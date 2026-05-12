@@ -13,6 +13,7 @@ import {
 } from "@tabler/icons-react"
 import { useTheme } from "next-themes"
 import { type ReactNode, useEffect, useMemo, useRef, useState } from "react"
+import { ChatMarkdown } from "@/components/chat/chat-markdown"
 
 type Role = "user" | "assistant"
 type FlowStep =
@@ -561,7 +562,7 @@ export function LlmHome({ countryCode, onChangeCountry }: { countryCode?: string
                     : "max-w-[88%] whitespace-pre-line rounded-2xl border border-border bg-card px-4 py-2.5 text-sm leading-relaxed text-foreground"
                 }
               >
-                {m.text}
+                <ChatMarkdown text={m.text} />
               </div>
             </div>
           ))}
@@ -767,9 +768,14 @@ export function LlmHome({ countryCode, onChangeCountry }: { countryCode?: string
               placeholder="Escribe tu consulta o responde al paso actual"
               className="min-h-10 flex-1 bg-transparent py-2 text-sm text-foreground outline-none placeholder:text-muted-foreground"
             />
-            {isLoading ? (
-              <span className="text-xs text-muted-foreground">Pensando...</span>
-            ) : null}
+            <button
+              type="button"
+              onClick={() => void onSend()}
+              disabled={!canSend}
+              className="rounded-xl bg-primary px-4 py-1.5 text-sm font-medium text-primary-foreground disabled:opacity-50"
+            >
+              {isLoading ? "Pensando..." : "Enviar"}
+            </button>
           </div>
         </div>
       </section>
