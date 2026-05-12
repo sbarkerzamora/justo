@@ -1,0 +1,17 @@
+---
+title: IR (rentas del trabajo)
+description: Base imponible de rentas del trabajo y tasa operativa provisional del MVP.
+---
+
+## Regla operativa
+
+- El IR se aplica sobre base imponible definida por normativa tributaria, despues de deducciones permitidas.
+- En el MVP inicial se usa una tasa referencial operativa documentada y revisable.
+
+## Formula
+
+- `ir_laboral = max(base_ir, 0) * tasa_ir_laboral`
+
+## Supuesto vigente
+
+- `tasa_ir_laboral = 0.015` (set normativo propuesto, pendiente confirmacion legal final para produccion).

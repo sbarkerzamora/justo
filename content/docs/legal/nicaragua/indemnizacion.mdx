@@ -1,0 +1,26 @@
+---
+title: Indemnizacion
+description: Regla de antiguedad para terminacion sin causa justificada en contrato por tiempo indeterminado.
+---
+
+## Base legal
+
+- Art. 42: pago proporcional de prestaciones al terminar la relacion laboral.
+- Art. 43: renuncia o mutuo acuerdo no elimina derecho por antiguedad del Art. 45.
+- Art. 45: despido sin causa en contrato por tiempo indeterminado.
+
+## Regla operativa
+
+- 1 mes de salario por cada uno de los primeros 3 anos.
+- 20 dias por cada ano desde el cuarto en adelante.
+- Minimo total: 1 mes.
+- Maximo total: 5 meses.
+- Las fracciones de ano se liquidan proporcionalmente.
+
+## Formula
+
+- `salario_diario = salario_mensual / 30`
+- `dias_indemnizacion = min(150, max(30, dias_primer_tramo + dias_segundo_tramo))`
+- `dias_primer_tramo = min(anos_antiguedad, 3) * 30`
+- `dias_segundo_tramo = max(anos_antiguedad - 3, 0) * 20`
+- `monto_indemnizacion = salario_diario * dias_indemnizacion`
