@@ -441,16 +441,17 @@ export function LlmHome({ countryCode, onChangeCountry }: { countryCode?: string
   }
 
   return (
-    <main className="mx-auto flex min-h-svh max-w-4xl flex-col px-4 md:px-8">
-      <header className="sticky top-0 z-10 mx-auto mb-4 mt-3 flex w-full max-w-4xl items-center justify-between rounded-2xl border border-border bg-card px-4 py-3 shadow-sm">
+    <main className="mx-auto flex h-svh max-w-4xl flex-col px-4 md:px-8">
+      <header className="sticky top-0 z-10 mx-auto mb-4 mt-3 flex w-full max-w-4xl items-center justify-between rounded-2xl border border-border bg-card px-4 py-3 shadow-sm max-sm:px-3 max-sm:py-2.5">
         <a href="/" className="text-lg font-semibold tracking-tight text-foreground">Justo</a>
         <div className="flex items-center gap-2">
           <button
             type="button"
             onClick={resetConversation}
-            className="inline-flex h-8 items-center justify-center rounded-lg border border-border bg-card px-3 text-xs font-semibold text-foreground hover:bg-accent"
+            className="inline-flex h-8 items-center justify-center rounded-lg border border-border bg-card px-3 text-xs font-semibold text-foreground hover:bg-accent max-sm:h-7 max-sm:px-2"
           >
-            Nueva conversacion
+            <span className="max-sm:hidden">Nueva conversacion</span>
+            <span className="sm:hidden">+</span>
           </button>
           <a
             href="/docs"
@@ -484,12 +485,13 @@ export function LlmHome({ countryCode, onChangeCountry }: { countryCode?: string
         </div>
       </header>
 
-      <section className="flex flex-1 flex-col overflow-y-auto">
+      <section className="flex flex-1 flex-col min-h-0">
         {isCalculationMode ? (
-          <div className="mb-3 space-y-2">
+          <div className="mb-3 space-y-2 max-sm:mb-2">
             <div className="mb-1 flex items-center justify-between text-xs text-muted-foreground">
               <span>Paso {stepIdx} de 8</span>
-              <span>{step === "done" ? "Resultado" : stepLabels[stepOrder[stepIdx - 1]]}</span>
+              <span className="max-sm:hidden">{step === "done" ? "Resultado" : stepLabels[stepOrder[stepIdx - 1]]}</span>
+              <span className="sm:hidden">{step === "done" ? "OK" : `P${stepIdx}`}</span>
             </div>
             <div className="h-2 rounded-full bg-muted">
               <div
@@ -516,7 +518,7 @@ export function LlmHome({ countryCode, onChangeCountry }: { countryCode?: string
           </div>
         ) : null}
 
-        <div className="flex-1 space-y-3 overflow-y-auto px-2">
+        <div className="flex-1 overflow-y-auto min-h-0 space-y-3 px-2 pb-2 max-sm:px-1">
           {messages.length === 0 ? (
             <div className="flex min-h-[50svh] flex-col items-center justify-center gap-4 px-2 text-center">
               <div className="max-w-xl space-y-3 text-sm leading-relaxed text-foreground motion-safe:animate-in motion-safe:fade-in motion-safe:slide-in-from-bottom-1 duration-300">
@@ -559,7 +561,7 @@ export function LlmHome({ countryCode, onChangeCountry }: { countryCode?: string
                 className={
                   m.role === "user"
                     ? "max-w-[85%] whitespace-pre-line rounded-2xl bg-primary px-4 py-2.5 text-sm text-primary-foreground"
-                    : "max-w-[88%] whitespace-pre-line rounded-2xl border border-border bg-card px-4 py-2.5 text-sm leading-relaxed text-foreground"
+                    : "max-w-[88%] rounded-2xl border border-border bg-card px-4 py-2.5 text-sm leading-relaxed text-foreground"
                 }
               >
                 <ChatMarkdown text={m.text} />
@@ -780,7 +782,7 @@ export function LlmHome({ countryCode, onChangeCountry }: { countryCode?: string
         </div>
       </section>
 
-      <footer className="border-t border-border py-4 text-center text-xs text-muted-foreground">
+      <footer className="border-t border-border py-3 text-center text-xs text-muted-foreground max-sm:py-2 max-sm:text-[10px]">
         <div className="mb-2 flex items-center justify-center gap-1.5">
           <button
             type="button"

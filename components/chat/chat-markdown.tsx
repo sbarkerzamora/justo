@@ -4,36 +4,32 @@ type Segment =
   | { type: "text"; content: string }
   | { type: "bold"; content: string }
   | { type: "italic"; content: string }
+  | { type: "code"; content: string }
 
 const parseInline = (text: string): (string | Segment)[] => {
   const parts: (string | Segment)[] = []
-  let remaining = text
+  const regex = /(\*\*|__)(.+?)\1|(\*|_)(.+?)\3|`(.+?)`/g
+  let lastIndex = 0
+  let match: RegExpExecArray | null
 
-  while (remaining.length > 0) {
-    const boldMatch = remaining.match(/^(\*\*|__)(.+?)\1/)
-    if (boldMatch) {
-      if (boldMatch.index && boldMatch.index > 0) {
-        parts.push(remaining.slice(0, boldMatch.index))
-      }
-      parts.push({ type: "bold", content: boldMatch[2] })
-      remaining = remaining.slice(boldMatch.index! + boldMatch[0].length)
-      // eslint-disable-next-line no-constant-condition
-      continue
+  while ((match = regex.exec(text)) !== null) {
+    if (match.index > lastIndex) {
+      parts.push(text.slice(lastIndex, match.index))
     }
 
-    const italicMatch = remaining.match(/^(\*|_)(.+?)\1/)
-    if (italicMatch) {
-      if (italicMatch.index && italicMatch.index > 0) {
-        parts.push(remaining.slice(0, italicMatch.index))
-      }
-      parts.push({ type: "italic", content: italicMatch[2] })
-      remaining = remaining.slice(italicMatch.index! + italicMatch[0].length)
-      // eslint-disable-next-line no-constant-condition
-      continue
+    if (match[1]) {
+      parts.push({ type: "bold", content: match[2] })
+    } else if (match[3]) {
+      parts.push({ type: "italic", content: match[4] })
+    } else if (match[5]) {
+      parts.push({ type: "code", content: match[5] })
     }
 
-    parts.push(remaining)
-    break
+    lastIndex = match.index + match[0].length
+  }
+
+  if (lastIndex < text.length) {
+    parts.push(text.slice(lastIndex))
   }
 
   return parts
@@ -43,41 +39,102 @@ const renderSegment = (seg: string | Segment, key: number): ReactNode => {
   if (typeof seg === "string") return seg
   if (seg.type === "bold") return <strong key={key}>{seg.content}</strong>
   if (seg.type === "italic") return <em key={key}>{seg.content}</em>
+  if (seg.type === "code")
+    return (
+      <code
+        key={key}
+        className="rounded-md bg-muted px-1.5 py-0.5 font-mono text-xs"
+      >
+        {seg.content}
+      </code>
+    )
   return seg.content
 }
+
+const headerMatch = /^(#{1,3})\s+(.+)/
+const numberedListMatch = /^(\d+)\.\s+(.+)/
 
 export function ChatMarkdown({ text }: { text: string }) {
   const lines = text.split("\n")
   const elements: ReactNode[] = []
   let listItems: ReactNode[] | null = null
+  let listType: "ul" | "ol" | null = null
   let listKey = 0
+
+  const flushList = () => {
+    if (!listItems) return
+    const Tag = listType === "ol" ? "ol" : "ul"
+    elements.push(
+      <Tag key={`list-${listKey++}`} className={`space-y-0.5 ${listType === "ul" ? "list-disc" : "list-decimal"} pl-5`}>
+        {listItems}
+      </Tag>,
+    )
+    listItems = null
+    listType = null
+  }
 
   for (let i = 0; i < lines.length; i++) {
     const line = lines[i]
-    const listMatch = line.match(/^[-*]\s+(.+)/)
+    const trimmed = line.trim()
 
-    if (listMatch) {
-      if (!listItems) listItems = []
-      const segments = parseInline(listMatch[1])
+    // Headers
+    const hMatch = trimmed.match(headerMatch)
+    if (hMatch) {
+      flushList()
+      const level = hMatch[1].length as 1 | 2 | 3
+      const segments = parseInline(hMatch[2])
+      const Tag = level === 1 ? "h3" : level === 2 ? "h4" : "h5"
+      const size = level === 1 ? "text-base font-semibold" : level === 2 ? "text-sm font-semibold" : "text-sm font-medium"
+      elements.push(
+        <Tag key={`h-${i}`} className={`mt-4 mb-1 ${size}`}>
+          {segments.map((s, j) => renderSegment(s, j))}
+        </Tag>,
+      )
+      continue
+    }
+
+    // Unordered list
+    const ulMatch = trimmed.match(/^[-*]\s+(.+)/)
+    if (ulMatch) {
+      if (!listItems || listType !== "ul") {
+        flushList()
+        listItems = []
+        listType = "ul"
+      }
+      const segments = parseInline(ulMatch[1])
       listItems.push(
-        <li key={i} className="ml-4 list-disc">
+        <li key={`li-${i}`}>
           {segments.map((s, j) => renderSegment(s, j))}
         </li>,
       )
       continue
     }
 
-    if (listItems) {
-      elements.push(<ul key={`list-${listKey++}`} className="space-y-0.5">{listItems}</ul>)
-      listItems = null
+    // Ordered list
+    const olMatch = trimmed.match(numberedListMatch)
+    if (olMatch) {
+      if (!listItems || listType !== "ol") {
+        flushList()
+        listItems = []
+        listType = "ol"
+      }
+      const segments = parseInline(olMatch[2])
+      listItems.push(
+        <li key={`li-${i}`}>
+          {segments.map((s, j) => renderSegment(s, j))}
+        </li>,
+      )
+      continue
     }
 
-    if (line.trim() === "") {
+    flushList()
+
+    if (trimmed === "") {
       elements.push(<br key={`br-${i}`} />)
       continue
     }
 
-    const segments = parseInline(line)
+    const segments = parseInline(trimmed)
     elements.push(
       <p key={`p-${i}`} className="[&:not(:first-child)]:mt-2">
         {segments.map((s, j) => renderSegment(s, j))}
@@ -85,9 +142,7 @@ export function ChatMarkdown({ text }: { text: string }) {
     )
   }
 
-  if (listItems) {
-    elements.push(<ul key={`list-${listKey++}`} className="space-y-0.5">{listItems}</ul>)
-  }
+  flushList()
 
   return <>{elements}</>
 }
