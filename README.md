@@ -2,95 +2,181 @@
 
 ![Justo](public/images/og-image.png)
 
-Justo is an open source labor assistant for Central America. It provides a conversational labor settlement calculator that explains formulas, references legal basis, and exports a printable PDF with worker and employer signature lines.
+<p align="center">
+  <a href="LICENSE"><img src="https://img.shields.io/badge/license-MIT-blue.svg" alt="License MIT" /></a>
+  <img src="https://img.shields.io/badge/Next.js-16-black" alt="Next.js 16" />
+  <img src="https://img.shields.io/badge/PRs-welcome-brightgreen" alt="PRs Welcome" />
+  <img src="https://img.shields.io/badge/status-alpha-yellow" alt="Status Alpha" />
+</p>
 
-## Supported Countries
+<p align="center">
+  <strong>Asistente laboral open source para Centroamérica</strong><br />
+  Consulta legal contextual + calculadora guiada de liquidación laboral con trazabilidad jurídica.
+</p>
 
-| Country | Code | Currency | Status |
-|---|---|---|---|
-| Nicaragua | `ni` | NIO (Córdoba) | ✅ v0.2.0 |
-| Guatemala | `gt` | GTQ (Quetzal) | ✅ v0.1.0 |
-| Honduras | `hn` | HNL (Lempira) | ✅ v0.1.0 |
-| El Salvador | `sv` | USD | ✅ v0.1.0 |
-| Costa Rica | `cr` | CRC (Colón) | ✅ v0.1.0 |
-| Panamá | `pa` | USD | ✅ v0.1.0 |
+---
+
+## Características
+
+| | Funcionalidad |
+|---|---|
+| 🤖 | **Chat legal contextual** — Consulta derechos, prestaciones y deducciones con referencias al corpus legal del país seleccionado. |
+| 🧮 | **Calculadora guiada de liquidación** — Completa paso a paso los datos del trabajador y obtén el cálculo completo. |
+| 🌎 | **Multi-país** — Nicaragua, Guatemala, Honduras, El Salvador, Costa Rica y Panamá. Cada uno con su propia legislación. |
+| 📄 | **PDF profesional** — Reporte descargable con header, tabla de ingresos/deducciones, resumen ejecutivo y firmas. |
+| ⚖️ | **Trazabilidad legal** — Cada concepto muestra su fórmula de cálculo y el artículo de ley que lo respalda. |
+| 🔒 | **Sin datos en servidor** — Toda la información permanece en tu navegador (localStorage). |
+| 🌙 | **Tema oscuro** — Compatible con modo claro y oscuro. |
+
+---
+
+## Cómo funciona
+
+```
+  ┌─────────────────────────────────────────────────────────────┐
+  │  1. Abres la app → Seleccionas tu país                      │
+  │  2. Consultas legales libres o presionas "Iniciar cálculo"  │
+  │  3. Completas: nombre, salario, fechas, vacaciones          │
+  │  4. Revisas el resumen y confirmas                          │
+  │  5. Obtienes desglose completo + PDF descargable            │
+  └─────────────────────────────────────────────────────────────┘
+```
+
+### En detalle
+
+1. **Selección de país** — Al abrir la app, elige tu país o permite la detección automática por ubicación.
+2. **Chat legal** — Escribe cualquier pregunta sobre derechos laborales, indemnizaciones o deducciones. El asistente responde con referencias al corpus legal.
+3. **Cálculo guiado** — Presiona "Iniciar cálculo" y completa los datos del trabajador: nombre, salario mensual, fechas de inicio y salida, vacaciones pendientes y frecuencia de pago.
+4. **Confirmación** — Revisa el resumen de datos capturados antes de calcular. Puedes editar cualquier campo.
+5. **Resultado** — El motor determinístico calcula: indemnización, aguinaldo, vacaciones, salario proporcional y deducciones (INSS/ISSS/IGSS/IHSS/CCSS según país).
+6. **PDF** — Descarga un reporte profesional con desglose, fórmulas, base legal y espacios para firmas.
+
+---
+
+## Países soportados
+
+| País | Código | Moneda | Legislación | Versión |
+|---|---|---|---|---|
+| Nicaragua | `ni` | NIO (Córdoba) | Ley No. 185 | `ni-v0.2.0` |
+| Guatemala | `gt` | GTQ (Quetzal) | Decreto 1441 | `gt-v0.1.0` |
+| Honduras | `hn` | HNL (Lempira) | Decreto 189-59 | `hn-v0.1.0` |
+| El Salvador | `sv` | USD | Código de Trabajo | `sv-v0.1.0` |
+| Costa Rica | `cr` | CRC (Colón) | Código de Trabajo | `cr-v0.1.0` |
+| Panamá | `pa` | USD | Decreto 252 | `pa-v0.1.0` |
+
+---
 
 ## Tech Stack
 
-- Next.js 16 + React 19
-- assistant-ui (`@assistant-ui/react`) for chat UI
-- Vercel AI SDK v6 (`ai`) + OpenRouter gateway
-- Fumadocs for documentation pages
-- TypeScript + Tailwind CSS v4
-- PDF generation via `pdf-lib`
+- **Framework**: Next.js 16 + React 19
+- **UI**: assistant-ui (`@assistant-ui/react`) + Tailwind CSS v4
+- **AI**: Vercel AI SDK v6 (`ai`) + OpenRouter gateway
+- **Docs**: Fumadocs (`fumadocs-core` + `fumadocs-ui`)
+- **PDF**: `pdf-lib`
+- **Animaciones**: `motion` + `tw-animate-css`
+- **Lenguaje**: TypeScript
 
-## Quick Start
+---
 
-### Requirements
+## Cómo empezar
+
+### Requisitos
 
 - Node.js >= 22.6
 - Bun >= 1.3
 
-### Install dependencies
+### Instalación
 
 ```bash
 bun install
 ```
 
-### Configure environment variables
+### Configurar variables de entorno
 
-Copy `.env.example` to `.env.local` and set your OpenRouter key:
+Copia `.env.example` a `.env.local` y configura tu clave de OpenRouter:
 
 ```bash
 cp .env.example .env.local
 ```
 
-Required variables:
-- `OPENROUTER_API_KEY`
-- `OPENROUTER_BASE_URL` (default already provided)
-- `OPENROUTER_MODEL`
+Variables requeridas:
 
-### Run locally
+| Variable | Descripción |
+|---|---|
+| `OPENROUTER_API_KEY` | Tu API key de OpenRouter |
+| `OPENROUTER_BASE_URL` | URL base (default ya incluido) |
+| `OPENROUTER_MODEL` | Modelo a usar (ej: `openai/gpt-4o-mini`) |
+
+### Ejecutar
 
 ```bash
 bun run dev
 ```
 
-Open `http://localhost:3000`.
+Abrir `http://localhost:3000`.
 
-## Project Structure
+---
 
-- `app/` Next.js routes and API endpoints
-- `components/chat/` chat interface (LLM + guided liquidation flow)
-- `lib/settlement/{ni,gt,hn,sv,cr,pa}/` deterministic settlement logic per jurisdiction
-- `lib/pdf/` PDF generation utilities
-- `lib/source.tsx` static Fumadocs source for docs pages
-- `content/legal/{ni,gt,hn,sv,cr,pa}/` legal corpus per country
-- `content/docs/` Fumadocs documentation content
+## Estructura del proyecto
+
+```
+app/
+├── api/
+│   ├── chat/                     # LLM chat via OpenRouter
+│   └── liquidation/
+│       ├── calculate/            # Cálculo determinístico (por país)
+│       └── pdf/                  # Generación de PDF
+├── docs/                         # Documentación (Fumadocs)
+└── page.tsx                      # Página principal (chat)
+components/
+├── chat/llm-home.tsx             # Interfaz de chat + calculadora
+├── location-dialog.tsx           # Selección de país
+├── location-gate.tsx             # Guardia de ubicación
+├── docs-footer.tsx               # Footer de documentación
+├── docs-nav-title.tsx            # Nav de docs con país
+└── ui/                           # Componentes shadcn/ui
+content/
+├── legal/{ni,gt,hn,sv,cr,pa}/   # Corpus legal por país
+└── docs/                         # Documentación en MDX
+lib/
+├── settlement/{ni,gt,hn,sv,cr,pa}/  # Motores de cálculo
+├── pdf/settlement-pdf.ts         # Generación de PDF
+└── source.tsx                    # Fuente estática de Fumadocs
+```
+
+---
 
 ## API Endpoints
 
-- `POST /api/chat` assistant responses via OpenRouter
-- `POST /api/liquidation/calculate` deterministic settlement result (routes by `countryCode`)
-- `POST /api/liquidation/pdf` printable settlement PDF
+| Endpoint | Descripción |
+|---|---|
+| `POST /api/chat` | Consulta legal asistida por LLM vía OpenRouter |
+| `POST /api/liquidation/calculate` | Cálculo determinístico de liquidación (rutea por `countryCode`) |
+| `POST /api/liquidation/pdf` | Genera PDF descargable con el resultado |
 
-## Legal and Safety Notes
+---
 
-- This project is informational and does not constitute legal advice.
-- Each jurisdiction uses its own legal corpus (rates, formulas, articles) stored under `content/legal/`.
-- Settlement formulas must be verified against current official regulations.
-- Complex or disputed cases should be escalated to legal/accounting professionals.
+## ⚠️ Aviso legal
 
-## Open Source Contribution
+> **Este proyecto es informativo y no constituye asesoría legal profesional.**
+>
+> - Los cálculos y la información proporcionada deben verificarse contra la normativa oficial vigente de cada país.
+> - Las tasas de deducciones (INSS, IGSS, ISSS, IHSS, CCSS, AFP, ISR, etc.) son valores propuestos y requieren confirmación con las entidades oficiales correspondientes.
+> - Para casos complejos, disputados o de alto valor, se recomienda contratar los servicios de un abogado laboral o contador profesional en la jurisdicción correspondiente.
+> - Este software se proporciona "tal cual", sin garantías de ningún tipo, expresas o implícitas.
 
-Contributions are welcome.
+---
 
-1. Fork the repository.
-2. Create a branch: `feat/your-change`.
-3. Add tests for formula or behavior changes.
-4. Open a pull request with context and legal references when applicable.
+## Contribuir
 
-### Suggested local checks
+Las contribuciones son bienvenidas.
+
+1. Haz fork del repositorio.
+2. Crea una rama: `feat/tu-cambio`.
+3. Agrega tests para cambios en fórmulas o comportamiento.
+4. Abre un Pull Request con contexto y referencias legales cuando corresponda.
+
+### Verificaciones locales
 
 ```bash
 bun run typecheck
@@ -99,29 +185,43 @@ bun run test
 bun run build
 ```
 
-## Documentation
+---
 
-- App documentation is available at `/docs`.
-- Legal source pages per country are available at `/docs/legal/{nicaragua,guatemala,honduras,elsalvador,costarica,panama}`.
-- Source legal markdown lives in `content/legal/`.
+## Documentación
 
-## Deploy on Vercel
+- Documentación de la app en `/docs`
+- Páginas legales por país: `/docs/legal/{nicaragua,guatemala,honduras,elsalvador,costarica,panama}`
+- Corpus legal fuente: `content/legal/`
 
-1. Import repository in Vercel.
-2. Configure environment variables:
+---
+
+## Despliegue en Vercel
+
+1. Importa el repositorio en Vercel.
+2. Configura las variables de entorno:
    - `OPENROUTER_API_KEY`
    - `OPENROUTER_BASE_URL`
    - `OPENROUTER_MODEL`
-3. Deploy `main` as production branch.
+3. Despliega `main` como rama de producción.
 
-After deploy, verify:
-- Legal chat responses work.
-- Guided liquidation flow completes for each country.
-- PDF download works from result card.
+Después del deploy, verifica:
+- [ ] Las consultas legales responden correctamente.
+- [ ] El flujo guiado de liquidación se completa para cada país.
+- [ ] La descarga de PDF funciona desde la tarjeta de resultado.
+
+---
 
 ## Roadmap
 
-- Harden legal corpus and deduction rules across all jurisdictions
-- Add automated tests for all formula branches per country
-- Add thread persistence and case history
-- Add support for additional Central American countries
+- [x] Nicaragua, Guatemala, Honduras, El Salvador, Costa Rica, Panamá
+- [ ] Harden legal corpus and deduction rules across all jurisdictions
+- [ ] Add automated tests for all formula branches per country
+- [ ] Add thread persistence and case history
+- [ ] UI/UX refinements and responsive improvements
+
+---
+
+<p align="center">
+  <strong>Justo</strong> · <a href="https://github.com/sbarkerzamora/justo">github.com/sbarkerzamora/justo</a> · Código abierto (MIT)<br />
+  Desarrollado por <a href="https://stephanbarker.com">stephanbarker.com</a>
+</p>
