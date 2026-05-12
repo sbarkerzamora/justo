@@ -71,22 +71,30 @@ const docsSource = defineSource<JustoPageData, { title?: string; pages?: string[
       slugs: ["legal", "nicaragua"],
       data: {
         title: "⚖ Nicaragua, marco legal",
-        description:
-          "Referencias legales y operativas usadas por el sistema para el calculo de liquidacion.",
+        description: "Ley No. 185 (Codigo del Trabajo) y reglas operativas del motor de liquidacion.",
         body: (
-          <div className="space-y-5">
+          <div className="space-y-6">
             <p className="text-sm text-muted-foreground">
-              Esta seccion resume la base normativa usada para formulas, supuestos y deducciones.
+              El sistema laboral nicaraguense se rige por la <strong>Ley No. 185, Codigo del
+              Trabajo</strong> (La Gaceta No. 205, 30-Oct-1996) con sus reformas vigentes. Esta
+              seccion documenta las reglas operativas usadas por el motor de calculo, los articulos
+              aplicables y ejemplos practicos por rubro.
+            </p>
+            <p className="text-sm text-muted-foreground">
+              Version del corpus: <code>ni-v0.2.0</code>
             </p>
             <ul className="grid gap-2 sm:grid-cols-2">
-              <li><Link className="block rounded-lg border border-border bg-card px-3 py-2 hover:bg-accent" href="/docs/legal/nicaragua/indemnizacion">Indemnizacion</Link></li>
-              <li><Link className="block rounded-lg border border-border bg-card px-3 py-2 hover:bg-accent" href="/docs/legal/nicaragua/aguinaldo">Aguinaldo</Link></li>
-              <li><Link className="block rounded-lg border border-border bg-card px-3 py-2 hover:bg-accent" href="/docs/legal/nicaragua/vacaciones">Vacaciones</Link></li>
-              <li><Link className="block rounded-lg border border-border bg-card px-3 py-2 hover:bg-accent" href="/docs/legal/nicaragua/salario-proporcional">Salario proporcional</Link></li>
-              <li><Link className="block rounded-lg border border-border bg-card px-3 py-2 hover:bg-accent" href="/docs/legal/nicaragua/deducciones">Deducciones</Link></li>
-              <li><Link className="block rounded-lg border border-border bg-card px-3 py-2 hover:bg-accent" href="/docs/legal/nicaragua/inss">INSS</Link></li>
-              <li className="sm:col-span-2"><Link className="block rounded-lg border border-border bg-card px-3 py-2 hover:bg-accent" href="/docs/legal/nicaragua/ir-rentas-trabajo">IR rentas del trabajo</Link></li>
+              <li><Link className="block rounded-lg border border-border bg-card px-3 py-2 hover:bg-accent" href="/docs/legal/nicaragua/indemnizacion">💼 Indemnizacion</Link></li>
+              <li><Link className="block rounded-lg border border-border bg-card px-3 py-2 hover:bg-accent" href="/docs/legal/nicaragua/aguinaldo">🎁 Aguinaldo</Link></li>
+              <li><Link className="block rounded-lg border border-border bg-card px-3 py-2 hover:bg-accent" href="/docs/legal/nicaragua/vacaciones">🌴 Vacaciones</Link></li>
+              <li><Link className="block rounded-lg border border-border bg-card px-3 py-2 hover:bg-accent" href="/docs/legal/nicaragua/salario-proporcional">🧾 Salario proporcional</Link></li>
+              <li><Link className="block rounded-lg border border-border bg-card px-3 py-2 hover:bg-accent" href="/docs/legal/nicaragua/deducciones">➖ Deducciones</Link></li>
+              <li><Link className="block rounded-lg border border-border bg-card px-3 py-2 hover:bg-accent" href="/docs/legal/nicaragua/inss">🛡 INSS</Link></li>
+              <li className="sm:col-span-2"><Link className="block rounded-lg border border-border bg-card px-3 py-2 hover:bg-accent" href="/docs/legal/nicaragua/ir-rentas-trabajo">📊 IR rentas del trabajo</Link></li>
             </ul>
+            <div className="rounded-xl border border-border bg-card p-3 text-sm text-muted-foreground">
+              Aviso: contenido informativo. Para casos complejos validar con asesoria legal.
+            </div>
           </div>
         ),
       },
@@ -96,12 +104,71 @@ const docsSource = defineSource<JustoPageData, { title?: string; pages?: string[
       path: "legal/nicaragua/indemnizacion",
       data: {
         title: "💼 Indemnizacion por antiguedad",
-        description: "Regla de antiguedad para terminacion sin causa justificada.",
+        description: "Indemnizacion por despido sin causa justificada en contrato por tiempo indeterminado. Arts. 42, 43, 45 Ley 185.",
         body: (
-          <>
-            <p>Arts. 42, 43 y 45 de Ley 185.</p>
-            <p>1 mes por ano en los primeros 3 anos; luego 20 dias por ano, minimo 1 mes.</p>
-          </>
+          <div className="space-y-6">
+            <section>
+              <h2 className="text-base font-semibold">Base legal</h2>
+              <ul className="list-disc space-y-1 pl-5 text-sm">
+                <li><strong>Art. 42</strong> — Pago proporcional de prestaciones al terminar la relacion laboral.</li>
+                <li><strong>Art. 43</strong> — Renuncia o mutuo acuerdo no elimina el derecho por antiguedad del Art. 45.</li>
+                <li><strong>Art. 45</strong> — Despido sin causa justificada en contrato por tiempo indeterminado.</li>
+              </ul>
+            </section>
+            <section>
+              <h2 className="text-base font-semibold">Regla operativa</h2>
+              <ul className="list-disc space-y-1 pl-5 text-sm">
+                <li><strong>Primer tramo</strong> (anos 1 a 3): 30 dias de salario por cada ano.</li>
+                <li><strong>Segundo tramo</strong> (ano 4 en adelante): 20 dias de salario por cada ano.</li>
+                <li><strong>Minimo</strong>: 30 dias (1 mes).</li>
+                <li><strong>Maximo</strong>: 150 dias (5 meses).</li>
+                <li>Fracciones de ano se liquidan proporcionalmente.</li>
+              </ul>
+            </section>
+            <section>
+              <h2 className="text-base font-semibold">Variables</h2>
+              <table className="w-full text-sm">
+                <thead><tr className="border-b border-border"><th className="pr-4 text-left font-medium">Variable</th><th className="text-left font-medium">Descripcion</th></tr></thead>
+                <tbody>
+                  <tr className="border-b border-border"><td className="py-1 pr-4 font-mono text-xs">salario_mensual</td><td className="py-1">Salario ordinario mensual en NIO</td></tr>
+                  <tr className="border-b border-border"><td className="py-1 pr-4 font-mono text-xs">anos_antiguedad</td><td className="py-1">Anos completos desde inicio hasta salida</td></tr>
+                  <tr><td className="py-1 pr-4 font-mono text-xs">salario_diario</td><td className="py-1">salario_mensual / 30</td></tr>
+                </tbody>
+              </table>
+            </section>
+            <section>
+              <h2 className="text-base font-semibold">Formula</h2>
+              <pre className="rounded-lg bg-muted p-3 text-xs"><code>{`salario_diario = salario_mensual / 30
+dias_primer_tramo = min(anos_antiguedad, 3) * 30
+dias_segundo_tramo = max(anos_antiguedad - 3, 0) * 20
+dias_indemnizacion = min(150, max(30, dias_primer_tramo + dias_segundo_tramo))
+monto_indemnizacion = salario_diario * dias_indemnizacion`}</code></pre>
+            </section>
+            <section>
+              <h2 className="text-base font-semibold">Ejemplo</h2>
+              <div className="rounded-lg border border-border bg-card p-3 text-sm">
+                <p className="mb-1 font-medium">Trabajador con 5 anos de antiguedad y salario de C$15,000</p>
+                <ul className="space-y-0.5 text-xs text-muted-foreground">
+                  <li>salario_diario = 15,000 / 30 = <strong>C$500</strong></li>
+                  <li>dias_primer_tramo = min(5, 3) * 30 = <strong>90</strong></li>
+                  <li>dias_segundo_tramo = max(5 - 3, 0) * 20 = <strong>40</strong></li>
+                  <li>dias_indemnizacion = min(150, max(30, 90 + 40)) = <strong>130</strong></li>
+                  <li>monto_indemnizacion = 500 * 130 = <strong>C$65,000</strong></li>
+                </ul>
+              </div>
+            </section>
+            <section>
+              <h2 className="text-base font-semibold">Excepciones</h2>
+              <ul className="list-disc space-y-1 pl-5 text-sm">
+                <li>Despido con causa justificada imputable al trabajador: no aplica indemnizacion.</li>
+                <li>Casos de reintegro y sanciones adicionales se tratan fuera del calculo base.</li>
+              </ul>
+            </section>
+            <section>
+              <h2 className="text-base font-semibold">Vigencia</h2>
+              <p className="text-sm text-muted-foreground">Ley No. 185, Arts. 42, 43, 45. Corpus: <code>ni-v0.2.0</code></p>
+            </section>
+          </div>
         ),
       },
     },
@@ -110,8 +177,55 @@ const docsSource = defineSource<JustoPageData, { title?: string; pages?: string[
       path: "legal/nicaragua/aguinaldo",
       data: {
         title: "🎁 Aguinaldo proporcional",
-        description: "Decimo tercer mes completo o proporcional.",
-        body: <p>Arts. 93, 94, 95 y 97 de Ley 185. Formula: base * (dias/365).</p>,
+        description: "Decimo tercer mes completo o proporcional segun tiempo trabajado. Arts. 93-97 Ley 185.",
+        body: (
+          <div className="space-y-6">
+            <section>
+              <h2 className="text-base font-semibold">Base legal</h2>
+              <ul className="list-disc space-y-1 pl-5 text-sm">
+                <li><strong>Art. 93</strong> — Derecho a decimo tercer mes completo o proporcional.</li>
+                <li><strong>Art. 94</strong> — Base de calculo: ultimo salario o salario mas alto de ultimos 6 meses si variable.</li>
+                <li><strong>Art. 95</strong> — Oportunidad de pago.</li>
+                <li><strong>Art. 97</strong> — Exencion de impuesto, descuentos, cotizaciones y deducciones.</li>
+              </ul>
+            </section>
+            <section>
+              <h2 className="text-base font-semibold">Regla operativa</h2>
+              <p className="text-sm">Al finalizar la relacion laboral, se paga la parte proporcional del decimo tercer mes por tiempo trabajado mayor de un mes y menor de un ano.</p>
+            </section>
+            <section>
+              <h2 className="text-base font-semibold">Variables</h2>
+              <table className="w-full text-sm">
+                <thead><tr className="border-b border-border"><th className="pr-4 text-left font-medium">Variable</th><th className="text-left font-medium">Descripcion</th></tr></thead>
+                <tbody>
+                  <tr className="border-b border-border"><td className="py-1 pr-4 font-mono text-xs">salario_base</td><td className="py-1">Salario mensual ordinario en NIO</td></tr>
+                  <tr><td className="py-1 pr-4 font-mono text-xs">dias_periodo</td><td className="py-1">Dias transcurridos desde el 1 de enero hasta la fecha de salida</td></tr>
+                </tbody>
+              </table>
+            </section>
+            <section>
+              <h2 className="text-base font-semibold">Formula</h2>
+              <pre className="rounded-lg bg-muted p-3 text-xs"><code>{`aguinaldo_proporcional = salario_base * (dias_periodo / 365)`}</code></pre>
+            </section>
+            <section>
+              <h2 className="text-base font-semibold">Ejemplo</h2>
+              <div className="rounded-lg border border-border bg-card p-3 text-sm">
+                <p className="mb-1 font-medium">Salario de C$15,000, salida el 30 de septiembre (273 dias)</p>
+                <ul className="space-y-0.5 text-xs text-muted-foreground">
+                  <li>aguinaldo = 15,000 * (273 / 365) = 15,000 * 0.748 = <strong>C$11,220</strong></li>
+                </ul>
+              </div>
+            </section>
+            <section>
+              <h2 className="text-base font-semibold">Excepciones</h2>
+              <p className="text-sm">Si el tiempo trabajado no supera un mes, no se liquida proporcional de aguinaldo por esta regla. Aguinaldo exento de INSS e IR (Art. 97).</p>
+            </section>
+            <section>
+              <h2 className="text-base font-semibold">Vigencia</h2>
+              <p className="text-sm text-muted-foreground">Ley No. 185, Arts. 93, 94, 95, 97. Corpus: <code>ni-v0.2.0</code></p>
+            </section>
+          </div>
+        ),
       },
     },
     {
@@ -119,8 +233,56 @@ const docsSource = defineSource<JustoPageData, { title?: string; pages?: string[
       path: "legal/nicaragua/vacaciones",
       data: {
         title: "🌴 Vacaciones pendientes",
-        description: "Pago de vacaciones pendientes no gozadas.",
-        body: <p>Arts. 76, 77 y 78 de Ley 185. Formula: (salario/30) * dias pendientes.</p>,
+        description: "Pago de vacaciones no gozadas al cierre. Arts. 76, 77, 78 Ley 185.",
+        body: (
+          <div className="space-y-6">
+            <section>
+              <h2 className="text-base font-semibold">Base legal</h2>
+              <ul className="list-disc space-y-1 pl-5 text-sm">
+                <li><strong>Art. 76</strong> — 15 dias de vacaciones por cada 6 meses de trabajo ininterrumpido.</li>
+                <li><strong>Art. 77</strong> — Al terminar, se pagan salarios y prestaciones proporcionales acumuladas.</li>
+                <li><strong>Art. 78</strong> — Base en ultimo salario ordinario o promedio de ultimos 6 meses si variable.</li>
+              </ul>
+            </section>
+            <section>
+              <h2 className="text-base font-semibold">Regla operativa</h2>
+              <p className="text-sm">Se liquidan las vacaciones pendientes no gozadas al cierre de la relacion laboral. El usuario declara los dias pendientes y el motor los valida en rango permitido.</p>
+            </section>
+            <section>
+              <h2 className="text-base font-semibold">Variables</h2>
+              <table className="w-full text-sm">
+                <thead><tr className="border-b border-border"><th className="pr-4 text-left font-medium">Variable</th><th className="text-left font-medium">Descripcion</th></tr></thead>
+                <tbody>
+                  <tr className="border-b border-border"><td className="py-1 pr-4 font-mono text-xs">salario_mensual</td><td className="py-1">Salario ordinario mensual en NIO</td></tr>
+                  <tr><td className="py-1 pr-4 font-mono text-xs">dias_vacaciones_pendientes</td><td className="py-1">Dias de vacaciones acumulados no gozados</td></tr>
+                </tbody>
+              </table>
+            </section>
+            <section>
+              <h2 className="text-base font-semibold">Formula</h2>
+              <pre className="rounded-lg bg-muted p-3 text-xs"><code>{`salario_diario = salario_mensual / 30
+vacaciones_pendientes = salario_diario * dias_vacaciones_pendientes`}</code></pre>
+            </section>
+            <section>
+              <h2 className="text-base font-semibold">Ejemplo</h2>
+              <div className="rounded-lg border border-border bg-card p-3 text-sm">
+                <p className="mb-1 font-medium">Salario de C$15,000, 10 dias de vacaciones pendientes</p>
+                <ul className="space-y-0.5 text-xs text-muted-foreground">
+                  <li>salario_diario = 15,000 / 30 = <strong>C$500</strong></li>
+                  <li>vacaciones = 500 * 10 = <strong>C$5,000</strong></li>
+                </ul>
+              </div>
+            </section>
+            <section>
+              <h2 className="text-base font-semibold">Excepciones</h2>
+              <p className="text-sm">Si el salario es variable, debe usarse el promedio ordinario de los ultimos 6 meses como base.</p>
+            </section>
+            <section>
+              <h2 className="text-base font-semibold">Vigencia</h2>
+              <p className="text-sm text-muted-foreground">Ley No. 185, Arts. 76, 77, 78. Corpus: <code>ni-v0.2.0</code></p>
+            </section>
+          </div>
+        ),
       },
     },
     {
@@ -128,8 +290,55 @@ const docsSource = defineSource<JustoPageData, { title?: string; pages?: string[
       path: "legal/nicaragua/salario-proporcional",
       data: {
         title: "🧾 Salario pendiente",
-        description: "Liquidacion del salario pendiente del periodo en curso.",
-        body: <p>Art. 42 y Arts. 81, 84, 86 de Ley 185. Formula: (salario/30) * dias.</p>,
+        description: "Liquidacion del salario del mes en curso al momento de la salida. Arts. 42, 81, 84, 86 Ley 185.",
+        body: (
+          <div className="space-y-6">
+            <section>
+              <h2 className="text-base font-semibold">Base legal</h2>
+              <ul className="list-disc space-y-1 pl-5 text-sm">
+                <li><strong>Art. 42</strong> — Pago de prestaciones y conceptos proporcionales al cierre.</li>
+                <li><strong>Arts. 81, 84, 86</strong> — Definicion de salario, salario ordinario y pago.</li>
+              </ul>
+            </section>
+            <section>
+              <h2 className="text-base font-semibold">Regla operativa</h2>
+              <p className="text-sm">Se liquida el salario pendiente del periodo en curso al momento de la salida. El MVP usa captura explicita de dias pendientes para evitar ambiguedad de calendario de pago.</p>
+            </section>
+            <section>
+              <h2 className="text-base font-semibold">Variables</h2>
+              <table className="w-full text-sm">
+                <thead><tr className="border-b border-border"><th className="pr-4 text-left font-medium">Variable</th><th className="text-left font-medium">Descripcion</th></tr></thead>
+                <tbody>
+                  <tr className="border-b border-border"><td className="py-1 pr-4 font-mono text-xs">salario_mensual</td><td className="py-1">Salario ordinario mensual en NIO</td></tr>
+                  <tr><td className="py-1 pr-4 font-mono text-xs">dias_salario_pendiente</td><td className="py-1">Dias trabajados en el mes de salida no pagados aun</td></tr>
+                </tbody>
+              </table>
+            </section>
+            <section>
+              <h2 className="text-base font-semibold">Formula</h2>
+              <pre className="rounded-lg bg-muted p-3 text-xs"><code>{`salario_diario = salario_mensual / 30
+salario_proporcional = salario_diario * dias_salario_pendiente`}</code></pre>
+            </section>
+            <section>
+              <h2 className="text-base font-semibold">Ejemplo</h2>
+              <div className="rounded-lg border border-border bg-card p-3 text-sm">
+                <p className="mb-1 font-medium">Salario de C$15,000, salida el dia 15 del mes (15 dias pendientes)</p>
+                <ul className="space-y-0.5 text-xs text-muted-foreground">
+                  <li>salario_diario = 15,000 / 30 = <strong>C$500</strong></li>
+                  <li>salario_proporcional = 500 * 15 = <strong>C$7,500</strong></li>
+                </ul>
+              </div>
+            </section>
+            <section>
+              <h2 className="text-base font-semibold">Excepciones</h2>
+              <p className="text-sm">Si existe salario variable o esquema mixto, se debe aplicar promedio ordinario conforme reglas internas.</p>
+            </section>
+            <section>
+              <h2 className="text-base font-semibold">Vigencia</h2>
+              <p className="text-sm text-muted-foreground">Ley No. 185, Arts. 42, 81, 84, 86. Corpus: <code>ni-v0.2.0</code></p>
+            </section>
+          </div>
+        ),
       },
     },
     {
@@ -137,8 +346,70 @@ const docsSource = defineSource<JustoPageData, { title?: string; pages?: string[
       path: "legal/nicaragua/deducciones",
       data: {
         title: "➖ Deducciones legales",
-        description: "Deducciones legales sobre conceptos imponibles.",
-        body: <p>Art. 88 y Art. 97 de Ley 185. INSS e IR solo sobre base imponible.</p>,
+        description: "INSS e IR sobre conceptos imponibles. Arts. 88 y 97 Ley 185.",
+        body: (
+          <div className="space-y-6">
+            <section>
+              <h2 className="text-base font-semibold">Base legal</h2>
+              <ul className="list-disc space-y-1 pl-5 text-sm">
+                <li><strong>Art. 88 (Ley 185)</strong> — Del salario se hacen deducciones legales.</li>
+                <li><strong>Art. 97 (Ley 185)</strong> — El decimo tercer mes esta exento de impuesto, descuentos, cotizaciones y deducciones.</li>
+                <li><strong>Normativa INSS</strong> — Cotizacion laboral aplicable.</li>
+                <li><strong>Normativa IR</strong> — Rentas del trabajo.</li>
+              </ul>
+            </section>
+            <section>
+              <h2 className="text-base font-semibold">Regla operativa</h2>
+              <ul className="list-disc space-y-1 pl-5 text-sm">
+                <li>Solo se aplican deducciones permitidas legalmente y sobre conceptos imponibles.</li>
+                <li>Aguinaldo proporcional no integra base imponible de deducciones (Art. 97).</li>
+                <li>INSS se calcula sobre salario proporcional + vacaciones pagadas.</li>
+                <li>IR se calcula sobre ingreso bruto menos INSS y aguinaldo.</li>
+              </ul>
+            </section>
+            <section>
+              <h2 className="text-base font-semibold">Variables</h2>
+              <table className="w-full text-sm">
+                <thead><tr className="border-b border-border"><th className="pr-4 text-left font-medium">Variable</th><th className="text-left font-medium">Descripcion</th></tr></thead>
+                <tbody>
+                  <tr className="border-b border-border"><td className="py-1 pr-4 font-mono text-xs">base_inss</td><td className="py-1">Salario proporcional + vacaciones pagadas</td></tr>
+                  <tr className="border-b border-border"><td className="py-1 pr-4 font-mono text-xs">tasa_inss_laboral</td><td className="py-1">0.07 (7%)</td></tr>
+                  <tr className="border-b border-border"><td className="py-1 pr-4 font-mono text-xs">base_ir</td><td className="py-1">Ingreso bruto - INSS - aguinaldo</td></tr>
+                  <tr><td className="py-1 pr-4 font-mono text-xs">tasa_ir_laboral</td><td className="py-1">0.015 (1.5%)</td></tr>
+                </tbody>
+              </table>
+            </section>
+            <section>
+              <h2 className="text-base font-semibold">Formulas</h2>
+              <pre className="rounded-lg bg-muted p-3 text-xs"><code>{`inss_laboral = base_inss * 0.07
+ir_laboral = max(base_ir, 0) * 0.015
+total_deducciones = inss_laboral + ir_laboral
+neto = ingreso_bruto - total_deducciones`}</code></pre>
+            </section>
+            <section>
+              <h2 className="text-base font-semibold">Ejemplo</h2>
+              <div className="rounded-lg border border-border bg-card p-3 text-sm">
+                <p className="mb-1 font-medium">Ingreso bruto C$88,720, aguinaldo C$11,220</p>
+                <ul className="space-y-0.5 text-xs text-muted-foreground">
+                  <li>base_inss = C$7,500 (salario prop.) + C$5,000 (vac.) = <strong>C$12,500</strong></li>
+                  <li>inss = 12,500 * 0.07 = <strong>C$875</strong></li>
+                  <li>base_ir = 88,720 - 875 - 11,220 = <strong>C$76,625</strong></li>
+                  <li>ir = max(76,625, 0) * 0.015 = <strong>C$1,149</strong></li>
+                  <li>total deducciones = 875 + 1,149 = <strong>C$2,024</strong></li>
+                  <li>neto = 88,720 - 2,024 = <strong>C$86,696</strong></li>
+                </ul>
+              </div>
+            </section>
+            <section>
+              <h2 className="text-base font-semibold">Excepciones</h2>
+              <p className="text-sm">Si la base imponible resulta 0 o negativa, la deduccion correspondiente es 0.</p>
+            </section>
+            <section>
+              <h2 className="text-base font-semibold">Vigencia</h2>
+              <p className="text-sm text-muted-foreground">Ley No. 185 Arts. 88 y 97 + normativa INSS e IR vigente. Corpus: <code>ni-v0.2.0</code></p>
+            </section>
+          </div>
+        ),
       },
     },
     {
@@ -146,8 +417,53 @@ const docsSource = defineSource<JustoPageData, { title?: string; pages?: string[
       path: "legal/nicaragua/inss",
       data: {
         title: "🛡 INSS laboral",
-        description: "Cotizacion laboral en el MVP.",
-        body: <p>Tasa operativa actual del corpus: 0.07, sujeta a revision legal.</p>,
+        description: "Cotizacion del 7% sobre base imponible. Ley de Seguridad Social + normativa INSS.",
+        body: (
+          <div className="space-y-6">
+            <section>
+              <h2 className="text-base font-semibold">Base legal</h2>
+              <p className="text-sm">Ley de Seguridad Social y reglamentacion administrativa aplicable del INSS.</p>
+            </section>
+            <section>
+              <h2 className="text-base font-semibold">Regla operativa</h2>
+              <ul className="list-disc space-y-1 pl-5 text-sm">
+                <li>La cotizacion laboral del trabajador se aplica sobre conceptos salariales imponibles.</li>
+                <li>En el MVP inicial, la base imponible contempla salario proporcional y vacaciones pagadas.</li>
+              </ul>
+            </section>
+            <section>
+              <h2 className="text-base font-semibold">Variables</h2>
+              <table className="w-full text-sm">
+                <thead><tr className="border-b border-border"><th className="pr-4 text-left font-medium">Variable</th><th className="text-left font-medium">Descripcion</th></tr></thead>
+                <tbody>
+                  <tr className="border-b border-border"><td className="py-1 pr-4 font-mono text-xs">base_inss</td><td className="py-1">Salario proporcional + vacaciones pagadas</td></tr>
+                  <tr><td className="py-1 pr-4 font-mono text-xs">tasa_inss_laboral</td><td className="py-1">0.07 (7%)</td></tr>
+                </tbody>
+              </table>
+            </section>
+            <section>
+              <h2 className="text-base font-semibold">Formula</h2>
+              <pre className="rounded-lg bg-muted p-3 text-xs"><code>{`inss_laboral = base_inss * 0.07`}</code></pre>
+            </section>
+            <section>
+              <h2 className="text-base font-semibold">Ejemplo</h2>
+              <div className="rounded-lg border border-border bg-card p-3 text-sm">
+                <p className="mb-1 font-medium">Base INSS de C$12,500</p>
+                <ul className="space-y-0.5 text-xs text-muted-foreground">
+                  <li>inss = 12,500 * 0.07 = <strong>C$875</strong></li>
+                </ul>
+              </div>
+            </section>
+            <section>
+              <h2 className="text-base font-semibold">Excepciones</h2>
+              <p className="text-sm">Conceptos no imponibles por ley no se incluyen en <code>base_inss</code>.</p>
+            </section>
+            <section>
+              <h2 className="text-base font-semibold">Vigencia</h2>
+              <p className="text-sm text-muted-foreground">Ley de Seguridad Social + normativa INSS. Tasa: 7% (set propuesto). Corpus: <code>ni-v0.2.0</code></p>
+            </section>
+          </div>
+        ),
       },
     },
     {
@@ -155,8 +471,54 @@ const docsSource = defineSource<JustoPageData, { title?: string; pages?: string[
       path: "legal/nicaragua/ir-rentas-trabajo",
       data: {
         title: "📊 IR rentas del trabajo",
-        description: "Base imponible y tasa operativa provisional.",
-        body: <p>Tasa operativa actual del corpus: 0.015, sujeta a revision legal.</p>,
+        description: "Impuesto sobre la renta del trabajo al 1.5%. Ley de Concertacion Tributaria.",
+        body: (
+          <div className="space-y-6">
+            <section>
+              <h2 className="text-base font-semibold">Base legal</h2>
+              <p className="text-sm">Ley de Concertacion Tributaria y disposiciones vigentes para retencion o calculo de rentas del trabajo aplicables a liquidacion.</p>
+            </section>
+            <section>
+              <h2 className="text-base font-semibold">Regla operativa</h2>
+              <ul className="list-disc space-y-1 pl-5 text-sm">
+                <li>El IR se aplica sobre base imponible definida por normativa tributaria, despues de deducciones permitidas.</li>
+                <li>Base IR = Ingreso bruto - INSS - Aguinaldo.</li>
+                <li>En el MVP inicial se usa una tasa referencial operativa del 1.5%.</li>
+              </ul>
+            </section>
+            <section>
+              <h2 className="text-base font-semibold">Variables</h2>
+              <table className="w-full text-sm">
+                <thead><tr className="border-b border-border"><th className="pr-4 text-left font-medium">Variable</th><th className="text-left font-medium">Descripcion</th></tr></thead>
+                <tbody>
+                  <tr className="border-b border-border"><td className="py-1 pr-4 font-mono text-xs">base_ir</td><td className="py-1">Ingreso bruto - INSS - aguinaldo</td></tr>
+                  <tr><td className="py-1 pr-4 font-mono text-xs">tasa_ir_laboral</td><td className="py-1">0.015 (1.5%)</td></tr>
+                </tbody>
+              </table>
+            </section>
+            <section>
+              <h2 className="text-base font-semibold">Formula</h2>
+              <pre className="rounded-lg bg-muted p-3 text-xs"><code>{`ir_laboral = max(base_ir, 0) * 0.015`}</code></pre>
+            </section>
+            <section>
+              <h2 className="text-base font-semibold">Ejemplo</h2>
+              <div className="rounded-lg border border-border bg-card p-3 text-sm">
+                <p className="mb-1 font-medium">Base IR de C$76,625</p>
+                <ul className="space-y-0.5 text-xs text-muted-foreground">
+                  <li>ir = max(76,625, 0) * 0.015 = <strong>C$1,149</strong></li>
+                </ul>
+              </div>
+            </section>
+            <section>
+              <h2 className="text-base font-semibold">Excepciones</h2>
+              <p className="text-sm">Aguinaldo proporcional exento de deducciones segun Art. 97 de Ley 185.</p>
+            </section>
+            <section>
+              <h2 className="text-base font-semibold">Vigencia</h2>
+              <p className="text-sm text-muted-foreground">Ley de Concertacion Tributaria. Tasa: 1.5% (set propuesto, pendiente confirmacion). Corpus: <code>ni-v0.2.0</code></p>
+            </section>
+          </div>
+        ),
       },
     },
     {
@@ -165,17 +527,31 @@ const docsSource = defineSource<JustoPageData, { title?: string; pages?: string[
       slugs: ["legal", "guatemala"],
       data: {
         title: "⚖ Guatemala, marco legal",
-        description: "Codigo de Trabajo Decreto 1441 y leyes complementarias.",
+        description: "Codigo de Trabajo Decreto 1441, Decreto 76-78 (Aguinaldo) y Decreto 42-92 (Bono 14).",
         body: (
-          <ul className="grid gap-2 sm:grid-cols-2">
-            <li><a className="block rounded-lg border border-border bg-card px-3 py-2 hover:bg-accent" href="/docs/legal/guatemala/indemnizacion">Indemnizacion por antiguedad</a></li>
-            <li><a className="block rounded-lg border border-border bg-card px-3 py-2 hover:bg-accent" href="/docs/legal/guatemala/aguinaldo">Aguinaldo y Bono 14</a></li>
-            <li><a className="block rounded-lg border border-border bg-card px-3 py-2 hover:bg-accent" href="/docs/legal/guatemala/vacaciones">Vacaciones pendientes</a></li>
-            <li><a className="block rounded-lg border border-border bg-card px-3 py-2 hover:bg-accent" href="/docs/legal/guatemala/salario-proporcional">Salario pendiente</a></li>
-            <li><a className="block rounded-lg border border-border bg-card px-3 py-2 hover:bg-accent" href="/docs/legal/guatemala/deducciones">Deducciones legales</a></li>
-            <li><a className="block rounded-lg border border-border bg-card px-3 py-2 hover:bg-accent" href="/docs/legal/guatemala/igss">IGSS laboral</a></li>
-            <li className="sm:col-span-2"><a className="block rounded-lg border border-border bg-card px-3 py-2 hover:bg-accent" href="/docs/legal/guatemala/isr">ISR rentas del trabajo</a></li>
-          </ul>
+          <div className="space-y-6">
+            <p className="text-sm text-muted-foreground">
+              El sistema laboral guatemalteco se rige por el <strong>Codigo de Trabajo (Decreto
+              1441)</strong>, la <strong>Ley de Aguinaldo (Decreto 76-78)</strong> y el <strong>Bono
+              14 (Decreto 42-92)</strong>. Esta seccion documenta las reglas operativas usadas por
+              el motor de calculo, los articulos aplicables y ejemplos practicos por rubro.
+            </p>
+            <p className="text-sm text-muted-foreground">
+              Version del corpus: <code>gt-v0.1.0</code>
+            </p>
+            <ul className="grid gap-2 sm:grid-cols-2">
+              <li><Link className="block rounded-lg border border-border bg-card px-3 py-2 hover:bg-accent" href="/docs/legal/guatemala/indemnizacion">💼 Indemnizacion por antiguedad</Link></li>
+              <li><Link className="block rounded-lg border border-border bg-card px-3 py-2 hover:bg-accent" href="/docs/legal/guatemala/aguinaldo">🎁 Aguinaldo y Bono 14</Link></li>
+              <li><Link className="block rounded-lg border border-border bg-card px-3 py-2 hover:bg-accent" href="/docs/legal/guatemala/vacaciones">🌴 Vacaciones pendientes</Link></li>
+              <li><Link className="block rounded-lg border border-border bg-card px-3 py-2 hover:bg-accent" href="/docs/legal/guatemala/salario-proporcional">🧾 Salario pendiente</Link></li>
+              <li><Link className="block rounded-lg border border-border bg-card px-3 py-2 hover:bg-accent" href="/docs/legal/guatemala/deducciones">➖ Deducciones legales</Link></li>
+              <li><Link className="block rounded-lg border border-border bg-card px-3 py-2 hover:bg-accent" href="/docs/legal/guatemala/igss">🛡 IGSS laboral</Link></li>
+              <li className="sm:col-span-2"><Link className="block rounded-lg border border-border bg-card px-3 py-2 hover:bg-accent" href="/docs/legal/guatemala/isr">📊 ISR rentas del trabajo</Link></li>
+            </ul>
+            <div className="rounded-xl border border-border bg-card p-3 text-sm text-muted-foreground">
+              Aviso: contenido informativo. Para casos complejos validar con asesoria legal.
+            </div>
+          </div>
         ),
       },
     },
@@ -184,8 +560,59 @@ const docsSource = defineSource<JustoPageData, { title?: string; pages?: string[
       path: "legal/guatemala/indemnizacion",
       data: {
         title: "💼 Indemnizacion por antiguedad",
-        description: "30 dias por ano, maximo 8 meses.",
-        body: <p>Arts. 78-82 Codigo de Trabajo. 30 dias por ano, maximo 240 dias. Formula: (salario/30) * min(anos * 30, 240).</p>,
+        description: "30 dias de salario por cada ano de servicio, maximo 8 meses. Arts. 78-82 Codigo de Trabajo.",
+        body: (
+          <div className="space-y-6">
+            <section>
+              <h2 className="text-base font-semibold">Base legal</h2>
+              <ul className="list-disc space-y-1 pl-5 text-sm">
+                <li><strong>Arts. 78-82</strong> — Indemnizacion universal: 30 dias de salario por cada ano de servicio continuo.</li>
+                <li><strong>Art. 82</strong> — Limite maximo de 8 meses (240 dias).</li>
+              </ul>
+            </section>
+            <section>
+              <h2 className="text-base font-semibold">Regla operativa</h2>
+              <ul className="list-disc space-y-1 pl-5 text-sm">
+                <li>30 dias de salario por cada ano trabajado.</li>
+                <li>Fracciones de ano se pagan proporcionalmente.</li>
+                <li>Maximo: 240 dias (8 meses).</li>
+                <li>Aplica a terminacion por despido injustificado o renuncia voluntaria.</li>
+              </ul>
+            </section>
+            <section>
+              <h2 className="text-base font-semibold">Variables</h2>
+              <table className="w-full text-sm">
+                <thead><tr className="border-b border-border"><th className="pr-4 text-left font-medium">Variable</th><th className="text-left font-medium">Descripcion</th></tr></thead>
+                <tbody>
+                  <tr className="border-b border-border"><td className="py-1 pr-4 font-mono text-xs">salario_mensual</td><td className="py-1">Salario ordinario mensual en GTQ</td></tr>
+                  <tr className="border-b border-border"><td className="py-1 pr-4 font-mono text-xs">anos_antiguedad</td><td className="py-1">Anos completos desde inicio hasta salida</td></tr>
+                  <tr><td className="py-1 pr-4 font-mono text-xs">salario_diario</td><td className="py-1">salario_mensual / 30</td></tr>
+                </tbody>
+              </table>
+            </section>
+            <section>
+              <h2 className="text-base font-semibold">Formula</h2>
+              <pre className="rounded-lg bg-muted p-3 text-xs"><code>{`salario_diario = salario_mensual / 30
+dias_indemnizacion = min(anos_antiguedad * 30, 240)
+monto_indemnizacion = salario_diario * dias_indemnizacion`}</code></pre>
+            </section>
+            <section>
+              <h2 className="text-base font-semibold">Ejemplo</h2>
+              <div className="rounded-lg border border-border bg-card p-3 text-sm">
+                <p className="mb-1 font-medium">Trabajador con 6 anos de antiguedad y salario de Q8,000</p>
+                <ul className="space-y-0.5 text-xs text-muted-foreground">
+                  <li>salario_diario = 8,000 / 30 = <strong>Q266.67</strong></li>
+                  <li>dias_indemnizacion = min(6 * 30, 240) = min(180, 240) = <strong>180</strong></li>
+                  <li>monto = 266.67 * 180 = <strong>Q48,000</strong></li>
+                </ul>
+              </div>
+            </section>
+            <section>
+              <h2 className="text-base font-semibold">Vigencia</h2>
+              <p className="text-sm text-muted-foreground">Codigo de Trabajo Decreto 1441, Arts. 78-82. Corpus: <code>gt-v0.1.0</code></p>
+            </section>
+          </div>
+        ),
       },
     },
     {
@@ -193,8 +620,60 @@ const docsSource = defineSource<JustoPageData, { title?: string; pages?: string[
       path: "legal/guatemala/aguinaldo",
       data: {
         title: "🎁 Aguinaldo y Bono 14",
-        description: "Dos prestaciones anuales de un salario cada una.",
-        body: <p>Decreto 76-78 (Aguinaldo) y Decreto 42-92 (Bono 14). Cada uno: salario * (dias/365).</p>,
+        description: "Dos prestaciones anuales equivalentes a un salario cada una. Decreto 76-78 y Decreto 42-92.",
+        body: (
+          <div className="space-y-6">
+            <section>
+              <h2 className="text-base font-semibold">Base legal</h2>
+              <ul className="list-disc space-y-1 pl-5 text-sm">
+                <li><strong>Decreto 76-78</strong> — Ley de Aguinaldo para Trabajadores del Sector Privado.</li>
+                <li><strong>Decreto 42-92</strong> — Bono Anual para Trabajadores del Sector Privado (Bono 14).</li>
+              </ul>
+            </section>
+            <section>
+              <h2 className="text-base font-semibold">Regla operativa</h2>
+              <ul className="list-disc space-y-1 pl-5 text-sm">
+                <li><strong>Aguinaldo</strong>: 1 salario ordinario mensual por cada ano, pagadero en diciembre.</li>
+                <li><strong>Bono 14</strong>: 1 salario ordinario mensual por cada ano, pagadero en julio.</li>
+                <li>Al finalizar la relacion laboral, se paga la parte proporcional de ambos.</li>
+              </ul>
+            </section>
+            <section>
+              <h2 className="text-base font-semibold">Variables</h2>
+              <table className="w-full text-sm">
+                <thead><tr className="border-b border-border"><th className="pr-4 text-left font-medium">Variable</th><th className="text-left font-medium">Descripcion</th></tr></thead>
+                <tbody>
+                  <tr className="border-b border-border"><td className="py-1 pr-4 font-mono text-xs">salario_mensual</td><td className="py-1">Salario ordinario mensual en GTQ</td></tr>
+                  <tr><td className="py-1 pr-4 font-mono text-xs">dias_periodo</td><td className="py-1">Dias del ano en curso hasta la fecha de salida</td></tr>
+                </tbody>
+              </table>
+            </section>
+            <section>
+              <h2 className="text-base font-semibold">Formulas</h2>
+              <pre className="rounded-lg bg-muted p-3 text-xs"><code>{`aguinaldo_proporcional = salario_mensual * (dias_periodo / 365)
+bono14_proporcional = salario_mensual * (dias_periodo / 365)`}</code></pre>
+            </section>
+            <section>
+              <h2 className="text-base font-semibold">Ejemplo</h2>
+              <div className="rounded-lg border border-border bg-card p-3 text-sm">
+                <p className="mb-1 font-medium">Salario de Q8,000, salida el 31 de octubre (304 dias)</p>
+                <ul className="space-y-0.5 text-xs text-muted-foreground">
+                  <li>aguinaldo = 8,000 * (304 / 365) = 8,000 * 0.833 = <strong>Q6,664</strong></li>
+                  <li>bono14 = 8,000 * (304 / 365) = <strong>Q6,664</strong></li>
+                  <li>total = Q6,664 + Q6,664 = <strong>Q13,328</strong></li>
+                </ul>
+              </div>
+            </section>
+            <section>
+              <h2 className="text-base font-semibold">Excepciones</h2>
+              <p className="text-sm">Aguinaldo y Bono 14 estan exentos de deducciones (IGSS e ISR).</p>
+            </section>
+            <section>
+              <h2 className="text-base font-semibold">Vigencia</h2>
+              <p className="text-sm text-muted-foreground">Decreto 76-78 y Decreto 42-92. Corpus: <code>gt-v0.1.0</code></p>
+            </section>
+          </div>
+        ),
       },
     },
     {
@@ -202,8 +681,54 @@ const docsSource = defineSource<JustoPageData, { title?: string; pages?: string[
       path: "legal/guatemala/vacaciones",
       data: {
         title: "🌴 Vacaciones pendientes",
-        description: "15 dias habiles por ano.",
-        body: <p>Art. 130 Codigo de Trabajo. Formula: (salario/30) * dias pendientes.</p>,
+        description: "15 dias habiles de vacaciones por cada ano. Art. 130 Codigo de Trabajo.",
+        body: (
+          <div className="space-y-6">
+            <section>
+              <h2 className="text-base font-semibold">Base legal</h2>
+              <ul className="list-disc space-y-1 pl-5 text-sm">
+                <li><strong>Art. 130</strong> — 15 dias habiles de vacaciones remuneradas por cada ano de servicio continuo.</li>
+              </ul>
+            </section>
+            <section>
+              <h2 className="text-base font-semibold">Regla operativa</h2>
+              <ul className="list-disc space-y-1 pl-5 text-sm">
+                <li>15 dias habiles de vacaciones por cada ano trabajado.</li>
+                <li>Se pagan las vacaciones no gozadas al cierre de la relacion laboral.</li>
+                <li>Base de calculo: ultimo salario ordinario.</li>
+              </ul>
+            </section>
+            <section>
+              <h2 className="text-base font-semibold">Variables</h2>
+              <table className="w-full text-sm">
+                <thead><tr className="border-b border-border"><th className="pr-4 text-left font-medium">Variable</th><th className="text-left font-medium">Descripcion</th></tr></thead>
+                <tbody>
+                  <tr className="border-b border-border"><td className="py-1 pr-4 font-mono text-xs">salario_mensual</td><td className="py-1">Salario ordinario mensual en GTQ</td></tr>
+                  <tr><td className="py-1 pr-4 font-mono text-xs">dias_vacaciones_pendientes</td><td className="py-1">Dias de vacaciones acumulados no gozados</td></tr>
+                </tbody>
+              </table>
+            </section>
+            <section>
+              <h2 className="text-base font-semibold">Formula</h2>
+              <pre className="rounded-lg bg-muted p-3 text-xs"><code>{`salario_diario = salario_mensual / 30
+vacaciones_pendientes = salario_diario * dias_vacaciones_pendientes`}</code></pre>
+            </section>
+            <section>
+              <h2 className="text-base font-semibold">Ejemplo</h2>
+              <div className="rounded-lg border border-border bg-card p-3 text-sm">
+                <p className="mb-1 font-medium">Salario de Q8,000, 8 dias de vacaciones pendientes</p>
+                <ul className="space-y-0.5 text-xs text-muted-foreground">
+                  <li>salario_diario = 8,000 / 30 = <strong>Q266.67</strong></li>
+                  <li>vacaciones = 266.67 * 8 = <strong>Q2,133</strong></li>
+                </ul>
+              </div>
+            </section>
+            <section>
+              <h2 className="text-base font-semibold">Vigencia</h2>
+              <p className="text-sm text-muted-foreground">Codigo de Trabajo Decreto 1441, Art. 130. Corpus: <code>gt-v0.1.0</code></p>
+            </section>
+          </div>
+        ),
       },
     },
     {
@@ -211,8 +736,50 @@ const docsSource = defineSource<JustoPageData, { title?: string; pages?: string[
       path: "legal/guatemala/salario-proporcional",
       data: {
         title: "🧾 Salario pendiente",
-        description: "Proporcional del mes en curso.",
-        body: <p>Arts. 68-76 Codigo de Trabajo. Formula: (salario/30) * dias trabajados.</p>,
+        description: "Pago proporcional del mes en curso. Arts. 68-76 Codigo de Trabajo.",
+        body: (
+          <div className="space-y-6">
+            <section>
+              <h2 className="text-base font-semibold">Base legal</h2>
+              <ul className="list-disc space-y-1 pl-5 text-sm">
+                <li><strong>Arts. 68-76</strong> — Regulacion del salario ordinario y pago proporcional.</li>
+              </ul>
+            </section>
+            <section>
+              <h2 className="text-base font-semibold">Regla operativa</h2>
+              <p className="text-sm">Se liquida el salario pendiente del periodo en curso al momento de la salida. Base: ultimo salario ordinario mensual.</p>
+            </section>
+            <section>
+              <h2 className="text-base font-semibold">Variables</h2>
+              <table className="w-full text-sm">
+                <thead><tr className="border-b border-border"><th className="pr-4 text-left font-medium">Variable</th><th className="text-left font-medium">Descripcion</th></tr></thead>
+                <tbody>
+                  <tr className="border-b border-border"><td className="py-1 pr-4 font-mono text-xs">salario_mensual</td><td className="py-1">Salario ordinario mensual en GTQ</td></tr>
+                  <tr><td className="py-1 pr-4 font-mono text-xs">dias_trabajados</td><td className="py-1">Dias trabajados en el mes de salida</td></tr>
+                </tbody>
+              </table>
+            </section>
+            <section>
+              <h2 className="text-base font-semibold">Formula</h2>
+              <pre className="rounded-lg bg-muted p-3 text-xs"><code>{`salario_diario = salario_mensual / 30
+salario_proporcional = salario_diario * dias_trabajados`}</code></pre>
+            </section>
+            <section>
+              <h2 className="text-base font-semibold">Ejemplo</h2>
+              <div className="rounded-lg border border-border bg-card p-3 text-sm">
+                <p className="mb-1 font-medium">Salario de Q8,000, salida el dia 20 del mes</p>
+                <ul className="space-y-0.5 text-xs text-muted-foreground">
+                  <li>salario_diario = 8,000 / 30 = <strong>Q266.67</strong></li>
+                  <li>salario_proporcional = 266.67 * 20 = <strong>Q5,333</strong></li>
+                </ul>
+              </div>
+            </section>
+            <section>
+              <h2 className="text-base font-semibold">Vigencia</h2>
+              <p className="text-sm text-muted-foreground">Codigo de Trabajo Decreto 1441, Arts. 68-76. Corpus: <code>gt-v0.1.0</code></p>
+            </section>
+          </div>
+        ),
       },
     },
     {
@@ -220,8 +787,50 @@ const docsSource = defineSource<JustoPageData, { title?: string; pages?: string[
       path: "legal/guatemala/deducciones",
       data: {
         title: "➖ Deducciones legales",
-        description: "IGSS e ISR.",
-        body: <p>IGSS 4.83% e ISR 5% simplificado. Aguinaldo y Bono 14 exentos.</p>,
+        description: "IGSS 4.83% e ISR 5% sobre conceptos imponibles. Codigo de Trabajo Art. 88.",
+        body: (
+          <div className="space-y-6">
+            <section>
+              <h2 className="text-base font-semibold">Base legal</h2>
+              <ul className="list-disc space-y-1 pl-5 text-sm">
+                <li><strong>Codigo de Trabajo Art. 88</strong> — Del salario se hacen deducciones legales.</li>
+                <li><strong>Ley del IGSS</strong> — Cotizacion del 4.83% para el trabajador.</li>
+                <li><strong>Ley del ISR</strong> — Impuesto sobre la renta del trabajo.</li>
+              </ul>
+            </section>
+            <section>
+              <h2 className="text-base font-semibold">Regla operativa</h2>
+              <ul className="list-disc space-y-1 pl-5 text-sm">
+                <li>IGSS se calcula sobre salario proporcional + vacaciones pagadas.</li>
+                <li>ISR se calcula sobre ingreso bruto menos IGSS, aguinaldo y bono 14.</li>
+                <li>Aguinaldo y Bono 14 estan exentos de deducciones.</li>
+              </ul>
+            </section>
+            <section>
+              <h2 className="text-base font-semibold">Formulas</h2>
+              <pre className="rounded-lg bg-muted p-3 text-xs"><code>{`igss_laboral = (salario_prop. + vacaciones) * 0.0483
+isr_base = ingreso_bruto - igss - aguinaldo - bono14
+isr_laboral = max(isr_base, 0) * 0.05
+total_deducciones = igss_laboral + isr_laboral`}</code></pre>
+            </section>
+            <section>
+              <h2 className="text-base font-semibold">Ejemplo</h2>
+              <div className="rounded-lg border border-border bg-card p-3 text-sm">
+                <p className="mb-1 font-medium">Ingreso bruto Q64,458, base IGSS Q7,466</p>
+                <ul className="space-y-0.5 text-xs text-muted-foreground">
+                  <li>igss = 7,466 * 0.0483 = <strong>Q361</strong></li>
+                  <li>isr_base = 64,458 - 361 - 6,664 - 6,664 = <strong>Q50,769</strong></li>
+                  <li>isr = max(50,769, 0) * 0.05 = <strong>Q2,538</strong></li>
+                  <li>total deducciones = 361 + 2,538 = <strong>Q2,899</strong></li>
+                </ul>
+              </div>
+            </section>
+            <section>
+              <h2 className="text-base font-semibold">Vigencia</h2>
+              <p className="text-sm text-muted-foreground">Codigo de Trabajo Art. 88 + Ley IGSS + Ley ISR. Corpus: <code>gt-v0.1.0</code></p>
+            </section>
+          </div>
+        ),
       },
     },
     {
@@ -229,8 +838,40 @@ const docsSource = defineSource<JustoPageData, { title?: string; pages?: string[
       path: "legal/guatemala/igss",
       data: {
         title: "🛡 IGSS laboral",
-        description: "Cotizacion del 4.83%.",
-        body: <p>Tasa operativa: 4.83%. Formula: base * 0.0483.</p>,
+        description: "Cotizacion del 4.83% al Instituto Guatemalteco de Seguridad Social.",
+        body: (
+          <div className="space-y-6">
+            <section>
+              <h2 className="text-base font-semibold">Base legal</h2>
+              <p className="text-sm">Ley del Instituto Guatemalteco de Seguridad Social.</p>
+            </section>
+            <section>
+              <h2 className="text-base font-semibold">Regla operativa</h2>
+              <ul className="list-disc space-y-1 pl-5 text-sm">
+                <li>La cotizacion laboral se aplica sobre el salario ordinario y prestaciones imponibles.</li>
+                <li>Tasa laboral: 4.83% sobre el salario.</li>
+                <li>Tasa patronal: 10.67% (no descontada al trabajador).</li>
+              </ul>
+            </section>
+            <section>
+              <h2 className="text-base font-semibold">Formula</h2>
+              <pre className="rounded-lg bg-muted p-3 text-xs"><code>{`igss_laboral = base_igss * 0.0483`}</code></pre>
+            </section>
+            <section>
+              <h2 className="text-base font-semibold">Ejemplo</h2>
+              <div className="rounded-lg border border-border bg-card p-3 text-sm">
+                <p className="mb-1 font-medium">Base IGSS de Q7,466</p>
+                <ul className="space-y-0.5 text-xs text-muted-foreground">
+                  <li>igss = 7,466 * 0.0483 = <strong>Q361</strong></li>
+                </ul>
+              </div>
+            </section>
+            <section>
+              <h2 className="text-base font-semibold">Vigencia</h2>
+              <p className="text-sm text-muted-foreground">Ley del IGSS. Tasa: 4.83% (pendiente confirmacion oficial). Corpus: <code>gt-v0.1.0</code></p>
+            </section>
+          </div>
+        ),
       },
     },
     {
@@ -238,8 +879,44 @@ const docsSource = defineSource<JustoPageData, { title?: string; pages?: string[
       path: "legal/guatemala/isr",
       data: {
         title: "📊 ISR rentas del trabajo",
-        description: "Tasa simplificada del 5%.",
-        body: <p>Tasa operativa propuesta: 5%. Formula: max(base, 0) * 0.05.</p>,
+        description: "Impuesto sobre la renta del trabajo al 5% simplificado. Ley del ISR.",
+        body: (
+          <div className="space-y-6">
+            <section>
+              <h2 className="text-base font-semibold">Base legal</h2>
+              <p className="text-sm">Ley del Impuesto Sobre la Renta (ISR) de Guatemala.</p>
+            </section>
+            <section>
+              <h2 className="text-base font-semibold">Regla operativa</h2>
+              <ul className="list-disc space-y-1 pl-5 text-sm">
+                <li>Se aplica sobre la renta imponible despues de deducciones permitidas.</li>
+                <li>Base ISR = Ingreso bruto - IGSS - aguinaldo - bono 14.</li>
+                <li>En el MVP inicial se usa una tasa simplificada del 5%.</li>
+              </ul>
+            </section>
+            <section>
+              <h2 className="text-base font-semibold">Formula</h2>
+              <pre className="rounded-lg bg-muted p-3 text-xs"><code>{`isr_laboral = max(base_isr, 0) * 0.05`}</code></pre>
+            </section>
+            <section>
+              <h2 className="text-base font-semibold">Ejemplo</h2>
+              <div className="rounded-lg border border-border bg-card p-3 text-sm">
+                <p className="mb-1 font-medium">Base ISR de Q50,769</p>
+                <ul className="space-y-0.5 text-xs text-muted-foreground">
+                  <li>isr = max(50,769, 0) * 0.05 = <strong>Q2,538</strong></li>
+                </ul>
+              </div>
+            </section>
+            <section>
+              <h2 className="text-base font-semibold">Excepciones</h2>
+              <p className="text-sm">Aguinaldo y Bono 14 exentos de ISR.</p>
+            </section>
+            <section>
+              <h2 className="text-base font-semibold">Vigencia</h2>
+              <p className="text-sm text-muted-foreground">Ley del ISR. Tasa: 5% simplificada (pendiente tabla progresiva oficial). Corpus: <code>gt-v0.1.0</code></p>
+            </section>
+          </div>
+        ),
       },
     },
     {
@@ -248,16 +925,30 @@ const docsSource = defineSource<JustoPageData, { title?: string; pages?: string[
       slugs: ["legal", "honduras"],
       data: {
         title: "⚖ Honduras, marco legal",
-        description: "Codigo de Trabajo Decreto 189-59 y leyes complementarias.",
+        description: "Codigo de Trabajo Decreto 189-59 y Decreto 133-92 (Decimotercer Mes).",
         body: (
-          <ul className="grid gap-2 sm:grid-cols-2">
-            <li><a className="block rounded-lg border border-border bg-card px-3 py-2 hover:bg-accent" href="/docs/legal/honduras/indemnizacion">Indemnizacion por antiguedad</a></li>
-            <li><a className="block rounded-lg border border-border bg-card px-3 py-2 hover:bg-accent" href="/docs/legal/honduras/aguinaldo">Aguinaldo (Decimotercer Mes)</a></li>
-            <li><a className="block rounded-lg border border-border bg-card px-3 py-2 hover:bg-accent" href="/docs/legal/honduras/vacaciones">Vacaciones pendientes</a></li>
-            <li><a className="block rounded-lg border border-border bg-card px-3 py-2 hover:bg-accent" href="/docs/legal/honduras/salario-proporcional">Salario pendiente</a></li>
-            <li><a className="block rounded-lg border border-border bg-card px-3 py-2 hover:bg-accent" href="/docs/legal/honduras/deducciones">Deducciones legales</a></li>
-            <li><a className="block rounded-lg border border-border bg-card px-3 py-2 hover:bg-accent" href="/docs/legal/honduras/ihss">IHSS laboral</a></li>
-          </ul>
+          <div className="space-y-6">
+            <p className="text-sm text-muted-foreground">
+              El sistema laboral hondureno se rige por el <strong>Codigo de Trabajo (Decreto
+              189-59)</strong> y la <strong>Ley del Decimotercer Mes (Decreto 133-92)</strong>.
+              Esta seccion documenta las reglas operativas usadas por el motor de calculo, los
+              articulos aplicables y ejemplos practicos por rubro.
+            </p>
+            <p className="text-sm text-muted-foreground">
+              Version del corpus: <code>hn-v0.1.0</code>
+            </p>
+            <ul className="grid gap-2 sm:grid-cols-2">
+              <li><Link className="block rounded-lg border border-border bg-card px-3 py-2 hover:bg-accent" href="/docs/legal/honduras/indemnizacion">💼 Indemnizacion por antiguedad</Link></li>
+              <li><Link className="block rounded-lg border border-border bg-card px-3 py-2 hover:bg-accent" href="/docs/legal/honduras/aguinaldo">🎁 Aguinaldo (Decimotercer Mes)</Link></li>
+              <li><Link className="block rounded-lg border border-border bg-card px-3 py-2 hover:bg-accent" href="/docs/legal/honduras/vacaciones">🌴 Vacaciones pendientes</Link></li>
+              <li><Link className="block rounded-lg border border-border bg-card px-3 py-2 hover:bg-accent" href="/docs/legal/honduras/salario-proporcional">🧾 Salario pendiente</Link></li>
+              <li><Link className="block rounded-lg border border-border bg-card px-3 py-2 hover:bg-accent" href="/docs/legal/honduras/deducciones">➖ Deducciones legales</Link></li>
+              <li><Link className="block rounded-lg border border-border bg-card px-3 py-2 hover:bg-accent" href="/docs/legal/honduras/ihss">🛡 IHSS laboral</Link></li>
+            </ul>
+            <div className="rounded-xl border border-border bg-card p-3 text-sm text-muted-foreground">
+              Aviso: contenido informativo. Para casos complejos validar con asesoria legal.
+            </div>
+          </div>
         ),
       },
     },
@@ -266,8 +957,65 @@ const docsSource = defineSource<JustoPageData, { title?: string; pages?: string[
       path: "legal/honduras/indemnizacion",
       data: {
         title: "💼 Indemnizacion por antiguedad",
-        description: "Auxilio de cesantia, 1 mes por ano, maximo 25 meses.",
-        body: <p>Arts. 116, 120 y 123 Codigo de Trabajo. 3-6m=10d, 6-12m=20d, +1a=1 mes/ano, max 750d. Formula: (salario/30) * min(anos * 30, 750).</p>,
+        description: "Auxilio de cesantia: 1 mes por ano, maximo 25 meses. Arts. 116, 120, 123 Codigo de Trabajo.",
+        body: (
+          <div className="space-y-6">
+            <section>
+              <h2 className="text-base font-semibold">Base legal</h2>
+              <ul className="list-disc space-y-1 pl-5 text-sm">
+                <li><strong>Art. 116</strong> — Preaviso segun tiempo de servicio (1 sem a 2 meses).</li>
+                <li><strong>Art. 120</strong> — Auxilio de cesantia por antiguedad.</li>
+                <li><strong>Art. 123(b)</strong> — Base de calculo: promedio salarial ultimos 6 meses.</li>
+              </ul>
+            </section>
+            <section>
+              <h2 className="text-base font-semibold">Regla operativa</h2>
+              <ul className="list-disc space-y-1 pl-5 text-sm">
+                <li><strong>3 a 6 meses</strong>: 10 dias de salario.</li>
+                <li><strong>6 a 12 meses</strong>: 20 dias de salario.</li>
+                <li><strong>1 ano o mas</strong>: 1 mes (30 dias) de salario por cada ano.</li>
+                <li>Fracciones de ano se pagan proporcionalmente.</li>
+                <li><strong>Maximo</strong>: 750 dias (25 meses).</li>
+              </ul>
+            </section>
+            <section>
+              <h2 className="text-base font-semibold">Variables</h2>
+              <table className="w-full text-sm">
+                <thead><tr className="border-b border-border"><th className="pr-4 text-left font-medium">Variable</th><th className="text-left font-medium">Descripcion</th></tr></thead>
+                <tbody>
+                  <tr className="border-b border-border"><td className="py-1 pr-4 font-mono text-xs">salario_mensual</td><td className="py-1">Salario ordinario mensual en HNL</td></tr>
+                  <tr className="border-b border-border"><td className="py-1 pr-4 font-mono text-xs">anos_antiguedad</td><td className="py-1">Anos completos desde inicio hasta salida</td></tr>
+                  <tr><td className="py-1 pr-4 font-mono text-xs">salario_diario</td><td className="py-1">salario_mensual / 30</td></tr>
+                </tbody>
+              </table>
+            </section>
+            <section>
+              <h2 className="text-base font-semibold">Formula</h2>
+              <pre className="rounded-lg bg-muted p-3 text-xs"><code>{`salario_diario = salario_mensual / 30
+dias_indemnizacion = min(anos_antiguedad * 30, 750)
+monto_indemnizacion = salario_diario * dias_indemnizacion`}</code></pre>
+            </section>
+            <section>
+              <h2 className="text-base font-semibold">Ejemplo</h2>
+              <div className="rounded-lg border border-border bg-card p-3 text-sm">
+                <p className="mb-1 font-medium">Trabajador con 8 anos de antiguedad y salario de L15,000</p>
+                <ul className="space-y-0.5 text-xs text-muted-foreground">
+                  <li>salario_diario = 15,000 / 30 = <strong>L500</strong></li>
+                  <li>dias_indemnizacion = min(8 * 30, 750) = min(240, 750) = <strong>240</strong></li>
+                  <li>monto = 500 * 240 = <strong>L120,000</strong></li>
+                </ul>
+              </div>
+            </section>
+            <section>
+              <h2 className="text-base font-semibold">Excepciones</h2>
+              <p className="text-sm">No aplica si el trabajador esta cubierto por pension equivalente del IHSS (Art. 120-f).</p>
+            </section>
+            <section>
+              <h2 className="text-base font-semibold">Vigencia</h2>
+              <p className="text-sm text-muted-foreground">Codigo de Trabajo Decreto 189-59, Arts. 116, 120, 123. Corpus: <code>hn-v0.1.0</code></p>
+            </section>
+          </div>
+        ),
       },
     },
     {
@@ -275,8 +1023,56 @@ const docsSource = defineSource<JustoPageData, { title?: string; pages?: string[
       path: "legal/honduras/aguinaldo",
       data: {
         title: "🎁 Aguinaldo (Decimotercer Mes)",
-        description: "Un salario mensual adicional proporcional.",
-        body: <p>Decreto 133-92. Formula: salario * (dias/365).</p>,
+        description: "Un salario mensual adicional por ano, proporcional al cierre. Decreto 133-92.",
+        body: (
+          <div className="space-y-6">
+            <section>
+              <h2 className="text-base font-semibold">Base legal</h2>
+              <ul className="list-disc space-y-1 pl-5 text-sm">
+                <li><strong>Decreto 133-92</strong> — Ley del Decimotercer Mes de Honduras.</li>
+              </ul>
+            </section>
+            <section>
+              <h2 className="text-base font-semibold">Regla operativa</h2>
+              <ul className="list-disc space-y-1 pl-5 text-sm">
+                <li>1 salario mensual ordinario por cada ano de servicio.</li>
+                <li>Al finalizar la relacion laboral, se paga la parte proporcional al tiempo trabajado en el periodo vigente.</li>
+                <li>Base: salario ordinario mensual.</li>
+              </ul>
+            </section>
+            <section>
+              <h2 className="text-base font-semibold">Variables</h2>
+              <table className="w-full text-sm">
+                <thead><tr className="border-b border-border"><th className="pr-4 text-left font-medium">Variable</th><th className="text-left font-medium">Descripcion</th></tr></thead>
+                <tbody>
+                  <tr className="border-b border-border"><td className="py-1 pr-4 font-mono text-xs">salario_mensual</td><td className="py-1">Salario ordinario mensual en HNL</td></tr>
+                  <tr><td className="py-1 pr-4 font-mono text-xs">dias_periodo</td><td className="py-1">Dias del ano en curso hasta la fecha de salida</td></tr>
+                </tbody>
+              </table>
+            </section>
+            <section>
+              <h2 className="text-base font-semibold">Formula</h2>
+              <pre className="rounded-lg bg-muted p-3 text-xs"><code>{`aguinaldo_proporcional = salario_mensual * (dias_periodo / 365)`}</code></pre>
+            </section>
+            <section>
+              <h2 className="text-base font-semibold">Ejemplo</h2>
+              <div className="rounded-lg border border-border bg-card p-3 text-sm">
+                <p className="mb-1 font-medium">Salario de L15,000, salida el 31 de octubre (304 dias)</p>
+                <ul className="space-y-0.5 text-xs text-muted-foreground">
+                  <li>aguinaldo = 15,000 * (304 / 365) = 15,000 * 0.833 = <strong>L12,495</strong></li>
+                </ul>
+              </div>
+            </section>
+            <section>
+              <h2 className="text-base font-semibold">Excepciones</h2>
+              <p className="text-sm">Aguinaldo exento de deducciones IHSS.</p>
+            </section>
+            <section>
+              <h2 className="text-base font-semibold">Vigencia</h2>
+              <p className="text-sm text-muted-foreground">Decreto 133-92. Corpus: <code>hn-v0.1.0</code></p>
+            </section>
+          </div>
+        ),
       },
     },
     {
@@ -284,8 +1080,58 @@ const docsSource = defineSource<JustoPageData, { title?: string; pages?: string[
       path: "legal/honduras/vacaciones",
       data: {
         title: "🌴 Vacaciones pendientes",
-        description: "Escala progresiva de 10 a 20 dias habiles.",
-        body: <p>Art. 346 Codigo de Trabajo. 1a=10d, 2a=12d, 3a=15d, 4a+=20d. Formula: (salario/30) * dias pendientes.</p>,
+        description: "Escala progresiva: 10 a 20 dias habiles segun antiguedad. Art. 346 Codigo de Trabajo.",
+        body: (
+          <div className="space-y-6">
+            <section>
+              <h2 className="text-base font-semibold">Base legal</h2>
+              <ul className="list-disc space-y-1 pl-5 text-sm">
+                <li><strong>Art. 346</strong> — Escala de vacaciones segun anos de servicio continuo.</li>
+                <li><strong>Art. 349</strong> — Al terminar, se pagan vacaciones no gozadas proporcionalmente.</li>
+                <li><strong>Art. 352</strong> — Base: promedio ordinario ultimos 6 meses.</li>
+              </ul>
+            </section>
+            <section>
+              <h2 className="text-base font-semibold">Regla operativa</h2>
+              <ul className="list-disc space-y-1 pl-5 text-sm">
+                <li><strong>1 ano</strong>: 10 dias habiles.</li>
+                <li><strong>2 anos</strong>: 12 dias habiles.</li>
+                <li><strong>3 anos</strong>: 15 dias habiles.</li>
+                <li><strong>4 anos o mas</strong>: 20 dias habiles.</li>
+                <li>Se pagan las vacaciones no gozadas al cierre de la relacion laboral.</li>
+              </ul>
+            </section>
+            <section>
+              <h2 className="text-base font-semibold">Variables</h2>
+              <table className="w-full text-sm">
+                <thead><tr className="border-b border-border"><th className="pr-4 text-left font-medium">Variable</th><th className="text-left font-medium">Descripcion</th></tr></thead>
+                <tbody>
+                  <tr className="border-b border-border"><td className="py-1 pr-4 font-mono text-xs">salario_mensual</td><td className="py-1">Salario ordinario mensual en HNL</td></tr>
+                  <tr><td className="py-1 pr-4 font-mono text-xs">dias_vacaciones_pendientes</td><td className="py-1">Dias de vacaciones acumulados no gozados</td></tr>
+                </tbody>
+              </table>
+            </section>
+            <section>
+              <h2 className="text-base font-semibold">Formula</h2>
+              <pre className="rounded-lg bg-muted p-3 text-xs"><code>{`salario_diario = salario_mensual / 30
+vacaciones_pendientes = salario_diario * dias_vacaciones_pendientes`}</code></pre>
+            </section>
+            <section>
+              <h2 className="text-base font-semibold">Ejemplo</h2>
+              <div className="rounded-lg border border-border bg-card p-3 text-sm">
+                <p className="mb-1 font-medium">Salario de L15,000, 10 dias de vacaciones pendientes</p>
+                <ul className="space-y-0.5 text-xs text-muted-foreground">
+                  <li>salario_diario = 15,000 / 30 = <strong>L500</strong></li>
+                  <li>vacaciones = 500 * 10 = <strong>L5,000</strong></li>
+                </ul>
+              </div>
+            </section>
+            <section>
+              <h2 className="text-base font-semibold">Vigencia</h2>
+              <p className="text-sm text-muted-foreground">Codigo de Trabajo Decreto 189-59, Arts. 346, 349, 352. Corpus: <code>hn-v0.1.0</code></p>
+            </section>
+          </div>
+        ),
       },
     },
     {
@@ -293,8 +1139,51 @@ const docsSource = defineSource<JustoPageData, { title?: string; pages?: string[
       path: "legal/honduras/salario-proporcional",
       data: {
         title: "🧾 Salario pendiente",
-        description: "Proporcional del mes en curso.",
-        body: <p>Arts. 322 y 378 Codigo de Trabajo. Formula: (salario/30) * dias trabajados.</p>,
+        description: "Pago proporcional del mes en curso. Arts. 322 y 378 Codigo de Trabajo.",
+        body: (
+          <div className="space-y-6">
+            <section>
+              <h2 className="text-base font-semibold">Base legal</h2>
+              <ul className="list-disc space-y-1 pl-5 text-sm">
+                <li><strong>Art. 322</strong> — Regla de salario semanal (44h pagadas como 48h).</li>
+                <li><strong>Art. 378</strong> — Pago proporcional por obra o tiempo trabajado.</li>
+              </ul>
+            </section>
+            <section>
+              <h2 className="text-base font-semibold">Regla operativa</h2>
+              <p className="text-sm">Se liquida el salario pendiente del periodo en curso al momento de la salida, calculado de forma proporcional a los dias trabajados.</p>
+            </section>
+            <section>
+              <h2 className="text-base font-semibold">Variables</h2>
+              <table className="w-full text-sm">
+                <thead><tr className="border-b border-border"><th className="pr-4 text-left font-medium">Variable</th><th className="text-left font-medium">Descripcion</th></tr></thead>
+                <tbody>
+                  <tr className="border-b border-border"><td className="py-1 pr-4 font-mono text-xs">salario_mensual</td><td className="py-1">Salario ordinario mensual en HNL</td></tr>
+                  <tr><td className="py-1 pr-4 font-mono text-xs">dias_trabajados</td><td className="py-1">Dias trabajados en el mes de salida</td></tr>
+                </tbody>
+              </table>
+            </section>
+            <section>
+              <h2 className="text-base font-semibold">Formula</h2>
+              <pre className="rounded-lg bg-muted p-3 text-xs"><code>{`salario_diario = salario_mensual / 30
+salario_proporcional = salario_diario * dias_trabajados`}</code></pre>
+            </section>
+            <section>
+              <h2 className="text-base font-semibold">Ejemplo</h2>
+              <div className="rounded-lg border border-border bg-card p-3 text-sm">
+                <p className="mb-1 font-medium">Salario de L15,000, salida el dia 18 del mes</p>
+                <ul className="space-y-0.5 text-xs text-muted-foreground">
+                  <li>salario_diario = 15,000 / 30 = <strong>L500</strong></li>
+                  <li>salario_proporcional = 500 * 18 = <strong>L9,000</strong></li>
+                </ul>
+              </div>
+            </section>
+            <section>
+              <h2 className="text-base font-semibold">Vigencia</h2>
+              <p className="text-sm text-muted-foreground">Codigo de Trabajo Decreto 189-59, Arts. 322 y 378. Corpus: <code>hn-v0.1.0</code></p>
+            </section>
+          </div>
+        ),
       },
     },
     {
@@ -302,8 +1191,44 @@ const docsSource = defineSource<JustoPageData, { title?: string; pages?: string[
       path: "legal/honduras/deducciones",
       data: {
         title: "➖ Deducciones legales",
-        description: "IHSS sobre conceptos imponibles.",
-        body: <p>IHSS 3.5%. Aguinaldo exento.</p>,
+        description: "IHSS 3.5% sobre base imponible. Codigo de Trabajo Art. 667.",
+        body: (
+          <div className="space-y-6">
+            <section>
+              <h2 className="text-base font-semibold">Base legal</h2>
+              <ul className="list-disc space-y-1 pl-5 text-sm">
+                <li><strong>Art. 667 (Art. 95.5)</strong> — Deducciones solo permitidas por ley, orden judicial o autorizacion escrita.</li>
+                <li><strong>Ley del IHSS</strong> — Cotizacion laboral obligatoria.</li>
+              </ul>
+            </section>
+            <section>
+              <h2 className="text-base font-semibold">Regla operativa</h2>
+              <ul className="list-disc space-y-1 pl-5 text-sm">
+                <li>IHSS se calcula sobre salario proporcional + vacaciones pagadas.</li>
+                <li>Aguinaldo proporcional exento de deducciones.</li>
+                <li>Solo se aplican deducciones permitidas legalmente.</li>
+              </ul>
+            </section>
+            <section>
+              <h2 className="text-base font-semibold">Formula</h2>
+              <pre className="rounded-lg bg-muted p-3 text-xs"><code>{`ihss_laboral = (salario_prop. + vacaciones) * 0.035
+total_deducciones = ihss_laboral`}</code></pre>
+            </section>
+            <section>
+              <h2 className="text-base font-semibold">Ejemplo</h2>
+              <div className="rounded-lg border border-border bg-card p-3 text-sm">
+                <p className="mb-1 font-medium">Base IHSS de L14,000 (salario prop. L9,000 + vac. L5,000)</p>
+                <ul className="space-y-0.5 text-xs text-muted-foreground">
+                  <li>ihss = 14,000 * 0.035 = <strong>L490</strong></li>
+                </ul>
+              </div>
+            </section>
+            <section>
+              <h2 className="text-base font-semibold">Vigencia</h2>
+              <p className="text-sm text-muted-foreground">Codigo de Trabajo Art. 667 + Ley del IHSS. Corpus: <code>hn-v0.1.0</code></p>
+            </section>
+          </div>
+        ),
       },
     },
     {
@@ -311,8 +1236,39 @@ const docsSource = defineSource<JustoPageData, { title?: string; pages?: string[
       path: "legal/honduras/ihss",
       data: {
         title: "🛡 IHSS laboral",
-        description: "Cotizacion del 3.5%.",
-        body: <p>Tasa operativa: 3.5%. Formula: base * 0.035.</p>,
+        description: "Cotizacion del 3.5% al Instituto Hondureno de Seguridad Social.",
+        body: (
+          <div className="space-y-6">
+            <section>
+              <h2 className="text-base font-semibold">Base legal</h2>
+              <p className="text-sm">Ley del Instituto Hondureno de Seguridad Social y su reglamento.</p>
+            </section>
+            <section>
+              <h2 className="text-base font-semibold">Regla operativa</h2>
+              <ul className="list-disc space-y-1 pl-5 text-sm">
+                <li>La cotizacion laboral se aplica sobre el salario ordinario y prestaciones imponibles.</li>
+                <li>Tasa laboral propuesta: 3.5% sobre el salario.</li>
+              </ul>
+            </section>
+            <section>
+              <h2 className="text-base font-semibold">Formula</h2>
+              <pre className="rounded-lg bg-muted p-3 text-xs"><code>{`ihss_laboral = base_ihss * 0.035`}</code></pre>
+            </section>
+            <section>
+              <h2 className="text-base font-semibold">Ejemplo</h2>
+              <div className="rounded-lg border border-border bg-card p-3 text-sm">
+                <p className="mb-1 font-medium">Base IHSS de L14,000</p>
+                <ul className="space-y-0.5 text-xs text-muted-foreground">
+                  <li>ihss = 14,000 * 0.035 = <strong>L490</strong></li>
+                </ul>
+              </div>
+            </section>
+            <section>
+              <h2 className="text-base font-semibold">Vigencia</h2>
+              <p className="text-sm text-muted-foreground">Ley del IHSS. Tasa: 3.5% (pendiente confirmacion oficial). Corpus: <code>hn-v0.1.0</code></p>
+            </section>
+          </div>
+        ),
       },
     },
     {
@@ -321,17 +1277,31 @@ const docsSource = defineSource<JustoPageData, { title?: string; pages?: string[
       slugs: ["legal", "elsalvador"],
       data: {
         title: "⚖ El Salvador, marco legal",
-        description: "Codigo de Trabajo de El Salvador y leyes complementarias.",
+        description: "Codigo de Trabajo de El Salvador, Ley del ISSS y Ley del SAP (AFP).",
         body: (
-          <ul className="grid gap-2 sm:grid-cols-2">
-            <li><a className="block rounded-lg border border-border bg-card px-3 py-2 hover:bg-accent" href="/docs/legal/elsalvador/indemnizacion">Indemnizacion por despido</a></li>
-            <li><a className="block rounded-lg border border-border bg-card px-3 py-2 hover:bg-accent" href="/docs/legal/elsalvador/aguinaldo">Aguinaldo</a></li>
-            <li><a className="block rounded-lg border border-border bg-card px-3 py-2 hover:bg-accent" href="/docs/legal/elsalvador/vacaciones">Vacaciones pendientes</a></li>
-            <li><a className="block rounded-lg border border-border bg-card px-3 py-2 hover:bg-accent" href="/docs/legal/elsalvador/salario-proporcional">Salario pendiente</a></li>
-            <li><a className="block rounded-lg border border-border bg-card px-3 py-2 hover:bg-accent" href="/docs/legal/elsalvador/deducciones">Deducciones legales</a></li>
-            <li><a className="block rounded-lg border border-border bg-card px-3 py-2 hover:bg-accent" href="/docs/legal/elsalvador/isss">ISSS laboral</a></li>
-            <li className="sm:col-span-2"><a className="block rounded-lg border border-border bg-card px-3 py-2 hover:bg-accent" href="/docs/legal/elsalvador/afp">AFP laboral</a></li>
-          </ul>
+          <div className="space-y-6">
+            <p className="text-sm text-muted-foreground">
+              El sistema laboral salvadoreno se rige por el <strong>Codigo de Trabajo</strong>, la
+              <strong> Ley del Seguro Social (ISSS)</strong> y la <strong>Ley del Sistema de Ahorro
+              para Pensiones (AFP)</strong>. Esta seccion documenta las reglas operativas usadas por
+              el motor de calculo, los articulos aplicables y ejemplos practicos por rubro.
+            </p>
+            <p className="text-sm text-muted-foreground">
+              Version del corpus: <code>sv-v0.1.0</code> | Moneda: USD
+            </p>
+            <ul className="grid gap-2 sm:grid-cols-2">
+              <li><Link className="block rounded-lg border border-border bg-card px-3 py-2 hover:bg-accent" href="/docs/legal/elsalvador/indemnizacion">💼 Indemnizacion por despido</Link></li>
+              <li><Link className="block rounded-lg border border-border bg-card px-3 py-2 hover:bg-accent" href="/docs/legal/elsalvador/aguinaldo">🎁 Aguinaldo</Link></li>
+              <li><Link className="block rounded-lg border border-border bg-card px-3 py-2 hover:bg-accent" href="/docs/legal/elsalvador/vacaciones">🌴 Vacaciones pendientes</Link></li>
+              <li><Link className="block rounded-lg border border-border bg-card px-3 py-2 hover:bg-accent" href="/docs/legal/elsalvador/salario-proporcional">🧾 Salario pendiente</Link></li>
+              <li><Link className="block rounded-lg border border-border bg-card px-3 py-2 hover:bg-accent" href="/docs/legal/elsalvador/deducciones">➖ Deducciones legales</Link></li>
+              <li><Link className="block rounded-lg border border-border bg-card px-3 py-2 hover:bg-accent" href="/docs/legal/elsalvador/isss">🏥 ISSS laboral</Link></li>
+              <li className="sm:col-span-2"><Link className="block rounded-lg border border-border bg-card px-3 py-2 hover:bg-accent" href="/docs/legal/elsalvador/afp">💰 AFP laboral</Link></li>
+            </ul>
+            <div className="rounded-xl border border-border bg-card p-3 text-sm text-muted-foreground">
+              Aviso: contenido informativo. Para casos complejos validar con asesoria legal.
+            </div>
+          </div>
         ),
       },
     },
@@ -340,8 +1310,59 @@ const docsSource = defineSource<JustoPageData, { title?: string; pages?: string[
       path: "legal/elsalvador/indemnizacion",
       data: {
         title: "💼 Indemnizacion por despido",
-        description: "30 dias por ano, minimo 15 dias.",
-        body: <p>Arts. 58-59 Codigo de Trabajo. 30 dias/ano, min 15d. Formula: (salario/30) * max(anos * 30, 15).</p>,
+        description: "30 dias de salario por cada ano, minimo 15 dias. Arts. 58-59 Codigo de Trabajo.",
+        body: (
+          <div className="space-y-6">
+            <section>
+              <h2 className="text-base font-semibold">Base legal</h2>
+              <ul className="list-disc space-y-1 pl-5 text-sm">
+                <li><strong>Art. 58</strong> — Indemnizacion por despido injustificado en contrato por tiempo indeterminado: 30 dias por ano.</li>
+                <li><strong>Art. 59</strong> — Indemnizacion en contrato a plazo fijo: salario por tiempo restante, tope del Art. 58.</li>
+              </ul>
+            </section>
+            <section>
+              <h2 className="text-base font-semibold">Regla operativa</h2>
+              <ul className="list-disc space-y-1 pl-5 text-sm">
+                <li>30 dias de salario por cada ano de servicio.</li>
+                <li>Fracciones de ano se pagan proporcionalmente.</li>
+                <li><strong>Minimo</strong>: 15 dias de salario.</li>
+                <li>Base: salario ordinario mensual.</li>
+              </ul>
+            </section>
+            <section>
+              <h2 className="text-base font-semibold">Variables</h2>
+              <table className="w-full text-sm">
+                <thead><tr className="border-b border-border"><th className="pr-4 text-left font-medium">Variable</th><th className="text-left font-medium">Descripcion</th></tr></thead>
+                <tbody>
+                  <tr className="border-b border-border"><td className="py-1 pr-4 font-mono text-xs">salario_mensual</td><td className="py-1">Salario ordinario mensual en USD</td></tr>
+                  <tr className="border-b border-border"><td className="py-1 pr-4 font-mono text-xs">anos_antiguedad</td><td className="py-1">Anos desde inicio hasta salida</td></tr>
+                  <tr><td className="py-1 pr-4 font-mono text-xs">salario_diario</td><td className="py-1">salario_mensual / 30</td></tr>
+                </tbody>
+              </table>
+            </section>
+            <section>
+              <h2 className="text-base font-semibold">Formula</h2>
+              <pre className="rounded-lg bg-muted p-3 text-xs"><code>{`salario_diario = salario_mensual / 30
+dias_indemnizacion = max(anos_antiguedad * 30, 15)
+monto_indemnizacion = salario_diario * dias_indemnizacion`}</code></pre>
+            </section>
+            <section>
+              <h2 className="text-base font-semibold">Ejemplo</h2>
+              <div className="rounded-lg border border-border bg-card p-3 text-sm">
+                <p className="mb-1 font-medium">Trabajador con 4 anos y salario de $1,200</p>
+                <ul className="space-y-0.5 text-xs text-muted-foreground">
+                  <li>salario_diario = 1,200 / 30 = <strong>$40</strong></li>
+                  <li>dias_indemnizacion = max(4 * 30, 15) = max(120, 15) = <strong>120</strong></li>
+                  <li>monto = 40 * 120 = <strong>$4,800</strong></li>
+                </ul>
+              </div>
+            </section>
+            <section>
+              <h2 className="text-base font-semibold">Vigencia</h2>
+              <p className="text-sm text-muted-foreground">Codigo de Trabajo de El Salvador, Arts. 58 y 59. Corpus: <code>sv-v0.1.0</code></p>
+            </section>
+          </div>
+        ),
       },
     },
     {
@@ -349,8 +1370,64 @@ const docsSource = defineSource<JustoPageData, { title?: string; pages?: string[
       path: "legal/elsalvador/aguinaldo",
       data: {
         title: "🎁 Aguinaldo",
-        description: "Escala de 15, 19 o 21 dias segun antiguedad.",
-        body: <p>Arts. 196-202 Codigo de Trabajo. 1-3a=15d, 3-10a=19d, 10a+=21d. Formula: (salario/30) * escala * (dias/365).</p>,
+        description: "Escala progresiva de 15, 19 o 21 dias de salario segun antiguedad. Arts. 196-202.",
+        body: (
+          <div className="space-y-6">
+            <section>
+              <h2 className="text-base font-semibold">Base legal</h2>
+              <ul className="list-disc space-y-1 pl-5 text-sm">
+                <li><strong>Art. 196</strong> — Obligacion de pago de aguinaldo anual.</li>
+                <li><strong>Art. 197</strong> — Pago completo (1 ano+) o proporcional.</li>
+                <li><strong>Art. 198</strong> — Monto minimo escalonado segun antiguedad.</li>
+                <li><strong>Art. 202</strong> — Pago proporcional al terminar la relacion laboral.</li>
+              </ul>
+            </section>
+            <section>
+              <h2 className="text-base font-semibold">Regla operativa</h2>
+              <ul className="list-disc space-y-1 pl-5 text-sm">
+                <li><strong>1 a 3 anos</strong>: 15 dias de salario.</li>
+                <li><strong>3 a 10 anos</strong>: 19 dias de salario.</li>
+                <li><strong>10 anos o mas</strong>: 21 dias de salario.</li>
+                <li>Al terminar la relacion, proporcional al periodo trabajado en el ano.</li>
+              </ul>
+            </section>
+            <section>
+              <h2 className="text-base font-semibold">Variables</h2>
+              <table className="w-full text-sm">
+                <thead><tr className="border-b border-border"><th className="pr-4 text-left font-medium">Variable</th><th className="text-left font-medium">Descripcion</th></tr></thead>
+                <tbody>
+                  <tr className="border-b border-border"><td className="py-1 pr-4 font-mono text-xs">salario_mensual</td><td className="py-1">Salario ordinario mensual en USD</td></tr>
+                  <tr className="border-b border-border"><td className="py-1 pr-4 font-mono text-xs">anos_antiguedad</td><td className="py-1">Anos de servicio para determinar escala</td></tr>
+                  <tr><td className="py-1 pr-4 font-mono text-xs">dias_periodo</td><td className="py-1">Dias del ano en curso hasta la fecha de salida</td></tr>
+                </tbody>
+              </table>
+            </section>
+            <section>
+              <h2 className="text-base font-semibold">Formula</h2>
+              <pre className="rounded-lg bg-muted p-3 text-xs"><code>{`escala = 15 si anos < 3, 19 si anos < 10, 21 si anos >= 10
+aguinaldo_prop. = (salario / 30) * escala * (dias_periodo / 365)`}</code></pre>
+            </section>
+            <section>
+              <h2 className="text-base font-semibold">Ejemplo</h2>
+              <div className="rounded-lg border border-border bg-card p-3 text-sm">
+                <p className="mb-1 font-medium">Salario $1,200, 6 anos de servicio, salida octubre (304 dias)</p>
+                <ul className="space-y-0.5 text-xs text-muted-foreground">
+                  <li>escala = 19 (3 a 10 anos)</li>
+                  <li>diario = 1,200 / 30 = <strong>$40</strong></li>
+                  <li>aguinaldo = 40 * 19 * (304 / 365) = 40 * 19 * 0.833 = <strong>$633</strong></li>
+                </ul>
+              </div>
+            </section>
+            <section>
+              <h2 className="text-base font-semibold">Excepciones</h2>
+              <p className="text-sm">Aguinaldo exento de deducciones ISSS y AFP.</p>
+            </section>
+            <section>
+              <h2 className="text-base font-semibold">Vigencia</h2>
+              <p className="text-sm text-muted-foreground">Codigo de Trabajo Arts. 196-202. Corpus: <code>sv-v0.1.0</code></p>
+            </section>
+          </div>
+        ),
       },
     },
     {
@@ -358,8 +1435,55 @@ const docsSource = defineSource<JustoPageData, { title?: string; pages?: string[
       path: "legal/elsalvador/vacaciones",
       data: {
         title: "🌴 Vacaciones pendientes",
-        description: "15 dias + 30% de prima.",
-        body: <p>Arts. 177 y 187 Codigo de Trabajo. 15 dias + prima 30%. Formula: (salario/30) * dias * 1.30.</p>,
+        description: "15 dias con prima del 30% sobre salario ordinario. Arts. 177 y 187.",
+        body: (
+          <div className="space-y-6">
+            <section>
+              <h2 className="text-base font-semibold">Base legal</h2>
+              <ul className="list-disc space-y-1 pl-5 text-sm">
+                <li><strong>Art. 177</strong> — 15 dias de vacaciones despues de 1 ano de trabajo, pagadas a salario ordinario + 30% de prima.</li>
+                <li><strong>Art. 187</strong> — Pago proporcional al terminar la relacion laboral.</li>
+              </ul>
+            </section>
+            <section>
+              <h2 className="text-base font-semibold">Regla operativa</h2>
+              <ul className="list-disc space-y-1 pl-5 text-sm">
+                <li>15 dias de vacaciones remuneradas por cada ano de servicio.</li>
+                <li><strong>Prima del 30%</strong> sobre el salario ordinario.</li>
+                <li>Se pagan vacaciones no gozadas al cierre de la relacion.</li>
+              </ul>
+            </section>
+            <section>
+              <h2 className="text-base font-semibold">Variables</h2>
+              <table className="w-full text-sm">
+                <thead><tr className="border-b border-border"><th className="pr-4 text-left font-medium">Variable</th><th className="text-left font-medium">Descripcion</th></tr></thead>
+                <tbody>
+                  <tr className="border-b border-border"><td className="py-1 pr-4 font-mono text-xs">salario_mensual</td><td className="py-1">Salario ordinario mensual en USD</td></tr>
+                  <tr><td className="py-1 pr-4 font-mono text-xs">dias_vacaciones_pendientes</td><td className="py-1">Dias de vacaciones acumulados no gozados</td></tr>
+                </tbody>
+              </table>
+            </section>
+            <section>
+              <h2 className="text-base font-semibold">Formula</h2>
+              <pre className="rounded-lg bg-muted p-3 text-xs"><code>{`salario_diario = salario_mensual / 30
+vacaciones_pendientes = salario_diario * dias_vacaciones_pendientes * 1.30`}</code></pre>
+            </section>
+            <section>
+              <h2 className="text-base font-semibold">Ejemplo</h2>
+              <div className="rounded-lg border border-border bg-card p-3 text-sm">
+                <p className="mb-1 font-medium">Salario de $1,200, 8 dias de vacaciones pendientes</p>
+                <ul className="space-y-0.5 text-xs text-muted-foreground">
+                  <li>salario_diario = 1,200 / 30 = <strong>$40</strong></li>
+                  <li>vacaciones = 40 * 8 * 1.30 = <strong>$416</strong></li>
+                </ul>
+              </div>
+            </section>
+            <section>
+              <h2 className="text-base font-semibold">Vigencia</h2>
+              <p className="text-sm text-muted-foreground">Codigo de Trabajo de El Salvador, Arts. 177 y 187. Corpus: <code>sv-v0.1.0</code></p>
+            </section>
+          </div>
+        ),
       },
     },
     {
@@ -367,8 +1491,44 @@ const docsSource = defineSource<JustoPageData, { title?: string; pages?: string[
       path: "legal/elsalvador/salario-proporcional",
       data: {
         title: "🧾 Salario pendiente",
-        description: "Proporcional del mes en curso.",
-        body: <p>Formula: (salario/30) * dias trabajados.</p>,
+        description: "Pago proporcional del mes en curso. Codigo de Trabajo.",
+        body: (
+          <div className="space-y-6">
+            <section>
+              <h2 className="text-base font-semibold">Base legal</h2>
+              <p className="text-sm">Principio general del Codigo de Trabajo de El Salvador. El salario se debe en proporcion al tiempo trabajado.</p>
+            </section>
+            <section>
+              <h2 className="text-base font-semibold">Variables</h2>
+              <table className="w-full text-sm">
+                <thead><tr className="border-b border-border"><th className="pr-4 text-left font-medium">Variable</th><th className="text-left font-medium">Descripcion</th></tr></thead>
+                <tbody>
+                  <tr className="border-b border-border"><td className="py-1 pr-4 font-mono text-xs">salario_mensual</td><td className="py-1">Salario ordinario mensual en USD</td></tr>
+                  <tr><td className="py-1 pr-4 font-mono text-xs">dias_trabajados</td><td className="py-1">Dias trabajados en el mes de salida</td></tr>
+                </tbody>
+              </table>
+            </section>
+            <section>
+              <h2 className="text-base font-semibold">Formula</h2>
+              <pre className="rounded-lg bg-muted p-3 text-xs"><code>{`salario_diario = salario_mensual / 30
+salario_proporcional = salario_diario * dias_trabajados`}</code></pre>
+            </section>
+            <section>
+              <h2 className="text-base font-semibold">Ejemplo</h2>
+              <div className="rounded-lg border border-border bg-card p-3 text-sm">
+                <p className="mb-1 font-medium">Salario de $1,200, salida el dia 22 del mes</p>
+                <ul className="space-y-0.5 text-xs text-muted-foreground">
+                  <li>salario_diario = 1,200 / 30 = <strong>$40</strong></li>
+                  <li>salario_proporcional = 40 * 22 = <strong>$880</strong></li>
+                </ul>
+              </div>
+            </section>
+            <section>
+              <h2 className="text-base font-semibold">Vigencia</h2>
+              <p className="text-sm text-muted-foreground">Codigo de Trabajo de El Salvador. Corpus: <code>sv-v0.1.0</code></p>
+            </section>
+          </div>
+        ),
       },
     },
     {
@@ -376,8 +1536,50 @@ const docsSource = defineSource<JustoPageData, { title?: string; pages?: string[
       path: "legal/elsalvador/deducciones",
       data: {
         title: "➖ Deducciones legales",
-        description: "ISSS 3% y AFP 7.25%, tope 20%.",
-        body: <p>ISSS 3% + AFP 7.25%. Tope legal 20% del salario (Art. 132).</p>,
+        description: "ISSS 3% + AFP 7.25%. Tope legal 20% del salario (Art. 132).",
+        body: (
+          <div className="space-y-6">
+            <section>
+              <h2 className="text-base font-semibold">Base legal</h2>
+              <ul className="list-disc space-y-1 pl-5 text-sm">
+                <li><strong>Art. 132</strong> — Tope maximo de deducciones del 20% del salario.</li>
+                <li><strong>Ley del ISSS</strong> — Cotizacion de salud: 3% trabajador.</li>
+                <li><strong>Ley del SAP (AFP)</strong> — Cotizacion previsional: 7.25% trabajador.</li>
+              </ul>
+            </section>
+            <section>
+              <h2 className="text-base font-semibold">Regla operativa</h2>
+              <ul className="list-disc space-y-1 pl-5 text-sm">
+                <li>ISSS + AFP no pueden exceder el 20% del salario.</li>
+                <li>Base: salario proporcional + vacaciones pagadas.</li>
+                <li>Aguinaldo exento de deducciones.</li>
+              </ul>
+            </section>
+            <section>
+              <h2 className="text-base font-semibold">Formulas</h2>
+              <pre className="rounded-lg bg-muted p-3 text-xs"><code>{`isss = base * 0.03
+afp = base * 0.0725
+total = isss + afp
+(maximo 20% del salario)`}</code></pre>
+            </section>
+            <section>
+              <h2 className="text-base font-semibold">Ejemplo</h2>
+              <div className="rounded-lg border border-border bg-card p-3 text-sm">
+                <p className="mb-1 font-medium">Base de $1,296 (salario prop. $880 + vac. $416)</p>
+                <ul className="space-y-0.5 text-xs text-muted-foreground">
+                  <li>isss = 1,296 * 0.03 = <strong>$39</strong></li>
+                  <li>afp = 1,296 * 0.0725 = <strong>$94</strong></li>
+                  <li>total = 39 + 94 = <strong>$133</strong></li>
+                  <li>(tope 20% = $259, no excedido)</li>
+                </ul>
+              </div>
+            </section>
+            <section>
+              <h2 className="text-base font-semibold">Vigencia</h2>
+              <p className="text-sm text-muted-foreground">Codigo de Trabajo Art. 132 + Ley ISSS + Ley SAP. Corpus: <code>sv-v0.1.0</code></p>
+            </section>
+          </div>
+        ),
       },
     },
     {
@@ -385,8 +1587,36 @@ const docsSource = defineSource<JustoPageData, { title?: string; pages?: string[
       path: "legal/elsalvador/isss",
       data: {
         title: "🏥 ISSS laboral",
-        description: "Cotizacion del 3%.",
-        body: <p>Tasa operativa: 3%. Formula: base * 0.03.</p>,
+        description: "Cotizacion del 3% al Seguro Social de El Salvador.",
+        body: (
+          <div className="space-y-6">
+            <section>
+              <h2 className="text-base font-semibold">Base legal</h2>
+              <p className="text-sm">Ley del Seguro Social de El Salvador.</p>
+            </section>
+            <section>
+              <h2 className="text-base font-semibold">Regla operativa</h2>
+              <p className="text-sm">La cotizacion laboral del ISSS se aplica sobre el salario ordinario y prestaciones imponibles. Tasa laboral: 3%.</p>
+            </section>
+            <section>
+              <h2 className="text-base font-semibold">Formula</h2>
+              <pre className="rounded-lg bg-muted p-3 text-xs"><code>{`isss_laboral = base_isss * 0.03`}</code></pre>
+            </section>
+            <section>
+              <h2 className="text-base font-semibold">Ejemplo</h2>
+              <div className="rounded-lg border border-border bg-card p-3 text-sm">
+                <p className="mb-1 font-medium">Base ISSS de $1,296</p>
+                <ul className="space-y-0.5 text-xs text-muted-foreground">
+                  <li>isss = 1,296 * 0.03 = <strong>$39</strong></li>
+                </ul>
+              </div>
+            </section>
+            <section>
+              <h2 className="text-base font-semibold">Vigencia</h2>
+              <p className="text-sm text-muted-foreground">Ley del ISSS. Tasa: 3% (pendiente confirmacion). Corpus: <code>sv-v0.1.0</code></p>
+            </section>
+          </div>
+        ),
       },
     },
     {
@@ -394,8 +1624,36 @@ const docsSource = defineSource<JustoPageData, { title?: string; pages?: string[
       path: "legal/elsalvador/afp",
       data: {
         title: "💰 AFP laboral",
-        description: "Cotizacion del 7.25%.",
-        body: <p>Tasa operativa: 7.25%. Formula: base * 0.0725.</p>,
+        description: "Cotizacion del 7.25% al Sistema de Ahorro para Pensiones.",
+        body: (
+          <div className="space-y-6">
+            <section>
+              <h2 className="text-base font-semibold">Base legal</h2>
+              <p className="text-sm">Ley del Sistema de Ahorro para Pensiones (SAP), Decreto 927.</p>
+            </section>
+            <section>
+              <h2 className="text-base font-semibold">Regla operativa</h2>
+              <p className="text-sm">La cotizacion previsional se aplica sobre el salario ordinario. Tasa laboral propuesta: 7.25%.</p>
+            </section>
+            <section>
+              <h2 className="text-base font-semibold">Formula</h2>
+              <pre className="rounded-lg bg-muted p-3 text-xs"><code>{`afp_laboral = base_afp * 0.0725`}</code></pre>
+            </section>
+            <section>
+              <h2 className="text-base font-semibold">Ejemplo</h2>
+              <div className="rounded-lg border border-border bg-card p-3 text-sm">
+                <p className="mb-1 font-medium">Base AFP de $1,296</p>
+                <ul className="space-y-0.5 text-xs text-muted-foreground">
+                  <li>afp = 1,296 * 0.0725 = <strong>$94</strong></li>
+                </ul>
+              </div>
+            </section>
+            <section>
+              <h2 className="text-base font-semibold">Vigencia</h2>
+              <p className="text-sm text-muted-foreground">Decreto 927 (Ley SAP). Tasa: 7.25% (pendiente confirmacion). Corpus: <code>sv-v0.1.0</code></p>
+            </section>
+          </div>
+        ),
       },
     },
     {
@@ -404,16 +1662,30 @@ const docsSource = defineSource<JustoPageData, { title?: string; pages?: string[
       slugs: ["legal", "costarica"],
       data: {
         title: "⚖ Costa Rica, marco legal",
-        description: "Codigo de Trabajo de Costa Rica y leyes complementarias.",
+        description: "Codigo de Trabajo de Costa Rica, Ley 2412 (Aguinaldo) y Ley Constitutiva de la CCSS.",
         body: (
-          <ul className="grid gap-2 sm:grid-cols-2">
-            <li><a className="block rounded-lg border border-border bg-card px-3 py-2 hover:bg-accent" href="/docs/legal/costarica/indemnizacion">Cesantia y Preaviso</a></li>
-            <li><a className="block rounded-lg border border-border bg-card px-3 py-2 hover:bg-accent" href="/docs/legal/costarica/aguinaldo">Aguinaldo</a></li>
-            <li><a className="block rounded-lg border border-border bg-card px-3 py-2 hover:bg-accent" href="/docs/legal/costarica/vacaciones">Vacaciones pendientes</a></li>
-            <li><a className="block rounded-lg border border-border bg-card px-3 py-2 hover:bg-accent" href="/docs/legal/costarica/salario-proporcional">Salario pendiente</a></li>
-            <li><a className="block rounded-lg border border-border bg-card px-3 py-2 hover:bg-accent" href="/docs/legal/costarica/deducciones">Deducciones legales</a></li>
-            <li><a className="block rounded-lg border border-border bg-card px-3 py-2 hover:bg-accent" href="/docs/legal/costarica/ccss">CCSS laboral</a></li>
-          </ul>
+          <div className="space-y-6">
+            <p className="text-sm text-muted-foreground">
+              El sistema laboral costarricense se rige por el <strong>Codigo de Trabajo</strong>, la
+              <strong> Ley del Aguinaldo (Ley 2412)</strong> y la <strong>Ley Constitutiva de la
+              CCSS (Ley 17)</strong>. Esta seccion documenta las reglas operativas usadas por el
+              motor de calculo, los articulos aplicables y ejemplos practicos por rubro.
+            </p>
+            <p className="text-sm text-muted-foreground">
+              Version del corpus: <code>cr-v0.1.0</code> | Moneda: CRC (Colon)
+            </p>
+            <ul className="grid gap-2 sm:grid-cols-2">
+              <li><Link className="block rounded-lg border border-border bg-card px-3 py-2 hover:bg-accent" href="/docs/legal/costarica/indemnizacion">💼 Cesantia y Preaviso</Link></li>
+              <li><Link className="block rounded-lg border border-border bg-card px-3 py-2 hover:bg-accent" href="/docs/legal/costarica/aguinaldo">🎁 Aguinaldo</Link></li>
+              <li><Link className="block rounded-lg border border-border bg-card px-3 py-2 hover:bg-accent" href="/docs/legal/costarica/vacaciones">🌴 Vacaciones pendientes</Link></li>
+              <li><Link className="block rounded-lg border border-border bg-card px-3 py-2 hover:bg-accent" href="/docs/legal/costarica/salario-proporcional">🧾 Salario pendiente</Link></li>
+              <li><Link className="block rounded-lg border border-border bg-card px-3 py-2 hover:bg-accent" href="/docs/legal/costarica/deducciones">➖ Deducciones legales</Link></li>
+              <li><Link className="block rounded-lg border border-border bg-card px-3 py-2 hover:bg-accent" href="/docs/legal/costarica/ccss">🏥 CCSS laboral</Link></li>
+            </ul>
+            <div className="rounded-xl border border-border bg-card p-3 text-sm text-muted-foreground">
+              Aviso: contenido informativo. Para casos complejos validar con asesoria legal.
+            </div>
+          </div>
         ),
       },
     },
@@ -422,8 +1694,63 @@ const docsSource = defineSource<JustoPageData, { title?: string; pages?: string[
       path: "legal/costarica/indemnizacion",
       data: {
         title: "💼 Cesantia y Preaviso",
-        description: "Cesantia progresiva + preaviso segun tiempo.",
-        body: <p>Arts. 28-30 Codigo de Trabajo. Cesantia ~20d/ano (max 8a). Preaviso: 7d, 15d o 30d segun tiempo. Formula: (salario/30) * dias.</p>,
+        description: "Cesantia ~20 dias/ano (max 8 anos) + preaviso 7/15/30 dias. Arts. 28-30 Codigo de Trabajo.",
+        body: (
+          <div className="space-y-6">
+            <section>
+              <h2 className="text-base font-semibold">Base legal</h2>
+              <ul className="list-disc space-y-1 pl-5 text-sm">
+                <li><strong>Art. 28</strong> — Preaviso: 1 sem (3-6m), 15d (6-12m), 1 mes (+1a).</li>
+                <li><strong>Art. 29</strong> — Cesantia: tabla progresiva ~20 dias/ano, max 8 anos.</li>
+                <li><strong>Art. 30</strong> — Base: promedio salarial ultimos 6 meses.</li>
+              </ul>
+            </section>
+            <section>
+              <h2 className="text-base font-semibold">Regla operativa</h2>
+              <ul className="list-disc space-y-1 pl-5 text-sm">
+                <li><strong>Cesantia</strong>: ~20 dias de salario por ano (max. 8 anos = 160 dias).</li>
+                <li><strong>Preaviso</strong>: 7 dias (3-6m), 15 dias (6-12m), 30 dias (+1a).</li>
+                <li>Base: promedio ordinario de ultimos 6 meses.</li>
+              </ul>
+            </section>
+            <section>
+              <h2 className="text-base font-semibold">Variables</h2>
+              <table className="w-full text-sm">
+                <thead><tr className="border-b border-border"><th className="pr-4 text-left font-medium">Variable</th><th className="text-left font-medium">Descripcion</th></tr></thead>
+                <tbody>
+                  <tr className="border-b border-border"><td className="py-1 pr-4 font-mono text-xs">salario_mensual</td><td className="py-1">Salario ordinario mensual en CRC</td></tr>
+                  <tr className="border-b border-border"><td className="py-1 pr-4 font-mono text-xs">anos_antiguedad</td><td className="py-1">Anos desde inicio hasta salida</td></tr>
+                  <tr><td className="py-1 pr-4 font-mono text-xs">salario_diario</td><td className="py-1">salario_mensual / 30</td></tr>
+                </tbody>
+              </table>
+            </section>
+            <section>
+              <h2 className="text-base font-semibold">Formulas</h2>
+              <pre className="rounded-lg bg-muted p-3 text-xs"><code>{`salario_diario = salario_mensual / 30
+dias_cesantia = min(anos_antiguedad * 20, 160)
+monto_cesantia = salario_diario * dias_cesantia
+dias_preaviso = anos >= 1 ? 30 : meses >= 6 ? 15 : 7
+monto_preaviso = salario_diario * dias_preaviso`}</code></pre>
+            </section>
+            <section>
+              <h2 className="text-base font-semibold">Ejemplo</h2>
+              <div className="rounded-lg border border-border bg-card p-3 text-sm">
+                <p className="mb-1 font-medium">Trabajador con 5 anos y salario de CRC 800,000</p>
+                <ul className="space-y-0.5 text-xs text-muted-foreground">
+                  <li>salario_diario = 800,000 / 30 = <strong>CRC 26,667</strong></li>
+                  <li>dias_cesantia = min(5 * 20, 160) = min(100, 160) = <strong>100</strong></li>
+                  <li>cesantia = 26,667 * 100 = <strong>CRC 2,666,700</strong></li>
+                  <li>preaviso = 30 dias (1 ano+) = 26,667 * 30 = <strong>CRC 800,000</strong></li>
+                  <li>total indemnizacion = 2,666,700 + 800,000 = <strong>CRC 3,466,700</strong></li>
+                </ul>
+              </div>
+            </section>
+            <section>
+              <h2 className="text-base font-semibold">Vigencia</h2>
+              <p className="text-sm text-muted-foreground">Codigo de Trabajo de Costa Rica, Arts. 28, 29, 30. Corpus: <code>cr-v0.1.0</code></p>
+            </section>
+          </div>
+        ),
       },
     },
     {
@@ -431,8 +1758,57 @@ const docsSource = defineSource<JustoPageData, { title?: string; pages?: string[
       path: "legal/costarica/aguinaldo",
       data: {
         title: "🎁 Aguinaldo",
-        description: "1/12 de salarios anuales.",
-        body: <p>Ley No. 2412. Formula: salario * (dias/365).</p>,
+        description: "Equivalente a 1/12 de salarios anuales. Ley No. 2412.",
+        body: (
+          <div className="space-y-6">
+            <section>
+              <h2 className="text-base font-semibold">Base legal</h2>
+              <ul className="list-disc space-y-1 pl-5 text-sm">
+                <li><strong>Ley No. 2412</strong> — Ley del Aguinaldo de Costa Rica.</li>
+                <li>Equivalente a 1/12 del total de salarios devengados en el ano.</li>
+                <li>Debe pagarse antes del 20 de diciembre.</li>
+              </ul>
+            </section>
+            <section>
+              <h2 className="text-base font-semibold">Regla operativa</h2>
+              <ul className="list-disc space-y-1 pl-5 text-sm">
+                <li>1/12 de salarios anuales, proporcional al tiempo trabajado.</li>
+                <li>Al finalizar la relacion, se paga proporcional al periodo trabajado en el ano.</li>
+              </ul>
+            </section>
+            <section>
+              <h2 className="text-base font-semibold">Variables</h2>
+              <table className="w-full text-sm">
+                <thead><tr className="border-b border-border"><th className="pr-4 text-left font-medium">Variable</th><th className="text-left font-medium">Descripcion</th></tr></thead>
+                <tbody>
+                  <tr className="border-b border-border"><td className="py-1 pr-4 font-mono text-xs">salario_mensual</td><td className="py-1">Salario ordinario mensual en CRC</td></tr>
+                  <tr><td className="py-1 pr-4 font-mono text-xs">dias_periodo</td><td className="py-1">Dias del ano en curso hasta la fecha de salida</td></tr>
+                </tbody>
+              </table>
+            </section>
+            <section>
+              <h2 className="text-base font-semibold">Formula</h2>
+              <pre className="rounded-lg bg-muted p-3 text-xs"><code>{`aguinaldo_proporcional = salario_mensual * (dias_periodo / 365)`}</code></pre>
+            </section>
+            <section>
+              <h2 className="text-base font-semibold">Ejemplo</h2>
+              <div className="rounded-lg border border-border bg-card p-3 text-sm">
+                <p className="mb-1 font-medium">Salario de CRC 800,000, salida el 30 de septiembre (273 dias)</p>
+                <ul className="space-y-0.5 text-xs text-muted-foreground">
+                  <li>aguinaldo = 800,000 * (273 / 365) = 800,000 * 0.748 = <strong>CRC 598,400</strong></li>
+                </ul>
+              </div>
+            </section>
+            <section>
+              <h2 className="text-base font-semibold">Excepciones</h2>
+              <p className="text-sm">Aguinaldo exento de deducciones CCSS.</p>
+            </section>
+            <section>
+              <h2 className="text-base font-semibold">Vigencia</h2>
+              <p className="text-sm text-muted-foreground">Ley No. 2412. Corpus: <code>cr-v0.1.0</code></p>
+            </section>
+          </div>
+        ),
       },
     },
     {
@@ -440,8 +1816,55 @@ const docsSource = defineSource<JustoPageData, { title?: string; pages?: string[
       path: "legal/costarica/vacaciones",
       data: {
         title: "🌴 Vacaciones pendientes",
-        description: "14 dias por cada 50 semanas.",
-        body: <p>Arts. 153 y 156 Codigo de Trabajo. 14d/50 semanas. Formula: (salario/30) * dias pendientes.</p>,
+        description: "14 dias por cada 50 semanas de servicio. Arts. 153 y 156 Codigo de Trabajo.",
+        body: (
+          <div className="space-y-6">
+            <section>
+              <h2 className="text-base font-semibold">Base legal</h2>
+              <ul className="list-disc space-y-1 pl-5 text-sm">
+                <li><strong>Art. 153</strong> — 2 semanas (14 dias) por cada 50 semanas de servicio continuo.</li>
+                <li><strong>Art. 156</strong> — No compensables en dinero, excepto al terminar la relacion.</li>
+              </ul>
+            </section>
+            <section>
+              <h2 className="text-base font-semibold">Regla operativa</h2>
+              <ul className="list-disc space-y-1 pl-5 text-sm">
+                <li>14 dias de vacaciones por cada 50 semanas trabajadas.</li>
+                <li>Al terminar antes de 50 semanas: 1 dia por mes trabajado.</li>
+                <li>Se pagan las no gozadas al cierre.</li>
+              </ul>
+            </section>
+            <section>
+              <h2 className="text-base font-semibold">Variables</h2>
+              <table className="w-full text-sm">
+                <thead><tr className="border-b border-border"><th className="pr-4 text-left font-medium">Variable</th><th className="text-left font-medium">Descripcion</th></tr></thead>
+                <tbody>
+                  <tr className="border-b border-border"><td className="py-1 pr-4 font-mono text-xs">salario_mensual</td><td className="py-1">Salario ordinario mensual en CRC</td></tr>
+                  <tr><td className="py-1 pr-4 font-mono text-xs">dias_vacaciones_pendientes</td><td className="py-1">Dias de vacaciones acumulados no gozados</td></tr>
+                </tbody>
+              </table>
+            </section>
+            <section>
+              <h2 className="text-base font-semibold">Formula</h2>
+              <pre className="rounded-lg bg-muted p-3 text-xs"><code>{`salario_diario = salario_mensual / 30
+vacaciones_pendientes = salario_diario * dias_vacaciones_pendientes`}</code></pre>
+            </section>
+            <section>
+              <h2 className="text-base font-semibold">Ejemplo</h2>
+              <div className="rounded-lg border border-border bg-card p-3 text-sm">
+                <p className="mb-1 font-medium">Salario de CRC 800,000, 10 dias de vacaciones pendientes</p>
+                <ul className="space-y-0.5 text-xs text-muted-foreground">
+                  <li>salario_diario = 800,000 / 30 = <strong>CRC 26,667</strong></li>
+                  <li>vacaciones = 26,667 * 10 = <strong>CRC 266,670</strong></li>
+                </ul>
+              </div>
+            </section>
+            <section>
+              <h2 className="text-base font-semibold">Vigencia</h2>
+              <p className="text-sm text-muted-foreground">Codigo de Trabajo de Costa Rica, Arts. 153 y 156. Corpus: <code>cr-v0.1.0</code></p>
+            </section>
+          </div>
+        ),
       },
     },
     {
@@ -449,8 +1872,44 @@ const docsSource = defineSource<JustoPageData, { title?: string; pages?: string[
       path: "legal/costarica/salario-proporcional",
       data: {
         title: "🧾 Salario pendiente",
-        description: "Proporcional del mes en curso.",
-        body: <p>Formula: (salario/30) * dias trabajados.</p>,
+        description: "Pago proporcional del mes en curso.",
+        body: (
+          <div className="space-y-6">
+            <section>
+              <h2 className="text-base font-semibold">Base legal</h2>
+              <p className="text-sm">Principio general del Codigo de Trabajo de Costa Rica.</p>
+            </section>
+            <section>
+              <h2 className="text-base font-semibold">Variables</h2>
+              <table className="w-full text-sm">
+                <thead><tr className="border-b border-border"><th className="pr-4 text-left font-medium">Variable</th><th className="text-left font-medium">Descripcion</th></tr></thead>
+                <tbody>
+                  <tr className="border-b border-border"><td className="py-1 pr-4 font-mono text-xs">salario_mensual</td><td className="py-1">Salario ordinario mensual en CRC</td></tr>
+                  <tr><td className="py-1 pr-4 font-mono text-xs">dias_trabajados</td><td className="py-1">Dias trabajados en el mes de salida</td></tr>
+                </tbody>
+              </table>
+            </section>
+            <section>
+              <h2 className="text-base font-semibold">Formula</h2>
+              <pre className="rounded-lg bg-muted p-3 text-xs"><code>{`salario_diario = salario_mensual / 30
+salario_proporcional = salario_diario * dias_trabajados`}</code></pre>
+            </section>
+            <section>
+              <h2 className="text-base font-semibold">Ejemplo</h2>
+              <div className="rounded-lg border border-border bg-card p-3 text-sm">
+                <p className="mb-1 font-medium">Salario de CRC 800,000, salida el dia 18 del mes</p>
+                <ul className="space-y-0.5 text-xs text-muted-foreground">
+                  <li>salario_diario = 800,000 / 30 = <strong>CRC 26,667</strong></li>
+                  <li>salario_proporcional = 26,667 * 18 = <strong>CRC 480,006</strong></li>
+                </ul>
+              </div>
+            </section>
+            <section>
+              <h2 className="text-base font-semibold">Vigencia</h2>
+              <p className="text-sm text-muted-foreground">Codigo de Trabajo de Costa Rica. Corpus: <code>cr-v0.1.0</code></p>
+            </section>
+          </div>
+        ),
       },
     },
     {
@@ -458,8 +1917,43 @@ const docsSource = defineSource<JustoPageData, { title?: string; pages?: string[
       path: "legal/costarica/deducciones",
       data: {
         title: "➖ Deducciones legales",
-        description: "CCSS 9.17% sobre base imponible.",
-        body: <p>CCSS 9.17% (salud + pension + invalidez). Aguinaldo exento.</p>,
+        description: "CCSS 9.17% sobre base imponible. Ley Constitutiva de la CCSS.",
+        body: (
+          <div className="space-y-6">
+            <section>
+              <h2 className="text-base font-semibold">Base legal</h2>
+              <ul className="list-disc space-y-1 pl-5 text-sm">
+                <li><strong>Ley No. 17</strong> — Ley Constitutiva de la CCSS.</li>
+                <li>CCSS: 9.17% (salud ~5.5% + pension ~2.84% + invalidez ~0.83%).</li>
+              </ul>
+            </section>
+            <section>
+              <h2 className="text-base font-semibold">Regla operativa</h2>
+              <ul className="list-disc space-y-1 pl-5 text-sm">
+                <li>CCSS se calcula sobre salario proporcional + vacaciones pagadas.</li>
+                <li>Aguinaldo exento de deducciones.</li>
+              </ul>
+            </section>
+            <section>
+              <h2 className="text-base font-semibold">Formula</h2>
+              <pre className="rounded-lg bg-muted p-3 text-xs"><code>{`ccss_laboral = base_ccss * 0.0917
+total_deducciones = ccss_laboral`}</code></pre>
+            </section>
+            <section>
+              <h2 className="text-base font-semibold">Ejemplo</h2>
+              <div className="rounded-lg border border-border bg-card p-3 text-sm">
+                <p className="mb-1 font-medium">Base CCSS de CRC 746,676 (salario prop. + vacaciones)</p>
+                <ul className="space-y-0.5 text-xs text-muted-foreground">
+                  <li>ccss = 746,676 * 0.0917 = <strong>CRC 68,470</strong></li>
+                </ul>
+              </div>
+            </section>
+            <section>
+              <h2 className="text-base font-semibold">Vigencia</h2>
+              <p className="text-sm text-muted-foreground">Ley No. 17 (Ley Constitutiva de la CCSS). Corpus: <code>cr-v0.1.0</code></p>
+            </section>
+          </div>
+        ),
       },
     },
     {
@@ -467,8 +1961,39 @@ const docsSource = defineSource<JustoPageData, { title?: string; pages?: string[
       path: "legal/costarica/ccss",
       data: {
         title: "🏥 CCSS laboral",
-        description: "Cotizacion del 9.17%.",
-        body: <p>Tasa operativa: 9.17%. Formula: base * 0.0917.</p>,
+        description: "Cotizacion del 9.17% a la Caja Costarricense de Seguro Social.",
+        body: (
+          <div className="space-y-6">
+            <section>
+              <h2 className="text-base font-semibold">Base legal</h2>
+              <p className="text-sm">Ley Constitutiva de la CCSS (Ley No. 17).</p>
+            </section>
+            <section>
+              <h2 className="text-base font-semibold">Regla operativa</h2>
+              <ul className="list-disc space-y-1 pl-5 text-sm">
+                <li>Tasa laboral: 9.17% (salud ~5.5% + pension ~2.84% + invalidez ~0.83%).</li>
+                <li>Se aplica sobre salario ordinario y prestaciones imponibles.</li>
+              </ul>
+            </section>
+            <section>
+              <h2 className="text-base font-semibold">Formula</h2>
+              <pre className="rounded-lg bg-muted p-3 text-xs"><code>{`ccss_laboral = base_ccss * 0.0917`}</code></pre>
+            </section>
+            <section>
+              <h2 className="text-base font-semibold">Ejemplo</h2>
+              <div className="rounded-lg border border-border bg-card p-3 text-sm">
+                <p className="mb-1 font-medium">Base CCSS de CRC 746,676</p>
+                <ul className="space-y-0.5 text-xs text-muted-foreground">
+                  <li>ccss = 746,676 * 0.0917 = <strong>CRC 68,470</strong></li>
+                </ul>
+              </div>
+            </section>
+            <section>
+              <h2 className="text-base font-semibold">Vigencia</h2>
+              <p className="text-sm text-muted-foreground">Ley No. 17. Tasa: 9.17% (pendiente confirmacion). Corpus: <code>cr-v0.1.0</code></p>
+            </section>
+          </div>
+        ),
       },
     },
     {
@@ -477,16 +2002,30 @@ const docsSource = defineSource<JustoPageData, { title?: string; pages?: string[
       slugs: ["legal", "panama"],
       data: {
         title: "⚖ Panama, marco legal",
-        description: "Codigo de Trabajo de Panama y leyes complementarias.",
+        description: "Codigo de Trabajo de Panama, Ley 13 de 1994 (Decimotercer Mes) y Ley Organica de la CSS.",
         body: (
-          <ul className="grid gap-2 sm:grid-cols-2">
-            <li><a className="block rounded-lg border border-border bg-card px-3 py-2 hover:bg-accent" href="/docs/legal/panama/indemnizacion">Indemnizacion y Prima</a></li>
-            <li><a className="block rounded-lg border border-border bg-card px-3 py-2 hover:bg-accent" href="/docs/legal/panama/aguinaldo">Decimotercer Mes</a></li>
-            <li><a className="block rounded-lg border border-border bg-card px-3 py-2 hover:bg-accent" href="/docs/legal/panama/vacaciones">Vacaciones pendientes</a></li>
-            <li><a className="block rounded-lg border border-border bg-card px-3 py-2 hover:bg-accent" href="/docs/legal/panama/salario-proporcional">Salario pendiente</a></li>
-            <li><a className="block rounded-lg border border-border bg-card px-3 py-2 hover:bg-accent" href="/docs/legal/panama/deducciones">Deducciones legales</a></li>
-            <li><a className="block rounded-lg border border-border bg-card px-3 py-2 hover:bg-accent" href="/docs/legal/panama/css">CSS laboral</a></li>
-          </ul>
+          <div className="space-y-6">
+            <p className="text-sm text-muted-foreground">
+              El sistema laboral panameno se rige por el <strong>Codigo de Trabajo</strong>, la
+              <strong> Ley 13 de 1994 (Decimotercer Mes)</strong> y la <strong>Ley Organica de la
+              Caja de Seguro Social (CSS)</strong>. Esta seccion documenta las reglas operativas
+              usadas por el motor de calculo, los articulos aplicables y ejemplos practicos.
+            </p>
+            <p className="text-sm text-muted-foreground">
+              Version del corpus: <code>pa-v0.1.0</code> | Moneda: USD
+            </p>
+            <ul className="grid gap-2 sm:grid-cols-2">
+              <li><Link className="block rounded-lg border border-border bg-card px-3 py-2 hover:bg-accent" href="/docs/legal/panama/indemnizacion">💼 Indemnizacion y Prima de Antiguedad</Link></li>
+              <li><Link className="block rounded-lg border border-border bg-card px-3 py-2 hover:bg-accent" href="/docs/legal/panama/aguinaldo">🎁 Decimotercer Mes</Link></li>
+              <li><Link className="block rounded-lg border border-border bg-card px-3 py-2 hover:bg-accent" href="/docs/legal/panama/vacaciones">🌴 Vacaciones pendientes</Link></li>
+              <li><Link className="block rounded-lg border border-border bg-card px-3 py-2 hover:bg-accent" href="/docs/legal/panama/salario-proporcional">🧾 Salario pendiente</Link></li>
+              <li><Link className="block rounded-lg border border-border bg-card px-3 py-2 hover:bg-accent" href="/docs/legal/panama/deducciones">➖ Deducciones legales</Link></li>
+              <li><Link className="block rounded-lg border border-border bg-card px-3 py-2 hover:bg-accent" href="/docs/legal/panama/css">🏥 CSS laboral</Link></li>
+            </ul>
+            <div className="rounded-xl border border-border bg-card p-3 text-sm text-muted-foreground">
+              Aviso: contenido informativo. Para casos complejos validar con asesoria legal.
+            </div>
+          </div>
         ),
       },
     },
@@ -495,8 +2034,64 @@ const docsSource = defineSource<JustoPageData, { title?: string; pages?: string[
       path: "legal/panama/indemnizacion",
       data: {
         title: "💼 Indemnizacion y Prima de Antiguedad",
-        description: "Prima 7d/ano + Indemnizacion 3.4 sem/ano.",
-        body: <p>Arts. 224-225 Codigo de Trabajo. Prima: 7d/ano. Indemnizacion: 3.4 sem/ano (1ros 10a), luego 1 sem/ano. Min: 1 sem.</p>,
+        description: "Prima 7d/ano (Art. 224) + Indemnizacion 3.4 sem/ano (Art. 225-C). Codigo de Trabajo de Panama.",
+        body: (
+          <div className="space-y-6">
+            <section>
+              <h2 className="text-base font-semibold">Base legal</h2>
+              <ul className="list-disc space-y-1 pl-5 text-sm">
+                <li><strong>Art. 224</strong> — Prima de antiguedad: 1 semana (7 dias) de salario por cada ano, toda terminacion.</li>
+                <li><strong>Art. 225-C</strong> — Indemnizacion por despido injustificado: 3.4 semanas/ano primeros 10 anos, 1 sem/ano extra.</li>
+                <li><strong>Art. 212</strong> — Preaviso de 30 dias para trabajadores exceptuados.</li>
+              </ul>
+            </section>
+            <section>
+              <h2 className="text-base font-semibold">Regla operativa</h2>
+              <ul className="list-disc space-y-1 pl-5 text-sm">
+                <li><strong>Prima de antiguedad</strong>: 7 dias de salario por cada ano, proporcional.</li>
+                <li><strong>Indemnizacion</strong>: 3.4 sem/ano (23.8 dias) primeros 10 anos, luego 1 sem/ano (7 dias).</li>
+                <li><strong>Minimo</strong>: 1 semana de salario.</li>
+              </ul>
+            </section>
+            <section>
+              <h2 className="text-base font-semibold">Variables</h2>
+              <table className="w-full text-sm">
+                <thead><tr className="border-b border-border"><th className="pr-4 text-left font-medium">Variable</th><th className="text-left font-medium">Descripcion</th></tr></thead>
+                <tbody>
+                  <tr className="border-b border-border"><td className="py-1 pr-4 font-mono text-xs">salario_mensual</td><td className="py-1">Salario ordinario mensual en USD</td></tr>
+                  <tr className="border-b border-border"><td className="py-1 pr-4 font-mono text-xs">anos_antiguedad</td><td className="py-1">Anos desde inicio hasta salida</td></tr>
+                  <tr><td className="py-1 pr-4 font-mono text-xs">salario_diario</td><td className="py-1">salario_mensual / 30</td></tr>
+                </tbody>
+              </table>
+            </section>
+            <section>
+              <h2 className="text-base font-semibold">Formulas</h2>
+              <pre className="rounded-lg bg-muted p-3 text-xs"><code>{`salario_diario = salario_mensual / 30
+prima_antiguedad = salario_diario * anos * 7
+
+dias_indemnizacion = min(anos,10)*23.8 + max(anos-10,0)*7
+dias_indemnizacion = max(dias_indemnizacion, 7)
+indemnizacion = salario_diario * dias_indemnizacion`}</code></pre>
+            </section>
+            <section>
+              <h2 className="text-base font-semibold">Ejemplo</h2>
+              <div className="rounded-lg border border-border bg-card p-3 text-sm">
+                <p className="mb-1 font-medium">Trabajador con 7 anos y salario de $1,500</p>
+                <ul className="space-y-0.5 text-xs text-muted-foreground">
+                  <li>salario_diario = 1,500 / 30 = <strong>$50</strong></li>
+                  <li>prima = 50 * 7 * 7 = <strong>$2,450</strong></li>
+                  <li>dias_indem = min(7,10)*23.8 + max(7-10,0)*7 = <strong>166.6</strong></li>
+                  <li>indemnizacion = 50 * 166.6 = <strong>$8,330</strong></li>
+                  <li>total = 2,450 + 8,330 = <strong>$10,780</strong></li>
+                </ul>
+              </div>
+            </section>
+            <section>
+              <h2 className="text-base font-semibold">Vigencia</h2>
+              <p className="text-sm text-muted-foreground">Codigo de Trabajo de Panama, Arts. 224, 225. Corpus: <code>pa-v0.1.0</code></p>
+            </section>
+          </div>
+        ),
       },
     },
     {
@@ -504,8 +2099,52 @@ const docsSource = defineSource<JustoPageData, { title?: string; pages?: string[
       path: "legal/panama/aguinaldo",
       data: {
         title: "🎁 Decimotercer Mes",
-        description: "1/12 de salarios anuales.",
-        body: <p>Ley 13 de 1994. Formula: salario * (dias/365).</p>,
+        description: "1/12 de salarios anuales. Ley 13 de 1994.",
+        body: (
+          <div className="space-y-6">
+            <section>
+              <h2 className="text-base font-semibold">Base legal</h2>
+              <ul className="list-disc space-y-1 pl-5 text-sm">
+                <li><strong>Ley 13 de 1994</strong> — Regula el Decimotercer Mes en Panama.</li>
+              </ul>
+            </section>
+            <section>
+              <h2 className="text-base font-semibold">Regla operativa</h2>
+              <ul className="list-disc space-y-1 pl-5 text-sm">
+                <li>Equivalente a 1/12 del total de salarios devengados en el ano.</li>
+                <li>Proporcional al tiempo laborado al terminar la relacion.</li>
+                <li>Base: salario ordinario mensual.</li>
+              </ul>
+            </section>
+            <section>
+              <h2 className="text-base font-semibold">Variables</h2>
+              <table className="w-full text-sm">
+                <thead><tr className="border-b border-border"><th className="pr-4 text-left font-medium">Variable</th><th className="text-left font-medium">Descripcion</th></tr></thead>
+                <tbody>
+                  <tr className="border-b border-border"><td className="py-1 pr-4 font-mono text-xs">salario_mensual</td><td className="py-1">Salario ordinario mensual en USD</td></tr>
+                  <tr><td className="py-1 pr-4 font-mono text-xs">dias_periodo</td><td className="py-1">Dias del ano en curso hasta la fecha de salida</td></tr>
+                </tbody>
+              </table>
+            </section>
+            <section>
+              <h2 className="text-base font-semibold">Formula</h2>
+              <pre className="rounded-lg bg-muted p-3 text-xs"><code>{`decimotercer_mes = salario_mensual * (dias_periodo / 365)`}</code></pre>
+            </section>
+            <section>
+              <h2 className="text-base font-semibold">Ejemplo</h2>
+              <div className="rounded-lg border border-border bg-card p-3 text-sm">
+                <p className="mb-1 font-medium">Salario de $1,500, salida el 30 de septiembre (273 dias)</p>
+                <ul className="space-y-0.5 text-xs text-muted-foreground">
+                  <li>decimo = 1,500 * (273 / 365) = 1,500 * 0.748 = <strong>$1,122</strong></li>
+                </ul>
+              </div>
+            </section>
+            <section>
+              <h2 className="text-base font-semibold">Vigencia</h2>
+              <p className="text-sm text-muted-foreground">Ley 13 de 1994. Corpus: <code>pa-v0.1.0</code></p>
+            </section>
+          </div>
+        ),
       },
     },
     {
@@ -513,8 +2152,55 @@ const docsSource = defineSource<JustoPageData, { title?: string; pages?: string[
       path: "legal/panama/vacaciones",
       data: {
         title: "🌴 Vacaciones pendientes",
-        description: "30 dias por cada 11 meses.",
-        body: <p>Art. 54 Codigo de Trabajo. 30d/11 meses. Formula: (salario/30) * dias pendientes.</p>,
+        description: "30 dias por cada 11 meses de servicio. Art. 54 Codigo de Trabajo.",
+        body: (
+          <div className="space-y-6">
+            <section>
+              <h2 className="text-base font-semibold">Base legal</h2>
+              <ul className="list-disc space-y-1 pl-5 text-sm">
+                <li><strong>Art. 54</strong> — 30 dias de vacaciones por cada 11 meses de trabajo continuo.</li>
+                <li>Tasa: 1 dia por cada 11 dias trabajados.</li>
+              </ul>
+            </section>
+            <section>
+              <h2 className="text-base font-semibold">Regla operativa</h2>
+              <ul className="list-disc space-y-1 pl-5 text-sm">
+                <li>30 dias de vacaciones remuneradas por cada 11 meses de servicio.</li>
+                <li>Proporcional al tiempo trabajado al terminar la relacion.</li>
+                <li>Base: promedio ordinario + extraordinario ultimos 11 meses.</li>
+              </ul>
+            </section>
+            <section>
+              <h2 className="text-base font-semibold">Variables</h2>
+              <table className="w-full text-sm">
+                <thead><tr className="border-b border-border"><th className="pr-4 text-left font-medium">Variable</th><th className="text-left font-medium">Descripcion</th></tr></thead>
+                <tbody>
+                  <tr className="border-b border-border"><td className="py-1 pr-4 font-mono text-xs">salario_mensual</td><td className="py-1">Salario ordinario mensual en USD</td></tr>
+                  <tr><td className="py-1 pr-4 font-mono text-xs">dias_vacaciones_pendientes</td><td className="py-1">Dias de vacaciones acumulados no gozados</td></tr>
+                </tbody>
+              </table>
+            </section>
+            <section>
+              <h2 className="text-base font-semibold">Formula</h2>
+              <pre className="rounded-lg bg-muted p-3 text-xs"><code>{`salario_diario = salario_mensual / 30
+vacaciones_pendientes = salario_diario * dias_vacaciones_pendientes`}</code></pre>
+            </section>
+            <section>
+              <h2 className="text-base font-semibold">Ejemplo</h2>
+              <div className="rounded-lg border border-border bg-card p-3 text-sm">
+                <p className="mb-1 font-medium">Salario de $1,500, 12 dias de vacaciones pendientes</p>
+                <ul className="space-y-0.5 text-xs text-muted-foreground">
+                  <li>salario_diario = 1,500 / 30 = <strong>$50</strong></li>
+                  <li>vacaciones = 50 * 12 = <strong>$600</strong></li>
+                </ul>
+              </div>
+            </section>
+            <section>
+              <h2 className="text-base font-semibold">Vigencia</h2>
+              <p className="text-sm text-muted-foreground">Codigo de Trabajo de Panama, Art. 54. Corpus: <code>pa-v0.1.0</code></p>
+            </section>
+          </div>
+        ),
       },
     },
     {
@@ -522,8 +2208,44 @@ const docsSource = defineSource<JustoPageData, { title?: string; pages?: string[
       path: "legal/panama/salario-proporcional",
       data: {
         title: "🧾 Salario pendiente",
-        description: "Proporcional del mes en curso.",
-        body: <p>Formula: (salario/30) * dias trabajados.</p>,
+        description: "Pago proporcional del mes en curso.",
+        body: (
+          <div className="space-y-6">
+            <section>
+              <h2 className="text-base font-semibold">Base legal</h2>
+              <p className="text-sm">Principio general del Codigo de Trabajo de Panama.</p>
+            </section>
+            <section>
+              <h2 className="text-base font-semibold">Variables</h2>
+              <table className="w-full text-sm">
+                <thead><tr className="border-b border-border"><th className="pr-4 text-left font-medium">Variable</th><th className="text-left font-medium">Descripcion</th></tr></thead>
+                <tbody>
+                  <tr className="border-b border-border"><td className="py-1 pr-4 font-mono text-xs">salario_mensual</td><td className="py-1">Salario ordinario mensual en USD</td></tr>
+                  <tr><td className="py-1 pr-4 font-mono text-xs">dias_trabajados</td><td className="py-1">Dias trabajados en el mes de salida</td></tr>
+                </tbody>
+              </table>
+            </section>
+            <section>
+              <h2 className="text-base font-semibold">Formula</h2>
+              <pre className="rounded-lg bg-muted p-3 text-xs"><code>{`salario_diario = salario_mensual / 30
+salario_proporcional = salario_diario * dias_trabajados`}</code></pre>
+            </section>
+            <section>
+              <h2 className="text-base font-semibold">Ejemplo</h2>
+              <div className="rounded-lg border border-border bg-card p-3 text-sm">
+                <p className="mb-1 font-medium">Salario de $1,500, salida el dia 15 del mes</p>
+                <ul className="space-y-0.5 text-xs text-muted-foreground">
+                  <li>salario_diario = 1,500 / 30 = <strong>$50</strong></li>
+                  <li>salario_proporcional = 50 * 15 = <strong>$750</strong></li>
+                </ul>
+              </div>
+            </section>
+            <section>
+              <h2 className="text-base font-semibold">Vigencia</h2>
+              <p className="text-sm text-muted-foreground">Codigo de Trabajo de Panama. Corpus: <code>pa-v0.1.0</code></p>
+            </section>
+          </div>
+        ),
       },
     },
     {
@@ -531,8 +2253,45 @@ const docsSource = defineSource<JustoPageData, { title?: string; pages?: string[
       path: "legal/panama/deducciones",
       data: {
         title: "➖ Deducciones legales",
-        description: "CSS 9.75% sobre base imponible.",
-        body: <p>CSS 9.75%. Tope legal 50% del salario (Art. 161).</p>,
+        description: "CSS 9.75% sobre base imponible. Tope legal 50% (Art. 161).",
+        body: (
+          <div className="space-y-6">
+            <section>
+              <h2 className="text-base font-semibold">Base legal</h2>
+              <ul className="list-disc space-y-1 pl-5 text-sm">
+                <li><strong>Art. 161</strong> — Tope maximo de deducciones del 50% del salario en efectivo (excepto pension alimenticia).</li>
+                <li><strong>Ley Organica de la CSS</strong> — Cotizacion social obligatoria.</li>
+              </ul>
+            </section>
+            <section>
+              <h2 className="text-base font-semibold">Regla operativa</h2>
+              <ul className="list-disc space-y-1 pl-5 text-sm">
+                <li>CSS se calcula sobre salario proporcional + vacaciones pagadas.</li>
+                <li>Tasa: 9.75% sobre base imponible.</li>
+                <li>Tope maximo de deducciones: 50% del salario.</li>
+              </ul>
+            </section>
+            <section>
+              <h2 className="text-base font-semibold">Formula</h2>
+              <pre className="rounded-lg bg-muted p-3 text-xs"><code>{`css_laboral = base_css * 0.0975
+total_deducciones = css_laboral
+(maximo 50% del salario, Art. 161)`}</code></pre>
+            </section>
+            <section>
+              <h2 className="text-base font-semibold">Ejemplo</h2>
+              <div className="rounded-lg border border-border bg-card p-3 text-sm">
+                <p className="mb-1 font-medium">Base CSS de $1,350 (salario prop. $750 + vac. $600)</p>
+                <ul className="space-y-0.5 text-xs text-muted-foreground">
+                  <li>css = 1,350 * 0.0975 = <strong>$132</strong></li>
+                </ul>
+              </div>
+            </section>
+            <section>
+              <h2 className="text-base font-semibold">Vigencia</h2>
+              <p className="text-sm text-muted-foreground">Codigo de Trabajo Art. 161 + Ley Organica de la CSS. Corpus: <code>pa-v0.1.0</code></p>
+            </section>
+          </div>
+        ),
       },
     },
     {
@@ -540,8 +2299,36 @@ const docsSource = defineSource<JustoPageData, { title?: string; pages?: string[
       path: "legal/panama/css",
       data: {
         title: "🏥 CSS laboral",
-        description: "Cotizacion del 9.75%.",
-        body: <p>Tasa operativa: 9.75%. Formula: base * 0.0975.</p>,
+        description: "Cotizacion del 9.75% a la Caja de Seguro Social de Panama.",
+        body: (
+          <div className="space-y-6">
+            <section>
+              <h2 className="text-base font-semibold">Base legal</h2>
+              <p className="text-sm">Ley Organica de la Caja de Seguro Social de Panama.</p>
+            </section>
+            <section>
+              <h2 className="text-base font-semibold">Regla operativa</h2>
+              <p className="text-sm">Tasa laboral propuesta: 9.75% sobre el salario ordinario y prestaciones imponibles.</p>
+            </section>
+            <section>
+              <h2 className="text-base font-semibold">Formula</h2>
+              <pre className="rounded-lg bg-muted p-3 text-xs"><code>{`css_laboral = base_css * 0.0975`}</code></pre>
+            </section>
+            <section>
+              <h2 className="text-base font-semibold">Ejemplo</h2>
+              <div className="rounded-lg border border-border bg-card p-3 text-sm">
+                <p className="mb-1 font-medium">Base CSS de $1,350</p>
+                <ul className="space-y-0.5 text-xs text-muted-foreground">
+                  <li>css = 1,350 * 0.0975 = <strong>$132</strong></li>
+                </ul>
+              </div>
+            </section>
+            <section>
+              <h2 className="text-base font-semibold">Vigencia</h2>
+              <p className="text-sm text-muted-foreground">Ley Organica de la CSS. Tasa: 9.75% (pendiente confirmacion). Corpus: <code>pa-v0.1.0</code></p>
+            </section>
+          </div>
+        ),
       },
     },
   ],

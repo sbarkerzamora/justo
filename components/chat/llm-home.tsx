@@ -518,9 +518,21 @@ export function LlmHome({ countryCode, onChangeCountry }: { countryCode?: string
         <div className="flex-1 space-y-3 overflow-y-auto px-2">
           {messages.length === 0 ? (
             <div className="flex min-h-[50svh] flex-col items-center justify-center gap-4 px-2 text-center">
-              <div className="max-w-xl text-sm leading-relaxed text-foreground motion-safe:animate-in motion-safe:fade-in motion-safe:slide-in-from-bottom-1 duration-300">
-                Hola, soy Justo. Puedes preguntarme lo que necesites sobre la ley laboral o presionar
-                Iniciar calculo.
+              <div className="max-w-xl space-y-3 text-sm leading-relaxed text-foreground motion-safe:animate-in motion-safe:fade-in motion-safe:slide-in-from-bottom-1 duration-300">
+                <p>
+                  Hola, soy Justo. Puedes consultarme sobre la legislacion laboral de
+                  Centroamerica o calcular una <strong>liquidacion laboral</strong> completa.
+                </p>
+                <ul className="list-disc space-y-1 pl-5 text-left text-muted-foreground">
+                  <li>
+                    <strong>Consulta legal</strong>: preguntame sobre derechos, prestaciones,
+                    indemnizaciones y deducciones segun el pais que seleccionaste.
+                  </li>
+                  <li>
+                    <strong>Calculo de liquidacion</strong>: completa los pasos guiados y obten
+                    el desglose con formulas legales, deducciones y PDF descargable.
+                  </li>
+                </ul>
               </div>
               <button
                 type="button"
