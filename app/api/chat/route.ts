@@ -1,5 +1,5 @@
 import { createOpenAI } from "@ai-sdk/openai"
-import { convertToModelMessages, streamText, type UIMessage } from "ai"
+import { convertToModelMessages, generateText, type UIMessage } from "ai"
 
 const openrouter = createOpenAI({
   apiKey: process.env.OPENROUTER_API_KEY,
@@ -31,11 +31,11 @@ export async function POST(request: Request) {
     }),
   )
 
-  const result = streamText({
+  const { text } = await generateText({
     model: openrouter.chat(process.env.OPENROUTER_MODEL ?? "openai/gpt-4o-mini"),
     system: systemPrompt,
     messages: modelMessages,
   })
 
-  return result.toUIMessageStreamResponse()
+  return Response.json({ text })
 }

@@ -1,0 +1,20 @@
+---
+title: Indemnizacion por antiguedad
+description: Cesantia progresiva + preaviso segun tiempo de servicio.
+---
+
+## Base legal
+
+- Arts. 28, 29 y 30 del Codigo de Trabajo de Costa Rica.
+
+## Regla operativa
+
+- Cesantia: ~20 dias de salario por ano (max. 8 anos).
+- Preaviso: 7 dias (3-6m), 15 dias (6-12m), 30 dias (+1a).
+- Base: promedio de ultimos 6 meses.
+
+## Formula
+
+- `salario_diario = salario_mensual / 30`
+- `cesantia = salario_diario * min(anos * 20, 160)`
+- `preaviso = salario_diario * dias_segun_tiempo`

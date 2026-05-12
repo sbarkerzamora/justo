@@ -1,7 +1,11 @@
 export type PayrollFrequency = "mensual" | "quincenal" | "semanal"
 
+export type CountryCode = "ni" | "gt" | "hn" | "sv" | "cr" | "pa"
+
+export type CurrencyCode = "NIO" | "GTQ" | "HNL" | "USD" | "CRC"
+
 export interface SettlementInput {
-  countryCode: "ni"
+  countryCode: CountryCode
   employeeName: string
   employerName: string
   monthlySalary: number
@@ -19,7 +23,7 @@ export interface SettlementLine {
 }
 
 export interface SettlementResult {
-  currency: "NIO"
+  currency: CurrencyCode
   tenureDays: number
   tenureText: string
   incomes: SettlementLine[]

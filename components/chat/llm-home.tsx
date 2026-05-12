@@ -12,7 +12,7 @@ import {
   IconSun,
 } from "@tabler/icons-react"
 import { useTheme } from "next-themes"
-import { type ReactNode, useMemo, useRef, useState } from "react"
+import { type ReactNode, useEffect, useMemo, useRef, useState } from "react"
 
 type Role = "user" | "assistant"
 type FlowStep =
@@ -30,7 +30,7 @@ type EditMode = null | "salary" | "dates" | "vacations"
 
 type ChatMessage = { id: string; role: Role; text: string }
 type SettlementForm = {
-  countryCode: "ni"
+  countryCode: string
   employeeName: string
   employerName: string
   monthlySalary: number
@@ -51,8 +51,8 @@ type SettlementApiResponse = {
   }
 }
 
-const defaultForm: SettlementForm = {
-  countryCode: "ni",
+const defaultForm = (cc: string): SettlementForm => ({
+  countryCode: cc,
   employeeName: "",
   employerName: "",
   monthlySalary: 0,
@@ -60,7 +60,7 @@ const defaultForm: SettlementForm = {
   unusedVacationDays: 0,
   startDate: "",
   endDate: "",
-}
+})
 
 const stepOrder: FlowStep[] = [
   "employeeName",
@@ -73,9 +73,29 @@ const stepOrder: FlowStep[] = [
   "confirm",
 ]
 
+const stepLabels: Record<string, string> = {
+  employeeName: "Nombre del trabajador",
+  employerName: "Nombre del empleador",
+  monthlySalary: "Salario mensual",
+  startDate: "Fecha de inicio",
+  endDate: "Fecha de salida",
+  unusedVacationDays: "Vacaciones pendientes",
+  frequency: "Frecuencia de pago",
+  confirm: "Confirmar datos",
+}
+
 const uid = () => crypto.randomUUID()
-const money = (value: number) =>
-  new Intl.NumberFormat("es-NI", { style: "currency", currency: "NIO" }).format(value)
+const money = (value: number, currencyCode?: string) =>
+  new Intl.NumberFormat("es-NI", { style: "currency", currency: currencyCode ?? "NIO" }).format(value)
+
+const currencyConfig: Record<string, { code: string; locale: string; label: string }> = {
+  ni: { code: "NIO", locale: "es-NI", label: "córdobas (NIO)" },
+  gt: { code: "GTQ", locale: "es-GT", label: "quetzales (GTQ)" },
+  sv: { code: "USD", locale: "es-SV", label: "dólares (USD)" },
+  hn: { code: "HNL", locale: "es-HN", label: "lempiras (HNL)" },
+  cr: { code: "CRC", locale: "es-CR", label: "colones (CRC)" },
+  pa: { code: "USD", locale: "es-PA", label: "dólares (USD)" },
+}
 
 const toIsoDate = (displayDate: string) => {
   const m = displayDate.match(/^(\d{2})\/(\d{2})\/(\d{4})$/)
@@ -90,13 +110,24 @@ const toIsoDate = (displayDate: string) => {
     .padStart(2, "0")}`
 }
 
-export function LlmHome() {
+const countryLabels: Record<string, string> = {
+  ni: "Nicaragua",
+  sv: "El Salvador",
+  gt: "Guatemala",
+  hn: "Honduras",
+  cr: "Costa Rica",
+  pa: "Panamá",
+}
+
+export function LlmHome({ countryCode, onChangeCountry }: { countryCode?: string; onChangeCountry?: () => void }) {
+  const cc = countryCode ?? "ni"
+  const fmt = (v: number) => money(v, currencyConfig[cc]?.code)
   const { resolvedTheme, setTheme } = useTheme()
   const [messages, setMessages] = useState<ChatMessage[]>([])
   const [input, setInput] = useState("")
   const [step, setStep] = useState<FlowStep>("idle")
   const [editMode, setEditMode] = useState<EditMode>(null)
-  const [form, setForm] = useState<SettlementForm>(defaultForm)
+  const [form, setForm] = useState<SettlementForm>(defaultForm(cc))
   const [isLoading, setIsLoading] = useState(false)
   const [isTyping, setIsTyping] = useState(false)
   const [typingLabel, setTypingLabel] = useState("Escribiendo")
@@ -108,7 +139,12 @@ export function LlmHome() {
   const [editVacations, setEditVacations] = useState("")
   const [editStartDate, setEditStartDate] = useState("")
   const [editEndDate, setEditEndDate] = useState("")
-  const inputRef = useRef<HTMLTextAreaElement | null>(null)
+  const inputRef = useRef<HTMLInputElement | null>(null)
+  const messagesEndRef = useRef<HTMLDivElement | null>(null)
+
+  useEffect(() => {
+    messagesEndRef.current?.scrollIntoView({ behavior: "smooth" })
+  }, [messages])
 
   const canSend = useMemo(() => input.trim().length > 0 && !isLoading, [input, isLoading])
   const stepIdx = useMemo(() => {
@@ -136,7 +172,6 @@ export function LlmHome() {
     const map: Record<string, string> = {
       employeeName: "Empecemos, cual es el nombre completo del trabajador?",
       employerName: "Gracias. Cual es el nombre del empleador o empresa?",
-      monthlySalary: "Cual es el salario mensual en cordobas (NIO)?",
       startDate: "Cual es la fecha de inicio laboral? Formato DD/MM/AAAA.",
       endDate: "Cual es la fecha de salida? Formato DD/MM/AAAA.",
       unusedVacationDays: "Cuantos dias de vacaciones pendientes hay?",
@@ -147,7 +182,7 @@ export function LlmHome() {
 
   const startFlow = () => {
     setMessages([])
-    setForm(defaultForm)
+    setForm(defaultForm(cc))
     setResult(null)
     setEditMode(null)
     setStep("employeeName")
@@ -254,7 +289,7 @@ export function LlmHome() {
       setResult(data)
       setLastCalculation(data)
       setStep("done")
-      await appendAssistant(`Neto estimado: ${money(data.result.netTotal)}`, {
+      await appendAssistant(`Neto estimado: ${fmt(data.result.netTotal)}`, {
         delay: 420,
         phase: "Escribiendo resultado",
       })
@@ -313,10 +348,8 @@ export function LlmHome() {
         await appendAssistant("No pude responder en este momento.", { delay: 500 })
         return
       }
-      await appendAssistant("Consulta legal recibida. En la siguiente iteracion activaremos streaming completo.", {
-        delay: 650,
-        phase: "Buscando base legal",
-      })
+      const data = await res.json()
+      await appendAssistant(data.text, { delay: 0 })
     } finally {
       setIsLoading(false)
     }
@@ -364,7 +397,12 @@ export function LlmHome() {
       const ns = nextStep(step)
       setStep(ns)
       if (ns === "confirm") showSummary()
-      else askForStep(ns)
+      else if (ns === "monthlySalary") {
+        void appendAssistant(
+          `Cual es el salario mensual en ${currencyConfig[cc]?.label ?? "córdobas (NIO)"}?`,
+          { delay: 520 },
+        )
+      } else askForStep(ns)
       return
     }
 
@@ -374,6 +412,13 @@ export function LlmHome() {
       return
     }
     await sendLegalQuery(text)
+  }
+
+  const handleKeyDown = (e: React.KeyboardEvent) => {
+    if (e.key === "Enter" && !e.shiftKey) {
+      e.preventDefault()
+      void onSend()
+    }
   }
 
   const onExportPdf = async (payloadOverride?: SettlementForm) => {
@@ -395,30 +440,30 @@ export function LlmHome() {
   }
 
   return (
-    <main className="min-h-svh bg-[oklch(0.97_0.006_225)] px-4 py-6 text-[oklch(0.26_0.02_230)] md:px-8">
-      <header className="mx-auto mb-5 flex max-w-4xl items-center justify-between rounded-2xl border border-[oklch(0.9_0.01_230)] bg-[oklch(0.99_0.004_230)] px-4 py-3">
-        <div className="text-lg font-semibold tracking-tight">Justo</div>
+    <main className="mx-auto flex min-h-svh max-w-4xl flex-col px-4 md:px-8">
+      <header className="sticky top-0 z-10 mx-auto mb-4 mt-3 flex w-full max-w-4xl items-center justify-between rounded-2xl border border-border bg-card px-4 py-3 shadow-sm">
+        <a href="/" className="text-lg font-semibold tracking-tight text-foreground">Justo</a>
         <div className="flex items-center gap-2">
           <button
             type="button"
             onClick={resetConversation}
-            className="inline-flex h-9 items-center justify-center rounded-xl border border-[oklch(0.86_0.015_220)] bg-white px-3 text-xs font-semibold hover:bg-[oklch(0.97_0.006_225)]"
+            className="inline-flex h-8 items-center justify-center rounded-lg border border-border bg-card px-3 text-xs font-semibold text-foreground hover:bg-accent"
           >
             Nueva conversacion
           </button>
           <a
             href="/docs"
-            className="inline-flex h-9 items-center justify-center gap-2 rounded-xl border border-[oklch(0.86_0.015_220)] bg-white px-3 text-xs font-semibold hover:bg-[oklch(0.97_0.006_225)]"
+            className="inline-flex h-8 items-center justify-center gap-1 rounded-lg border border-border bg-card px-3 text-xs font-semibold text-foreground hover:bg-accent"
             aria-label="Ir a documentacion"
           >
             <IconBook className="size-4" />
             Docs
           </a>
           <a
-            href="https://github.com/stephanbarker/justo"
+            href="https://github.com/sbarkerzamora/justo"
             target="_blank"
             rel="noreferrer"
-            className="inline-flex size-9 items-center justify-center rounded-xl border border-[oklch(0.86_0.015_220)] bg-white hover:bg-[oklch(0.97_0.006_225)]"
+            className="inline-flex size-8 items-center justify-center rounded-lg border border-border bg-card text-foreground hover:bg-accent"
             aria-label="Repositorio del proyecto en GitHub"
           >
             <IconBrandGithub className="size-4" />
@@ -426,7 +471,7 @@ export function LlmHome() {
           <button
             type="button"
             onClick={() => setTheme(resolvedTheme === "dark" ? "light" : "dark")}
-            className="inline-flex size-9 items-center justify-center rounded-xl border border-[oklch(0.86_0.015_220)] bg-white hover:bg-[oklch(0.97_0.006_225)]"
+            className="inline-flex size-8 items-center justify-center rounded-lg border border-border bg-card text-foreground hover:bg-accent"
             aria-label="Cambiar tema"
           >
             {resolvedTheme === "dark" ? (
@@ -438,53 +483,104 @@ export function LlmHome() {
         </div>
       </header>
 
-      <section className="mx-auto flex h-[78svh] max-w-4xl flex-col rounded-3xl border border-[oklch(0.88_0.01_220)] bg-[oklch(0.99_0.004_230)] p-4 shadow-sm md:p-6">
-        {isCalculationMode ? <div className="mb-3">
-          <div className="mb-1 flex items-center justify-between text-xs text-[oklch(0.46_0.03_230)]">
-            <span>Paso {stepIdx} de 8</span>
-            <span>{step === "done" ? "Resultado" : stepOrder[stepIdx - 1]}</span>
+      <section className="flex flex-1 flex-col overflow-y-auto">
+        {isCalculationMode ? (
+          <div className="mb-3 space-y-2">
+            <div className="mb-1 flex items-center justify-between text-xs text-muted-foreground">
+              <span>Paso {stepIdx} de 8</span>
+              <span>{step === "done" ? "Resultado" : stepLabels[stepOrder[stepIdx - 1]]}</span>
+            </div>
+            <div className="h-2 rounded-full bg-muted">
+              <div
+                className="h-2 rounded-full bg-primary transition-all duration-300"
+                style={{ width: `${(stepIdx / 8) * 100}%` }}
+              />
+            </div>
+            <div className="flex items-center gap-1.5 text-[11px] text-muted-foreground">
+              <img
+                src={`https://flagcdn.com/w40/${cc}.png`}
+                alt={countryLabels[cc] ?? cc}
+                className="h-2.5 w-3.5 rounded-[1px] border border-border object-cover"
+              />
+              <span>
+                Calculando segun legislacion de <span className="font-medium text-foreground">{countryLabels[cc] ?? cc}</span>
+              </span>
+              <a
+                href="/docs"
+                className="ml-auto underline underline-offset-2 hover:text-foreground"
+              >
+                Ver marco legal →
+              </a>
+            </div>
           </div>
-          <div className="h-2 rounded-full bg-[oklch(0.93_0.01_225)]">
-            <div className="h-2 rounded-full bg-[oklch(0.5_0.11_245)] transition-all duration-300" style={{ width: `${(stepIdx / 8) * 100}%` }} />
-          </div>
-        </div> : null}
+        ) : null}
 
-        <div className="flex-1 space-y-4 overflow-y-auto pr-2">
+        <div className="flex-1 space-y-3 overflow-y-auto px-2">
           {messages.length === 0 ? (
-            <div className="flex min-h-[45svh] flex-col items-center justify-center gap-5 px-2 text-center">
-              <div className="max-w-xl rounded-2xl border border-[oklch(0.86_0.015_220)] bg-white px-4 py-3 text-sm leading-relaxed motion-safe:animate-in motion-safe:fade-in motion-safe:slide-in-from-bottom-1 duration-300">
-                Hola, soy Justo. Puedes preguntarme lo que necesites sobre la ley laboral o presionar Iniciar calculo.
+            <div className="flex min-h-[50svh] flex-col items-center justify-center gap-4 px-2 text-center">
+              <div className="max-w-xl text-sm leading-relaxed text-foreground motion-safe:animate-in motion-safe:fade-in motion-safe:slide-in-from-bottom-1 duration-300">
+                Hola, soy Justo. Puedes preguntarme lo que necesites sobre la ley laboral o presionar
+                Iniciar calculo.
               </div>
-              <button type="button" onClick={startFlow} className="inline-flex items-center gap-3 rounded-2xl bg-[oklch(0.49_0.12_245)] px-6 py-3 text-base font-semibold text-[oklch(0.985_0.003_230)] shadow-[0_10px_30px_oklch(0.49_0.12_245_/_0.25)] transition-all duration-300 ease-out hover:translate-y-[-1px] hover:bg-[oklch(0.45_0.12_245)]">
-                <IconCalculator className="size-5" />Iniciar calculo<IconSparkles className="size-5" />
+              <button
+                type="button"
+                onClick={startFlow}
+                className="inline-flex items-center gap-3 rounded-2xl bg-primary px-6 py-3 text-base font-semibold text-primary-foreground shadow-lg transition-all duration-300 ease-out hover:translate-y-[-1px]"
+              >
+                <IconCalculator className="size-5" />
+                Iniciar calculo
+                <IconSparkles className="size-5" />
               </button>
             </div>
           ) : null}
 
           {messages.map((m) => (
-            <div key={m.id} className={(m.role === "user" ? "flex justify-end" : "flex justify-start") + " motion-safe:animate-in motion-safe:fade-in motion-safe:slide-in-from-bottom-1 duration-200"}>
-              <div className={m.role === "user" ? "max-w-[85%] whitespace-pre-line rounded-2xl bg-[oklch(0.5_0.11_245)] px-4 py-2 text-sm text-[oklch(0.985_0.003_230)]" : "max-w-[88%] whitespace-pre-line rounded-2xl border border-[oklch(0.86_0.015_220)] bg-white px-4 py-2 text-sm leading-relaxed"}>{m.text}</div>
+            <div
+              key={m.id}
+              className={
+                (m.role === "user" ? "flex justify-end" : "flex justify-start") +
+                " motion-safe:animate-in motion-safe:fade-in motion-safe:slide-in-from-bottom-1 duration-200"
+              }
+            >
+              <div
+                className={
+                  m.role === "user"
+                    ? "max-w-[85%] whitespace-pre-line rounded-2xl bg-primary px-4 py-2.5 text-sm text-primary-foreground"
+                    : "max-w-[88%] whitespace-pre-line rounded-2xl border border-border bg-card px-4 py-2.5 text-sm leading-relaxed text-foreground"
+                }
+              >
+                {m.text}
+              </div>
             </div>
           ))}
 
           {isCalculationMode && step === "frequency" ? (
-            <div className="rounded-2xl border border-[oklch(0.86_0.015_220)] bg-white p-3">
-              <p className="mb-2 text-xs font-medium text-[oklch(0.45_0.03_230)]">Selecciona una opcion</p>
+            <div className="rounded-2xl border border-border bg-card p-3">
+              <p className="mb-2 text-xs font-medium text-muted-foreground">
+                Selecciona una opcion
+              </p>
               <div className="flex gap-2">
                 {(["mensual", "quincenal", "semanal"] as const).map((f) => (
-                  <button key={f} type="button" onClick={() => onFrequencySelect(f)} className="rounded-xl border border-[oklch(0.8_0.02_230)] px-3 py-2 text-sm font-medium capitalize hover:bg-[oklch(0.96_0.01_230)]">{f}</button>
+                  <button
+                    key={f}
+                    type="button"
+                    onClick={() => onFrequencySelect(f)}
+                    className="rounded-xl border border-border px-3 py-2 text-sm font-medium capitalize text-foreground hover:bg-accent"
+                  >
+                    {f}
+                  </button>
                 ))}
               </div>
             </div>
           ) : null}
 
           {isCalculationMode && step === "confirm" ? (
-            <div className="rounded-2xl border border-[oklch(0.84_0.02_230)] bg-white p-4">
-              <p className="mb-3 text-sm font-semibold">Resumen capturado</p>
+            <div className="rounded-2xl border border-border bg-card p-4">
+              <p className="mb-3 text-sm font-semibold text-foreground">Resumen capturado</p>
               <div className="grid gap-2 text-sm">
                 <Row label="Trabajador" value={form.employeeName} />
                 <Row label="Empleador" value={form.employerName} />
-                <Row label="Salario" value={money(form.monthlySalary)} />
+                <Row label="Salario" value={fmt(form.monthlySalary)} />
                 <Row label="Fechas" value={`${form.startDate} -> ${form.endDate}`} />
                 <Row label="Vacaciones" value={`${form.unusedVacationDays} dias`} />
                 <Row label="Frecuencia" value={form.frequency} />
@@ -499,75 +595,240 @@ export function LlmHome() {
           ) : null}
 
           {isCalculationMode && editMode ? (
-            <div className="rounded-2xl border border-[oklch(0.84_0.02_230)] bg-white p-4">
+            <div className="rounded-2xl border border-border bg-card p-4">
               {editMode === "salary" ? (
-                <label className="grid gap-2 text-sm"><span>Nuevo salario mensual</span><input inputMode="decimal" value={editSalary} onChange={(e) => setEditSalary(e.target.value)} className="h-10 rounded-xl border border-[oklch(0.84_0.02_230)] px-3" /></label>
+                <label className="grid gap-2 text-sm">
+                  <span className="text-foreground">Nuevo salario mensual</span>
+                  <input
+                    inputMode="decimal"
+                    value={editSalary}
+                    onChange={(e) => setEditSalary(e.target.value)}
+                    className="h-10 rounded-xl border border-border bg-background px-3 text-foreground"
+                  />
+                </label>
               ) : null}
               {editMode === "vacations" ? (
-                <label className="grid gap-2 text-sm"><span>Nuevos dias de vacaciones</span><input inputMode="numeric" value={editVacations} onChange={(e) => setEditVacations(e.target.value)} className="h-10 rounded-xl border border-[oklch(0.84_0.02_230)] px-3" /></label>
+                <label className="grid gap-2 text-sm">
+                  <span className="text-foreground">Nuevos dias de vacaciones</span>
+                  <input
+                    inputMode="numeric"
+                    value={editVacations}
+                    onChange={(e) => setEditVacations(e.target.value)}
+                    className="h-10 rounded-xl border border-border bg-background px-3 text-foreground"
+                  />
+                </label>
               ) : null}
               {editMode === "dates" ? (
-                <div className="grid gap-2 text-sm"><label className="grid gap-1"><span>Fecha inicio (DD/MM/AAAA)</span><input inputMode="numeric" pattern="[0-9/]*" enterKeyHint="next" autoComplete="off" value={editStartDate} onChange={(e) => setEditStartDate(e.target.value)} className="h-10 rounded-xl border border-[oklch(0.84_0.02_230)] px-3" /></label><label className="grid gap-1"><span>Fecha salida (DD/MM/AAAA)</span><input inputMode="numeric" pattern="[0-9/]*" enterKeyHint="done" autoComplete="off" value={editEndDate} onChange={(e) => setEditEndDate(e.target.value)} className="h-10 rounded-xl border border-[oklch(0.84_0.02_230)] px-3" /></label></div>
+                <div className="grid gap-2 text-sm">
+                  <label className="grid gap-1">
+                    <span className="text-foreground">Fecha inicio (DD/MM/AAAA)</span>
+                    <input
+                      inputMode="numeric"
+                      pattern="[0-9/]*"
+                      enterKeyHint="next"
+                      autoComplete="off"
+                      value={editStartDate}
+                      onChange={(e) => setEditStartDate(e.target.value)}
+                      className="h-10 rounded-xl border border-border bg-background px-3 text-foreground"
+                    />
+                  </label>
+                  <label className="grid gap-1">
+                    <span className="text-foreground">Fecha salida (DD/MM/AAAA)</span>
+                    <input
+                      inputMode="numeric"
+                      pattern="[0-9/]*"
+                      enterKeyHint="done"
+                      autoComplete="off"
+                      value={editEndDate}
+                      onChange={(e) => setEditEndDate(e.target.value)}
+                      className="h-10 rounded-xl border border-border bg-background px-3 text-foreground"
+                    />
+                  </label>
+                </div>
               ) : null}
-              <div className="mt-3 flex gap-2"><ActionButton onClick={() => void saveEdit()} label="Guardar cambios" primary /><ActionButton onClick={() => setEditMode(null)} label="Cancelar" /></div>
+              <div className="mt-3 flex gap-2">
+                <ActionButton onClick={() => void saveEdit()} label="Guardar cambios" primary />
+                <ActionButton onClick={() => setEditMode(null)} label="Cancelar" />
+              </div>
             </div>
           ) : null}
 
           {isTyping ? (
-            <div className="flex justify-start"><div className="rounded-2xl border border-[oklch(0.86_0.015_220)] bg-white px-4 py-2 text-sm text-[oklch(0.45_0.03_230)]"><div className="mb-1 text-xs font-medium">{typingLabel}</div><div className="flex items-center gap-1"><span className="size-2 rounded-full bg-[oklch(0.6_0.05_235)] motion-safe:animate-bounce" /><span className="size-2 rounded-full bg-[oklch(0.6_0.05_235)] motion-safe:animate-bounce [animation-delay:120ms]" /><span className="size-2 rounded-full bg-[oklch(0.6_0.05_235)] motion-safe:animate-bounce [animation-delay:240ms]" /></div></div></div>
+            <div className="flex justify-start">
+              <div className="rounded-2xl border border-border bg-card px-4 py-2.5 text-sm text-muted-foreground">
+                <div className="mb-1 text-xs font-medium">{typingLabel}</div>
+                <div className="flex items-center gap-1">
+                  <span className="size-2 rounded-full bg-primary motion-safe:animate-bounce" />
+                  <span className="size-2 rounded-full bg-primary motion-safe:animate-bounce [animation-delay:120ms]" />
+                  <span className="size-2 rounded-full bg-primary motion-safe:animate-bounce [animation-delay:240ms]" />
+                </div>
+              </div>
+            </div>
           ) : null}
 
           {isCalculationMode && result ? (
-            <div className="rounded-2xl border border-[oklch(0.84_0.02_230)] bg-white p-4">
-              <p className="text-sm font-semibold">Resultado final</p>
-              <p className="mt-1 text-xs text-[oklch(0.46_0.03_230)]">Version legal: {result.result.legalCorpusVersion}</p>
-              <p className="mt-3 text-2xl font-semibold text-[oklch(0.43_0.11_248)]">Neto: {money(result.result.netTotal)}</p>
+            <div className="rounded-2xl border border-border bg-card p-4">
+              <p className="text-sm font-semibold text-foreground">Resultado final</p>
+              <p className="mt-1 text-xs text-muted-foreground">
+                Version legal: {result.result.legalCorpusVersion}
+              </p>
+              <p className="mt-3 text-2xl font-semibold text-primary">
+                Neto: {fmt(result.result.netTotal)}
+              </p>
               <div className="mt-3 grid gap-2 text-sm">
-                <Row label="Ingresos brutos" value={money(result.result.grossIncome)} />
-                <Row label="Deducciones" value={money(result.result.totalDeductions)} />
+                <Row label="Ingresos brutos" value={fmt(result.result.grossIncome)} />
+                <Row label="Deducciones" value={fmt(result.result.totalDeductions)} />
               </div>
-              <details className="mt-3 rounded-xl border border-[oklch(0.9_0.01_230)] p-3 text-sm"><summary className="cursor-pointer font-medium">Ver desglose completo</summary><div className="mt-2 space-y-2">{result.result.incomes.map((l) => <p key={l.label}>+ {l.label}: {money(l.amount)} | {l.formula} | {l.legalReference}</p>)}{result.result.deductions.map((l) => <p key={l.label}>- {l.label}: {money(l.amount)} | {l.formula} | {l.legalReference}</p>)}</div></details>
-              <button type="button" onClick={() => void onExportPdf()} className="mt-4 inline-flex items-center gap-2 rounded-xl border border-[oklch(0.78_0.03_230)] bg-white px-4 py-2 text-sm font-semibold"><IconDownload className="size-4" />Descargar PDF</button>
+              <details className="mt-3 rounded-xl border border-border p-3 text-sm text-foreground">
+                <summary className="cursor-pointer font-medium">Ver desglose completo</summary>
+                <div className="mt-2 space-y-2">
+                  {result.result.incomes.map((l) => (
+                    <p key={l.label}>
+                      + {l.label}: {fmt(l.amount)} | {l.formula} | {l.legalReference}
+                    </p>
+                  ))}
+                  {result.result.deductions.map((l) => (
+                    <p key={l.label}>
+                      - {l.label}: {fmt(l.amount)} | {l.formula} | {l.legalReference}
+                    </p>
+                  ))}
+                </div>
+              </details>
+              <button
+                type="button"
+                onClick={() => void onExportPdf()}
+                className="mt-4 inline-flex items-center gap-2 rounded-xl border border-border bg-card px-4 py-2 text-sm font-semibold text-foreground"
+              >
+                <IconDownload className="size-4" />
+                Descargar PDF
+              </button>
               <div className="mt-3 grid gap-2 sm:grid-cols-2">
-                <button type="button" onClick={startFlow} className="inline-flex items-center justify-center rounded-xl bg-[oklch(0.49_0.12_245)] px-4 py-2 text-sm font-semibold text-[oklch(0.985_0.003_230)]">Volver a calcular</button>
-                <button type="button" onClick={() => void backToLegalChat()} className="inline-flex items-center justify-center rounded-xl border border-[oklch(0.8_0.02_230)] bg-white px-4 py-2 text-sm font-semibold">Escribir una pregunta</button>
+                <button
+                  type="button"
+                  onClick={startFlow}
+                  className="inline-flex items-center justify-center rounded-xl bg-primary px-4 py-2 text-sm font-semibold text-primary-foreground"
+                >
+                  Volver a calcular
+                </button>
+                <button
+                  type="button"
+                  onClick={() => void backToLegalChat()}
+                  className="inline-flex items-center justify-center rounded-xl border border-border bg-card px-4 py-2 text-sm font-semibold text-foreground"
+                >
+                  Escribir una pregunta
+                </button>
               </div>
             </div>
           ) : null}
 
           {!isCalculationMode && lastCalculation ? (
-            <div className="rounded-2xl border border-[oklch(0.84_0.02_230)] bg-white p-4">
-              <p className="text-sm font-semibold">Ultimo calculo</p>
-              <p className="mt-1 text-xs text-[oklch(0.46_0.03_230)]">
+            <div className="rounded-2xl border border-border bg-card p-4">
+              <p className="text-sm font-semibold text-foreground">Ultimo calculo</p>
+              <p className="mt-1 text-xs text-muted-foreground">
                 Version legal: {lastCalculation.result.legalCorpusVersion}
               </p>
-              <p className="mt-2 text-xl font-semibold text-[oklch(0.43_0.11_248)]">
-                Neto: {money(lastCalculation.result.netTotal)}
+              <p className="mt-2 text-xl font-semibold text-primary">
+                Neto: {fmt(lastCalculation.result.netTotal)}
               </p>
               <button
                 type="button"
                 onClick={() => void onExportPdf(lastCalculation.input)}
-                className="mt-3 inline-flex items-center gap-2 rounded-xl border border-[oklch(0.78_0.03_230)] bg-white px-4 py-2 text-sm font-semibold"
+                className="mt-3 inline-flex items-center gap-2 rounded-xl border border-border bg-card px-4 py-2 text-sm font-semibold text-foreground"
               >
-                <IconDownload className="size-4" />Descargar PDF
+                <IconDownload className="size-4" />
+                Descargar PDF
               </button>
             </div>
           ) : null}
+
+          <div ref={messagesEndRef} />
         </div>
 
-        <div className="mt-3 rounded-2xl border border-[oklch(0.86_0.015_220)] bg-white p-2">
-          <textarea ref={inputRef} rows={1} value={input} onChange={(e) => setInput(e.target.value)} placeholder="Escribe tu consulta o responde al paso actual" className="min-h-10 w-full resize-none bg-transparent px-3 py-2 text-sm outline-none" />
-          <div className="flex justify-end"><button type="button" onClick={() => void onSend()} disabled={!canSend} className="rounded-xl bg-[oklch(0.48_0.12_245)] px-4 py-2 text-sm font-medium text-[oklch(0.985_0.003_230)] disabled:opacity-50">{isLoading ? "Pensando..." : "Enviar"}</button></div>
+        <div className="border-t border-border pb-4 pt-3">
+          <div className="flex items-center gap-2 rounded-2xl border border-border bg-card px-4">
+            <input
+              ref={inputRef}
+              type="text"
+              value={input}
+              onChange={(e) => setInput(e.target.value)}
+              onKeyDown={handleKeyDown}
+              placeholder="Escribe tu consulta o responde al paso actual"
+              className="min-h-10 flex-1 bg-transparent py-2 text-sm text-foreground outline-none placeholder:text-muted-foreground"
+            />
+            {isLoading ? (
+              <span className="text-xs text-muted-foreground">Pensando...</span>
+            ) : null}
+          </div>
         </div>
       </section>
+
+      <footer className="border-t border-border py-4 text-center text-xs text-muted-foreground">
+        <div className="mb-2 flex items-center justify-center gap-1.5">
+          <button
+            type="button"
+            onClick={onChangeCountry}
+            className="inline-flex items-center gap-1.5 rounded-full border border-border bg-card px-3 py-1 text-[11px] font-medium text-foreground hover:bg-accent"
+          >
+            <img
+              src={`https://flagcdn.com/w40/${cc}.png`}
+              alt={countryLabels[cc] ?? cc}
+              className="h-2.5 w-3.5 rounded-[2px] border border-border object-cover"
+            />
+            {countryLabels[cc] ?? cc}
+          </button>
+        </div>
+        <p>
+          Justo &middot; Asistente laboral open source para Centroamerica &middot; La informacion
+          aqui presentada no constituye asesoria legal profesional
+        </p>
+        <p className="mt-1">
+          Desarrollado por{" "}
+          <a
+            href="https://stephanbarker.com"
+            target="_blank"
+            rel="noreferrer"
+            className="underline underline-offset-2 hover:text-foreground"
+          >
+            stephanbarker.com
+          </a>
+        </p>
+      </footer>
     </main>
   )
 }
 
 function Row({ label, value }: { label: string; value: string }) {
-  return <div className="flex items-center justify-between rounded-lg bg-[oklch(0.98_0.004_230)] px-3 py-2"><span className="text-[oklch(0.45_0.03_230)]">{label}</span><span className="font-medium capitalize">{value}</span></div>
+  return (
+    <div className="flex items-center justify-between rounded-lg bg-muted px-3 py-2">
+      <span className="text-muted-foreground">{label}</span>
+      <span className="font-medium capitalize text-foreground">{value}</span>
+    </div>
+  )
 }
 
-function ActionButton({ onClick, label, icon, primary = false }: { onClick: () => void; label: string; icon?: ReactNode; primary?: boolean }) {
-  return <button type="button" onClick={onClick} className={primary ? "inline-flex items-center gap-2 rounded-xl bg-[oklch(0.49_0.12_245)] px-3 py-2 text-sm font-medium text-[oklch(0.985_0.003_230)]" : "inline-flex items-center gap-2 rounded-xl border border-[oklch(0.8_0.02_230)] bg-white px-3 py-2 text-sm font-medium"}>{icon}{label}</button>
+function ActionButton({
+  onClick,
+  label,
+  icon,
+  primary = false,
+}: {
+  onClick: () => void
+  label: string
+  icon?: ReactNode
+  primary?: boolean
+}) {
+  return (
+    <button
+      type="button"
+      onClick={onClick}
+      className={
+        primary
+          ? "inline-flex items-center gap-2 rounded-xl bg-primary px-3 py-2 text-sm font-medium text-primary-foreground"
+          : "inline-flex items-center gap-2 rounded-xl border border-border bg-card px-3 py-2 text-sm font-medium text-foreground"
+      }
+    >
+      {icon}
+      {label}
+    </button>
+  )
 }

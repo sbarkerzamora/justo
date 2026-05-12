@@ -1,0 +1,23 @@
+---
+title: Indemnizacion por antiguedad
+description: Auxilio de cesantia, 1 mes por ano, maximo 25 meses.
+---
+
+## Base legal
+
+- Arts. 116, 120 y 123 del Codigo de Trabajo de Honduras (Decreto 189-59).
+
+## Regla operativa
+
+- 3 a 6 meses: 10 dias de salario.
+- 6 a 12 meses: 20 dias de salario.
+- 1 ano o mas: 1 mes de salario por cada ano.
+- Fracciones de ano proporcionales.
+- Maximo: 25 meses (750 dias).
+- Base: salario mensual ordinario.
+
+## Formula
+
+- `salario_diario = salario_mensual / 30`
+- `dias_indemnizacion = min(anos_antiguedad * 30, 750)`
+- `monto_indemnizacion = salario_diario * dias_indemnizacion`
