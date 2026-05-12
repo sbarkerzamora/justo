@@ -1,35 +1,43 @@
 # Justo
 
-Justo is an open source labor assistant for Central America, starting with Nicaragua. The first tool is a conversational labor settlement calculator that explains formulas, references legal basis, and exports a printable PDF with worker and employer signature lines.
+![Justo](public/images/og-image.png)
 
-## MVP Scope
+Justo is an open source labor assistant for Central America. It provides a conversational labor settlement calculator that explains formulas, references legal basis, and exports a printable PDF with worker and employer signature lines.
 
-- Country: Nicaragua (`ni`)
-- Experience: LLM chat-first interface
-- Calculation authority: deterministic server logic
-- Output: detailed settlement breakdown + printable PDF
+## Supported Countries
+
+| Country | Code | Currency | Status |
+|---|---|---|---|
+| Nicaragua | `ni` | NIO (Córdoba) | ✅ v0.2.0 |
+| Guatemala | `gt` | GTQ (Quetzal) | ✅ v0.1.0 |
+| Honduras | `hn` | HNL (Lempira) | ✅ v0.1.0 |
+| El Salvador | `sv` | USD | ✅ v0.1.0 |
+| Costa Rica | `cr` | CRC (Colón) | ✅ v0.1.0 |
+| Panamá | `pa` | USD | ✅ v0.1.0 |
 
 ## Tech Stack
 
 - Next.js 16 + React 19
 - assistant-ui (`@assistant-ui/react`) for chat UI
 - Vercel AI SDK v6 (`ai`) + OpenRouter gateway
+- Fumadocs for documentation pages
 - TypeScript + Tailwind CSS v4
+- PDF generation via `pdf-lib`
 
 ## Quick Start
 
-### 1) Requirements
+### Requirements
 
 - Node.js >= 22.6
 - Bun >= 1.3
 
-### 2) Install dependencies
+### Install dependencies
 
 ```bash
 bun install
 ```
 
-### 3) Configure environment variables
+### Configure environment variables
 
 Copy `.env.example` to `.env.local` and set your OpenRouter key:
 
@@ -38,12 +46,11 @@ cp .env.example .env.local
 ```
 
 Required variables:
-
 - `OPENROUTER_API_KEY`
 - `OPENROUTER_BASE_URL` (default already provided)
 - `OPENROUTER_MODEL`
 
-### 4) Run locally
+### Run locally
 
 ```bash
 bun run dev
@@ -54,20 +61,23 @@ Open `http://localhost:3000`.
 ## Project Structure
 
 - `app/` Next.js routes and API endpoints
-- `components/chat/` assistant-ui chat interface
-- `lib/settlement/` deterministic settlement logic by jurisdiction
+- `components/chat/` chat interface (LLM + guided liquidation flow)
+- `lib/settlement/{ni,gt,hn,sv,cr,pa}/` deterministic settlement logic per jurisdiction
 - `lib/pdf/` PDF generation utilities
-- `content/legal/ni/` legal corpus for Nicaragua
+- `lib/source.tsx` static Fumadocs source for docs pages
+- `content/legal/{ni,gt,hn,sv,cr,pa}/` legal corpus per country
+- `content/docs/` Fumadocs documentation content
 
-## Current API Endpoints
+## API Endpoints
 
-- `POST /api/chat` streamed assistant responses via OpenRouter
-- `POST /api/liquidation/calculate` deterministic settlement result
+- `POST /api/chat` assistant responses via OpenRouter
+- `POST /api/liquidation/calculate` deterministic settlement result (routes by `countryCode`)
 - `POST /api/liquidation/pdf` printable settlement PDF
 
 ## Legal and Safety Notes
 
 - This project is informational and does not constitute legal advice.
+- Each jurisdiction uses its own legal corpus (rates, formulas, articles) stored under `content/legal/`.
 - Settlement formulas must be verified against current official regulations.
 - Complex or disputed cases should be escalated to legal/accounting professionals.
 
@@ -85,13 +95,15 @@ Contributions are welcome.
 ```bash
 bun run typecheck
 bun run lint
+bun run test
+bun run build
 ```
 
 ## Documentation
 
 - App documentation is available at `/docs`.
-- Legal source pages for Nicaragua are available at `/docs/legal/nicaragua`.
-- Source legal markdown lives in `content/legal/ni`.
+- Legal source pages per country are available at `/docs/legal/{nicaragua,guatemala,honduras,elsalvador,costarica,panama}`.
+- Source legal markdown lives in `content/legal/`.
 
 ## Deploy on Vercel
 
@@ -103,14 +115,13 @@ bun run lint
 3. Deploy `main` as production branch.
 
 After deploy, verify:
-
 - Legal chat responses work.
-- Guided liquidation flow completes.
+- Guided liquidation flow completes for each country.
 - PDF download works from result card.
 
 ## Roadmap
 
-- Harden Nicaragua legal corpus and deduction rules (INSS + IR)
-- Add automated tests for all formula branches
-- Add support for Guatemala, Honduras, El Salvador, Costa Rica, and Panama
+- Harden legal corpus and deduction rules across all jurisdictions
+- Add automated tests for all formula branches per country
 - Add thread persistence and case history
+- Add support for additional Central American countries
