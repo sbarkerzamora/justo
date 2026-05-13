@@ -28,6 +28,11 @@ const countries: Country[] = [
   { code: "gt", name: "Guatemala", flag: "gt", timezones: ["America/Guatemala"] },
   { code: "hn", name: "Honduras", flag: "hn", timezones: ["America/Tegucigalpa"] },
   { code: "cr", name: "Costa Rica", flag: "cr", timezones: ["America/Costa_Rica"] },
+  { code: "cl", name: "Chile", flag: "cl", timezones: ["America/Santiago", "America/Punta_Arenas"] },
+  { code: "ar", name: "Argentina", flag: "ar", timezones: ["America/Buenos_Aires", "America/Cordoba", "America/Mendoza", "America/Argentina/Salta", "America/Argentina/Jujuy", "America/Argentina/Ushuaia"] },
+  { code: "pe", name: "Perú", flag: "pe", timezones: ["America/Lima"] },
+  { code: "co", name: "Colombia", flag: "co", timezones: ["America/Bogota"] },
+  { code: "mx", name: "México", flag: "mx", timezones: ["America/Mexico_City", "America/Matamoros", "America/Cancun", "America/Merida", "America/Monterrey", "America/Chihuahua", "America/Tijuana"] },
   { code: "pa", name: "Panamá", flag: "pa", timezones: ["America/Panama"] },
 ]
 

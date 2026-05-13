@@ -95,6 +95,11 @@ const currencyConfig: Record<string, { code: string; locale: string; label: stri
   sv: { code: "USD", locale: "es-SV", label: "dólares (USD)" },
   hn: { code: "HNL", locale: "es-HN", label: "lempiras (HNL)" },
   cr: { code: "CRC", locale: "es-CR", label: "colones (CRC)" },
+  cl: { code: "CLP", locale: "es-CL", label: "pesos chilenos (CLP)" },
+  ar: { code: "ARS", locale: "es-AR", label: "pesos argentinos (ARS)" },
+  pe: { code: "PEN", locale: "es-PE", label: "soles (PEN)" },
+  co: { code: "COP", locale: "es-CO", label: "pesos colombianos (COP)" },
+  mx: { code: "MXN", locale: "es-MX", label: "pesos mexicanos (MXN)" },
   pa: { code: "USD", locale: "es-PA", label: "dólares (USD)" },
 }
 
@@ -117,6 +122,11 @@ const countryLabels: Record<string, string> = {
   gt: "Guatemala",
   hn: "Honduras",
   cr: "Costa Rica",
+  cl: "Chile",
+  ar: "Argentina",
+  pe: "Perú",
+  co: "Colombia",
+  mx: "México",
   pa: "Panamá",
 }
 
@@ -673,9 +683,11 @@ export function LlmHome({ countryCode, onChangeCountry }: { countryCode?: string
               <div className="rounded-2xl border border-border bg-card px-4 py-2.5 text-sm text-muted-foreground">
                 <div className="mb-1 text-xs font-medium">{typingLabel}</div>
                 <div className="flex items-center gap-1">
-                  <span className="size-2 rounded-full bg-primary motion-safe:animate-bounce" />
-                  <span className="size-2 rounded-full bg-primary motion-safe:animate-bounce [animation-delay:120ms]" />
-                  <span className="size-2 rounded-full bg-primary motion-safe:animate-bounce [animation-delay:240ms]" />
+                  <span className="size-2 rounded-full bg-primary motion-safe:animate-typing-dot" />
+
+                  <span className="size-2 rounded-full bg-primary motion-safe:animate-typing-dot [animation-delay:200ms]" />
+
+                  <span className="size-2 rounded-full bg-primary motion-safe:animate-typing-dot [animation-delay:400ms]" />
                 </div>
               </div>
             </div>

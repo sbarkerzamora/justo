@@ -1,0 +1,15 @@
+---
+title: Vacaciones pendientes
+description: 15 dias habiles/ano + feriado progresivo. Arts. 67-73.
+---
+
+## Base legal
+
+- Art. 67: 15 dias habiles por ano.
+- Art. 68: +1 dia cada 3 anos desde el ano 10 (feriado progresivo).
+- Art. 73: Proporcional al terminar.
+
+## Formula
+
+- `feriado_progresivo = max(0, floor((anos - 10) / 3))`
+- `vacaciones = (salario/30) * (15 + feriado_progresivo)`

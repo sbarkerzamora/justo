@@ -244,4 +244,13 @@
   .justo-docs-layout article {
     grid-template-columns: 1fr !important;
   }
+
+  @keyframes typing-dot {
+    0%, 60%, 100% { opacity: 0.2; transform: scale(1); }
+    30% { opacity: 1; transform: scale(1.3); }
+  }
+
+  .animate-typing-dot {
+    animation: typing-dot 1.2s ease-in-out infinite;
+  }
 }

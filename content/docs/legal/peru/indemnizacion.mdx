@@ -1,0 +1,21 @@
+---
+title: Indemnizacion por despido
+description: 45/30/15 dias por ano segun antiguedad (Art. 167).
+---
+
+## Base legal
+
+- Art. 167: Escala de 45, 30 y 15 dias segun los anos de servicio.
+
+## Regla operativa
+
+- Anos 1-8: 45 dias/ano.
+- Anos 9-16: 30 dias/ano.
+- Anos 17+: 15 dias/ano.
+- Min: 90 dias. Max: 720 dias.
+
+## Formula
+
+- `dias_totales = min(anos,8)*45 + max(min(anos-8,8),0)*30 + max(anos-16,0)*15`
+- `dias_reales = min(max(dias_totales, 90), 720)`
+- `indemnizacion = (salario/30) * dias_reales`

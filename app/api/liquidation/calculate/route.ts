@@ -7,6 +7,11 @@ import { calculateHondurasSettlement } from "@/lib/settlement/hn/calculate"
 import { calculateElSalvadorSettlement } from "@/lib/settlement/sv/calculate"
 import { calculateCostaRicaSettlement } from "@/lib/settlement/cr/calculate"
 import { calculatePanamaSettlement } from "@/lib/settlement/pa/calculate"
+import { calculateMexicoSettlement } from "@/lib/settlement/mx/calculate"
+import { calculateColombiaSettlement } from "@/lib/settlement/co/calculate"
+import { calculatePeruSettlement } from "@/lib/settlement/pe/calculate"
+import { calculateArgentinaSettlement } from "@/lib/settlement/ar/calculate"
+import { calculateChileSettlement } from "@/lib/settlement/cl/calculate"
 
 export async function POST(request: Request) {
   const payload = await request.json()
@@ -26,6 +31,31 @@ export async function POST(request: Request) {
 
   if (countryCode === "gt") {
     const result = calculateGuatemalaSettlement(parsed.data)
+    return NextResponse.json({ input: parsed.data, result })
+  }
+
+  if (countryCode === "cl") {
+    const result = calculateChileSettlement(parsed.data)
+    return NextResponse.json({ input: parsed.data, result })
+  }
+
+  if (countryCode === "ar") {
+    const result = calculateArgentinaSettlement(parsed.data)
+    return NextResponse.json({ input: parsed.data, result })
+  }
+
+  if (countryCode === "pe") {
+    const result = calculatePeruSettlement(parsed.data)
+    return NextResponse.json({ input: parsed.data, result })
+  }
+
+  if (countryCode === "co") {
+    const result = calculateColombiaSettlement(parsed.data)
+    return NextResponse.json({ input: parsed.data, result })
+  }
+
+  if (countryCode === "mx") {
+    const result = calculateMexicoSettlement(parsed.data)
     return NextResponse.json({ input: parsed.data, result })
   }
 

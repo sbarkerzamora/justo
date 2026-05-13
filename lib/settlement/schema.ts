@@ -1,7 +1,7 @@
 import { z } from "zod"
 
 export const settlementInputSchema = z.object({
-  countryCode: z.enum(["ni", "gt", "hn", "sv", "cr", "pa"]),
+  countryCode: z.enum(["ni", "gt", "hn", "sv", "cr", "pa", "mx", "co", "pe", "ar", "cl"]),
   employeeName: z.string().min(2),
   employerName: z.string().min(2),
   monthlySalary: z.number().positive(),

@@ -1,8 +1,8 @@
 export type PayrollFrequency = "mensual" | "quincenal" | "semanal"
 
-export type CountryCode = "ni" | "gt" | "hn" | "sv" | "cr" | "pa"
+export type CountryCode = "ni" | "gt" | "hn" | "sv" | "cr" | "pa" | "mx" | "co" | "pe" | "ar" | "cl"
 
-export type CurrencyCode = "NIO" | "GTQ" | "HNL" | "USD" | "CRC"
+export type CurrencyCode = "NIO" | "GTQ" | "HNL" | "USD" | "CRC" | "MXN" | "COP" | "PEN" | "ARS" | "CLP"
 
 export interface SettlementInput {
   countryCode: CountryCode

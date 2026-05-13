@@ -136,7 +136,7 @@ export function ChatMarkdown({ text }: { text: string }) {
 
     const segments = parseInline(trimmed)
     elements.push(
-      <p key={`p-${i}`} className="[&:not(:first-child)]:mt-2">
+      <p key={`p-${listKey++}-${i}`} className="[&:not(:first-child)]:mt-2">
         {segments.map((s, j) => renderSegment(s, j))}
       </p>,
     )

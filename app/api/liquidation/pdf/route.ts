@@ -8,6 +8,11 @@ import { calculateHondurasSettlement } from "@/lib/settlement/hn/calculate"
 import { calculateElSalvadorSettlement } from "@/lib/settlement/sv/calculate"
 import { calculateCostaRicaSettlement } from "@/lib/settlement/cr/calculate"
 import { calculatePanamaSettlement } from "@/lib/settlement/pa/calculate"
+import { calculateMexicoSettlement } from "@/lib/settlement/mx/calculate"
+import { calculateColombiaSettlement } from "@/lib/settlement/co/calculate"
+import { calculatePeruSettlement } from "@/lib/settlement/pe/calculate"
+import { calculateArgentinaSettlement } from "@/lib/settlement/ar/calculate"
+import { calculateChileSettlement } from "@/lib/settlement/cl/calculate"
 
 const calculators: Record<string, (input: any) => any> = {
   ni: calculateNicaraguaSettlement,
@@ -16,6 +21,11 @@ const calculators: Record<string, (input: any) => any> = {
   sv: calculateElSalvadorSettlement,
   cr: calculateCostaRicaSettlement,
   pa: calculatePanamaSettlement,
+  mx: calculateMexicoSettlement,
+  co: calculateColombiaSettlement,
+  pe: calculatePeruSettlement,
+  ar: calculateArgentinaSettlement,
+  cl: calculateChileSettlement,
 }
 
 export async function POST(request: Request) {
