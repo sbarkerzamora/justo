@@ -17,12 +17,21 @@ const COLORS = {
   netText: rgb(1, 1, 1),
 }
 
+const currencyFormatters: Record<string, Intl.NumberFormat> = {
+  NIO: new Intl.NumberFormat("es-NI", { style: "currency", currency: "NIO", minimumFractionDigits: 2 }),
+  USD: new Intl.NumberFormat("es-NI", { style: "currency", currency: "USD", minimumFractionDigits: 2 }),
+  GTQ: new Intl.NumberFormat("es-NI", { style: "currency", currency: "GTQ", minimumFractionDigits: 2 }),
+  HNL: new Intl.NumberFormat("es-NI", { style: "currency", currency: "HNL", minimumFractionDigits: 2 }),
+  CRC: new Intl.NumberFormat("es-NI", { style: "currency", currency: "CRC", minimumFractionDigits: 2 }),
+  MXN: new Intl.NumberFormat("es-NI", { style: "currency", currency: "MXN", minimumFractionDigits: 2 }),
+  COP: new Intl.NumberFormat("es-NI", { style: "currency", currency: "COP", minimumFractionDigits: 2 }),
+  PEN: new Intl.NumberFormat("es-NI", { style: "currency", currency: "PEN", minimumFractionDigits: 2 }),
+  ARS: new Intl.NumberFormat("es-NI", { style: "currency", currency: "ARS", minimumFractionDigits: 2 }),
+  CLP: new Intl.NumberFormat("es-NI", { style: "currency", currency: "CLP", minimumFractionDigits: 2 }),
+}
+
 const money = (amount: number, currencyCode: string) =>
-  new Intl.NumberFormat("es-NI", {
-    style: "currency",
-    currency: currencyCode,
-    minimumFractionDigits: 2,
-  }).format(amount)
+  (currencyFormatters[currencyCode] ?? currencyFormatters.NIO).format(amount)
 
 export const buildSettlementPdf = async (
   input: SettlementInput,
@@ -30,9 +39,11 @@ export const buildSettlementPdf = async (
 ) => {
   const pdf = await PDFDocument.create()
   const page = pdf.addPage([595.28, 841.89])
-  const font = await pdf.embedFont(StandardFonts.Helvetica)
-  const bold = await pdf.embedFont(StandardFonts.HelveticaBold)
-  const mono = await pdf.embedFont(StandardFonts.Courier)
+  const [font, bold, mono] = await Promise.all([
+    pdf.embedFont(StandardFonts.Helvetica),
+    pdf.embedFont(StandardFonts.HelveticaBold),
+    pdf.embedFont(StandardFonts.Courier),
+  ])
 
   const W = 595.28
   const H = 841.89
@@ -163,8 +174,8 @@ export const buildSettlementPdf = async (
   page.drawText("Monto", { x: col4, y: y + 2, size: 9, font: bold, color: COLORS.white })
   y -= hdrH
 
-  for (const line of result.incomes) {
-    const bg = result.incomes.indexOf(line) % 2 === 0 ? COLORS.rowEven : COLORS.rowOdd
+  for (const [index, line] of result.incomes.entries()) {
+    const bg = index % 2 === 0 ? COLORS.rowEven : COLORS.rowOdd
     page.drawRectangle({ x: left - 4, y, width: contentW + 8, height: rowH, color: bg })
     drawText(line.label, { size: 9, x: col1 })
     y += 13
@@ -190,8 +201,8 @@ export const buildSettlementPdf = async (
   page.drawText("Monto", { x: col4, y: y + 2, size: 9, font: bold, color: COLORS.white })
   y -= hdrH
 
-  for (const line of result.deductions) {
-    const bg = result.deductions.indexOf(line) % 2 === 0 ? COLORS.rowEven : COLORS.rowOdd
+  for (const [index, line] of result.deductions.entries()) {
+    const bg = index % 2 === 0 ? COLORS.rowEven : COLORS.rowOdd
     page.drawRectangle({ x: left - 4, y, width: contentW + 8, height: rowH, color: bg })
     drawText(line.label, { size: 9, x: col1 })
     y += 13

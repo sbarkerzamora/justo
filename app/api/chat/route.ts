@@ -1,6 +1,6 @@
 import { createOpenAI } from "@ai-sdk/openai"
 import { convertToModelMessages, generateText, tool, zodSchema, type UIMessage } from "ai"
-import { existsSync, readFileSync } from "node:fs"
+import { readFile } from "node:fs/promises"
 import { join } from "node:path"
 import { z } from "zod"
 
@@ -69,6 +69,19 @@ const openrouter = createOpenAI({
   apiKey: process.env.OPENROUTER_API_KEY,
   baseURL: process.env.OPENROUTER_BASE_URL ?? "https://openrouter.ai/api/v1",
 })
+
+const legalCorpusCache = new Map<string, string>()
+
+const readLegalCorpusFile = async (filePath: string) => {
+  const cached = legalCorpusCache.get(filePath)
+  if (cached) {
+    return cached
+  }
+
+  const content = await readFile(filePath, "utf8")
+  legalCorpusCache.set(filePath, content)
+  return content
+}
 
 const buildSystemPrompt = (countryCode: string): string => {
   const meta = countryMeta[countryCode]
@@ -157,13 +170,8 @@ export async function POST(request: Request) {
           const dir = countryDirMap[cc] ?? cc
           const filePath = join(process.cwd(), "content", "legal", dir, `${sanitized}.md`)
 
-          if (!existsSync(filePath)) {
-            const known = countryTopicFiles[cc] ?? []
-            return `No encontré información sobre "${topic}" en el corpus legal de ${countryName}. Temas disponibles: ${known.join(", ")}.`
-          }
-
           try {
-            const content = readFileSync(filePath, "utf8")
+            const content = await readLegalCorpusFile(filePath)
 
             const frontmatterEnd = content.indexOf("---", 3)
             const body = frontmatterEnd !== -1 ? content.slice(frontmatterEnd + 3) : content
@@ -186,6 +194,10 @@ export async function POST(request: Request) {
               vigencia_fuente: sections["vigencia_fuente"] ?? "No disponible",
             })
           } catch {
+            const known = countryTopicFiles[cc] ?? []
+            if (!known.includes(sanitized)) {
+              return `No encontré información sobre "${topic}" en el corpus legal de ${countryName}. Temas disponibles: ${known.join(", ")}.`
+            }
             return `Error al leer el corpus legal de ${countryName} para el tema "${topic}".`
           }
         },

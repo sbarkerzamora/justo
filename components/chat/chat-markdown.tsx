@@ -35,7 +35,7 @@ const parseInline = (text: string): (string | Segment)[] => {
   return parts
 }
 
-const renderSegment = (seg: string | Segment, key: number): ReactNode => {
+const renderSegment = (seg: string | Segment, key: string): ReactNode => {
   if (typeof seg === "string") return seg
   if (seg.type === "bold") return <strong key={key}>{seg.content}</strong>
   if (seg.type === "italic") return <em key={key}>{seg.content}</em>
@@ -60,15 +60,17 @@ export function ChatMarkdown({ text }: { text: string }) {
   let listItems: ReactNode[] | null = null
   let listType: "ul" | "ol" | null = null
   let listKey = 0
+  let elementKey = 0
+  let nodeKey = 0
 
   const flushList = () => {
     if (!listItems) return
     const Tag = listType === "ol" ? "ol" : "ul"
-    elements.push(
-      <Tag key={`list-${listKey++}`} className={`space-y-0.5 ${listType === "ul" ? "list-disc" : "list-decimal"} pl-5`}>
-        {listItems}
-      </Tag>,
-    )
+      elements.push(
+        <Tag key={`list-${listKey++}`} className={`space-y-0.5 ${listType === "ul" ? "list-disc" : "list-decimal"} pl-5`}>
+          {listItems}
+        </Tag>,
+      )
     listItems = null
     listType = null
   }
@@ -86,8 +88,8 @@ export function ChatMarkdown({ text }: { text: string }) {
       const Tag = level === 1 ? "h3" : level === 2 ? "h4" : "h5"
       const size = level === 1 ? "text-base font-semibold" : level === 2 ? "text-sm font-semibold" : "text-sm font-medium"
       elements.push(
-        <Tag key={`h-${i}`} className={`mt-4 mb-1 ${size}`}>
-          {segments.map((s, j) => renderSegment(s, j))}
+        <Tag key={`h-${nodeKey++}`} className={`mt-4 mb-1 ${size}`}>
+          {segments.map((s) => renderSegment(s, `h-${elementKey++}`))}
         </Tag>,
       )
       continue
@@ -103,8 +105,8 @@ export function ChatMarkdown({ text }: { text: string }) {
       }
       const segments = parseInline(ulMatch[1])
       listItems.push(
-        <li key={`li-${i}`}>
-          {segments.map((s, j) => renderSegment(s, j))}
+        <li key={`li-${nodeKey++}`}>
+          {segments.map((s) => renderSegment(s, `ul-${elementKey++}`))}
         </li>,
       )
       continue
@@ -120,8 +122,8 @@ export function ChatMarkdown({ text }: { text: string }) {
       }
       const segments = parseInline(olMatch[2])
       listItems.push(
-        <li key={`li-${i}`}>
-          {segments.map((s, j) => renderSegment(s, j))}
+        <li key={`li-${nodeKey++}`}>
+          {segments.map((s) => renderSegment(s, `ol-${elementKey++}`))}
         </li>,
       )
       continue
@@ -130,14 +132,14 @@ export function ChatMarkdown({ text }: { text: string }) {
     flushList()
 
     if (trimmed === "") {
-      elements.push(<br key={`br-${i}`} />)
+      elements.push(<br key={`br-${nodeKey++}`} />)
       continue
     }
 
     const segments = parseInline(trimmed)
     elements.push(
-      <p key={`p-${listKey++}-${i}`} className="[&:not(:first-child)]:mt-2">
-        {segments.map((s, j) => renderSegment(s, j))}
+      <p key={`p-${nodeKey++}`} className="[&:not(:first-child)]:mt-2">
+        {segments.map((s) => renderSegment(s, `p-${elementKey++}`))}
       </p>,
     )
   }

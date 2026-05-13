@@ -28,6 +28,13 @@
 | 🔒 | **Sin datos en servidor** — Toda la información permanece en tu navegador (localStorage). |
 | 🌙 | **Tema oscuro** — Compatible con modo claro y oscuro. |
 
+### Novedades recientes
+
+- **Rutas por país**: navegación directa por código (`/ni`, `/gt`, `/sv`, etc.) con shell específico por jurisdicción.
+- **SEO técnico**: se agregaron `sitemap` y `robots` + metadata dinámica para páginas por país.
+- **Ajustes React/Next**: migración de enlaces internos a `next/link`, banderas a `next/image` y refactor de `LlmHome` en subcomponentes para mejor mantenibilidad.
+- **Mejoras de rendimiento**: hoist de `Intl.NumberFormat`, paralelización de operaciones independientes y optimizaciones en generación de PDF.
+
 ---
 
 ## Cómo funciona
@@ -126,13 +133,18 @@ Abrir `http://localhost:3000`.
 
 ```
 app/
+├── [country]/                    # Ruta dinámica por país (ej: /ni)
+│   ├── layout.tsx                # Layout por jurisdicción
+│   └── page.tsx                  # Home de país (metadata dinámica)
 ├── api/
 │   ├── chat/                     # LLM chat via OpenRouter
 │   └── liquidation/
 │       ├── calculate/            # Cálculo determinístico (por país)
 │       └── pdf/                  # Generación de PDF
 ├── docs/                         # Documentación (Fumadocs)
-└── page.tsx                      # Página principal (chat)
+├── robots.ts                     # Robots policy
+├── sitemap.ts                    # Sitemap generado por app router
+└── page.tsx                      # Entrada: selector/redirección de país
 components/
 ├── chat/llm-home.tsx             # Interfaz de chat + calculadora
 ├── location-dialog.tsx           # Selección de país

@@ -8,6 +8,14 @@ const nextConfig = {
   turbopack: {
     root: rootDir,
   },
+  images: {
+    remotePatterns: [
+      {
+        protocol: "https",
+        hostname: "flagcdn.com",
+      },
+    ],
+  },
 }
 
 export default nextConfig

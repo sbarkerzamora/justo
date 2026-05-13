@@ -1,21 +1,9 @@
 "use client"
 
-import { useRouter } from "next/navigation"
-import { useEffect, useState } from "react"
-
-const countryLabels: Record<string, string> = {
-  ni: "Nicaragua",
-  sv: "El Salvador",
-  gt: "Guatemala",
-  hn: "Honduras",
-  cr: "Costa Rica",
-  pa: "Panamá",
-  mx: "México",
-  co: "Colombia",
-  pe: "Perú",
-  ar: "Argentina",
-  cl: "Chile",
-}
+import Image from "next/image"
+import { useRouter, useSearchParams } from "next/navigation"
+import { Suspense, useEffect, useState } from "react"
+import { getCountryInfo } from "@/lib/countries"
 
 const countryLinks: Record<string, string> = {
   ni: "/docs/legal/nicaragua",
@@ -31,32 +19,61 @@ const countryLinks: Record<string, string> = {
   cl: "/docs/legal/chile",
 }
 
-export function DocsNavTitle() {
-  const router = useRouter()
-  const [cc, setCc] = useState<string | null>(null)
+function NavTitleInner() {
+  const { push } = useRouter()
+  const searchParams = useSearchParams()
+  const [storedCountry, setStoredCountry] = useState<string | null>(null)
+  const fromUrl = searchParams.get("country")
 
   useEffect(() => {
-    const stored = localStorage.getItem("justo-country")
-    if (stored) setCc(stored)
-  }, [])
+    if (fromUrl) {
+      try {
+        localStorage.setItem("justo-country", fromUrl)
+      } catch {
+        /* noop */
+      }
+      setStoredCountry(fromUrl)
+      return
+    }
+
+    try {
+      setStoredCountry(localStorage.getItem("justo-country"))
+    } catch {
+      setStoredCountry(null)
+    }
+  }, [fromUrl])
+
+  const cc = fromUrl ?? storedCountry
+
+  const info = cc ? getCountryInfo(cc) : null
 
   return (
     <div className="flex items-center gap-2">
       <span>Justo</span>
-      {cc ? (
+      {info ? (
         <button
           type="button"
-          onClick={() => router.push(countryLinks[cc] ?? "/docs/legal/nicaragua")}
+          onClick={() => push(countryLinks[info.code] ?? "/docs/legal/nicaragua")}
           className="inline-flex cursor-pointer items-center gap-1 rounded-full border border-border bg-muted px-2 py-0.5 text-[10px] font-medium text-muted-foreground hover:bg-accent"
         >
-          <img
-            src={`https://flagcdn.com/w40/${cc}.png`}
-            alt={countryLabels[cc] ?? cc}
+          <Image
+            src={`https://flagcdn.com/w40/${info.flag}.png`}
+            alt={info.name}
+            width={12}
+            height={8}
             className="h-2 w-3 rounded-[1px] border border-border object-cover"
           />
-          {countryLabels[cc] ?? cc}
+          {info.name}
         </button>
       ) : null}
     </div>
+  )
+}
+
+export function DocsNavTitle() {
+  return (
+    <Suspense fallback={<div className="flex items-center gap-2"><span>Justo</span></div>}>
+      <NavTitleInner />
+    </Suspense>
   )
 }

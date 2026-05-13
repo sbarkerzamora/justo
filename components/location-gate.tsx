@@ -1,7 +1,7 @@
 "use client"
 
-import { useEffect, useState } from "react"
-import { LlmHome } from "@/components/chat/llm-home"
+import { useMemo } from "react"
+import { useRouter } from "next/navigation"
 import { LocationDialog } from "@/components/location-dialog"
 import { AnimatedGridPattern } from "@/components/ui/animated-grid-pattern"
 import { cn } from "@/lib/utils"
@@ -17,46 +17,20 @@ const getStored = (): string | null => {
   }
 }
 
-const setStored = (code: string) => {
-  try {
-    localStorage.setItem(STORAGE_KEY, code)
-  } catch {
-    /* noop */
-  }
-}
-
 export function LocationGate() {
-  const [ready, setReady] = useState(false)
-  const [countryCode, setCountryCode] = useState<string | null>(null)
-  const [showDialog, setShowDialog] = useState(false)
-
-  useEffect(() => {
-    const stored = getStored()
-    if (stored) {
-      setCountryCode(stored)
-    } else {
-      setShowDialog(true)
-    }
-    setReady(true)
-  }, [])
+  const { push } = useRouter()
+  const storedCountry = useMemo(() => getStored(), [])
 
   const handleConfirm = (code: string) => {
-    setStored(code)
-    setCountryCode(code)
-    setShowDialog(false)
+    push(`/${code}`)
   }
 
-  const handleChangeCountry = () => {
-    try {
-      localStorage.removeItem(STORAGE_KEY)
-    } catch {
-      /* noop */
+  if (storedCountry) {
+    if (typeof window !== "undefined") {
+      window.location.replace(`/${storedCountry}`)
     }
-    setCountryCode(null)
-    setShowDialog(true)
+    return null
   }
-
-  if (!ready) return null
 
   return (
     <div className="relative min-h-svh">
@@ -71,8 +45,7 @@ export function LocationGate() {
         )}
       />
       <div className="relative z-10">
-        <LocationDialog open={showDialog} onConfirm={handleConfirm} />
-        {countryCode ? <LlmHome countryCode={countryCode} onChangeCountry={handleChangeCountry} /> : null}
+        <LocationDialog open onConfirm={handleConfirm} />
       </div>
     </div>
   )

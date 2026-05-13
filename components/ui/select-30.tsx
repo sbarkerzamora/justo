@@ -1,4 +1,5 @@
 import { useId } from 'react';
+import Image from 'next/image';
 
 import { Label } from '@/components/ui/label';
 import {
@@ -42,9 +43,11 @@ const Select30 = () => {
           {hubs.map((hub) => (
             <SelectItem key={hub.value} value={hub.value} className="rounded-lg">
               <span className="flex items-center gap-2">
-                <img 
+                <Image 
                   src={`https://flagcdn.com/w40/${hub.flag}.png`} 
                   alt={`${hub.label} flag`} 
+                  width={16}
+                  height={12}
                   className="h-3 w-4.5 object-cover rounded-xs border border-zinc-200 dark:border-zinc-800"
                 />
                 <span className="truncate">{hub.label}</span>
