@@ -22,7 +22,7 @@
 |---|---|
 | 🤖 | **Chat legal contextual** — Consulta derechos, prestaciones y deducciones con referencias al corpus legal del país seleccionado. |
 | 🧮 | **Calculadora guiada de liquidación** — Completa paso a paso los datos del trabajador y obtén el cálculo completo. |
-| 🌎 | **Multi-país** — Nicaragua, Guatemala, Honduras, El Salvador, Costa Rica y Panamá. Cada uno con su propia legislación. |
+| 🌎 | **Multi-país** — 11 países: Centroamérica + México, Colombia, Perú, Argentina y Chile. Cada uno con su propia legislación. |
 | 📄 | **PDF profesional** — Reporte descargable con header, tabla de ingresos/deducciones, resumen ejecutivo y firmas. |
 | ⚖️ | **Trazabilidad legal** — Cada concepto muestra su fórmula de cálculo y el artículo de ley que lo respalda. |
 | 🔒 | **Sin datos en servidor** — Toda la información permanece en tu navegador (localStorage). |
@@ -63,6 +63,11 @@
 | El Salvador | `sv` | USD | Código de Trabajo | `sv-v0.1.0` |
 | Costa Rica | `cr` | CRC (Colón) | Código de Trabajo | `cr-v0.1.0` |
 | Panamá | `pa` | USD | Decreto 252 | `pa-v0.1.0` |
+| México | `mx` | MXN (Peso) | LFT | `mx-v0.1.0` |
+| Colombia | `co` | COP (Peso) | CST | `co-v0.1.0` |
+| Perú | `pe` | PEN (Sol) | Ley General de Trabajo | `pe-v0.1.0` |
+| Argentina | `ar` | ARS (Peso) | LCT Ley 20.744 | `ar-v0.1.0` |
+| Chile | `cl` | CLP (Peso) | Código del Trabajo | `cl-v0.1.0` |
 
 ---
 
@@ -136,10 +141,10 @@ components/
 ├── docs-nav-title.tsx            # Nav de docs con país
 └── ui/                           # Componentes shadcn/ui
 content/
-├── legal/{ni,gt,hn,sv,cr,pa}/   # Corpus legal por país
+├── legal/{ni,gt,hn,sv,cr,pa,mx,co,pe,ar,cl}/   # Corpus legal por país
 └── docs/                         # Documentación en MDX
 lib/
-├── settlement/{ni,gt,hn,sv,cr,pa}/  # Motores de cálculo
+├── settlement/{ni,gt,hn,sv,cr,pa,mx,co,pe,ar,cl}/  # Motores de cálculo
 ├── pdf/settlement-pdf.ts         # Generación de PDF
 └── source.tsx                    # Fuente estática de Fumadocs
 ```
@@ -161,7 +166,7 @@ lib/
 > **Este proyecto es informativo y no constituye asesoría legal profesional.**
 >
 > - Los cálculos y la información proporcionada deben verificarse contra la normativa oficial vigente de cada país.
-> - Las tasas de deducciones (INSS, IGSS, ISSS, IHSS, CCSS, AFP, ISR, etc.) son valores propuestos y requieren confirmación con las entidades oficiales correspondientes.
+> - Las tasas de deducciones (INSS, IGSS, ISSS, IHSS, CCSS, AFP, EPS, ONP, SARA, PAMI, AFC, ISR, etc.) son valores propuestos y requieren confirmación con las entidades oficiales correspondientes.
 > - Para casos complejos, disputados o de alto valor, se recomienda contratar los servicios de un abogado laboral o contador profesional en la jurisdicción correspondiente.
 > - Este software se proporciona "tal cual", sin garantías de ningún tipo, expresas o implícitas.
 
@@ -190,7 +195,7 @@ bun run build
 ## Documentación
 
 - Documentación de la app en `/docs`
-- Páginas legales por país: `/docs/legal/{nicaragua,guatemala,honduras,elsalvador,costarica,panama}`
+- Páginas legales por país: `/docs/legal/{nicaragua,guatemala,honduras,elsalvador,costarica,panama,mexico,colombia,peru,argentina,chile}`
 - Corpus legal fuente: `content/legal/`
 
 ---
@@ -214,6 +219,7 @@ Después del deploy, verifica:
 ## Roadmap
 
 - [x] Nicaragua, Guatemala, Honduras, El Salvador, Costa Rica, Panamá
+- [x] México, Colombia, Perú, Argentina, Chile
 - [ ] Harden legal corpus and deduction rules across all jurisdictions
 - [ ] Add automated tests for all formula branches per country
 - [ ] Add thread persistence and case history
