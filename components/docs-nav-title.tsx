@@ -5,12 +5,30 @@ import { useEffect, useState } from "react"
 
 const countryLabels: Record<string, string> = {
   ni: "Nicaragua",
+  sv: "El Salvador",
   gt: "Guatemala",
+  hn: "Honduras",
+  cr: "Costa Rica",
+  pa: "Panamá",
+  mx: "México",
+  co: "Colombia",
+  pe: "Perú",
+  ar: "Argentina",
+  cl: "Chile",
 }
 
 const countryLinks: Record<string, string> = {
   ni: "/docs/legal/nicaragua",
+  sv: "/docs/legal/elsalvador",
   gt: "/docs/legal/guatemala",
+  hn: "/docs/legal/honduras",
+  cr: "/docs/legal/costarica",
+  pa: "/docs/legal/panama",
+  mx: "/docs/legal/mexico",
+  co: "/docs/legal/colombia",
+  pe: "/docs/legal/peru",
+  ar: "/docs/legal/argentina",
+  cl: "/docs/legal/chile",
 }
 
 export function DocsNavTitle() {

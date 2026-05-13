@@ -23,9 +23,26 @@ last_reviewed: "2026-05-11"
 
 ## formula
 
-- `eps = base * 0.04`
-- `pension = base * 0.04`
-- `total = base * 0.08`
+- `eps_laboral = base_eps * tasa_eps`
+- `pension_laboral = base_pension * tasa_pension`
+- `total_seguridad_social = eps_laboral + pension_laboral`
+
+## variables
+
+- `base_eps`
+- `tasa_eps`
+- `base_pension`
+- `tasa_pension`
+
+## supuestos
+
+- `tasa_eps = 0.04` (4% salud, Ley 100 de 1993, pendiente confirmacion legal final).
+- `tasa_pension = 0.04` (4% pension, Ley 100 de 1993, pendiente confirmacion legal final).
+
+## excepciones
+
+- Aguinaldo y cesantia no integran base de deducciones de seguridad social segun regimen vigente.
+- Aportes a cuenta AFC (ahorro voluntario) no implementados en MVP.
 
 ## vigencia_fuente
 

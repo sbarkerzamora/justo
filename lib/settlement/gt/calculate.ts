@@ -1,24 +1,9 @@
+import { clamp, round2, daysBetween, startOfYear, formatTenure } from "@/lib/settlement/shared"
 import { SettlementInput, SettlementLine, SettlementResult } from "@/lib/settlement/types"
+import { getGuatemalaLegalRates } from "@/lib/settlement/gt/legal-params"
 
 const CURRENCY = "GTQ" as const
 const LEGAL_CORPUS_VERSION = "gt-v0.1.0"
-
-const clamp = (value: number, min: number, max: number) =>
-  Math.min(max, Math.max(min, value))
-
-const round2 = (value: number) => Math.round(value * 100) / 100
-
-const daysBetween = (start: Date, end: Date) =>
-  Math.max(1, Math.ceil((end.getTime() - start.getTime()) / (1000 * 60 * 60 * 24)))
-
-const startOfYear = (date: Date) => new Date(Date.UTC(date.getUTCFullYear(), 0, 1))
-
-const formatTenure = (totalDays: number) => {
-  const years = Math.floor(totalDays / 365)
-  const months = Math.floor((totalDays % 365) / 30)
-  const days = totalDays - years * 365 - months * 30
-  return `${years} anos, ${months} meses, ${days} dias`
-}
 
 export const calculateGuatemalaSettlement = (
   input: SettlementInput,
@@ -95,25 +80,27 @@ export const calculateGuatemalaSettlement = (
 
   const grossIncome = round2(incomes.reduce((sum, line) => sum + line.amount, 0))
 
-  // Deducciones IGSS 4.83%
-  const igssBase = round2(proportionalSalary + vacationPay)
-  const igss = round2(igssBase * 0.0483)
+  const { igssRate, isrRate } = getGuatemalaLegalRates()
 
-  // ISR simplificado 5% sobre base despues de IGSS, aguinaldo y bono14 exentos
+  // Deducciones IGSS: se aplica sobre salario proporcional + vacaciones
+  const igssBase = round2(proportionalSalary + vacationPay)
+  const igss = round2(igssBase * igssRate)
+
+  // ISR simplificado: base = ingresos totales - IGSS - aguinaldo (exento) - bono14 (exento)
   const isrBase = round2(grossIncome - igss - aguinaldo - bono14)
-  const isr = round2(Math.max(0, isrBase) * 0.05)
+  const isr = round2(Math.max(0, isrBase) * isrRate)
 
   const deductions: SettlementLine[] = [
     {
       label: "IGSS laboral",
       amount: igss,
-      formula: `(${igssBase} x 4.83%)`,
+      formula: `(${igssBase} x ${(igssRate * 100).toFixed(2)}%)`,
       legalReference: "Ley del IGSS + Acuerdo 1124",
     },
     {
       label: "ISR estimado",
       amount: isr,
-      formula: `(max(${isrBase}, 0) x 5%)`,
+      formula: `(max(${isrBase}, 0) x ${(isrRate * 100).toFixed(0)}%)`,
       legalReference: "Ley del ISR (tasa simplificada propuesta)",
     },
   ]

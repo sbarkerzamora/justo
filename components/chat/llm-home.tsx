@@ -130,6 +130,64 @@ const countryLabels: Record<string, string> = {
   pa: "Panamá",
 }
 
+const exampleQuestions: Record<string, string[]> = {
+  ni: [
+    "¿Cuánto me pagan de indemnización si renuncio con 5 años?",
+    "¿Cómo se calcula el aguinaldo proporcional?",
+    "¿Qué descuentos tiene mi liquidación (INSS e IR)?",
+  ],
+  sv: [
+    "¿Cuánto me corresponde de indemnización (cesantía)?",
+    "¿Cómo se calcula el aguinaldo por años trabajados?",
+    "¿Qué son ISSS y AFP y cuánto descuentan?",
+  ],
+  gt: [
+    "¿Cuánto me corresponde de indemnización?",
+    "¿Cómo se calcula el Bono 14?",
+    "¿Qué es el IGSS y cuánto descuenta?",
+  ],
+  hn: [
+    "¿Cuánto me pagan de auxilio de cesantía?",
+    "¿Cómo se calcula el decimotercer mes?",
+    "¿Qué es el IHSS y cuánto descuenta?",
+  ],
+  cr: [
+    "¿Cuánto me corresponde de cesantía y preaviso?",
+    "¿Cómo se calcula el aguinaldo proporcional?",
+    "¿Qué es la CCSS y cuánto descuenta?",
+  ],
+  pa: [
+    "¿Cuánto me pagan de prima de antigüedad?",
+    "¿Cómo se calcula el decimotercer mes?",
+    "¿Qué es la CSS y cuánto descuenta?",
+  ],
+  mx: [
+    "¿Cuánto me corresponde de indemnización constitucional?",
+    "¿Cómo se calcula el aguinaldo proporcional?",
+    "¿Qué es el IMSS y cuánto descuenta?",
+  ],
+  co: [
+    "¿Cuánto me corresponde de cesantías e intereses?",
+    "¿Cómo se calcula la prima de servicios?",
+    "¿Qué son EPS y pensión y cuánto descuentan?",
+  ],
+  pe: [
+    "¿Cuánto me pagan de CTS?",
+    "¿Cómo se calcula la indemnización por años?",
+    "¿Qué es la ONP y cuánto descuenta?",
+  ],
+  ar: [
+    "¿Cuánto me corresponde de indemnización por antigüedad?",
+    "¿Cómo se calcula el SAC (aguinaldo)?",
+    "¿Qué descuentos tiene mi liquidación (jubilación, PAMI, obra social)?",
+  ],
+  cl: [
+    "¿Cuánto me pagan de indemnización por años de servicio?",
+    "¿Cómo funciona el aviso sustitutivo?",
+    "¿Qué descuentan AFP, salud y AFC?",
+  ],
+}
+
 export function LlmHome({ countryCode, onChangeCountry }: { countryCode?: string; onChangeCountry?: () => void }) {
   const cc = countryCode ?? "ni"
   const fmt = (v: number) => money(v, currencyConfig[cc]?.code)
@@ -353,7 +411,10 @@ export function LlmHome({ countryCode, onChangeCountry }: { countryCode?: string
       const res = await fetch("/api/chat", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ messages: [{ role: "user", parts: [{ type: "text", text }] }] }),
+        body: JSON.stringify({
+          messages: [{ role: "user", parts: [{ type: "text", text }] }],
+          countryCode: cc,
+        }),
       })
       if (!res.ok) {
         await appendAssistant("No pude responder en este momento.", { delay: 500 })
@@ -377,10 +438,8 @@ export function LlmHome({ countryCode, onChangeCountry }: { countryCode?: string
     focusMainInput()
   }
 
-  const onSend = async () => {
-    const text = input.trim()
+  const sendText = async (text: string) => {
     if (!text || isLoading) return
-    setInput("")
     append("user", text)
 
     if (step === "done") {
@@ -425,6 +484,18 @@ export function LlmHome({ countryCode, onChangeCountry }: { countryCode?: string
     await sendLegalQuery(text)
   }
 
+  const onSend = async () => {
+    const text = input.trim()
+    if (!text || isLoading) return
+    setInput("")
+    await sendText(text)
+  }
+
+  const handleExampleClick = (q: string) => {
+    setInput("")
+    void sendText(q)
+  }
+
   const handleKeyDown = (e: React.KeyboardEvent) => {
     if (e.key === "Enter" && !e.shiftKey) {
       e.preventDefault()
@@ -453,7 +524,21 @@ export function LlmHome({ countryCode, onChangeCountry }: { countryCode?: string
   return (
     <main className="mx-auto flex h-svh max-w-4xl flex-col px-4 md:px-8">
       <header className="sticky top-0 z-10 mx-auto mb-4 mt-3 flex w-full max-w-4xl items-center justify-between rounded-2xl border border-border bg-card px-4 py-3 shadow-sm max-sm:px-3 max-sm:py-2.5">
-        <a href="/" className="text-lg font-semibold tracking-tight text-foreground">Justo</a>
+        <div className="flex items-center gap-3">
+          <a href="/" className="text-lg font-semibold tracking-tight text-foreground">Justo</a>
+          <button
+            type="button"
+            onClick={onChangeCountry}
+            className="inline-flex items-center gap-1.5 rounded-lg border border-border bg-card px-2 py-1 text-[11px] font-medium text-foreground hover:bg-accent max-sm:gap-0 max-sm:border-0 max-sm:bg-transparent max-sm:p-0"
+          >
+            <img
+              src={`https://flagcdn.com/w40/${cc}.png`}
+              alt={countryLabels[cc] ?? cc}
+              className="h-3 w-4 rounded-[1px] border border-border object-cover"
+            />
+            <span className="max-sm:hidden">{countryLabels[cc] ?? cc}</span>
+          </button>
+        </div>
         <div className="flex items-center gap-2">
           <button
             type="button"
@@ -495,7 +580,7 @@ export function LlmHome({ countryCode, onChangeCountry }: { countryCode?: string
         </div>
       </header>
 
-      <section className="flex flex-1 flex-col min-h-0">
+      <section className="flex flex-1 flex-col min-h-0 pb-12">
         {isCalculationMode ? (
           <div className="mb-3 space-y-2 max-sm:mb-2">
             <div className="mb-1 flex items-center justify-between text-xs text-muted-foreground">
@@ -530,32 +615,50 @@ export function LlmHome({ countryCode, onChangeCountry }: { countryCode?: string
 
         <div className="flex-1 overflow-y-auto min-h-0 space-y-3 px-2 pb-2 max-sm:px-1">
           {messages.length === 0 ? (
-            <div className="flex min-h-[50svh] flex-col items-center justify-center gap-4 px-2 text-center">
-              <div className="max-w-xl space-y-3 text-sm leading-relaxed text-foreground motion-safe:animate-in motion-safe:fade-in motion-safe:slide-in-from-bottom-1 duration-300">
-                <p>
-                  Hola, soy Justo. Puedes consultarme sobre la legislacion laboral de
-                  Centroamerica o calcular una <strong>liquidacion laboral</strong> completa.
+            <div className="flex flex-1 flex-col items-center justify-center px-4">
+              <div className="max-w-md space-y-5 text-center motion-safe:animate-in motion-safe:fade-in motion-safe:slide-in-from-bottom-1 duration-300">
+                <div className="inline-flex items-center gap-2 rounded-full border border-border bg-card px-3 py-1 text-xs font-medium text-muted-foreground">
+                  <img
+                    src={`https://flagcdn.com/w40/${cc}.png`}
+                    alt={countryLabels[cc] ?? cc}
+                    className="h-3 w-4 rounded-[1px] border border-border object-cover"
+                  />
+                  {countryLabels[cc] ?? cc}
+                </div>
+
+                <p className="text-sm leading-relaxed text-foreground">
+                  Hola, soy <strong>Justo</strong>. Pregúntame sobre tus derechos laborales
+                  según la legislación de <strong>{countryLabels[cc] ?? cc}</strong>.
                 </p>
-                <ul className="list-disc space-y-1 pl-5 text-left text-muted-foreground">
-                  <li>
-                    <strong>Consulta legal</strong>: preguntame sobre derechos, prestaciones,
-                    indemnizaciones y deducciones segun el pais que seleccionaste.
-                  </li>
-                  <li>
-                    <strong>Calculo de liquidacion</strong>: completa los pasos guiados y obten
-                    el desglose con formulas legales, deducciones y PDF descargable.
-                  </li>
-                </ul>
+
+                <div className="space-y-2 text-left">
+                  <p className="text-[11px] font-semibold uppercase tracking-widest text-muted-foreground">
+                    Ejemplos de preguntas:
+                  </p>
+                  <div className="space-y-1.5">
+                    {(exampleQuestions[cc] ?? []).slice(0, 3).map((q, i) => (
+                      <button
+                        key={i}
+                        type="button"
+                        onClick={() => handleExampleClick(q)}
+                        className="block w-full rounded-xl border border-border bg-card px-3 py-2 text-left text-xs text-foreground transition-colors hover:bg-accent hover:text-primary"
+                      >
+                        {q}
+                      </button>
+                    ))}
+                  </div>
+                </div>
+
+                <button
+                  type="button"
+                  onClick={startFlow}
+                  className="inline-flex items-center gap-2 rounded-2xl bg-primary px-6 py-3 text-sm font-semibold text-primary-foreground shadow-lg transition-all hover:translate-y-[-1px]"
+                >
+                  <IconCalculator className="size-4" />
+                  Iniciar cálculo guiado
+                  <IconSparkles className="size-4" />
+                </button>
               </div>
-              <button
-                type="button"
-                onClick={startFlow}
-                className="inline-flex items-center gap-3 rounded-2xl bg-primary px-6 py-3 text-base font-semibold text-primary-foreground shadow-lg transition-all duration-300 ease-out hover:translate-y-[-1px]"
-              >
-                <IconCalculator className="size-5" />
-                Iniciar calculo
-                <IconSparkles className="size-5" />
-              </button>
             </div>
           ) : null}
 
@@ -578,6 +681,19 @@ export function LlmHome({ countryCode, onChangeCountry }: { countryCode?: string
               </div>
             </div>
           ))}
+
+          {!isCalculationMode && messages.length > 0 ? (
+            <div className="flex justify-center pt-1">
+              <button
+                type="button"
+                onClick={startFlow}
+                className="inline-flex items-center gap-2 rounded-xl border border-border bg-card px-4 py-2 text-xs font-medium text-muted-foreground shadow-sm transition-all duration-200 hover:border-primary hover:text-foreground"
+              >
+                <IconCalculator className="size-4" />
+                Iniciar calculo guiado
+              </button>
+            </div>
+          ) : null}
 
           {isCalculationMode && step === "frequency" ? (
             <div className="rounded-2xl border border-border bg-card p-3">
@@ -794,27 +910,14 @@ export function LlmHome({ countryCode, onChangeCountry }: { countryCode?: string
         </div>
       </section>
 
-      <footer className="border-t border-border py-3 text-center text-xs text-muted-foreground max-sm:py-2 max-sm:text-[10px]">
-        <div className="mb-2 flex items-center justify-center gap-1.5">
-          <button
-            type="button"
-            onClick={onChangeCountry}
-            className="inline-flex items-center gap-1.5 rounded-full border border-border bg-card px-3 py-1 text-[11px] font-medium text-foreground hover:bg-accent"
-          >
-            <img
-              src={`https://flagcdn.com/w40/${cc}.png`}
-              alt={countryLabels[cc] ?? cc}
-              className="h-2.5 w-3.5 rounded-[2px] border border-border object-cover"
-            />
-            {countryLabels[cc] ?? cc}
-          </button>
-        </div>
-        <p>
-          Justo &middot; Asistente laboral open source para Centroamerica &middot; La informacion
-          aqui presentada no constituye asesoria legal profesional
-        </p>
-        <p className="mt-1">
-          Desarrollado por{" "}
+      <footer className="fixed inset-x-0 bottom-0 z-10 border-t border-border bg-background py-2.5 text-center text-[11px] text-muted-foreground max-sm:text-[10px]">
+        <div className="mx-auto flex max-w-4xl items-center justify-center gap-1.5 px-4">
+          <span>Justo</span>
+          <span className="max-sm:hidden" aria-hidden="true">·</span>
+          <span className="max-sm:hidden">Asistente laboral</span>
+          <span className="max-sm:hidden" aria-hidden="true">·</span>
+          <span className="max-sm:hidden">No constituye asesoría legal profesional</span>
+          <span aria-hidden="true">·</span>
           <a
             href="https://stephanbarker.com"
             target="_blank"
@@ -823,7 +926,7 @@ export function LlmHome({ countryCode, onChangeCountry }: { countryCode?: string
           >
             stephanbarker.com
           </a>
-        </p>
+        </div>
       </footer>
     </main>
   )

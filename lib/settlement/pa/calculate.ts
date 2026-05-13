@@ -1,25 +1,9 @@
+import { clamp, round2, daysBetween, startOfYear, formatTenure } from "@/lib/settlement/shared"
 import { SettlementInput, SettlementLine, SettlementResult } from "@/lib/settlement/types"
 import { getPanamaLegalRates } from "@/lib/settlement/pa/legal-params"
 
 const CURRENCY = "USD" as const
 const LEGAL_CORPUS_VERSION = "pa-v0.1.0"
-
-const clamp = (value: number, min: number, max: number) =>
-  Math.min(max, Math.max(min, value))
-
-const round2 = (value: number) => Math.round(value * 100) / 100
-
-const daysBetween = (start: Date, end: Date) =>
-  Math.max(1, Math.ceil((end.getTime() - start.getTime()) / (1000 * 60 * 60 * 24)))
-
-const startOfYear = (date: Date) => new Date(Date.UTC(date.getUTCFullYear(), 0, 1))
-
-const formatTenure = (totalDays: number) => {
-  const years = Math.floor(totalDays / 365)
-  const months = Math.floor((totalDays % 365) / 30)
-  const days = totalDays - years * 365 - months * 30
-  return `${years} anos, ${months} meses, ${days} dias`
-}
 
 export const calculatePanamaSettlement = (
   input: SettlementInput,

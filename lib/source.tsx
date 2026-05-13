@@ -17,27 +17,95 @@ const docsSource = defineSource<JustoPageData, { title?: string; pages?: string[
       path: "index",
       slugs: [],
       data: {
-        title: "Documentacion de Justo",
+        title: "Documentación de Justo",
         description:
-          "Base funcional del asistente laboral open source para Centroamerica, iniciando por Nicaragua.",
+          "Asistente laboral open source: consultas legales respaldadas por corpus y liquidaciones determinísticas.",
         body: (
-          <div className="space-y-6">
-            <p>
-              Justo combina dos modos: chat legal para consultas y flujo guiado deterministico para
-              calculo de liquidacion laboral.
-            </p>
-            <ul className="list-disc space-y-1 pl-5">
-              <li>Consulta legal en espanol con referencias del corpus.</li>
-              <li>Calculo paso a paso con validaciones y trazabilidad.</li>
-              <li>PDF imprimible con firmas de trabajador y empleador.</li>
-            </ul>
-            <div className="rounded-xl border border-border bg-card p-4">
-              <h2 className="mb-2 text-base font-semibold">Corpus legal</h2>
-              <p className="mb-3 text-sm text-muted-foreground">
-                Referencias normativas para Centroamerica, con reglas operativas del motor.
+          <div className="space-y-8">
+            <div>
+              <p>
+                Justo es un asistente laboral open source que combina un
+                chat legal con acceso al corpus normativo de cada país y un motor de liquidación
+                determinístico paso a paso.
               </p>
-              <Link className="text-sm font-medium underline underline-offset-4" href="/docs/legal/nicaragua">
-                Ver fuentes legales de Nicaragua
+            </div>
+
+            <div>
+              <h2 className="mb-3 text-sm font-semibold uppercase tracking-widest text-muted-foreground">
+                Qué podés hacer
+              </h2>
+              <div className="grid gap-4 sm:grid-cols-2">
+                <div className="rounded-xl border border-border bg-card p-4">
+                  <h3 className="mb-1 text-sm font-semibold">💬 Consulta legal</h3>
+                  <p className="text-xs text-muted-foreground">
+                    Preguntá sobre derechos, prestaciones, indemnizaciones y deducciones. El
+                    asistente consulta el corpus normativo del país activo y responde con
+                    referencias legales concretas. También podés hacer clic en los ejemplos de
+                    preguntas de la pantalla principal.
+                  </p>
+                </div>
+                <div className="rounded-xl border border-border bg-card p-4">
+                  <h3 className="mb-1 text-sm font-semibold">🧮 Cálculo estimativo</h3>
+                  <p className="text-xs text-muted-foreground">
+                    Pedí un cálculo rápido en el chat, ej:{" "}
+                    <em>"cuánto me corresponde con 5 años y salario de 15000"</em>. El motor
+                    determinístico calcula al instante usando las tasas del corpus legal.
+                  </p>
+                </div>
+                <div className="rounded-xl border border-border bg-card p-4">
+                  <h3 className="mb-1 text-sm font-semibold">📋 Liquidación guiada</h3>
+                  <p className="text-xs text-muted-foreground">
+                    Completá nombre, salario, fechas y vacaciones paso a paso. Obtené el desglose
+                    completo con fórmulas, deducciones, referencias legales y PDF descargable con
+                    firmas.
+                  </p>
+                </div>
+                <div className="rounded-xl border border-border bg-card p-4">
+                  <h3 className="mb-1 text-sm font-semibold">📚 Marco legal por país</h3>
+                  <p className="text-xs text-muted-foreground">
+                    Explorá las leyes, fórmulas y tasas de cada país en la sección{" "}
+                    <Link
+                      className="underline underline-offset-2 hover:text-foreground"
+                      href="/docs/legal"
+                    >
+                      Marco legal
+                    </Link>
+                    . Cada país tiene su propio conjunto de reglas documentadas.
+                  </p>
+                </div>
+              </div>
+            </div>
+
+            <div>
+              <h2 className="mb-3 text-sm font-semibold uppercase tracking-widest text-muted-foreground">
+                Países soportados
+              </h2>
+              <div className="flex flex-wrap gap-2">
+                {[
+                  "Nicaragua", "El Salvador", "Guatemala", "Honduras",
+                  "Costa Rica", "Panamá", "México", "Colombia",
+                  "Perú", "Argentina", "Chile",
+                ].map((name) => (
+                  <span
+                    key={name}
+                    className="rounded-full border border-border bg-card px-3 py-1 text-xs font-medium text-foreground"
+                  >
+                    {name}
+                  </span>
+                ))}
+              </div>
+            </div>
+
+            <div className="rounded-xl border border-border bg-card p-4 text-center">
+              <p className="mb-3 text-sm text-muted-foreground">
+                Seleccioná tu país desde la pantalla principal. Todo el contenido, cálculos y
+                referencias se adaptan automáticamente.
+              </p>
+              <Link
+                className="inline-flex items-center gap-2 rounded-xl bg-primary px-5 py-2.5 text-sm font-semibold text-white"
+                href="/"
+              >
+                Ir a la aplicación
               </Link>
             </div>
           </div>
@@ -48,19 +116,79 @@ const docsSource = defineSource<JustoPageData, { title?: string; pages?: string[
       type: "page",
       path: "guia-rapida",
       data: {
-        title: "🧭 Guia rapida",
-        description: "Como usar Justo en menos de 2 minutos.",
+        title: "🧭 Guía rápida",
+        description: "Cómo usar Justo en menos de 2 minutos.",
         body: (
           <div className="space-y-4">
-            <ol className="list-decimal space-y-2 pl-5">
-              <li>Inicia una consulta legal para aclarar dudas de prestaciones en Centroamerica.</li>
-              <li>Pulsa Iniciar calculo y completa salario, fechas y vacaciones pendientes.</li>
-              <li>Confirma los datos y revisa el desglose con formulas y deducciones.</li>
-              <li>Genera el PDF para firma de trabajador y empleador.</li>
+            <ol className="list-decimal space-y-3 pl-5">
+              <li>
+                <strong>Seleccioná tu país</strong> al iniciar la aplicación. Todo el contenido,
+                cálculos y referencias legales se adaptan automáticamente a la legislación de
+                ese país.
+              </li>
+              <li>
+                <strong>Escribí una pregunta</strong> en el chat o hacé clic en uno de los
+                ejemplos de la pantalla de inicio. El asistente consulta el corpus legal para
+                responder con información respaldada.
+              </li>
+              <li>
+                <strong>Pedí un cálculo estimado</strong> directamente en el chat, por ejemplo:
+                <em> "cuánto me corresponde de indemnización con 5 años y salario de 15000?"</em>
+                El sistema calcula automáticamente usando el motor determinístico del país activo.
+              </li>
+              <li>
+                <strong>Iniciá el cálculo guiado</strong> para una liquidación formal. Completá
+                nombre, salario, fechas y vacaciones paso a paso. Revisá el resumen y confirmá.
+              </li>
+              <li>
+                <strong>Revisá el resultado</strong> con desglose de ingresos, deducciones,
+                fórmulas y referencias legales. Descargá el PDF imprimible con firmas.
+              </li>
             </ol>
             <p className="text-sm text-muted-foreground">
-              Si hay disputa o caso complejo, valida el resultado con asesoria legal y contable.
+              Si hay disputa o caso complejo, validá el resultado con asesoría legal y contable
+              profesional.
             </p>
+          </div>
+        ),
+      },
+    },
+    {
+      type: "page",
+      path: "legal/index",
+      slugs: ["legal"],
+      data: {
+        title: "Marco legal",
+        description: "Referencias normativas por país.",
+        body: (
+          <div className="space-y-6">
+            <p className="text-sm text-muted-foreground">
+              Seleccioná un país para ver su marco legal, fórmulas de liquidación y tasas
+              vigentes documentadas en el corpus legal.
+            </p>
+            <div className="grid gap-3 sm:grid-cols-2">
+              {[
+                ["nicaragua", "Nicaragua"],
+                ["elsalvador", "El Salvador"],
+                ["guatemala", "Guatemala"],
+                ["honduras", "Honduras"],
+                ["costarica", "Costa Rica"],
+                ["panama", "Panamá"],
+                ["mexico", "México"],
+                ["colombia", "Colombia"],
+                ["peru", "Perú"],
+                ["argentina", "Argentina"],
+                ["chile", "Chile"],
+              ].map(([slug, label]) => (
+                <a
+                  key={slug}
+                  href={`/docs/legal/${slug}`}
+                  className="rounded-xl border border-border bg-card p-3 text-sm font-medium text-foreground transition-colors hover:bg-accent"
+                >
+                  {label} →
+                </a>
+              ))}
+            </div>
           </div>
         ),
       },
@@ -3720,7 +3848,7 @@ vacaciones = (salario/30) * (15 + feriado_extra)`}</code></pre>
       type: "meta",
       path: "meta.json",
       data: {
-        title: "Justo Docs",
+        title: "Documentación",
         pages: ["index", "guia-rapida", "legal"],
       },
     },
@@ -3728,8 +3856,8 @@ vacaciones = (salario/30) * (15 + feriado_extra)`}</code></pre>
       type: "meta",
       path: "legal/meta.json",
       data: {
-        title: "Legal",
-        pages: ["nicaragua", "guatemala", "honduras", "elsalvador", "costarica", "panama", "mexico", "colombia", "peru", "argentina", "chile"],
+        title: "Marco legal por país",
+        pages: ["index", "nicaragua", "guatemala", "honduras", "elsalvador", "costarica", "panama", "mexico", "colombia", "peru", "argentina", "chile"],
       },
     },
     {

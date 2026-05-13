@@ -19,3 +19,7 @@ Version: `ar-v0.1.0`
 - `vacaciones.md`
 - `salario-proporcional.md`
 - `deducciones.md`
+
+## Contrato de datos para el motor
+
+Cada archivo tematico define `base_legal`, `regla_operativa`, `formula`, `variables`, `supuestos`, `excepciones`, `vigencia_fuente`.

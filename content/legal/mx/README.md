@@ -17,3 +17,7 @@ Version: `mx-v0.1.0`
 - `vacaciones.md`
 - `deducciones.md`
 - `imss.md`
+
+## Contrato de datos para el motor
+
+Cada archivo tematico define `base_legal`, `regla_operativa`, `formula`, `variables`, `supuestos`, `excepciones`, `vigencia_fuente`.

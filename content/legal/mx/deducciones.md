@@ -23,7 +23,21 @@ last_reviewed: "2026-05-11"
 
 ## formula
 
-- `imss_laboral = base_imss * 0.025`
+- `imss_laboral = base_imss * tasa_imss_laboral`
+
+## variables
+
+- `base_imss`
+- `tasa_imss_laboral`
+
+## supuestos
+
+- `tasa_imss_laboral = 0.025` (2.5%: enfermedades ~1.5% + invalidez ~0.625% + cesantia ~0.375%, pendiente confirmacion legal final).
+
+## excepciones
+
+- Aguinaldo exento de deducciones IMSS segun LFT Art. 87.
+- INFONAVIT es aportacion patronal, no se descuenta al trabajador.
 
 ## vigencia_fuente
 

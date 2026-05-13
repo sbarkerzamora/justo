@@ -1,5 +1,6 @@
 import { NextResponse } from "next/server"
 
+import { SettlementInput } from "@/lib/settlement/types"
 import { settlementInputSchema } from "@/lib/settlement/schema"
 import { calculateNicaraguaSettlement } from "@/lib/settlement/ni/calculate"
 import { calculateGuatemalaSettlement } from "@/lib/settlement/gt/calculate"
@@ -12,6 +13,21 @@ import { calculateColombiaSettlement } from "@/lib/settlement/co/calculate"
 import { calculatePeruSettlement } from "@/lib/settlement/pe/calculate"
 import { calculateArgentinaSettlement } from "@/lib/settlement/ar/calculate"
 import { calculateChileSettlement } from "@/lib/settlement/cl/calculate"
+import { SettlementResult } from "@/lib/settlement/types"
+
+const calculators: Record<string, (input: SettlementInput) => SettlementResult> = {
+  gt: calculateGuatemalaSettlement,
+  cl: calculateChileSettlement,
+  ar: calculateArgentinaSettlement,
+  pe: calculatePeruSettlement,
+  co: calculateColombiaSettlement,
+  mx: calculateMexicoSettlement,
+  pa: calculatePanamaSettlement,
+  cr: calculateCostaRicaSettlement,
+  sv: calculateElSalvadorSettlement,
+  hn: calculateHondurasSettlement,
+  ni: calculateNicaraguaSettlement,
+}
 
 export async function POST(request: Request) {
   const payload = await request.json()
@@ -28,57 +44,15 @@ export async function POST(request: Request) {
   }
 
   const { countryCode } = parsed.data
+  const calculator = calculators[countryCode]
 
-  if (countryCode === "gt") {
-    const result = calculateGuatemalaSettlement(parsed.data)
-    return NextResponse.json({ input: parsed.data, result })
+  if (!calculator) {
+    return NextResponse.json(
+      { error: `Pais no soportado: ${countryCode}` },
+      { status: 400 },
+    )
   }
 
-  if (countryCode === "cl") {
-    const result = calculateChileSettlement(parsed.data)
-    return NextResponse.json({ input: parsed.data, result })
-  }
-
-  if (countryCode === "ar") {
-    const result = calculateArgentinaSettlement(parsed.data)
-    return NextResponse.json({ input: parsed.data, result })
-  }
-
-  if (countryCode === "pe") {
-    const result = calculatePeruSettlement(parsed.data)
-    return NextResponse.json({ input: parsed.data, result })
-  }
-
-  if (countryCode === "co") {
-    const result = calculateColombiaSettlement(parsed.data)
-    return NextResponse.json({ input: parsed.data, result })
-  }
-
-  if (countryCode === "mx") {
-    const result = calculateMexicoSettlement(parsed.data)
-    return NextResponse.json({ input: parsed.data, result })
-  }
-
-  if (countryCode === "pa") {
-    const result = calculatePanamaSettlement(parsed.data)
-    return NextResponse.json({ input: parsed.data, result })
-  }
-
-  if (countryCode === "cr") {
-    const result = calculateCostaRicaSettlement(parsed.data)
-    return NextResponse.json({ input: parsed.data, result })
-  }
-
-  if (countryCode === "sv") {
-    const result = calculateElSalvadorSettlement(parsed.data)
-    return NextResponse.json({ input: parsed.data, result })
-  }
-
-  if (countryCode === "hn") {
-    const result = calculateHondurasSettlement(parsed.data)
-    return NextResponse.json({ input: parsed.data, result })
-  }
-
-  const result = calculateNicaraguaSettlement(parsed.data)
+  const result = calculator(parsed.data)
   return NextResponse.json({ input: parsed.data, result })
 }
