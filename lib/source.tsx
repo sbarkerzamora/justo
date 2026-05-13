@@ -102,7 +102,7 @@ const docsSource = defineSource<JustoPageData, { title?: string; pages?: string[
                 referencias se adaptan automáticamente.
               </p>
               <Link
-                className="inline-flex items-center gap-2 rounded-xl bg-primary px-5 py-2.5 text-sm font-semibold text-white"
+                className="inline-flex items-center gap-2 rounded-xl bg-primary px-5 py-2.5 text-sm font-semibold !text-white"
                 href="/"
               >
                 Ir a la aplicación
