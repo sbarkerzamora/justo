@@ -10,6 +10,11 @@
 </p>
 
 <p align="center">
+  <strong>🌐 Idiomas</strong><br />
+  <a href="README.md"><strong>Español</strong></a> · <a href="README.en.md">English</a>
+</p>
+
+<p align="center">
   <strong>Asistente laboral open source para Centroamérica</strong><br />
   Consulta legal contextual + calculadora guiada de liquidación laboral con trazabilidad jurídica.
 </p>
