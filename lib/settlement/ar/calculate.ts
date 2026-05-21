@@ -1,4 +1,4 @@
-import { clamp, round2, daysBetween, startOfYear, formatTenure } from "@/lib/settlement/shared"
+import { clamp, round2, daysBetween, formatTenure } from "@/lib/settlement/shared"
 import { SettlementInput, SettlementLine, SettlementResult } from "@/lib/settlement/types"
 import { getArgentinaLegalRates } from "@/lib/settlement/ar/legal-params"
 

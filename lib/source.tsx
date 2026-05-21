@@ -48,7 +48,7 @@ const docsSource = defineSource<JustoPageData, { title?: string; pages?: string[
                   <h3 className="mb-1 text-sm font-semibold">🧮 Cálculo estimativo</h3>
                   <p className="text-xs text-muted-foreground">
                     Pedí un cálculo rápido en el chat, ej:{" "}
-                    <em>"cuánto me corresponde con 5 años y salario de 15000"</em>. El motor
+                    <em>&quot;cuánto me corresponde con 5 años y salario de 15000&quot;</em>. El motor
                     determinístico calcula al instante usando las tasas del corpus legal.
                   </p>
                 </div>
@@ -133,7 +133,7 @@ const docsSource = defineSource<JustoPageData, { title?: string; pages?: string[
               </li>
               <li>
                 <strong>Pedí un cálculo estimado</strong> directamente en el chat, por ejemplo:
-                <em> "cuánto me corresponde de indemnización con 5 años y salario de 15000?"</em>
+                <em> &quot;cuánto me corresponde de indemnización con 5 años y salario de 15000?&quot;</em>
                 El sistema calcula automáticamente usando el motor determinístico del país activo.
               </li>
               <li>
@@ -4045,7 +4045,7 @@ vacaciones = (salario/30) * (15 + feriado_extra)`}</code></pre>
   ],
 })
 
-export const source: any = loader({
+export const source = loader({
   baseUrl: "/docs",
   source: docsSource,
 })

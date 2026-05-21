@@ -1,4 +1,4 @@
-import { clamp, round2, daysBetween, startOfYear, tenureMonths, formatTenure } from "@/lib/settlement/shared"
+import { clamp, round2, daysBetween, startOfYear, formatTenure } from "@/lib/settlement/shared"
 import { SettlementInput, SettlementLine, SettlementResult } from "@/lib/settlement/types"
 import { getCostaRicaLegalRates } from "@/lib/settlement/cr/legal-params"
 
@@ -22,8 +22,6 @@ export const calculateCostaRicaSettlement = (
   const tenureDays = daysBetween(start, end)
   const dailySalary = input.monthlySalary / 30
   const tenureYears = tenureDays / 365
-  const totalMonths = tenureMonths(tenureDays)
-
   // Cesantia: Art. 29 - ~20 dias/ano, max 8 anos
   const cesantiaDays = round2(Math.min(tenureYears * 20, 160))
   const cesantia = round2(dailySalary * cesantiaDays)

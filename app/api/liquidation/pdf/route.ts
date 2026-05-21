@@ -13,8 +13,9 @@ import { calculateColombiaSettlement } from "@/lib/settlement/co/calculate"
 import { calculatePeruSettlement } from "@/lib/settlement/pe/calculate"
 import { calculateArgentinaSettlement } from "@/lib/settlement/ar/calculate"
 import { calculateChileSettlement } from "@/lib/settlement/cl/calculate"
+import type { SettlementInput, SettlementResult } from "@/lib/settlement/types"
 
-const calculators: Record<string, (input: any) => any> = {
+const calculators: Record<string, (input: SettlementInput) => SettlementResult> = {
   ni: calculateNicaraguaSettlement,
   gt: calculateGuatemalaSettlement,
   hn: calculateHondurasSettlement,
@@ -29,7 +30,14 @@ const calculators: Record<string, (input: any) => any> = {
 }
 
 export async function POST(request: Request) {
-  const payload = await request.json()
+  let payload: unknown
+
+  try {
+    payload = await request.json()
+  } catch {
+    return NextResponse.json({ error: "JSON invalido en la solicitud" }, { status: 400 })
+  }
+
   const parsed = settlementInputSchema.safeParse(payload)
 
   if (!parsed.success) {

@@ -40,9 +40,6 @@ export const calculateMexicoSettlement = (
   // Prima de antiguedad: Art. 162 - 12 dias/ano (tope 2x salario minimo, no aplicado en MVP)
   const primaAntiguedad = round2(dailySalary * tenureYears * 12)
 
-  // Indemnización total
-  const totalIndemnizacion = round2(indemnizacionConstitucional + indemnizacionAnual + primaAntiguedad)
-
   // Aguinaldo: Art. 87 - 15 dias, proporcional
   const accrualStart = start > startOfYear(end) ? start : startOfYear(end)
   const aguinaldoDays = daysBetween(accrualStart, end)

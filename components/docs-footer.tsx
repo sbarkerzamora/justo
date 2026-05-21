@@ -1,6 +1,6 @@
 "use client"
 
-import { useEffect, useState } from "react"
+import { useState } from "react"
 
 const countryLabels: Record<string, string> = {
   ni: "Nicaragua",
@@ -17,12 +17,13 @@ const countryLabels: Record<string, string> = {
 }
 
 export function DocsFooter() {
-  const [cc, setCc] = useState<string | null>(null)
-
-  useEffect(() => {
-    const stored = localStorage.getItem("justo-country")
-    if (stored) setCc(stored)
-  }, [])
+  const [cc] = useState<string | null>(() => {
+    try {
+      return localStorage.getItem("justo-country")
+    } catch {
+      return null
+    }
+  })
 
   return (
     <footer className="border-t border-border py-6 text-center text-xs text-muted-foreground">

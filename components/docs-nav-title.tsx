@@ -4,42 +4,26 @@ import Image from "next/image"
 import { useRouter, useSearchParams } from "next/navigation"
 import { Suspense, useEffect, useState } from "react"
 import { getCountryInfo } from "@/lib/countries"
-
-const countryLinks: Record<string, string> = {
-  ni: "/docs/legal/nicaragua",
-  sv: "/docs/legal/elsalvador",
-  gt: "/docs/legal/guatemala",
-  hn: "/docs/legal/honduras",
-  cr: "/docs/legal/costarica",
-  pa: "/docs/legal/panama",
-  mx: "/docs/legal/mexico",
-  co: "/docs/legal/colombia",
-  pe: "/docs/legal/peru",
-  ar: "/docs/legal/argentina",
-  cl: "/docs/legal/chile",
-}
+import { getLegalDocsLink } from "@/lib/legal-docs-link"
 
 function NavTitleInner() {
   const { push } = useRouter()
   const searchParams = useSearchParams()
-  const [storedCountry, setStoredCountry] = useState<string | null>(null)
+  const [storedCountry] = useState<string | null>(() => {
+    try {
+      return localStorage.getItem("justo-country")
+    } catch {
+      return null
+    }
+  })
   const fromUrl = searchParams.get("country")
 
   useEffect(() => {
-    if (fromUrl) {
-      try {
-        localStorage.setItem("justo-country", fromUrl)
-      } catch {
-        /* noop */
-      }
-      setStoredCountry(fromUrl)
-      return
-    }
-
+    if (!fromUrl) return
     try {
-      setStoredCountry(localStorage.getItem("justo-country"))
+      localStorage.setItem("justo-country", fromUrl)
     } catch {
-      setStoredCountry(null)
+      /* noop */
     }
   }, [fromUrl])
 
@@ -53,7 +37,7 @@ function NavTitleInner() {
       {info ? (
         <button
           type="button"
-          onClick={() => push(countryLinks[info.code] ?? "/docs/legal/nicaragua")}
+          onClick={() => push(getLegalDocsLink(info.code))}
           className="inline-flex cursor-pointer items-center gap-1 rounded-full border border-border bg-muted px-2 py-0.5 text-[10px] font-medium text-muted-foreground hover:bg-accent"
         >
           <Image

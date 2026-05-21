@@ -31,12 +31,12 @@ export default async function Page({
     body: React.ReactNode
     title: string
     description?: string
-    toc?: unknown
+    toc?: React.ComponentProps<typeof DocsPage>["toc"]
     full?: boolean
   }
 
   return (
-    <DocsPage toc={pageData.toc as any} full={pageData.full ?? true}>
+    <DocsPage toc={pageData.toc} full={pageData.full ?? true}>
       <DocsTitle>{pageData.title}</DocsTitle>
       {pageData.description ? <DocsDescription>{pageData.description}</DocsDescription> : null}
       <DocsBody>{pageData.body}</DocsBody>

@@ -1,5 +1,5 @@
 import { createOpenAI } from "@ai-sdk/openai"
-import { convertToModelMessages, generateText, tool, zodSchema, type UIMessage } from "ai"
+import { convertToModelMessages, streamText, tool, zodSchema, type UIMessage } from "ai"
 import { readFile } from "node:fs/promises"
 import { join } from "node:path"
 import { z } from "zod"
@@ -49,6 +49,54 @@ const countryTopicFiles: Record<string, string[]> = {
   pe: ["indemnizacion", "cts", "gratificaciones", "vacaciones", "salario-proporcional", "deducciones", "onp-afp", "LEY_GENERAL_TRABAJO_Peru"],
   ar: ["indemnizacion", "preaviso", "sac-aguinaldo", "vacaciones", "salario-proporcional", "deducciones", "leydeltrabajoargentina"],
   cl: ["indemnizacion", "vacaciones", "salario-proporcional", "deducciones", "afp", "salud", "afc", "codigodeltrabajochile"],
+}
+
+const countryGeneralLawTopic: Record<string, string> = {
+  ni: "Ley185Nic",
+  gt: "Leydeltrabajogua",
+  sv: "OpenL-2605112301",
+  hn: "OpenL-2605112256",
+  cr: "OpenL-2605112303",
+  pa: "codigo-de-trabajo-panama",
+  mx: "1044_Ley_Federal_del_Trabajo",
+  co: "CODIGO SUSTANTIVO DEL TRABAJO - Colombia _ SUIN Juriscol",
+  pe: "LEY_GENERAL_TRABAJO_Peru",
+  ar: "leydeltrabajoargentina",
+  cl: "codigodeltrabajochile",
+}
+
+const normalizeCorpusTopic = (countryCode: string, topic: string): string => {
+  const normalized = topic
+    .normalize("NFD")
+    .replace(/[\u0300-\u036f]/g, "")
+    .toLowerCase()
+
+  const isGeneralLaborQuery =
+    normalized.includes("ley laboral") ||
+    normalized.includes("codigo del trabajo") ||
+    normalized.includes("derechos laborales") ||
+    normalized.includes("derecho laboral") ||
+    normalized.includes("ley de trabajo")
+
+  if (isGeneralLaborQuery) {
+    return countryGeneralLawTopic[countryCode] ?? topic
+  }
+
+  return topic
+}
+
+const toLookupKey = (value: string): string =>
+  value
+    .normalize("NFD")
+    .replace(/[\u0300-\u036f]/g, "")
+    .replace(/[^a-z0-9]/gi, "")
+    .toLowerCase()
+
+const resolveKnownTopicFilename = (countryCode: string, topic: string): string => {
+  const known = countryTopicFiles[countryCode] ?? []
+  const wanted = toLookupKey(topic)
+  const match = known.find((candidate) => toLookupKey(candidate) === wanted)
+  return match ?? topic
 }
 
 const calculators: Record<string, (input: SettlementInput) => SettlementResult> = {
@@ -113,17 +161,32 @@ SOLO puedes hacer estas dos cosas:
 
 REGLAS ESTRICTAS:
 
+- CLASIFICACION OBLIGATORIA: antes de responder clasifica la consulta como IN_SCOPE_LABORAL o OUT_OF_SCOPE.
+- IN_SCOPE_LABORAL incluye SIEMPRE: "ley laboral", "codigo del trabajo", "derechos laborales", "prestaciones", "liquidacion", "indemnizacion", "vacaciones", "aguinaldo", "deducciones", "despido", "renuncia".
+- Si hay duda entre IN_SCOPE_LABORAL y OUT_OF_SCOPE, asume IN_SCOPE_LABORAL y pide una aclaracion breve.
+- Para consultas legales o conceptuales, usa primero \`legalCorpusLookup\` antes de responder.
+- Para consultas de montos o estimados, usa siempre \`quickEstimate\`. Nunca hagas calculos por tu cuenta.
+- Para consultas generales como "ley laboral", "codigo del trabajo" o "derechos laborales", responde con un marco general del pais usando corpus y ofrece temas para profundizar.
+- Antes de rechazar una consulta, intenta responder con corpus o pide contexto adicional.
 - SOLO respondes sobre derecho laboral, específicamente de ${meta.name}. Cualquier otra pregunta (política, medicina, tecnología, deportes, entretenimiento, etc.) debes rechazarla cortésmente: "Soy un asistente especializado en derecho laboral de ${meta.name}. No tengo información para responder sobre ese tema. ¿Prefieres preguntarme sobre tus prestaciones, liquidación o derechos laborales?"
 - Si el usuario insiste en temas fuera de tu ámbito, repite el redireccionamiento una vez más de forma amable y luego sugiere terminar la conversación.
 - Responde SIEMPRE en español, de forma clara y amable.
 - No inventes leyes, tasas, artículos ni precedentes. Si no tienes certeza, dila.
 - Cuando uses \`legalCorpusLookup\`, cita la información del corpus en tu respuesta.
 - Cuando uses \`quickEstimate\`, presenta los resultados y recomienda la calculadora guiada si necesita precisión exacta.
+- Formato recomendado de respuesta: 1) resumen breve, 2) base legal/corpus consultado, 3) siguiente paso sugerido.
 - Puedes usar formato markdown básico como **negritas** y listas para mejorar la legibilidad.`
 }
 
 export async function POST(request: Request) {
-  const body = await request.json()
+  let body: unknown
+
+  try {
+    body = await request.json()
+  } catch {
+    return Response.json({ error: "JSON invalido en la solicitud" }, { status: 400 })
+  }
+
   const { messages, countryCode } = body as { messages: UIMessage[]; countryCode?: string }
 
   if (!Array.isArray(messages) || messages.length === 0) {
@@ -144,129 +207,136 @@ export async function POST(request: Request) {
     }),
   )
 
-  const { text } = await generateText({
-    model: openrouter.chat(process.env.OPENROUTER_MODEL ?? "openai/gpt-4o-mini"),
-    system: systemPrompt,
-    messages: modelMessages,
-    tools: {
-      legalCorpusLookup: tool({
-        description: `Busca información en el corpus legal del país activo. Úsala cuando te pregunten sobre derechos, artículos, fórmulas o tasas de un tema específico (indemnización, aguinaldo, vacaciones, ISSS, INSS, IGSS, CSS, etc.).`,
-        inputSchema: zodSchema(
-          z.object({
-            topic: z
-              .string()
-              .describe(
-                "El tema a consultar en el corpus legal, ej: indemnizacion, aguinaldo, vacaciones, deducciones, inss, isss, igss, ihss, ccss, css, imss, eps-pension, onp-afp, afp, salud, afc, sac-aguinaldo, cts, gratificaciones, prima-servicios, cesantia, preaviso, salario-proporcional, ir-rentas-trabajo",
-              ),
-          }),
+  try {
+    const result = streamText({
+      model: openrouter.chat(process.env.OPENROUTER_MODEL ?? "openai/gpt-4o-mini"),
+      system: systemPrompt,
+      messages: modelMessages,
+      tools: {
+        legalCorpusLookup: tool({
+          description: `Busca información en el corpus legal del país activo. Úsala cuando te pregunten sobre derechos, artículos, fórmulas o tasas de un tema específico (indemnización, aguinaldo, vacaciones, ISSS, INSS, IGSS, CSS, etc.).`,
+          inputSchema: zodSchema(
+            z.object({
+              topic: z
+                .string()
+                .describe(
+                  "El tema a consultar en el corpus legal, ej: indemnizacion, aguinaldo, vacaciones, deducciones, inss, isss, igss, ihss, ccss, css, imss, eps-pension, onp-afp, afp, salud, afc, sac-aguinaldo, cts, gratificaciones, prima-servicios, cesantia, preaviso, salario-proporcional, ir-rentas-trabajo",
+                ),
+            }),
         ),
         execute: async ({ topic }) => {
           const countryName = countryMeta[cc]?.name ?? "el país"
-          const sanitized = topic.replace(/[^a-z0-9-]/gi, "").toLowerCase()
+          const resolvedTopic = normalizeCorpusTopic(cc, topic)
+          const knownTopic = resolveKnownTopicFilename(cc, resolvedTopic)
+          const sanitized = knownTopic.replace(/[^a-z0-9-]/gi, "").toLowerCase()
           if (!sanitized) {
             return `El tema "${topic}" no es válido.`
           }
 
           const dir = countryDirMap[cc] ?? cc
-          const filePath = join(process.cwd(), "content", "legal", dir, `${sanitized}.md`)
+          const filePath = join(process.cwd(), "content", "legal", dir, `${knownTopic}.md`)
 
-          try {
-            const content = await readLegalCorpusFile(filePath)
+            try {
+              const content = await readLegalCorpusFile(filePath)
 
-            const frontmatterEnd = content.indexOf("---", 3)
-            const body = frontmatterEnd !== -1 ? content.slice(frontmatterEnd + 3) : content
+              const frontmatterEnd = content.indexOf("---", 3)
+              const body = frontmatterEnd !== -1 ? content.slice(frontmatterEnd + 3) : content
 
-            const sections: Record<string, string> = {}
-            const sectionRegex = /##\s*(\S+)\s*\n([^#]*)/g
-            let match: RegExpExecArray | null
-            while ((match = sectionRegex.exec(body)) !== null) {
-              sections[match[1]!] = match[2]!.trim()
-            }
+              const sections: Record<string, string> = {}
+              const sectionRegex = /##\s*(\S+)\s*\n([^#]*)/g
+              let match: RegExpExecArray | null
+              while ((match = sectionRegex.exec(body)) !== null) {
+                sections[match[1]!] = match[2]!.trim()
+              }
 
-            return JSON.stringify({
-              topic: sanitized,
-              base_legal: sections["base_legal"] ?? "No disponible",
-              regla_operativa: sections["regla_operativa"] ?? "No disponible",
-              formula: sections["formula"] ?? "No disponible",
-              variables: sections["variables"] ?? "No disponible",
-              supuestos: sections["supuestos"] ?? "No disponible",
-              excepciones: sections["excepciones"] ?? "No disponible",
-              vigencia_fuente: sections["vigencia_fuente"] ?? "No disponible",
-            })
+              return JSON.stringify({
+                topic: sanitized,
+                base_legal: sections["base_legal"] ?? "No disponible",
+                regla_operativa: sections["regla_operativa"] ?? "No disponible",
+                formula: sections["formula"] ?? "No disponible",
+                variables: sections["variables"] ?? "No disponible",
+                supuestos: sections["supuestos"] ?? "No disponible",
+                excepciones: sections["excepciones"] ?? "No disponible",
+                vigencia_fuente: sections["vigencia_fuente"] ?? "No disponible",
+              })
           } catch {
             const known = countryTopicFiles[cc] ?? []
-            if (!known.includes(sanitized)) {
+            if (!known.some((candidate) => toLookupKey(candidate) === toLookupKey(knownTopic))) {
               return `No encontré información sobre "${topic}" en el corpus legal de ${countryName}. Temas disponibles: ${known.join(", ")}.`
             }
             return `Error al leer el corpus legal de ${countryName} para el tema "${topic}".`
           }
-        },
-      }),
-      quickEstimate: tool({
-        description: `Calcula un estimado rápido de liquidación usando el motor determinístico. Úsala cuando el usuario pregunte "cuánto me corresponde" con un salario y años de antigüedad. No la uses para liquidaciones formales.`,
-        inputSchema: zodSchema(
-          z.object({
-            monthlySalary: z.number().positive().describe("Salario mensual del trabajador"),
-            tenureYears: z.number().positive().describe("Años de antigüedad del trabajador"),
-            unusedVacationDays: z
-              .number()
-              .min(0)
-              .max(30)
-              .optional()
-              .default(0)
-              .describe("Días de vacaciones pendientes (opcional)"),
-          }),
-        ),
-        execute: async ({ monthlySalary, tenureYears, unusedVacationDays }) => {
-          const calculator = calculators[cc]
-          if (!calculator) return `No hay calculadora disponible para este país. Usa la calculadora guiada.`
+          },
+        }),
+        quickEstimate: tool({
+          description: `Calcula un estimado rápido de liquidación usando el motor determinístico. Úsala cuando el usuario pregunte "cuánto me corresponde" con un salario y años de antigüedad. No la uses para liquidaciones formales.`,
+          inputSchema: zodSchema(
+            z.object({
+              monthlySalary: z.number().positive().describe("Salario mensual del trabajador"),
+              tenureYears: z.number().positive().describe("Años de antigüedad del trabajador"),
+              unusedVacationDays: z
+                .number()
+                .min(0)
+                .max(30)
+                .optional()
+                .default(0)
+                .describe("Días de vacaciones pendientes (opcional)"),
+            }),
+          ),
+          execute: async ({ monthlySalary, tenureYears, unusedVacationDays }) => {
+            const calculator = calculators[cc]
+            if (!calculator) return `No hay calculadora disponible para este país. Usa la calculadora guiada.`
 
-          const end = new Date()
-          const start = new Date()
-          start.setFullYear(start.getFullYear() - tenureYears)
+            const end = new Date()
+            const start = new Date()
+            start.setFullYear(start.getFullYear() - tenureYears)
 
-          const input: SettlementInput = {
-            countryCode: cc as SettlementInput["countryCode"],
-            employeeName: "Trabajador",
-            employerName: "Empleador",
-            monthlySalary,
-            frequency: "mensual",
-            unusedVacationDays,
-            startDate: start.toISOString().slice(0, 10),
-            endDate: end.toISOString().slice(0, 10),
-          }
+            const input: SettlementInput = {
+              countryCode: cc as SettlementInput["countryCode"],
+              employeeName: "Trabajador",
+              employerName: "Empleador",
+              monthlySalary,
+              frequency: "mensual",
+              unusedVacationDays,
+              startDate: start.toISOString().slice(0, 10),
+              endDate: end.toISOString().slice(0, 10),
+            }
 
-          try {
-            const result = calculator(input)
-            return JSON.stringify({
-              currency: result.currency,
-              grossIncome: result.grossIncome,
-              totalDeductions: result.totalDeductions,
-              netTotal: result.netTotal,
-              tenureDays: result.tenureDays,
-              tenureText: result.tenureText,
-              legalCorpusVersion: result.legalCorpusVersion,
-              incomes: result.incomes.map((i) => ({
-                label: i.label,
-                amount: i.amount,
-                formula: i.formula,
-                legalReference: i.legalReference,
-              })),
-              deductions: result.deductions.map((d) => ({
-                label: d.label,
-                amount: d.amount,
-                formula: d.formula,
-                legalReference: d.legalReference,
-              })),
-            })
-          } catch (e) {
-            return `Error al calcular el estimado: ${e instanceof Error ? e.message : "error desconocido"}. Usa la calculadora guiada para un cálculo más preciso.`
-          }
-        },
-      }),
-    },
-    maxRetries: 1,
-  })
+            try {
+              const result = calculator(input)
+              return JSON.stringify({
+                currency: result.currency,
+                grossIncome: result.grossIncome,
+                totalDeductions: result.totalDeductions,
+                netTotal: result.netTotal,
+                tenureDays: result.tenureDays,
+                tenureText: result.tenureText,
+                legalCorpusVersion: result.legalCorpusVersion,
+                incomes: result.incomes.map((i) => ({
+                  label: i.label,
+                  amount: i.amount,
+                  formula: i.formula,
+                  legalReference: i.legalReference,
+                })),
+                deductions: result.deductions.map((d) => ({
+                  label: d.label,
+                  amount: d.amount,
+                  formula: d.formula,
+                  legalReference: d.legalReference,
+                })),
+              })
+            } catch (e) {
+              return `Error al calcular el estimado: ${e instanceof Error ? e.message : "error desconocido"}. Usa la calculadora guiada para un cálculo más preciso.`
+            }
+          },
+        }),
+      },
+      maxRetries: 1,
+    })
 
-  return Response.json({ text })
+    return result.toTextStreamResponse()
+  } catch (error) {
+    console.error("Chat provider error:", error)
+    return Response.json({ error: "No se pudo obtener respuesta del proveedor de IA." }, { status: 503 })
+  }
 }

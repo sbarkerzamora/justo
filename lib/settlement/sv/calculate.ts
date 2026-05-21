@@ -46,7 +46,6 @@ export const calculateElSalvadorSettlement = (
   // Vacaciones: Art. 177 - 15 dias + 30% prima
   // Al terminar relacion, se pagan las no gozadas (Art. 187)
   // Si las vacaciones no se han tomado en el periodo, se paga proporcional
-  const vacationDaysPerYear = 15
   const vacationPremium = 0.30
   const vacationPay = round2(dailySalary * input.unusedVacationDays * (1 + vacationPremium))
 

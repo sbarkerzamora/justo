@@ -30,7 +30,14 @@ const calculators: Record<string, (input: SettlementInput) => SettlementResult> 
 }
 
 export async function POST(request: Request) {
-  const payload = await request.json()
+  let payload: unknown
+
+  try {
+    payload = await request.json()
+  } catch {
+    return NextResponse.json({ error: "JSON invalido en la solicitud" }, { status: 400 })
+  }
+
   const parsed = settlementInputSchema.safeParse(payload)
 
   if (!parsed.success) {

@@ -5,10 +5,11 @@ type Segment =
   | { type: "bold"; content: string }
   | { type: "italic"; content: string }
   | { type: "code"; content: string }
+  | { type: "link"; content: string; href: string }
 
 const parseInline = (text: string): (string | Segment)[] => {
   const parts: (string | Segment)[] = []
-  const regex = /(\*\*|__)(.+?)\1|(\*|_)(.+?)\3|`(.+?)`/g
+  const regex = /(\*\*|__)(.+?)\1|(\*|_)(.+?)\3|`(.+?)`|\[([^\]]+)\]\(([^)]+)\)/g
   let lastIndex = 0
   let match: RegExpExecArray | null
 
@@ -23,6 +24,8 @@ const parseInline = (text: string): (string | Segment)[] => {
       parts.push({ type: "italic", content: match[4] })
     } else if (match[5]) {
       parts.push({ type: "code", content: match[5] })
+    } else if (match[6] && match[7]) {
+      parts.push({ type: "link", content: match[6], href: match[7] })
     }
 
     lastIndex = match.index + match[0].length
@@ -48,6 +51,19 @@ const renderSegment = (seg: string | Segment, key: string): ReactNode => {
         {seg.content}
       </code>
     )
+  if (seg.type === "link") {
+    const isExternal = /^https?:\/\//.test(seg.href)
+    return (
+      <a
+        key={key}
+        href={seg.href}
+        className="underline decoration-muted-foreground/50 underline-offset-2 hover:text-primary"
+        {...(isExternal ? { target: "_blank", rel: "noreferrer noopener" } : {})}
+      >
+        {seg.content}
+      </a>
+    )
+  }
   return seg.content
 }
 

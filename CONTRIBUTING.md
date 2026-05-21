@@ -5,7 +5,7 @@ Thanks for contributing.
 ## Development setup
 
 1. Fork and clone the repository.
-2. Install dependencies with `bun install`.
+2. Install dependencies with `pnpm install`.
 3. Copy `.env.example` to `.env.local` and add required values.
 4. Start dev server with `bun run dev`.
 

@@ -48,23 +48,28 @@ export function AnimatedGridPattern({
   const [dimensions, setDimensions] = useState({ width: 0, height: 0 })
   const [squares, setSquares] = useState<Array<Square>>([])
 
-  const getPos = useCallback((): [number, number] => {
-    return [
-      Math.floor((Math.random() * dimensions.width) / width),
-      Math.floor((Math.random() * dimensions.height) / height),
-    ]
-  }, [dimensions.height, dimensions.width, height, width])
+  const generateSquaresForDimensions = useCallback(
+    (containerWidth: number, containerHeight: number, count: number) => {
+      const getPos = (): [number, number] => [
+        Math.floor((Math.random() * containerWidth) / width),
+        Math.floor((Math.random() * containerHeight) / height),
+      ]
 
-  const generateSquares = useCallback(
-    (count: number) => {
       return Array.from({ length: count }, (_, i) => ({
         id: i,
         pos: getPos(),
         iteration: 0,
       }))
     },
-    [getPos]
+    [height, width],
   )
+
+  const getPos = useCallback((): [number, number] => {
+    return [
+      Math.floor((Math.random() * dimensions.width) / width),
+      Math.floor((Math.random() * dimensions.height) / height),
+    ]
+  }, [dimensions.height, dimensions.width, height, width])
 
   const updateSquarePosition = useCallback(
     (squareId: number) => {
@@ -86,12 +91,6 @@ export function AnimatedGridPattern({
   )
 
   useEffect(() => {
-    if (dimensions.width && dimensions.height) {
-      setSquares(generateSquares(numSquares))
-    }
-  }, [dimensions.width, dimensions.height, generateSquares, numSquares])
-
-  useEffect(() => {
     const element = containerRef.current
     let resizeObserver: ResizeObserver | null = null
 
@@ -107,6 +106,8 @@ export function AnimatedGridPattern({
             ) {
               return currentDimensions
             }
+
+            setSquares(generateSquaresForDimensions(nextWidth, nextHeight, numSquares))
             return { width: nextWidth, height: nextHeight }
           })
         }
@@ -120,7 +121,7 @@ export function AnimatedGridPattern({
         resizeObserver.disconnect()
       }
     }
-  }, [])
+  }, [generateSquaresForDimensions, numSquares])
 
   return (
     <svg

@@ -16,7 +16,10 @@ import Link from "next/link"
 import { useTheme } from "next-themes"
 import { type Dispatch, type KeyboardEvent, type ReactNode, type RefObject, useEffect, useMemo, useReducer, useRef, useState } from "react"
 import { ChatMarkdown } from "@/components/chat/chat-markdown"
+import { Orb, type AgentState } from "@/components/ui/orb"
+import { getCountryOrbColors } from "@/lib/country-orb-colors"
 import { getCountryInfo } from "@/lib/countries"
+import { getLegalDocsLink } from "@/lib/legal-docs-link"
 
 type Role = "user" | "assistant"
 type FlowStep =
@@ -189,6 +192,8 @@ export function LlmHome({ countryCode, onChangeCountry }: { countryCode?: string
   const [isLoading, setIsLoading] = useState(false)
   const [isTyping, setIsTyping] = useState(false)
   const [typingLabel, setTypingLabel] = useState("Escribiendo")
+  const [isStreamingReply, setIsStreamingReply] = useState(false)
+  const [hasStreamChunk, setHasStreamChunk] = useState(false)
   const queue = useRef<Promise<void>>(Promise.resolve())
   const inputRef = useRef<HTMLInputElement | null>(null)
   const messagesEndRef = useRef<HTMLDivElement | null>(null)
@@ -212,6 +217,9 @@ export function LlmHome({ countryCode, onChangeCountry }: { countryCode?: string
   const isCalculationMode = step !== "idle"
 
   const append = (role: Role, text: string) => setMessages((p) => [...p, { id: uid(), role, text }])
+  const setMessageText = (id: string, text: string) => {
+    setMessages((current) => current.map((message) => (message.id === id ? { ...message, text } : message)))
+  }
   const wait = (ms: number) => new Promise((r) => setTimeout(r, ms))
 
   const appendAssistant = (text: string, opts?: { delay?: number; phase?: string }) => {
@@ -395,6 +403,14 @@ export function LlmHome({ countryCode, onChangeCountry }: { countryCode?: string
 
   const sendLegalQuery = async (text: string) => {
     setIsLoading(true)
+    const docsLink = getLegalDocsLink(cc)
+    const fallbackMessage = `Se nos desconecto el abogado digital por un momento ⚡\n\nMientras vuelve la conexion, puedes revisar el marco legal aqui: [Abrir documentacion](${docsLink})`
+    const assistantMessageId = uid()
+
+    setMessages((current) => [...current, { id: assistantMessageId, role: "assistant", text: "" }])
+    setIsStreamingReply(true)
+    setHasStreamChunk(false)
+
     try {
       const res = await fetch("/api/chat", {
         method: "POST",
@@ -405,12 +421,53 @@ export function LlmHome({ countryCode, onChangeCountry }: { countryCode?: string
         }),
       })
       if (!res.ok) {
-        await appendAssistant("No pude responder en este momento.", { delay: 500 })
+        setMessageText(assistantMessageId, fallbackMessage)
         return
       }
-      const data = await res.json()
-      await appendAssistant(data.text, { delay: 0 })
+
+      if (!res.body) {
+        setMessageText(assistantMessageId, fallbackMessage)
+        return
+      }
+
+      const reader = res.body.getReader()
+      const decoder = new TextDecoder()
+      let streamedText = ""
+      let receivedChunk = false
+
+      while (true) {
+        const { value, done } = await reader.read()
+        if (done) break
+
+        const chunk = decoder.decode(value, { stream: true })
+        if (!chunk) continue
+
+        streamedText += chunk
+        if (!receivedChunk && streamedText.trim().length > 0) {
+          receivedChunk = true
+          setHasStreamChunk(true)
+        }
+        setMessageText(assistantMessageId, streamedText)
+      }
+
+      const finalChunk = decoder.decode()
+      if (finalChunk) {
+        streamedText += finalChunk
+        if (!receivedChunk && streamedText.trim().length > 0) {
+          receivedChunk = true
+          setHasStreamChunk(true)
+        }
+        setMessageText(assistantMessageId, streamedText)
+      }
+
+      if (!streamedText.trim()) {
+        setMessageText(assistantMessageId, fallbackMessage)
+      }
+    } catch {
+      setMessageText(assistantMessageId, fallbackMessage)
     } finally {
+      setIsStreamingReply(false)
+      setHasStreamChunk(false)
       setIsLoading(false)
     }
   }
@@ -509,7 +566,18 @@ export function LlmHome({ countryCode, onChangeCountry }: { countryCode?: string
     URL.revokeObjectURL(url)
   }
 
-  return <LlmHomeView cc={cc} countryName={countryName} onChangeCountry={onChangeCountry} resetConversation={resetConversation} resolvedTheme={resolvedTheme} setTheme={setTheme} isCalculationMode={isCalculationMode} stepIdx={stepIdx} step={step} messages={messages} examples={examples} handleExampleClick={handleExampleClick} startFlow={startFlow} onFrequencySelect={onFrequencySelect} form={form} fmt={fmt} onConfirmAction={onConfirmAction} editMode={editMode} editSalary={editSalary} editVacations={editVacations} editStartDate={editStartDate} editEndDate={editEndDate} dispatch={dispatch} saveEdit={saveEdit} isTyping={isTyping} typingLabel={typingLabel} result={result} onExportPdf={onExportPdf} backToLegalChat={backToLegalChat} lastCalculation={lastCalculation} messagesEndRef={messagesEndRef} inputRef={inputRef} input={input} setInput={setInput} handleKeyDown={handleKeyDown} onSend={onSend} canSend={canSend} isLoading={isLoading} />
+  const orbState: AgentState = isStreamingReply
+    ? hasStreamChunk
+      ? "talking"
+      : "thinking"
+    : isLoading
+      ? isTyping
+        ? "talking"
+        : "thinking"
+      : null
+  const orbColors = getCountryOrbColors(cc)
+
+  return <LlmHomeView cc={cc} countryName={countryName} onChangeCountry={onChangeCountry} resetConversation={resetConversation} resolvedTheme={resolvedTheme} setTheme={setTheme} isCalculationMode={isCalculationMode} stepIdx={stepIdx} step={step} messages={messages} examples={examples} handleExampleClick={handleExampleClick} startFlow={startFlow} onFrequencySelect={onFrequencySelect} form={form} fmt={fmt} onConfirmAction={onConfirmAction} editMode={editMode} editSalary={editSalary} editVacations={editVacations} editStartDate={editStartDate} editEndDate={editEndDate} dispatch={dispatch} saveEdit={saveEdit} isTyping={isTyping} typingLabel={typingLabel} result={result} onExportPdf={onExportPdf} backToLegalChat={backToLegalChat} lastCalculation={lastCalculation} messagesEndRef={messagesEndRef} inputRef={inputRef} input={input} setInput={setInput} handleKeyDown={handleKeyDown} onSend={onSend} canSend={canSend} isLoading={isLoading} orbState={orbState} orbColors={orbColors} />
 }
 
 function LlmHomeView(props: {
@@ -551,13 +619,15 @@ function LlmHomeView(props: {
   onSend: () => Promise<void>
   canSend: boolean
   isLoading: boolean
+  orbState: AgentState
+  orbColors: [string, string]
 }) {
   const {
     cc, countryName, onChangeCountry, resetConversation, resolvedTheme, setTheme, isCalculationMode, stepIdx, step,
     messages, examples, handleExampleClick, startFlow, onFrequencySelect, form, fmt, onConfirmAction, editMode,
     editSalary, editVacations, editStartDate, editEndDate, dispatch, saveEdit, isTyping, typingLabel, result,
     onExportPdf, backToLegalChat, lastCalculation, messagesEndRef, inputRef, input, setInput, handleKeyDown,
-    onSend, canSend, isLoading,
+    onSend, canSend, isLoading, orbState, orbColors,
   } = props
 
   return (
@@ -565,6 +635,8 @@ function LlmHomeView(props: {
       <HomeHeader
         cc={cc}
         countryName={countryName}
+        orbState={orbState}
+        orbColors={orbColors}
         onChangeCountry={onChangeCountry}
         onReset={resetConversation}
         resolvedTheme={resolvedTheme}
@@ -688,6 +760,8 @@ function FooterBar() {
 function HomeHeader({
   cc,
   countryName,
+  orbState,
+  orbColors,
   onChangeCountry,
   onReset,
   resolvedTheme,
@@ -695,6 +769,8 @@ function HomeHeader({
 }: {
   cc: string
   countryName: string
+  orbState: AgentState
+  orbColors: [string, string]
   onChangeCountry?: () => void
   onReset: () => void
   resolvedTheme?: string
@@ -703,6 +779,9 @@ function HomeHeader({
   return (
     <header className="sticky top-0 z-10 mx-auto mb-4 mt-3 flex w-full max-w-4xl items-center justify-between rounded-2xl border border-border bg-card px-4 py-3 shadow-sm max-sm:px-3 max-sm:py-2.5">
       <div className="flex items-center gap-3">
+        <div className="relative size-9 overflow-hidden rounded-full border border-border bg-card">
+          <Orb className="size-9" agentState={orbState} colors={orbColors} />
+        </div>
         <Link href="/" className="text-lg font-semibold tracking-tight text-foreground">Justo</Link>
         <button
           type="button"

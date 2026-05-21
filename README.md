@@ -100,12 +100,13 @@
 ### Requisitos
 
 - Node.js >= 22.6
+- pnpm >= 10.18
 - Bun >= 1.3
 
 ### Instalación
 
 ```bash
-bun install
+pnpm install
 ```
 
 ### Configurar variables de entorno
