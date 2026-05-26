@@ -26,6 +26,21 @@ const requireEnv = (name: string, value: string | undefined): string => {
 
 const isEnabled = (value: string | undefined): boolean => value === "1" || value?.toLowerCase() === "true"
 
+const numberFromEnv = (
+  value: string | undefined,
+  fallback: number,
+  options: { min: number; max?: number; integer?: boolean },
+): number => {
+  const parsed = Number(value ?? fallback)
+  const isValid =
+    Number.isFinite(parsed) &&
+    parsed >= options.min &&
+    (options.max === undefined || parsed <= options.max) &&
+    (!options.integer || Number.isInteger(parsed))
+
+  return isValid ? parsed : fallback
+}
+
 const withNvidiaChatTemplateKwargs =
   (reasoningEffort: string): ChatProviderFetch =>
   (async (input, init) => {
@@ -68,9 +83,9 @@ export const getChatModelConfig = () => {
     return {
       provider,
       model: nvidia.chat(process.env.NVIDIA_MODEL ?? DEFAULT_NVIDIA_MODEL),
-      maxOutputTokens: Number(process.env.NVIDIA_MAX_OUTPUT_TOKENS ?? 16384),
-      temperature: Number(process.env.NVIDIA_TEMPERATURE ?? 1),
-      topP: Number(process.env.NVIDIA_TOP_P ?? 0.95),
+      maxOutputTokens: numberFromEnv(process.env.NVIDIA_MAX_OUTPUT_TOKENS, 16384, { min: 1, integer: true }),
+      temperature: numberFromEnv(process.env.NVIDIA_TEMPERATURE, 1, { min: 0, max: 2 }),
+      topP: numberFromEnv(process.env.NVIDIA_TOP_P, 0.95, { min: 0, max: 1 }),
       providerOptions: {
         openai: {
           reasoningEffort,
