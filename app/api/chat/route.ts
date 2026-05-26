@@ -226,10 +226,7 @@ const countryCorpusCache = new Map<string, CorpusDocument[]>()
 
 type CorpusDocument = {
   filename: string
-  title: string
   topic: string
-  version: string
-  body: string
 }
 
 const corpusStopWords = new Set([
@@ -341,24 +338,10 @@ const readCountryCorpus = async (
     (name) => name.endsWith(".md") && name.toLowerCase() !== "readme.md"
   )
 
-  const docs = await Promise.all(
-    filenames.map(async (filename) => {
-      const bodyWithFrontmatter = await readLegalCorpusFile(
-        join(corpusDir, filename)
-      )
-      const body = stripFrontmatter(bodyWithFrontmatter)
-      const title =
-        body.match(/^#\s+(.+)$/m)?.[1]?.trim() ?? filename.replace(/\.md$/i, "")
-      const topic =
-        bodyWithFrontmatter.match(/\ntopic:\s*"?([^"\n]+)"?/i)?.[1]?.trim() ??
-        filename.replace(/\.md$/i, "")
-      const version =
-        bodyWithFrontmatter.match(/\nversion:\s*"?([^"\n]+)"?/i)?.[1]?.trim() ??
-        "sin versión declarada"
-
-      return { filename, title, topic, version, body }
-    })
-  )
+  const docs = filenames.map((filename) => ({
+    filename,
+    topic: filename.replace(/\.md$/i, ""),
+  }))
 
   countryCorpusCache.set(countryCode, docs)
   return docs
@@ -370,17 +353,29 @@ const scoreCorpusDocument = (
   query: string
 ): number => {
   const normalizedQuery = normalizeSearchText(query)
-  const key = normalizeSearchText(`${doc.filename} ${doc.title} ${doc.topic}`)
-  const body = normalizeSearchText(doc.body)
+  const key = normalizeSearchText(`${doc.filename} ${doc.topic}`)
 
   let score = 0
   for (const term of terms) {
     if (key.includes(term)) score += 8
-    if (body.includes(term)) score += 1
   }
   if (normalizedQuery.includes(normalizeSearchText(doc.topic))) score += 12
 
   return score
+}
+
+const parseCorpusDocument = (filename: string, content: string) => {
+  const body = stripFrontmatter(content)
+  const title =
+    body.match(/^#\s+(.+)$/m)?.[1]?.trim() ?? filename.replace(/\.md$/i, "")
+  const topic =
+    content.match(/\ntopic:\s*"?([^"\n]+)"?/i)?.[1]?.trim() ??
+    filename.replace(/\.md$/i, "")
+  const version =
+    content.match(/\nversion:\s*"?([^"\n]+)"?/i)?.[1]?.trim() ??
+    "sin versión declarada"
+
+  return { body, title, topic, version }
 }
 
 const makeCorpusExcerpt = (
@@ -429,19 +424,26 @@ const buildLegalCorpusContext = async (
     if (fallback) selected.push(fallback)
   }
 
-  const context = selected
-    .map((doc) => {
-      const excerpt = makeCorpusExcerpt(doc.body, terms)
-      return `### ${doc.title}
-Archivo: content/legal/${countryDirMap[countryCode] ?? countryCode}/${doc.filename}
-Tema: ${doc.topic}
-Versión: ${doc.version}
+  const context = selected.map(async (doc) => {
+    const dir = countryDirMap[countryCode] ?? countryCode
+    const content = await readLegalCorpusFile(
+      join(process.cwd(), "content", "legal", dir, doc.filename)
+    )
+    const parsed = parseCorpusDocument(doc.filename, content)
+    const excerpt = makeCorpusExcerpt(parsed.body, terms)
+    return `### ${parsed.title}
+Archivo: content/legal/${dir}/${doc.filename}
+Tema: ${parsed.topic}
+Versión: ${parsed.version}
 
 ${excerpt}`
-    })
-    .join("\n\n---\n\n")
+  })
+  const contextChunks = await Promise.all(context)
 
-  return context || "No se encontró corpus legal para este país."
+  return (
+    contextChunks.join("\n\n---\n\n") ||
+    "No se encontró corpus legal para este país."
+  )
 }
 
 const extractMessageText = (message: UIMessage): string => {
@@ -582,7 +584,9 @@ export async function POST(request: Request) {
     : "ni"
 
   const latestUserText = getLatestUserText(messages)
-  const corpusContext = await buildLegalCorpusContext(cc, latestUserText)
+  const corpusContext = await buildLegalCorpusContext(cc, latestUserText).catch(
+    () => "No se encontró corpus legal para este país."
+  )
   const systemPrompt = buildSystemPrompt(cc, corpusContext)
 
   const modelMessages = await convertToModelMessages(
