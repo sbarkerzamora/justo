@@ -21,3 +21,13 @@ Version: `cr-v0.1.0`
 ## Contrato de datos para el motor
 
 Cada archivo tematico define base legal, regla operativa, formula, variables, supuestos, excepciones y vigencia.
+
+## Guia de uso para el asistente
+
+- País cubierto: Costa Rica.
+- Fuente primaria local: `OpenL-2605112303.md` (Código de Trabajo de Costa Rica).
+- Documentos temáticos enriquecidos: `aguinaldo.md`, `ccss.md`, `deducciones.md`, `indemnizacion.md`, `vacaciones.md`.
+- Antes de responder, el LLM debe recuperar el documento temático más cercano y contrastarlo con la fuente primaria local cuando la pregunta solicite base legal o detalle normativo.
+- Para liquidaciones o estimaciones, debe preguntar primero por salario/base, fechas o antigüedad, tipo de terminación y pagos/días pendientes relevantes.
+- Si un documento tiene estado `proposed` o contiene tasas sujetas a norma administrativa, la respuesta debe marcar la necesidad de validación legal/contable vigente.
+- Ningún documento temático reemplaza asesoría profesional; el contenido es informativo y sirve como fuente operativa del MVP.
