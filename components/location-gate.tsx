@@ -3,7 +3,8 @@
 import { useMemo } from "react"
 import { useRouter } from "next/navigation"
 import { LocationDialog } from "@/components/location-dialog"
-import { AsciiShaderBackground } from "@/components/ui/ascii-shader-background"
+import { AnimatedGridPattern } from "@/components/ui/animated-grid-pattern"
+import { cn } from "@/lib/utils"
 
 const STORAGE_KEY = "justo-country"
 
@@ -32,8 +33,17 @@ export function LocationGate() {
   }
 
   return (
-    <div className="relative isolate min-h-svh overflow-hidden bg-background">
-      <AsciiShaderBackground />
+    <div className="relative min-h-svh">
+      <AnimatedGridPattern
+        numSquares={30}
+        maxOpacity={0.08}
+        duration={3}
+        repeatDelay={1}
+        className={cn(
+          "mask-[radial-gradient(800px_circle_at_center,white,transparent)]",
+          "fixed inset-0 h-full w-full"
+        )}
+      />
       <div className="relative z-10">
         <LocationDialog open onConfirm={handleConfirm} />
       </div>
