@@ -16,6 +16,7 @@ import Link from "next/link"
 import { useTheme } from "next-themes"
 import { type Dispatch, type KeyboardEvent, type ReactNode, type RefObject, useEffect, useMemo, useReducer, useRef } from "react"
 import { ChatMarkdown } from "@/components/chat/chat-markdown"
+import ShinyText from "@/components/ShinyText"
 import { Orb, type AgentState } from "@/components/ui/orb"
 import { getCountryOrbColors } from "@/lib/country-orb-colors"
 import { getCountryInfo } from "@/lib/countries"
@@ -178,6 +179,30 @@ const toIsoDate = (displayDate: string) => {
     .padStart(2, "0")}`
 }
 
+const wait = (ms: number) => new Promise((resolve) => setTimeout(resolve, ms))
+
+const normalizeText = (value: string) =>
+  value
+    .normalize("NFD")
+    .replace(/[\u0300-\u036f]/g, "")
+    .toLowerCase()
+
+const shouldStartGuidedFlow = (text: string) => {
+  const normalized = normalizeText(text)
+  return (
+    normalized.includes("iniciar calcul") ||
+    normalized.includes("calculo guiado") ||
+    normalized.includes("calcular mi liquidacion") ||
+    normalized.includes("liquidacion completa") ||
+    normalized.includes("paso a paso")
+  )
+}
+
+const buildChatFallbackMessage = (docsLink: string, errorMessage?: string) => {
+  const reason = errorMessage ? `Detalle: ${errorMessage}` : "El proveedor de IA no completo la respuesta."
+  return `${reason}\n\nPuedo seguir ayudandote. Intenta de nuevo en un momento o revisa el marco legal aqui: [Abrir documentacion](${docsLink})`
+}
+
 export function LlmHome({ countryCode, onChangeCountry }: { countryCode?: string; onChangeCountry?: () => void }) {
   const cc = countryCode ?? "ni"
   const info = getCountryInfo(cc)
@@ -230,6 +255,7 @@ export function LlmHome({ countryCode, onChangeCountry }: { countryCode?: string
   }
 
   const startFlow = () => {
+    if (isLoading) return
     resetMessages()
     dispatch({ type: "setForm", form: defaultForm(cc) })
     dispatch({ type: "setResult", result: null })
@@ -388,13 +414,26 @@ export function LlmHome({ countryCode, onChangeCountry }: { countryCode?: string
 
   const sendLegalQuery = async (text: string) => {
     setLoading(true)
+    setTypingLabel("Justo esta pensando")
+    setTyping(true)
     const docsLink = getLegalDocsLink(cc)
-    const fallbackMessage = `Se nos desconecto el abogado digital por un momento ⚡\n\nMientras vuelve la conexion, puedes revisar el marco legal aqui: [Abrir documentacion](${docsLink})`
+    const fallbackMessage = buildChatFallbackMessage(docsLink)
     const assistantMessageId = crypto.randomUUID()
+    let assistantMessageCreated = false
 
-    setMessages((current) => [...current, { id: assistantMessageId, role: "assistant", text: "" }])
     setStreamingReply(true)
     setHasStreamChunk(false)
+
+    const ensureAssistantMessage = () => {
+      if (assistantMessageCreated) return
+      assistantMessageCreated = true
+      setMessages((current) => [...current, { id: assistantMessageId, role: "assistant", text: "" }])
+    }
+
+    const showAssistantMessage = (message: string) => {
+      ensureAssistantMessage()
+      setMessageText(assistantMessageId, message)
+    }
 
     try {
       const res = await fetch("/api/chat", {
@@ -406,19 +445,35 @@ export function LlmHome({ countryCode, onChangeCountry }: { countryCode?: string
         }),
       })
       if (!res.ok) {
-        setMessageText(assistantMessageId, fallbackMessage)
+        const errorMessage = await res
+          .json()
+          .then((data: { error?: unknown }) => (typeof data.error === "string" ? data.error : undefined))
+          .catch(() => undefined)
+        showAssistantMessage(buildChatFallbackMessage(docsLink, errorMessage))
         return
       }
 
       if (!res.body) {
-        setMessageText(assistantMessageId, fallbackMessage)
+        showAssistantMessage(fallbackMessage)
         return
       }
 
       const reader = res.body.getReader()
       const decoder = new TextDecoder()
       let streamedText = ""
+      let visibleText = ""
       let receivedChunk = false
+
+      const revealText = async (targetText: string) => {
+        ensureAssistantMessage()
+        while (visibleText.length < targetText.length) {
+          const remaining = targetText.length - visibleText.length
+          const step = remaining > 80 ? 5 : remaining > 30 ? 3 : 2
+          visibleText = targetText.slice(0, visibleText.length + step)
+          setMessageText(assistantMessageId, visibleText)
+          await wait(18)
+        }
+      }
 
       while (true) {
         const { value, done } = await reader.read()
@@ -431,8 +486,9 @@ export function LlmHome({ countryCode, onChangeCountry }: { countryCode?: string
         if (!receivedChunk && streamedText.trim().length > 0) {
           receivedChunk = true
           setHasStreamChunk(true)
+          setTyping(false)
         }
-        setMessageText(assistantMessageId, streamedText)
+        await revealText(streamedText)
       }
 
       const finalChunk = decoder.decode()
@@ -441,16 +497,20 @@ export function LlmHome({ countryCode, onChangeCountry }: { countryCode?: string
         if (!receivedChunk && streamedText.trim().length > 0) {
           receivedChunk = true
           setHasStreamChunk(true)
+          setTyping(false)
         }
-        setMessageText(assistantMessageId, streamedText)
+        await revealText(streamedText)
       }
 
       if (!streamedText.trim()) {
-        setMessageText(assistantMessageId, fallbackMessage)
+        showAssistantMessage(fallbackMessage)
       }
-    } catch {
-      setMessageText(assistantMessageId, fallbackMessage)
+    } catch (error) {
+      showAssistantMessage(
+        buildChatFallbackMessage(docsLink, error instanceof Error ? error.message : undefined)
+      )
     } finally {
+      setTyping(false)
       setStreamingReply(false)
       setHasStreamChunk(false)
       setLoading(false)
@@ -506,8 +566,7 @@ export function LlmHome({ countryCode, onChangeCountry }: { countryCode?: string
       return
     }
 
-    const lower = text.toLowerCase()
-    if (lower.includes("calcular") || lower.includes("liquidacion")) {
+    if (shouldStartGuidedFlow(text)) {
       startFlow()
       return
     }
@@ -522,6 +581,7 @@ export function LlmHome({ countryCode, onChangeCountry }: { countryCode?: string
   }
 
   const handleExampleClick = (q: string) => {
+    if (isLoading) return
     setInput("")
     void sendText(q)
   }
@@ -630,7 +690,7 @@ function LlmHomeView(props: {
       <section className="flex flex-1 flex-col min-h-0 pb-12">
         {isCalculationMode ? <ProgressHeader cc={cc} countryName={countryName} step={step} stepIdx={stepIdx} /> : null}
         <div className="flex-1 overflow-y-auto min-h-0 space-y-3 px-2 pb-2 max-sm:px-1">
-          {messages.length === 0 ? <WelcomeEmptyState cc={cc} countryName={countryName} examples={examples} onExampleClick={handleExampleClick} onStartFlow={startFlow} /> : null}
+          {messages.length === 0 ? <WelcomeEmptyState cc={cc} countryName={countryName} examples={examples} onExampleClick={handleExampleClick} onStartFlow={startFlow} isLoading={isLoading} /> : null}
           {messages.map((m) => (
             <div key={m.id} className={(m.role === "user" ? "flex justify-end" : "flex justify-start") + " motion-safe:animate-in motion-safe:fade-in motion-safe:slide-in-from-bottom-1 duration-200"}>
               <div className={m.role === "user" ? "max-w-[85%] whitespace-pre-line rounded-2xl bg-primary px-4 py-2.5 text-sm text-primary-foreground" : "max-w-[88%] rounded-2xl border border-border bg-card px-4 py-2.5 text-sm leading-relaxed text-foreground"}>
@@ -726,7 +786,28 @@ function EditPanel({ editMode, editSalary, editVacations, editStartDate, editEnd
   return <div className="rounded-2xl border border-border bg-card p-4">{editMode === "salary" ? <label className="grid gap-2 text-sm"><span className="text-foreground">Nuevo salario mensual</span><input inputMode="decimal" value={editSalary} onChange={(e) => dispatch({ type: "setEditField", field: "editSalary", value: e.target.value })} className="h-10 rounded-xl border border-border bg-background px-3 text-foreground" /></label> : null}{editMode === "vacations" ? <label className="grid gap-2 text-sm"><span className="text-foreground">Nuevos dias de vacaciones</span><input inputMode="numeric" value={editVacations} onChange={(e) => dispatch({ type: "setEditField", field: "editVacations", value: e.target.value })} className="h-10 rounded-xl border border-border bg-background px-3 text-foreground" /></label> : null}{editMode === "dates" ? <div className="grid gap-2 text-sm"><label className="grid gap-1"><span className="text-foreground">Fecha inicio (DD/MM/AAAA)</span><input inputMode="numeric" pattern="[0-9/]*" enterKeyHint="next" autoComplete="off" value={editStartDate} onChange={(e) => dispatch({ type: "setEditField", field: "editStartDate", value: e.target.value })} className="h-10 rounded-xl border border-border bg-background px-3 text-foreground" /></label><label className="grid gap-1"><span className="text-foreground">Fecha salida (DD/MM/AAAA)</span><input inputMode="numeric" pattern="[0-9/]*" enterKeyHint="done" autoComplete="off" value={editEndDate} onChange={(e) => dispatch({ type: "setEditField", field: "editEndDate", value: e.target.value })} className="h-10 rounded-xl border border-border bg-background px-3 text-foreground" /></label></div> : null}<div className="mt-3 flex gap-2"><ActionButton onClick={() => void saveEdit()} label="Guardar cambios" primary /><ActionButton onClick={() => dispatch({ type: "setEditMode", editMode: null })} label="Cancelar" /></div></div>
 }
 
-function TypingPanel({ typingLabel }: { typingLabel: string }) { return <div className="flex justify-start"><div className="rounded-2xl border border-border bg-card px-4 py-2.5 text-sm text-muted-foreground"><div className="mb-1 text-xs font-medium">{typingLabel}</div><div className="flex items-center gap-1"><span className="size-2 rounded-full bg-primary motion-safe:animate-typing-dot" /><span className="size-2 rounded-full bg-primary motion-safe:animate-typing-dot [animation-delay:200ms]" /><span className="size-2 rounded-full bg-primary motion-safe:animate-typing-dot [animation-delay:400ms]" /></div></div></div> }
+function TypingPanel({ typingLabel }: { typingLabel: string }) {
+  return (
+    <div className="flex justify-start">
+      <div className="inline-flex items-center gap-2 rounded-2xl border border-border bg-card px-4 py-2.5 text-sm text-foreground">
+        <IconSparkles className="size-4 shrink-0 text-primary" />
+        <ShinyText
+          text={typingLabel}
+          speed={2}
+          delay={0}
+          color="var(--muted-foreground)"
+          shineColor="var(--foreground)"
+          spread={120}
+          direction="left"
+          yoyo={false}
+          pauseOnHover={false}
+          disabled={false}
+          className="text-xs font-medium"
+        />
+      </div>
+    </div>
+  )
+}
 
 function ResultPanel({ result, fmt, onExportPdf, startFlow, backToLegalChat }: { result: SettlementApiResponse; fmt: (v: number) => string; onExportPdf: (payloadOverride?: SettlementForm) => Promise<void>; startFlow: () => void; backToLegalChat: () => Promise<void> }) {
   return <div className="rounded-2xl border border-border bg-card p-4"><p className="text-sm font-semibold text-foreground">Resultado final</p><p className="mt-1 text-xs text-muted-foreground">Version legal: {result.result.legalCorpusVersion}</p><p className="mt-3 text-2xl font-semibold text-primary">Neto: {fmt(result.result.netTotal)}</p><div className="mt-3 grid gap-2 text-sm"><Row label="Ingresos brutos" value={fmt(result.result.grossIncome)} /><Row label="Deducciones" value={fmt(result.result.totalDeductions)} /></div><details className="mt-3 rounded-xl border border-border p-3 text-sm text-foreground"><summary className="cursor-pointer font-medium">Ver desglose completo</summary><div className="mt-2 space-y-2">{result.result.incomes.map((l) => <p key={l.label}>+ {l.label}: {fmt(l.amount)} | {l.formula} | {l.legalReference}</p>)}{result.result.deductions.map((l) => <p key={l.label}>- {l.label}: {fmt(l.amount)} | {l.formula} | {l.legalReference}</p>)}</div></details><button type="button" onClick={() => void onExportPdf()} className="mt-4 inline-flex items-center gap-2 rounded-xl border border-border bg-card px-4 py-2 text-sm font-semibold text-foreground"><IconDownload className="size-4" />Descargar PDF</button><div className="mt-3 grid gap-2 sm:grid-cols-2"><button type="button" onClick={startFlow} className="inline-flex items-center justify-center rounded-xl bg-primary px-4 py-2 text-sm font-semibold text-primary-foreground">Volver a calcular</button><button type="button" onClick={() => void backToLegalChat()} className="inline-flex items-center justify-center rounded-xl border border-border bg-card px-4 py-2 text-sm font-semibold text-foreground">Escribir una pregunta</button></div></div>
@@ -832,12 +913,14 @@ function WelcomeEmptyState({
   examples,
   onExampleClick,
   onStartFlow,
+  isLoading,
 }: {
   cc: string
   countryName: string
   examples: string[]
   onExampleClick: (q: string) => void
   onStartFlow: () => void
+  isLoading: boolean
 }) {
   return (
     <div className="flex flex-1 flex-col items-center justify-center px-4">
@@ -866,7 +949,8 @@ function WelcomeEmptyState({
                 key={q}
                 type="button"
                 onClick={() => onExampleClick(q)}
-                className="block w-full rounded-xl border border-border bg-card px-3 py-2 text-left text-xs text-foreground transition-colors hover:bg-accent hover:text-primary"
+                disabled={isLoading}
+                className="block w-full rounded-xl border border-border bg-card px-3 py-2 text-left text-xs text-foreground transition-colors hover:bg-accent hover:text-primary disabled:cursor-not-allowed disabled:opacity-50"
               >
                 {q}
               </button>
@@ -876,7 +960,8 @@ function WelcomeEmptyState({
         <button
           type="button"
           onClick={onStartFlow}
-          className="inline-flex items-center gap-2 rounded-2xl bg-primary px-6 py-3 text-sm font-semibold text-primary-foreground shadow-lg transition-all hover:translate-y-[-1px]"
+          disabled={isLoading}
+          className="inline-flex items-center gap-2 rounded-2xl bg-primary px-6 py-3 text-sm font-semibold text-primary-foreground shadow-lg transition-all hover:translate-y-[-1px] disabled:cursor-not-allowed disabled:opacity-50"
         >
           <IconCalculator className="size-4" />
           Iniciar calculo guiado
