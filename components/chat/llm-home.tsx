@@ -945,12 +945,6 @@ function LlmHomeView(props: {
     orbColors,
   } = props
 
-  const shouldScrollMessages =
-    messages.length > 0 ||
-    isCalculationMode ||
-    isTyping ||
-    Boolean(lastCalculation)
-
   return (
     <main className="mx-auto flex h-svh max-w-4xl flex-col overflow-hidden px-4 md:px-8">
       <HomeHeader
@@ -978,10 +972,7 @@ function LlmHomeView(props: {
           />
         ) : null}
         <div
-          className={
-            "min-h-0 flex-1 space-y-3 px-2 pb-4 max-sm:px-1 " +
-            (shouldScrollMessages ? "overflow-y-auto" : "overflow-hidden")
-          }
+          className="min-h-0 flex-1 space-y-3 overflow-y-auto px-2 pb-4 max-sm:px-1 [scrollbar-gutter:stable]"
         >
           {messages.length === 0 ? (
             <WelcomeEmptyState

@@ -414,8 +414,10 @@ export default async function CountryPage({
 
   return (
     <>
-      <CountryShell countryCode={country} locale={locale} />
-      <CountrySeoContent countryName={info.name} seo={seo} locale={locale} />
+      <div className="fixed inset-0 overflow-y-auto">
+        <CountryShell countryCode={country} locale={locale} />
+        <CountrySeoContent countryName={info.name} seo={seo} locale={locale} />
+      </div>
       <script
         type="application/ld+json"
         dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
