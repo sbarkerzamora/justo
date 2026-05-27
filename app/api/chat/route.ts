@@ -1,4 +1,3 @@
-import { createOpenAI } from "@ai-sdk/openai"
 import {
   convertToModelMessages,
   streamText,
@@ -10,6 +9,7 @@ import { readdir, readFile } from "node:fs/promises"
 import { join } from "node:path"
 import { z } from "zod"
 
+import { getChatModelConfig } from "@/lib/ai/chat-provider"
 import { SettlementInput, SettlementResult } from "@/lib/settlement/types"
 import { calculateNicaraguaSettlement } from "@/lib/settlement/ni/calculate"
 import { calculateGuatemalaSettlement } from "@/lib/settlement/gt/calculate"
@@ -215,11 +215,6 @@ const calculators: Record<
   ar: calculateArgentinaSettlement,
   cl: calculateChileSettlement,
 }
-
-const openrouter = createOpenAI({
-  apiKey: process.env.OPENROUTER_API_KEY,
-  baseURL: process.env.OPENROUTER_BASE_URL ?? "https://openrouter.ai/api/v1",
-})
 
 const legalCorpusCache = new Map<string, string>()
 const countryCorpusCache = new Map<string, CorpusDocument[]>()
@@ -598,12 +593,15 @@ export async function POST(request: Request) {
   )
 
   try {
+    const chatModelConfig = getChatModelConfig()
     const result = streamText({
-      model: openrouter.chat(
-        process.env.OPENROUTER_MODEL ?? "openai/gpt-4o-mini"
-      ),
+      model: chatModelConfig.model,
       system: systemPrompt,
       messages: modelMessages,
+      maxOutputTokens: chatModelConfig.maxOutputTokens,
+      temperature: chatModelConfig.temperature,
+      topP: chatModelConfig.topP,
+      providerOptions: chatModelConfig.providerOptions,
       tools: {
         legalCorpusLookup: tool({
           description: `Busca información en el corpus legal del país activo. Úsala cuando te pregunten sobre derechos, artículos, fórmulas o tasas de un tema específico (indemnización, aguinaldo, vacaciones, ISSS, INSS, IGSS, CSS, etc.).`,
