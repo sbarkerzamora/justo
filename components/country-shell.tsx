@@ -11,9 +11,11 @@ import { cn } from "@/lib/utils"
 export function CountryShell({
   countryCode,
   locale,
+  children,
 }: {
   countryCode: string
   locale: Locale
+  children?: React.ReactNode
 }) {
   const { push } = useRouter()
   const [isSpringing, setIsSpringing] = useState(false)
@@ -123,6 +125,7 @@ export function CountryShell({
           ? "Swipe for legal explanation"
           : "Desliza para ver la explicación legal"}
       </div>
+      {children}
     </div>
   )
 }
