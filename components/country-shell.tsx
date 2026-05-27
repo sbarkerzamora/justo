@@ -82,7 +82,7 @@ export function CountryShell({
   return (
     <div
       className={cn(
-        "relative min-h-svh transform-gpu",
+        "relative h-svh transform-gpu",
         isSpringing && "justo-hero-spring"
       )}
     >
