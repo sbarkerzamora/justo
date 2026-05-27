@@ -980,7 +980,7 @@ function LlmHomeView(props: {
         ) : null}
         <div
           ref={messagesContainerRef}
-          className="min-h-0 flex-1 space-y-3 overflow-y-auto px-2 pb-4 max-sm:px-1"
+          className={`min-h-0 flex-1 space-y-3 overflow-y-auto px-2 pb-4 max-sm:px-1${messages.length > 0 ? " [scrollbar-gutter:stable]" : ""}`}
         >
           {messages.length === 0 ? (
             <WelcomeEmptyState
