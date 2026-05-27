@@ -8,7 +8,7 @@ import { getLegalDocsLink } from "@/lib/legal-docs-link"
 
 function NavTitleInner() {
   const { push } = useRouter()
-  const { get } = useSearchParams()
+  const searchParams = useSearchParams()
   const [storedCountry] = useState<string | null>(() => {
     try {
       return localStorage.getItem("justo-country")
@@ -16,7 +16,7 @@ function NavTitleInner() {
       return null
     }
   })
-  const fromUrl = get("country")
+  const fromUrl = searchParams.get("country")
 
   useEffect(() => {
     if (!fromUrl) return
