@@ -1,6 +1,6 @@
 "use client"
 
-import { useMemo } from "react"
+import { useEffect } from "react"
 import { useRouter } from "next/navigation"
 import { LocationDialog } from "@/components/location-dialog"
 import { AnimatedGridPattern } from "@/components/ui/animated-grid-pattern"
@@ -18,18 +18,17 @@ const getStored = (): string | null => {
 }
 
 export function LocationGate() {
-  const { push } = useRouter()
-  const storedCountry = useMemo(() => getStored(), [])
+  const { push, replace } = useRouter()
+
+  useEffect(() => {
+    const storedCountry = getStored()
+    if (storedCountry) {
+      replace(`/${storedCountry}`)
+    }
+  }, [replace])
 
   const handleConfirm = (code: string) => {
     push(`/${code}`)
-  }
-
-  if (storedCountry) {
-    if (typeof window !== "undefined") {
-      window.location.replace(`/${storedCountry}`)
-    }
-    return null
   }
 
   return (

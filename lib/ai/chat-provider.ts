@@ -3,8 +3,8 @@ import { createOpenAI } from "@ai-sdk/openai"
 const DEFAULT_OPENROUTER_BASE_URL = "https://openrouter.ai/api/v1"
 const DEFAULT_OPENROUTER_MODEL = "openai/gpt-4o-mini"
 const DEFAULT_NVIDIA_BASE_URL = "https://integrate.api.nvidia.com/v1"
-const DEFAULT_NVIDIA_MODEL = "deepseek-ai/deepseek-v4-flash"
-const DEFAULT_NVIDIA_REASONING_EFFORT = "high"
+const DEFAULT_NVIDIA_MODEL = "nvidia/nemotron-3-super-120b-a12b"
+const DEFAULT_NVIDIA_REASONING_BUDGET = 16384
 
 const chatProviders = ["openrouter", "nvidia"] as const
 
@@ -41,8 +41,8 @@ const numberFromEnv = (
   return isValid ? parsed : fallback
 }
 
-const withNvidiaChatTemplateKwargs =
-  (reasoningEffort: string): ChatProviderFetch =>
+const withNvidiaThinking =
+  (reasoningBudget: number): ChatProviderFetch =>
   (async (input, init) => {
     if (typeof init?.body !== "string") {
       return fetch(input, init)
@@ -55,9 +55,9 @@ const withNvidiaChatTemplateKwargs =
         ...init,
         body: JSON.stringify({
           ...body,
+          reasoning_budget: reasoningBudget,
           chat_template_kwargs: {
-            thinking: true,
-            reasoning_effort: reasoningEffort,
+            enable_thinking: true,
           },
         }),
       })
@@ -70,13 +70,16 @@ export const getChatModelConfig = () => {
   const provider = resolveChatProvider()
 
   if (provider === "nvidia") {
-    const reasoningEffort = process.env.NVIDIA_REASONING_EFFORT ?? DEFAULT_NVIDIA_REASONING_EFFORT
+    const reasoningBudget = numberFromEnv(process.env.NVIDIA_REASONING_BUDGET, DEFAULT_NVIDIA_REASONING_BUDGET, {
+      min: 1,
+      integer: true,
+    })
     const nvidia = createOpenAI({
       name: "nvidia",
       apiKey: requireEnv("NVIDIA_API_KEY", process.env.NVIDIA_API_KEY),
       baseURL: process.env.NVIDIA_BASE_URL ?? DEFAULT_NVIDIA_BASE_URL,
       fetch: isEnabled(process.env.NVIDIA_THINKING_ENABLED)
-        ? withNvidiaChatTemplateKwargs(reasoningEffort)
+        ? withNvidiaThinking(reasoningBudget)
         : undefined,
     })
 
@@ -86,11 +89,7 @@ export const getChatModelConfig = () => {
       maxOutputTokens: numberFromEnv(process.env.NVIDIA_MAX_OUTPUT_TOKENS, 16384, { min: 1, integer: true }),
       temperature: numberFromEnv(process.env.NVIDIA_TEMPERATURE, 1, { min: 0, max: 2 }),
       topP: numberFromEnv(process.env.NVIDIA_TOP_P, 0.95, { min: 0, max: 1 }),
-      providerOptions: {
-        openai: {
-          reasoningEffort,
-        },
-      },
+      providerOptions: undefined,
     }
   }
 
@@ -103,5 +102,6 @@ export const getChatModelConfig = () => {
   return {
     provider,
     model: openrouter.chat(process.env.OPENROUTER_MODEL ?? DEFAULT_OPENROUTER_MODEL),
+    providerOptions: undefined,
   }
 }

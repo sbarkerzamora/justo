@@ -110,7 +110,7 @@ bun install
 
 ### Configure Environment Variables
 
-Copy `.env.example` to `.env.local` and configure your OpenRouter key:
+Copy `.env.example` to `.env.local` and configure your AI provider:
 
 ```bash
 cp .env.example .env.local
@@ -120,9 +120,12 @@ Required variables:
 
 | Variable | Description |
 |---|---|
+| `AI_PROVIDER` | Chat provider: `openrouter` or `nvidia` |
 | `OPENROUTER_API_KEY` | Your OpenRouter API key |
 | `OPENROUTER_BASE_URL` | Base URL (default already included) |
 | `OPENROUTER_MODEL` | Model to use (e.g., `openai/gpt-4o-mini`) |
+| `NVIDIA_API_KEY` | Your NVIDIA API key, if using `AI_PROVIDER=nvidia` |
+| `NVIDIA_MODEL` | NVIDIA model to use |
 
 ### Run
 

@@ -111,7 +111,7 @@ pnpm install
 
 ### Configurar variables de entorno
 
-Copia `.env.example` a `.env.local` y configura tu clave de OpenRouter:
+Copia `.env.example` a `.env.local` y configura tu proveedor de IA:
 
 ```bash
 cp .env.example .env.local
@@ -121,9 +121,12 @@ Variables requeridas:
 
 | Variable | Descripción |
 |---|---|
+| `AI_PROVIDER` | Proveedor de chat: `openrouter` o `nvidia` |
 | `OPENROUTER_API_KEY` | Tu API key de OpenRouter |
 | `OPENROUTER_BASE_URL` | URL base (default ya incluido) |
 | `OPENROUTER_MODEL` | Modelo a usar (ej: `openai/gpt-4o-mini`) |
+| `NVIDIA_API_KEY` | Tu API key de NVIDIA, si usas `AI_PROVIDER=nvidia` |
+| `NVIDIA_MODEL` | Modelo NVIDIA a usar |
 
 ### Ejecutar
 
