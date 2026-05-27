@@ -946,7 +946,7 @@ function LlmHomeView(props: {
   } = props
 
   return (
-    <main className="mx-auto flex h-svh max-w-4xl flex-col overflow-hidden px-4 md:px-8">
+    <main className="mx-auto flex h-svh max-w-4xl flex-col overflow-clip px-4 md:px-8">
       <HomeHeader
         cc={cc}
         countryName={countryName}
