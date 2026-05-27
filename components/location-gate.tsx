@@ -41,7 +41,7 @@ export function LocationGate() {
         repeatDelay={1}
         className={cn(
           "mask-[radial-gradient(800px_circle_at_center,white,transparent)]",
-          "fixed inset-0 h-full w-full",
+          "fixed inset-0 h-full w-full"
         )}
       />
       <div className="relative z-10">

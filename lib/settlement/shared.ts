@@ -8,8 +8,6 @@ export const daysBetween = (start: Date, end: Date) =>
 
 export const startOfYear = (date: Date) => new Date(Date.UTC(date.getUTCFullYear(), 0, 1))
 
-export const tenureMonths = (totalDays: number) => Math.floor(totalDays / 30)
-
 export const formatTenure = (totalDays: number) => {
   const years = Math.floor(totalDays / 365)
   const months = Math.floor((totalDays % 365) / 30)

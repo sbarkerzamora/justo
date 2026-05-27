@@ -8,7 +8,7 @@ import {
   useState,
   type ComponentPropsWithoutRef,
 } from "react"
-import { motion } from "motion/react"
+import { LazyMotion, m, domAnimation } from "motion/react"
 
 import { cn } from "@/lib/utils"
 
@@ -45,7 +45,7 @@ export function AnimatedGridPattern({
 }: AnimatedGridPatternProps) {
   const id = useId()
   const containerRef = useRef<SVGSVGElement | null>(null)
-  const [dimensions, setDimensions] = useState({ width: 0, height: 0 })
+  const dimensionsRef = useRef({ width: 0, height: 0 })
   const [squares, setSquares] = useState<Array<Square>>([])
 
   const generateSquaresForDimensions = useCallback(
@@ -66,10 +66,10 @@ export function AnimatedGridPattern({
 
   const getPos = useCallback((): [number, number] => {
     return [
-      Math.floor((Math.random() * dimensions.width) / width),
-      Math.floor((Math.random() * dimensions.height) / height),
+      Math.floor((Math.random() * dimensionsRef.current.width) / width),
+      Math.floor((Math.random() * dimensionsRef.current.height) / height),
     ]
-  }, [dimensions.height, dimensions.width, height, width])
+  }, [height, width])
 
   const updateSquarePosition = useCallback(
     (squareId: number) => {
@@ -97,19 +97,17 @@ export function AnimatedGridPattern({
     if (element) {
       resizeObserver = new ResizeObserver((entries) => {
         for (const entry of entries) {
-          setDimensions((currentDimensions) => {
-            const nextWidth = entry.contentRect.width
-            const nextHeight = entry.contentRect.height
-            if (
-              currentDimensions.width === nextWidth &&
-              currentDimensions.height === nextHeight
-            ) {
-              return currentDimensions
-            }
+          const nextWidth = entry.contentRect.width
+          const nextHeight = entry.contentRect.height
+          if (
+            dimensionsRef.current.width === nextWidth &&
+            dimensionsRef.current.height === nextHeight
+          ) {
+            continue
+          }
 
-            setSquares(generateSquaresForDimensions(nextWidth, nextHeight, numSquares))
-            return { width: nextWidth, height: nextHeight }
-          })
+          dimensionsRef.current = { width: nextWidth, height: nextHeight }
+          setSquares(generateSquaresForDimensions(nextWidth, nextHeight, numSquares))
         }
       })
 
@@ -150,29 +148,31 @@ export function AnimatedGridPattern({
         </pattern>
       </defs>
       <rect width="100%" height="100%" fill={`url(#${id})`} />
-      <svg x={x} y={y} className="overflow-visible">
-        {squares.map(({ pos: [squareX, squareY], id, iteration }, index) => (
-          <motion.rect
-            initial={{ opacity: 0 }}
-            animate={{ opacity: maxOpacity }}
-            transition={{
-              duration,
-              repeat: 1,
-              delay: index * 0.1,
-              repeatType: "reverse",
-              repeatDelay,
-            }}
-            onAnimationComplete={() => updateSquarePosition(id)}
-            key={`${id}-${iteration}`}
-            width={width - 1}
-            height={height - 1}
-            x={squareX * width + 1}
-            y={squareY * height + 1}
-            fill="currentColor"
-            strokeWidth="0"
-          />
-        ))}
-      </svg>
+      <LazyMotion features={domAnimation}>
+        <svg x={x} y={y} className="overflow-visible">
+          {squares.map(({ pos: [squareX, squareY], id, iteration }, index) => (
+            <m.rect
+              initial={{ opacity: 0 }}
+              animate={{ opacity: maxOpacity }}
+              transition={{
+                duration,
+                repeat: 1,
+                delay: index * 0.1,
+                repeatType: "reverse",
+                repeatDelay,
+              }}
+              onAnimationComplete={() => updateSquarePosition(id)}
+              key={`${id}-${iteration}`}
+              width={width - 1}
+              height={height - 1}
+              x={squareX * width + 1}
+              y={squareY * height + 1}
+              fill="currentColor"
+              strokeWidth="0"
+            />
+          ))}
+        </svg>
+      </LazyMotion>
     </svg>
   )
 }
