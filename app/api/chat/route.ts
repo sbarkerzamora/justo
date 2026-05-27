@@ -383,9 +383,11 @@ const makeCorpusExcerpt = (
   }
 
   const normalizedBody = normalizeSearchText(body)
-  const indexes = terms
-    .map((term) => normalizedBody.indexOf(term))
-    .filter((index) => index >= 0)
+  const indexes: number[] = []
+  for (const term of terms) {
+    const index = normalizedBody.indexOf(term)
+    if (index >= 0) indexes.push(index)
+  }
   const firstIndex = indexes.length > 0 ? Math.min(...indexes) : 0
   const start = Math.max(0, firstIndex - 700)
   const end = Math.min(body.length, start + maxLength)

@@ -343,14 +343,16 @@ export function LlmHome({ countryCode, onChangeCountry }: { countryCode?: string
         return
       }
       const data: SettlementApiResponse = await res.json()
-      await appendAssistant("Datos validados, aplicando normativa laboral.", {
-        delay: 520,
-        phase: "Aplicando normativa",
-      })
-      await appendAssistant("Listo, preparando resultado final.", {
-        delay: 500,
-        phase: "Preparando resultado",
-      })
+      await Promise.all([
+        appendAssistant("Datos validados, aplicando normativa laboral.", {
+          delay: 520,
+          phase: "Aplicando normativa",
+        }),
+        appendAssistant("Listo, preparando resultado final.", {
+          delay: 500,
+          phase: "Preparando resultado",
+        }),
+      ])
       dispatch({ type: "setResult", result: data })
       dispatch({ type: "setLastCalculation", result: data })
       dispatch({ type: "setStep", step: "done" })
@@ -750,7 +752,7 @@ function ResultPanel({ result, fmt, onExportPdf, startFlow, backToLegalChat }: {
 function LastCalculationPanel({ lastCalculation, fmt, onExportPdf }: { lastCalculation: SettlementApiResponse; fmt: (v: number) => string; onExportPdf: (payloadOverride?: SettlementForm) => Promise<void> }) { return <div className="rounded-2xl border border-border bg-card p-4"><p className="text-sm font-semibold text-foreground">Ultimo calculo</p><p className="mt-1 text-xs text-muted-foreground">Version legal: {lastCalculation.result.legalCorpusVersion}</p><p className="mt-2 text-xl font-semibold text-primary">Neto: {fmt(lastCalculation.result.netTotal)}</p><button type="button" onClick={() => void onExportPdf(lastCalculation.input)} className="mt-3 inline-flex items-center gap-2 rounded-xl border border-border bg-card px-4 py-2 text-sm font-semibold text-foreground"><IconDownload className="size-4" />Descargar PDF</button></div> }
 
 function Composer({ inputRef, input, setInput, handleKeyDown, onSend, canSend, isLoading }: { inputRef: RefObject<HTMLInputElement | null>; input: string; setInput: (value: string) => void; handleKeyDown: (e: KeyboardEvent) => void; onSend: () => Promise<void>; canSend: boolean; isLoading: boolean }) {
-  return <div className="border-t border-border pb-4 pt-3"><div className="flex items-center gap-2 rounded-2xl border border-border bg-card px-4"><input ref={inputRef} type="text" value={input} onChange={(e) => setInput(e.target.value)} onKeyDown={handleKeyDown} placeholder="Escribe tu consulta o responde al paso actual" className="min-h-10 flex-1 bg-transparent py-2 text-sm text-foreground outline-none placeholder:text-muted-foreground" /><button type="button" onClick={() => void onSend()} disabled={!canSend} className="rounded-xl bg-primary px-4 py-1.5 text-sm font-medium text-primary-foreground disabled:opacity-50">{isLoading ? "Pensando..." : "Enviar"}</button></div></div>
+  return <div className="border-t border-border pb-4 pt-3"><div className="flex items-center gap-2 rounded-2xl border border-border bg-card px-4"><input ref={inputRef} type="text" value={input} onChange={(e) => setInput(e.target.value)} onKeyDown={handleKeyDown} placeholder="Escribe tu consulta o responde al paso actual" aria-label="Mensaje de chat" className="min-h-10 flex-1 bg-transparent py-2 text-sm text-foreground outline-none placeholder:text-muted-foreground" /><button type="button" onClick={() => void onSend()} disabled={!canSend} className="rounded-xl bg-primary px-4 py-1.5 text-sm font-medium text-primary-foreground disabled:opacity-50">{isLoading ? "Pensando..." : "Enviar"}</button></div></div>
 }
 
 function FooterBar() {
