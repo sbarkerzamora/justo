@@ -238,14 +238,20 @@ const normalizeText = (value: string) =>
     .replace(/[\u0300-\u036f]/g, "")
     .toLowerCase()
 
-const shouldStartGuidedFlow = (text: string) => {
+const shouldStartGuidedFlow = (text: string, locale: Locale) => {
   const normalized = normalizeText(text)
+  const es = locale === "es"
   return (
-    normalized.includes("iniciar calcul") ||
-    normalized.includes("calculo guiado") ||
-    normalized.includes("calcular mi liquidacion") ||
-    normalized.includes("liquidacion completa") ||
-    normalized.includes("paso a paso")
+    (es && normalized.includes("iniciar calcul")) ||
+    (es && normalized.includes("calculo guiado")) ||
+    (es && normalized.includes("calcular mi liquidacion")) ||
+    (es && normalized.includes("liquidacion completa")) ||
+    (es && normalized.includes("paso a paso")) ||
+    normalized.includes("start guided") ||
+    normalized.includes("guided calculation") ||
+    normalized.includes("calculate my settlement") ||
+    normalized.includes("step by step") ||
+    normalized.includes("full settlement")
   )
 }
 
@@ -735,7 +741,7 @@ export function LlmHome({
       return
     }
 
-    if (shouldStartGuidedFlow(text)) {
+    if (shouldStartGuidedFlow(text, locale)) {
       startFlow()
       return
     }
@@ -1160,7 +1166,7 @@ function ProgressHeader({
             : stepLabels[locale][stepOrder[stepIdx - 1]]}
         </span>
         <span className="sm:hidden">
-          {step === "done" ? "OK" : `P${stepIdx}`}
+          {step === "done" ? "OK" : locale === "en" ? `S${stepIdx}` : `P${stepIdx}`}
         </span>
       </div>
       <div className="h-2 rounded-full bg-muted">

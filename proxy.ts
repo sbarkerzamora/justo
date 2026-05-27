@@ -28,22 +28,7 @@ export function proxy(request: NextRequest) {
 
   if (firstSegment && isValidLocale(firstSegment)) {
     if (secondSegment && isValidCountry(secondSegment)) {
-      const response = NextResponse.next()
-      response.cookies.set("justo-locale", firstSegment, {
-        maxAge: 60 * 60 * 24 * 365,
-        path: "/",
-        sameSite: "lax",
-        httpOnly: true,
-        secure: process.env.NODE_ENV === "production",
-      })
-      response.cookies.set("justo-country", secondSegment, {
-        maxAge: 60 * 60 * 24 * 365,
-        path: "/",
-        sameSite: "lax",
-        httpOnly: true,
-        secure: process.env.NODE_ENV === "production",
-      })
-      return response
+      return NextResponse.next()
     }
 
     return NextResponse.redirect(

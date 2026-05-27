@@ -64,6 +64,11 @@ const countries: Record<CountryCode, CountryInfo> = {
       "¿Cómo se calcula el aguinaldo por años trabajados?",
       "¿Qué son ISSS y AFP y cuánto descuentan?",
     ],
+    exampleQuestionsEn: [
+      "How much severance (cesantía) do I get?",
+      "How is proportional Christmas bonus calculated?",
+      "What are ISSS and AFP and how much do they deduct?",
+    ],
   },
   gt: {
     code: "gt",
@@ -84,6 +89,11 @@ const countries: Record<CountryCode, CountryInfo> = {
       "¿Cuánto me corresponde de indemnización?",
       "¿Cómo se calcula el Bono 14?",
       "¿Qué es el IGSS y cuánto descuenta?",
+    ],
+    exampleQuestionsEn: [
+      "How much severance do I get?",
+      "How is the Bono 14 calculated?",
+      "What is IGSS and how much does it deduct?",
     ],
   },
   hn: {
@@ -106,6 +116,11 @@ const countries: Record<CountryCode, CountryInfo> = {
       "¿Cómo se calcula el decimotercer mes?",
       "¿Qué es el IHSS y cuánto descuenta?",
     ],
+    exampleQuestionsEn: [
+      "How much severance (auxilio de cesantía) do I get?",
+      "How is the thirteenth month calculated?",
+      "What is IHSS and how much does it deduct?",
+    ],
   },
   cr: {
     code: "cr",
@@ -127,6 +142,11 @@ const countries: Record<CountryCode, CountryInfo> = {
       "¿Cómo se calcula el aguinaldo proporcional?",
       "¿Qué es la CCSS y cuánto descuenta?",
     ],
+    exampleQuestionsEn: [
+      "How much severance and notice pay do I get?",
+      "How is proportional Christmas bonus calculated?",
+      "What is CCSS and how much does it deduct?",
+    ],
   },
   pa: {
     code: "pa",
@@ -147,6 +167,11 @@ const countries: Record<CountryCode, CountryInfo> = {
       "¿Cuánto me pagan de prima de antigüedad?",
       "¿Cómo se calcula el decimotercer mes?",
       "¿Qué es la CSS y cuánto descuenta?",
+    ],
+    exampleQuestionsEn: [
+      "How much seniority premium do I get?",
+      "How is the thirteenth month calculated?",
+      "What is CSS and how much does it deduct?",
     ],
   },
   mx: {
@@ -177,6 +202,11 @@ const countries: Record<CountryCode, CountryInfo> = {
       "¿Cómo se calcula el aguinaldo proporcional?",
       "¿Qué es el IMSS y cuánto descuenta?",
     ],
+    exampleQuestionsEn: [
+      "How much constitutional severance do I get?",
+      "How is proportional Christmas bonus calculated?",
+      "What is IMSS and how much does it deduct?",
+    ],
   },
   co: {
     code: "co",
@@ -198,6 +228,11 @@ const countries: Record<CountryCode, CountryInfo> = {
       "¿Cómo se calcula la prima de servicios?",
       "¿Qué son EPS y pensión y cuánto descuentan?",
     ],
+    exampleQuestionsEn: [
+      "How much severance and interest do I get?",
+      "How is the service premium calculated?",
+      "What are EPS and pension and how much do they deduct?",
+    ],
   },
   pe: {
     code: "pe",
@@ -218,6 +253,11 @@ const countries: Record<CountryCode, CountryInfo> = {
       "¿Cuánto me pagan de CTS?",
       "¿Cómo se calcula la indemnización por años?",
       "¿Qué es la ONP y cuánto descuenta?",
+    ],
+    exampleQuestionsEn: [
+      "How much CTS do I get?",
+      "How is severance calculated by years of service?",
+      "What is ONP and how much does it deduct?",
     ],
   },
   ar: {
@@ -247,6 +287,11 @@ const countries: Record<CountryCode, CountryInfo> = {
       "¿Cómo se calcula el SAC (aguinaldo)?",
       "¿Qué descuentos tiene mi liquidación (jubilación, PAMI, obra social)?",
     ],
+    exampleQuestionsEn: [
+      "How much seniority severance do I get?",
+      "How is the SAC (Christmas bonus) calculated?",
+      "Which deductions apply (retirement, PAMI, health insurance)?",
+    ],
   },
   cl: {
     code: "cl",
@@ -267,6 +312,11 @@ const countries: Record<CountryCode, CountryInfo> = {
       "¿Cuánto me pagan de indemnización por años de servicio?",
       "¿Cómo funciona el aviso sustitutivo?",
       "¿Qué descuentan AFP, salud y AFC?",
+    ],
+    exampleQuestionsEn: [
+      "How much severance per year of service do I get?",
+      "How does substitute notice work?",
+      "What do AFP, health insurance and AFC deduct?",
     ],
   },
 }
