@@ -2,6 +2,7 @@ import { NextResponse } from "next/server"
 import type { NextRequest } from "next/server"
 
 import { isValidCountry } from "@/lib/countries"
+import { defaultLocale, isValidLocale, localizedCountryPath } from "@/lib/i18n"
 
 export function proxy(request: NextRequest) {
   const { pathname } = request.nextUrl
@@ -23,17 +24,23 @@ export function proxy(request: NextRequest) {
 
   const segments = pathname.split("/").filter(Boolean)
   const firstSegment = segments[0]
+  const secondSegment = segments[1]
+
+  if (firstSegment && isValidLocale(firstSegment)) {
+    if (secondSegment && isValidCountry(secondSegment)) {
+      return NextResponse.next()
+    }
+
+    return NextResponse.redirect(
+      new URL(localizedCountryPath(firstSegment, "ni"), request.url)
+    )
+  }
 
   if (firstSegment && isValidCountry(firstSegment)) {
-    const response = NextResponse.next()
-    response.cookies.set("justo-country", firstSegment, {
-      maxAge: 60 * 60 * 24 * 365,
-      path: "/",
-      sameSite: "lax",
-      httpOnly: true,
-      secure: process.env.NODE_ENV === "production",
-    })
-    return response
+    return NextResponse.redirect(
+      new URL(localizedCountryPath(defaultLocale, firstSegment), request.url),
+      301
+    )
   }
 
   return NextResponse.redirect(new URL("/", request.url))

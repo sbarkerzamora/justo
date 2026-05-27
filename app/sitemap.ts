@@ -1,5 +1,6 @@
 import type { MetadataRoute } from "next"
 import { countryList } from "@/lib/countries"
+import { locales } from "@/lib/i18n"
 import { getSiteUrl } from "@/lib/site-url"
 import { source } from "@/lib/source"
 
@@ -37,13 +38,22 @@ export default function sitemap(): MetadataRoute.Sitemap {
     },
   ]
 
-  for (const country of countryList) {
-    entries.push({
-      url: `${SITE_URL}/${country.code}`,
-      lastModified: LAST_MODIFIED,
-      changeFrequency: "weekly",
-      priority: 0.9,
-    })
+  for (const locale of locales) {
+    for (const country of countryList) {
+      entries.push({
+        url: `${SITE_URL}/${locale}/${country.code}`,
+        lastModified: LAST_MODIFIED,
+        changeFrequency: "weekly",
+        priority: 0.9,
+        alternates: {
+          languages: {
+            [country.hreflang]: `${SITE_URL}/es/${country.code}`,
+            en: `${SITE_URL}/en/${country.code}`,
+            "x-default": `${SITE_URL}/`,
+          },
+        },
+      })
+    }
   }
 
   return [...entries, ...getDocsEntries()]

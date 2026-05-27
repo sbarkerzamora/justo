@@ -14,9 +14,10 @@ export interface CountryInfo {
   ogTitle: string
   ogDescription: string
   exampleQuestions: string[]
+  exampleQuestionsEn?: string[]
 }
 
-export const countries: Record<CountryCode, CountryInfo> = {
+const countries: Record<CountryCode, CountryInfo> = {
   ni: {
     code: "ni",
     name: "Nicaragua",
@@ -26,9 +27,9 @@ export const countries: Record<CountryCode, CountryInfo> = {
     currencyLabel: "córdobas (NIO)",
     locale: "es-NI",
     hreflang: "es-NI",
-    title: "Cálculo de Liquidación Laboral en Nicaragua 2026 | Justo",
+    title: "Calculadora de Liquidación Laboral Nicaragua 2026 | Justo",
     description:
-      "Calcula tu indemnización, aguinaldo proporcional, vacaciones y descuentos (INSS e IR) según el Código del Trabajo de Nicaragua. Gratis y sin registro.",
+      "Calcula liquidación, indemnización, aguinaldo proporcional, vacaciones, INSS e IR en Nicaragua. Gratis, sin registro y con explicación legal.",
     ogTitle: "Justo · Asistente laboral para Nicaragua",
     ogDescription:
       "Calcula liquidaciones laborales en Nicaragua con transparencia y trazabilidad según la Ley No. 185.",
@@ -36,6 +37,11 @@ export const countries: Record<CountryCode, CountryInfo> = {
       "¿Cuánto me pagan de indemnización si renuncio con 5 años?",
       "¿Cómo se calcula el aguinaldo proporcional?",
       "¿Qué descuentos tiene mi liquidación (INSS e IR)?",
+    ],
+    exampleQuestionsEn: [
+      "How much severance do I get if I resign after 5 years?",
+      "How is proportional Christmas bonus calculated?",
+      "Which deductions apply to my settlement (INSS and income tax)?",
     ],
   },
   sv: {
@@ -58,6 +64,11 @@ export const countries: Record<CountryCode, CountryInfo> = {
       "¿Cómo se calcula el aguinaldo por años trabajados?",
       "¿Qué son ISSS y AFP y cuánto descuentan?",
     ],
+    exampleQuestionsEn: [
+      "How much severance (cesantía) do I get?",
+      "How is proportional Christmas bonus calculated?",
+      "What are ISSS and AFP and how much do they deduct?",
+    ],
   },
   gt: {
     code: "gt",
@@ -78,6 +89,11 @@ export const countries: Record<CountryCode, CountryInfo> = {
       "¿Cuánto me corresponde de indemnización?",
       "¿Cómo se calcula el Bono 14?",
       "¿Qué es el IGSS y cuánto descuenta?",
+    ],
+    exampleQuestionsEn: [
+      "How much severance do I get?",
+      "How is the Bono 14 calculated?",
+      "What is IGSS and how much does it deduct?",
     ],
   },
   hn: {
@@ -100,6 +116,11 @@ export const countries: Record<CountryCode, CountryInfo> = {
       "¿Cómo se calcula el decimotercer mes?",
       "¿Qué es el IHSS y cuánto descuenta?",
     ],
+    exampleQuestionsEn: [
+      "How much severance (auxilio de cesantía) do I get?",
+      "How is the thirteenth month calculated?",
+      "What is IHSS and how much does it deduct?",
+    ],
   },
   cr: {
     code: "cr",
@@ -110,9 +131,9 @@ export const countries: Record<CountryCode, CountryInfo> = {
     currencyLabel: "colones (CRC)",
     locale: "es-CR",
     hreflang: "es-CR",
-    title: "Cálculo de Liquidación Laboral en Costa Rica 2026 | Justo",
+    title: "Calculadora de Liquidación Costa Rica 2026 | Justo",
     description:
-      "Calcula tu cesantía, preaviso, aguinaldo proporcional, vacaciones y descuentos (CCSS) según el Código de Trabajo de Costa Rica. Gratis y sin registro.",
+      "Calcula cesantía, preaviso, aguinaldo proporcional, vacaciones y CCSS en Costa Rica. Gratis, sin registro y con explicación legal.",
     ogTitle: "Justo · Asistente laboral para Costa Rica",
     ogDescription:
       "Calcula liquidaciones laborales en Costa Rica con transparencia y trazabilidad.",
@@ -120,6 +141,11 @@ export const countries: Record<CountryCode, CountryInfo> = {
       "¿Cuánto me corresponde de cesantía y preaviso?",
       "¿Cómo se calcula el aguinaldo proporcional?",
       "¿Qué es la CCSS y cuánto descuenta?",
+    ],
+    exampleQuestionsEn: [
+      "How much severance and notice pay do I get?",
+      "How is proportional Christmas bonus calculated?",
+      "What is CCSS and how much does it deduct?",
     ],
   },
   pa: {
@@ -141,6 +167,11 @@ export const countries: Record<CountryCode, CountryInfo> = {
       "¿Cuánto me pagan de prima de antigüedad?",
       "¿Cómo se calcula el decimotercer mes?",
       "¿Qué es la CSS y cuánto descuenta?",
+    ],
+    exampleQuestionsEn: [
+      "How much seniority premium do I get?",
+      "How is the thirteenth month calculated?",
+      "What is CSS and how much does it deduct?",
     ],
   },
   mx: {
@@ -171,6 +202,11 @@ export const countries: Record<CountryCode, CountryInfo> = {
       "¿Cómo se calcula el aguinaldo proporcional?",
       "¿Qué es el IMSS y cuánto descuenta?",
     ],
+    exampleQuestionsEn: [
+      "How much constitutional severance do I get?",
+      "How is proportional Christmas bonus calculated?",
+      "What is IMSS and how much does it deduct?",
+    ],
   },
   co: {
     code: "co",
@@ -181,9 +217,9 @@ export const countries: Record<CountryCode, CountryInfo> = {
     currencyLabel: "pesos colombianos (COP)",
     locale: "es-CO",
     hreflang: "es-CO",
-    title: "Cálculo de Liquidación Laboral en Colombia 2026 | Justo",
+    title: "Calculadora Laboral Colombia 2026 | Cesantías y Prima | Justo",
     description:
-      "Calcula tus cesantías, intereses a las cesantías, prima de servicios, vacaciones y descuentos (EPS y pensión) según el CST. Gratis y sin registro.",
+      "Calcula cesantías, intereses, prima de servicios, vacaciones, EPS y pensión en Colombia. Gratis, sin registro y con explicación legal.",
     ogTitle: "Justo · Asistente laboral para Colombia",
     ogDescription:
       "Calcula liquidaciones laborales en Colombia con transparencia y trazabilidad según el Código Sustantivo del Trabajo.",
@@ -191,6 +227,11 @@ export const countries: Record<CountryCode, CountryInfo> = {
       "¿Cuánto me corresponde de cesantías e intereses?",
       "¿Cómo se calcula la prima de servicios?",
       "¿Qué son EPS y pensión y cuánto descuentan?",
+    ],
+    exampleQuestionsEn: [
+      "How much severance and interest do I get?",
+      "How is the service premium calculated?",
+      "What are EPS and pension and how much do they deduct?",
     ],
   },
   pe: {
@@ -202,9 +243,9 @@ export const countries: Record<CountryCode, CountryInfo> = {
     currencyLabel: "soles (PEN)",
     locale: "es-PE",
     hreflang: "es-PE",
-    title: "Cálculo de Liquidación Laboral en Perú 2026 | Justo",
+    title: "Calculadora de Liquidación Perú 2026 | CTS y Gratificación | Justo",
     description:
-      "Calcula tu CTS, indemnización por años de servicio, gratificaciones, vacaciones y descuentos (ONP o AFP) según la Ley General del Trabajo. Gratis y sin registro.",
+      "Calcula liquidación, CTS, gratificaciones, vacaciones, indemnización y descuentos ONP o AFP en Perú. Gratis, sin registro y con explicación legal.",
     ogTitle: "Justo · Asistente laboral para Perú",
     ogDescription:
       "Calcula liquidaciones laborales en Perú con transparencia y trazabilidad.",
@@ -212,6 +253,11 @@ export const countries: Record<CountryCode, CountryInfo> = {
       "¿Cuánto me pagan de CTS?",
       "¿Cómo se calcula la indemnización por años?",
       "¿Qué es la ONP y cuánto descuenta?",
+    ],
+    exampleQuestionsEn: [
+      "How much CTS do I get?",
+      "How is severance calculated by years of service?",
+      "What is ONP and how much does it deduct?",
     ],
   },
   ar: {
@@ -241,6 +287,11 @@ export const countries: Record<CountryCode, CountryInfo> = {
       "¿Cómo se calcula el SAC (aguinaldo)?",
       "¿Qué descuentos tiene mi liquidación (jubilación, PAMI, obra social)?",
     ],
+    exampleQuestionsEn: [
+      "How much seniority severance do I get?",
+      "How is the SAC (Christmas bonus) calculated?",
+      "Which deductions apply (retirement, PAMI, health insurance)?",
+    ],
   },
   cl: {
     code: "cl",
@@ -262,12 +313,17 @@ export const countries: Record<CountryCode, CountryInfo> = {
       "¿Cómo funciona el aviso sustitutivo?",
       "¿Qué descuentan AFP, salud y AFC?",
     ],
+    exampleQuestionsEn: [
+      "How much severance per year of service do I get?",
+      "How does substitute notice work?",
+      "What do AFP, health insurance and AFC deduct?",
+    ],
   },
 }
 
 export const countryList = Object.values(countries)
 
-export const validCountryCodes = Object.keys(countries) as CountryCode[]
+const validCountryCodes = Object.keys(countries) as CountryCode[]
 
 export const defaultCountry: CountryCode = "ni"
 

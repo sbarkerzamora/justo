@@ -1,4 +1,4 @@
-export const defaultOrbColors: [string, string] = ["#7AA4D0", "#D8E7F6"]
+const defaultOrbColors: [string, string] = ["#7AA4D0", "#D8E7F6"]
 
 const countryOrbColors: Record<string, [string, string]> = {
   ni: ["#4F86C6", "#A8C8E8"],
