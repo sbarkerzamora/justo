@@ -14,12 +14,14 @@ import {
 import Image from "next/image"
 import Link from "next/link"
 import { useTheme } from "next-themes"
-import { type Dispatch, type KeyboardEvent, type ReactNode, type RefObject, useEffect, useMemo, useReducer, useRef, useState } from "react"
+import { type Dispatch, type KeyboardEvent, type ReactNode, type RefObject, useEffect, useMemo, useReducer, useRef } from "react"
 import { ChatMarkdown } from "@/components/chat/chat-markdown"
 import { Orb, type AgentState } from "@/components/ui/orb"
 import { getCountryOrbColors } from "@/lib/country-orb-colors"
 import { getCountryInfo } from "@/lib/countries"
 import { getLegalDocsLink } from "@/lib/legal-docs-link"
+import { useChatMessages } from "@/components/chat/use-chat-messages"
+import { useChatUI } from "@/components/chat/use-chat-ui"
 
 type Role = "user" | "assistant"
 type FlowStep =
@@ -148,7 +150,6 @@ const stepLabels: Record<string, string> = {
   confirm: "Confirmar datos",
 }
 
-const uid = () => crypto.randomUUID()
 const numberFormatters: Record<string, Intl.NumberFormat> = {
   NIO: new Intl.NumberFormat("es-NI", { style: "currency", currency: "NIO" }),
   USD: new Intl.NumberFormat("es-NI", { style: "currency", currency: "USD" }),
@@ -186,15 +187,9 @@ export function LlmHome({ countryCode, onChangeCountry }: { countryCode?: string
   const examples = info?.exampleQuestions ?? []
   const fmt = (v: number) => money(v, currencyCode)
   const { resolvedTheme, setTheme } = useTheme()
-  const [messages, setMessages] = useState<ChatMessage[]>([])
-  const [input, setInput] = useState("")
+  const { messages, setMessages, input, setInput, append, setMessageText, appendAssistant, resetMessages } = useChatMessages()
+  const { isLoading, isTyping, typingLabel, isStreamingReply, hasStreamChunk, setLoading, setTyping, setTypingLabel, setStreamingReply, setHasStreamChunk } = useChatUI()
   const [flow, dispatch] = useReducer(flowReducer, cc, createInitialFlowState)
-  const [isLoading, setIsLoading] = useState(false)
-  const [isTyping, setIsTyping] = useState(false)
-  const [typingLabel, setTypingLabel] = useState("Escribiendo")
-  const [isStreamingReply, setIsStreamingReply] = useState(false)
-  const [hasStreamChunk, setHasStreamChunk] = useState(false)
-  const queue = useRef<Promise<void>>(Promise.resolve())
   const inputRef = useRef<HTMLInputElement | null>(null)
   const messagesEndRef = useRef<HTMLDivElement | null>(null)
 
@@ -216,22 +211,11 @@ export function LlmHome({ countryCode, onChangeCountry }: { countryCode?: string
   }, [step])
   const isCalculationMode = step !== "idle"
 
-  const append = (role: Role, text: string) => setMessages((p) => [...p, { id: uid(), role, text }])
-  const setMessageText = (id: string, text: string) => {
-    setMessages((current) => current.map((message) => (message.id === id ? { ...message, text } : message)))
-  }
-  const wait = (ms: number) => new Promise((r) => setTimeout(r, ms))
-
-  const appendAssistant = (text: string, opts?: { delay?: number; phase?: string }) => {
-    queue.current = queue.current.then(async () => {
+  const appendAssistantWithUI = (text: string, opts?: { delay?: number; phase?: string }) =>
+    appendAssistant(text, opts, () => {
       setTypingLabel(opts?.phase ?? "Escribiendo")
-      setIsTyping(true)
-      await wait(opts?.delay ?? 500)
-      setIsTyping(false)
-      append("assistant", text)
-    })
-    return queue.current
-  }
+      setTyping(true)
+    }, () => setTyping(false))
 
   const askForStep = (s: FlowStep) => {
     const map: Record<string, string> = {
@@ -242,16 +226,16 @@ export function LlmHome({ countryCode, onChangeCountry }: { countryCode?: string
       unusedVacationDays: "Cuantos dias de vacaciones pendientes hay?",
       frequency: "Selecciona la frecuencia de pago.",
     }
-    if (map[s]) void appendAssistant(map[s], { delay: 520 })
+    if (map[s]) void appendAssistantWithUI(map[s], { delay: 520 })
   }
 
   const startFlow = () => {
-    setMessages([])
+    resetMessages()
     dispatch({ type: "setForm", form: defaultForm(cc) })
     dispatch({ type: "setResult", result: null })
     dispatch({ type: "setEditMode", editMode: null })
     dispatch({ type: "setStep", step: "employeeName" })
-    void appendAssistant("Perfecto, te guiare paso a paso para calcular tu liquidacion.", {
+    void appendAssistantWithUI("Perfecto, te guiare paso a paso para calcular tu liquidacion.", {
       delay: 520,
       phase: "Preparando guia",
     })
@@ -259,11 +243,10 @@ export function LlmHome({ countryCode, onChangeCountry }: { countryCode?: string
   }
 
   const resetConversation = () => {
-    setMessages([])
-    setInput("")
+    resetMessages()
     dispatch({ type: "setStep", step: "idle" })
     dispatch({ type: "setEditMode", editMode: null })
-    setIsTyping(false)
+    setTyping(false)
     dispatch({ type: "setResult", result: null })
     focusMainInput()
   }
@@ -304,7 +287,7 @@ export function LlmHome({ countryCode, onChangeCountry }: { countryCode?: string
 
   const showSummary = () => {
     dispatch({ type: "setStep", step: "confirm" })
-    void appendAssistant("Revisa los datos capturados y confirma para calcular.", {
+    void appendAssistantWithUI("Revisa los datos capturados y confirma para calcular.", {
       delay: 480,
       phase: "Preparando confirmacion",
     })
@@ -320,15 +303,15 @@ export function LlmHome({ countryCode, onChangeCountry }: { countryCode?: string
   const runCalculation = async () => {
     const payload = toPayload()
     if (!payload) {
-      await appendAssistant("Las fechas no son validas. Usa DD/MM/AAAA.", { delay: 480 })
+      await appendAssistantWithUI("Las fechas no son validas. Usa DD/MM/AAAA.", { delay: 480 })
       return
     }
     if (payload.endDate < payload.startDate) {
-      await appendAssistant("La fecha de salida no puede ser menor que la fecha de inicio.", { delay: 480 })
+      await appendAssistantWithUI("La fecha de salida no puede ser menor que la fecha de inicio.", { delay: 480 })
       return
     }
 
-    setIsLoading(true)
+    setLoading(true)
     try {
       const res = await fetch("/api/liquidation/calculate", {
         method: "POST",
@@ -336,7 +319,7 @@ export function LlmHome({ countryCode, onChangeCountry }: { countryCode?: string
         body: JSON.stringify(payload),
       })
       if (!res.ok) {
-        await appendAssistant("No pude calcular con esos datos. Revisemos el resumen.", {
+        await appendAssistantWithUI("No pude calcular con esos datos. Revisemos el resumen.", {
           delay: 520,
           phase: "Validando datos",
         })
@@ -344,11 +327,11 @@ export function LlmHome({ countryCode, onChangeCountry }: { countryCode?: string
       }
       const data: SettlementApiResponse = await res.json()
       await Promise.all([
-        appendAssistant("Datos validados, aplicando normativa laboral.", {
+        appendAssistantWithUI("Datos validados, aplicando normativa laboral.", {
           delay: 520,
           phase: "Aplicando normativa",
         }),
-        appendAssistant("Listo, preparando resultado final.", {
+        appendAssistantWithUI("Listo, preparando resultado final.", {
           delay: 500,
           phase: "Preparando resultado",
         }),
@@ -356,12 +339,12 @@ export function LlmHome({ countryCode, onChangeCountry }: { countryCode?: string
       dispatch({ type: "setResult", result: data })
       dispatch({ type: "setLastCalculation", result: data })
       dispatch({ type: "setStep", step: "done" })
-      await appendAssistant(`Neto estimado: ${fmt(data.result.netTotal)}`, {
+      await appendAssistantWithUI(`Neto estimado: ${fmt(data.result.netTotal)}`, {
         delay: 420,
         phase: "Escribiendo resultado",
       })
     } finally {
-      setIsLoading(false)
+      setLoading(false)
     }
   }
 
@@ -400,17 +383,17 @@ export function LlmHome({ countryCode, onChangeCountry }: { countryCode?: string
       if (!applyField("startDate", editStartDate) || !applyField("endDate", editEndDate)) return
     }
     dispatch({ type: "setEditMode", editMode: null })
-    await appendAssistant("Cambios aplicados.", { delay: 380 })
+    await appendAssistantWithUI("Cambios aplicados.", { delay: 380 })
   }
 
   const sendLegalQuery = async (text: string) => {
-    setIsLoading(true)
+    setLoading(true)
     const docsLink = getLegalDocsLink(cc)
     const fallbackMessage = `Se nos desconecto el abogado digital por un momento ⚡\n\nMientras vuelve la conexion, puedes revisar el marco legal aqui: [Abrir documentacion](${docsLink})`
-    const assistantMessageId = uid()
+    const assistantMessageId = crypto.randomUUID()
 
     setMessages((current) => [...current, { id: assistantMessageId, role: "assistant", text: "" }])
-    setIsStreamingReply(true)
+    setStreamingReply(true)
     setHasStreamChunk(false)
 
     try {
@@ -468,9 +451,9 @@ export function LlmHome({ countryCode, onChangeCountry }: { countryCode?: string
     } catch {
       setMessageText(assistantMessageId, fallbackMessage)
     } finally {
-      setIsStreamingReply(false)
+      setStreamingReply(false)
       setHasStreamChunk(false)
-      setIsLoading(false)
+      setLoading(false)
     }
   }
 
@@ -478,7 +461,7 @@ export function LlmHome({ countryCode, onChangeCountry }: { countryCode?: string
     dispatch({ type: "setStep", step: "idle" })
     dispatch({ type: "setResult", result: null })
     dispatch({ type: "setEditMode", editMode: null })
-    await appendAssistant("Listo, volvimos al modo consulta. Escribe tu pregunta y te ayudo.", {
+    await appendAssistantWithUI("Listo, volvimos al modo consulta. Escribe tu pregunta y te ayudo.", {
       delay: 350,
       phase: "Cambiando modo",
     })
@@ -490,11 +473,11 @@ export function LlmHome({ countryCode, onChangeCountry }: { countryCode?: string
     append("user", text)
 
     if (step === "done") {
-      await appendAssistant("Si deseas recalcular, pulsa Iniciar calculo nuevamente.", { delay: 420 })
+      await appendAssistantWithUI("Si deseas recalcular, pulsa Iniciar calculo nuevamente.", { delay: 420 })
       return
     }
     if (step === "frequency" || step === "confirm") {
-      await appendAssistant("Usa las opciones interactivas para continuar.", { delay: 420 })
+      await appendAssistantWithUI("Usa las opciones interactivas para continuar.", { delay: 420 })
       return
     }
     if (step !== "idle") {
@@ -508,14 +491,14 @@ export function LlmHome({ countryCode, onChangeCountry }: { countryCode?: string
       }
       const field = fieldMap[step]
       if (!field || !applyField(field, text)) {
-        await appendAssistant("Ese dato no es valido para este paso.", { delay: 420 })
+        await appendAssistantWithUI("Ese dato no es valido para este paso.", { delay: 420 })
         return
       }
       const ns = nextStep(step)
        dispatch({ type: "setStep", step: ns })
       if (ns === "confirm") showSummary()
       else if (ns === "monthlySalary") {
-        void appendAssistant(
+        void appendAssistantWithUI(
           `Cual es el salario mensual en ${currencyLabel}?`,
           { delay: 520 },
         )
