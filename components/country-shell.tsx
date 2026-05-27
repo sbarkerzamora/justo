@@ -26,14 +26,21 @@ export function CountryShell({ countryCode }: { countryCode: string }) {
         repeatDelay={1}
         className={cn(
           "mask-[radial-gradient(800px_circle_at_center,white,transparent)]",
-          "fixed inset-0 h-full w-full",
+          "fixed inset-0 h-full w-full"
         )}
       />
       <div className="relative z-10">
-        <LlmHome countryCode={countryCode} onChangeCountry={() => {
-          try { localStorage.removeItem("justo-country") } catch { /* noop */ }
-          push("/")
-        }} />
+        <LlmHome
+          countryCode={countryCode}
+          onChangeCountry={() => {
+            try {
+              localStorage.removeItem("justo-country")
+            } catch {
+              /* noop */
+            }
+            push("/")
+          }}
+        />
       </div>
     </div>
   )
