@@ -303,6 +303,7 @@ export function LlmHome({
   const [flow, dispatch] = useReducer(flowReducer, cc, createInitialFlowState)
   const inputRef = useRef<HTMLInputElement | null>(null)
   const messagesEndRef = useRef<HTMLDivElement | null>(null)
+  const messagesContainerRef = useRef<HTMLDivElement | null>(null)
 
   const {
     step,
@@ -318,7 +319,10 @@ export function LlmHome({
 
   useEffect(() => {
     if (messages.length === 0) return
-    messagesEndRef.current?.scrollIntoView({ behavior: "smooth" })
+    messagesContainerRef.current?.scrollTo({
+      top: messagesContainerRef.current.scrollHeight,
+      behavior: "smooth",
+    })
   }, [messages])
 
   useEffect(() => {
@@ -833,6 +837,7 @@ export function LlmHome({
       backToLegalChat={backToLegalChat}
       lastCalculation={lastCalculation}
       messagesEndRef={messagesEndRef}
+      messagesContainerRef={messagesContainerRef}
       inputRef={inputRef}
       input={input}
       setInput={setInput}
@@ -889,6 +894,7 @@ function LlmHomeView(props: {
   backToLegalChat: () => Promise<void>
   lastCalculation: SettlementApiResponse | null
   messagesEndRef: RefObject<HTMLDivElement | null>
+  messagesContainerRef: RefObject<HTMLDivElement | null>
   inputRef: RefObject<HTMLInputElement | null>
   input: string
   setInput: (value: string) => void
@@ -934,6 +940,7 @@ function LlmHomeView(props: {
     backToLegalChat,
     lastCalculation,
     messagesEndRef,
+    messagesContainerRef,
     inputRef,
     input,
     setInput,
@@ -972,6 +979,7 @@ function LlmHomeView(props: {
           />
         ) : null}
         <div
+          ref={messagesContainerRef}
           className="min-h-0 flex-1 space-y-3 overflow-y-auto px-2 pb-4 max-sm:px-1 [scrollbar-gutter:stable]"
         >
           {messages.length === 0 ? (
