@@ -312,4 +312,12 @@
   .animate-typing-dot {
     animation: typing-dot 1.2s ease-in-out infinite;
   }
+
+  .scrollbar-hidden {
+    scrollbar-width: none;
+    -ms-overflow-style: none;
+  }
+  .scrollbar-hidden::-webkit-scrollbar {
+    display: none;
+  }
 }
