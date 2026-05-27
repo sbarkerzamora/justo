@@ -2,6 +2,14 @@ import type { Metadata } from "next"
 import { notFound } from "next/navigation"
 import { DocsBody, DocsDescription, DocsPage, DocsTitle } from "fumadocs-ui/page"
 import { source } from "@/lib/source"
+import { getSiteUrl } from "@/lib/site-url"
+
+const SITE_URL = getSiteUrl()
+
+function docsPath(slug?: string[]): string {
+  if (!slug || slug.length === 0) return "/docs"
+  return `/docs/${slug.join("/")}`
+}
 
 export async function generateMetadata({
   params,
@@ -11,9 +19,30 @@ export async function generateMetadata({
   const { slug } = await params
   const page = source.getPage(slug)
   if (!page) return {}
+  const path = docsPath(slug)
+  const canonical = `${SITE_URL}${path}`
+  const title = page.data.title ?? "Justo Docs"
+  const description = page.data.description
   return {
-    title: page.data.title ?? "Justo Docs",
-    description: page.data.description,
+    title,
+    description,
+    alternates: { canonical },
+    openGraph: {
+      title,
+      description,
+      siteName: "Justo",
+      url: canonical,
+      type: "article",
+    },
+    twitter: {
+      card: "summary_large_image",
+      title,
+      description,
+    },
+    robots: {
+      index: true,
+      follow: true,
+    },
   }
 }
 

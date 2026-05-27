@@ -1,7 +1,8 @@
 import type { Metadata } from "next"
 import { LocationGate } from "@/components/location-gate"
+import { getSiteUrl } from "@/lib/site-url"
 
-const SITE_URL = process.env.NEXT_PUBLIC_SITE_URL || "http://localhost:3000"
+const SITE_URL = getSiteUrl()
 
 export const metadata: Metadata = {
   title: "Justo · Calculadora de Liquidación Laboral para Centroamérica",
