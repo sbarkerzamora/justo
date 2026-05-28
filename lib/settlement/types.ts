@@ -4,6 +4,13 @@ export type CountryCode = "ni" | "gt" | "hn" | "sv" | "cr" | "pa" | "mx" | "co" 
 
 export type CurrencyCode = "NIO" | "GTQ" | "HNL" | "USD" | "CRC" | "MXN" | "COP" | "PEN" | "ARS" | "CLP"
 
+export type TipoDespido =
+  | "renuncia"
+  | "despido_justificado"
+  | "despido_injustificado"
+  | "mutuo_acuerdo"
+  | "otro"
+
 export interface SettlementInput {
   countryCode: CountryCode
   employeeName: string
@@ -13,6 +20,7 @@ export interface SettlementInput {
   unusedVacationDays: number
   startDate: string
   endDate: string
+  terminationType?: TipoDespido
 }
 
 export interface SettlementLine {

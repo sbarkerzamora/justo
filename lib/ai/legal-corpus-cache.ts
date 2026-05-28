@@ -1,12 +1,6 @@
-import { Redis } from "@upstash/redis"
+import { redis } from "@/lib/redis"
 import { readdir, readFile } from "node:fs/promises"
 import { join } from "node:path"
-
-const redisUrl = process.env.UPSTASH_REDIS_REST_URL
-const redisToken = process.env.UPSTASH_REDIS_REST_TOKEN
-
-const redis =
-  redisUrl && redisToken ? new Redis({ url: redisUrl, token: redisToken }) : null
 
 const TTL_SECONDS = 60 * 60 * 24
 

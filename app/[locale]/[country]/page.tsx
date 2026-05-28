@@ -2,6 +2,7 @@ import { notFound } from "next/navigation"
 import { getCountryInfo, isValidCountry } from "@/lib/countries"
 import { CountryShell } from "@/components/country-shell"
 import { CountrySeoContent, type SeoData } from "@/components/country-seo-content"
+import { CountryStatsSection } from "@/components/country-stats-section"
 import { type Locale, isValidLocale } from "@/lib/i18n"
 import { getSiteUrl } from "@/lib/site-url"
 
@@ -398,6 +399,7 @@ export default async function CountryPage({
     <>
       <CountryShell countryCode={country} locale={locale} />
       <CountrySeoContent countryName={info.name} seo={seo} locale={locale} />
+      <CountryStatsSection countryCode={country} locale={locale} />
       <script
         type="application/ld+json"
         dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}

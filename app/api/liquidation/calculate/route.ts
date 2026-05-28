@@ -16,6 +16,8 @@ import { calculatePeruSettlement } from "@/lib/settlement/pe/calculate"
 import { calculateArgentinaSettlement } from "@/lib/settlement/ar/calculate"
 import { calculateChileSettlement } from "@/lib/settlement/cl/calculate"
 import { SettlementResult } from "@/lib/settlement/types"
+import { buildAnonymousRecord } from "@/lib/stats/mapper"
+import { persistAnonymousRecord } from "@/lib/stats/repository"
 
 const calculators: Record<string, (input: SettlementInput) => SettlementResult> = {
   gt: calculateGuatemalaSettlement,
@@ -80,5 +82,12 @@ export async function POST(request: Request) {
   }
 
   const result = calculator(parsed.data)
+
+  void persistAnonymousRecord(buildAnonymousRecord(parsed.data, result)).catch(
+    () => {
+      /* telemetría no crítica */
+    }
+  )
+
   return NextResponse.json({ input: parsed.data, result })
 }
