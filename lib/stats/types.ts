@@ -40,5 +40,4 @@ export interface CountryStats {
   salary: PercentileData
   tenure: PercentileData
   net: PercentileData
-  legalCorpusVersion: string
 }

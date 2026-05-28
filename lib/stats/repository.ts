@@ -79,25 +79,25 @@ export async function persistAnonymousRecord(
 async function getPercentiles(key: string): Promise<PercentileData> {
   if (!redis) return emptyPercentiles()
 
+  const r = redis
+
   try {
-    const count = await redis.zcard(key)
+    const count = await r.zcard(key)
     if (!count || count === 0) return emptyPercentiles()
 
     const indices = [0, 0.25, 0.5, 0.75, 0.9, 1].map((p) =>
       Math.min(Math.floor(p * (count - 1)), count - 1)
     )
 
-    const results: number[] = []
-    for (const idx of indices) {
-      const members = await redis.zrange<
-        { member: string; score: number }[]
-      >(key, idx, idx, { withScores: true })
-      if (members && members.length > 0) {
-        results.push(members[0].score)
-      } else {
-        results.push(0)
-      }
-    }
+    const members = await Promise.all(
+      indices.map((idx) =>
+        r.zrange<{ member: string; score: number }[]>(key, idx, idx, {
+          withScores: true,
+        })
+      )
+    )
+
+    const results = members.map((m) => (m && m.length > 0 ? m[0].score : 0))
 
     return {
       min: results[0],
@@ -154,7 +154,6 @@ export async function getCountryStats(
       salary,
       tenure,
       net,
-      legalCorpusVersion: "",
     }
   } catch {
     return emptyStats(countryCode)
@@ -170,6 +169,5 @@ function emptyStats(countryCode: CountryCode): CountryStats {
     salary: emptyPercentiles(),
     tenure: emptyPercentiles(),
     net: emptyPercentiles(),
-    legalCorpusVersion: "",
   }
 }

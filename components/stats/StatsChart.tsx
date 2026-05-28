@@ -37,13 +37,12 @@ interface ChartDatum {
 function getChartData(stats: CountryStats, view: ChartView): ChartDatum[] {
   switch (view) {
     case "salary": {
-      const { p5, p25, p50, p75, p95 } = estimatePercentiles(stats.salary)
       return [
-        { key: "Mín", values: [p5] },
-        { key: "P25", values: [p25] },
-        { key: "Mediana", values: [p50] },
-        { key: "P75", values: [p75] },
-        { key: "Máx", values: [p95] },
+        { key: "Mín", values: [stats.salary.min] },
+        { key: "P25", values: [stats.salary.p25] },
+        { key: "Mediana", values: [stats.salary.p50] },
+        { key: "P75", values: [stats.salary.p75] },
+        { key: "Máx", values: [stats.salary.max] },
       ]
     }
     case "tenure":
@@ -72,23 +71,6 @@ function getChartData(stats: CountryStats, view: ChartView): ChartDatum[] {
     }
     default:
       return []
-  }
-}
-
-function estimatePercentiles(p: {
-  min: number
-  p25: number
-  p50: number
-  p75: number
-  p90: number
-  max: number
-}) {
-  return {
-    p5: Math.round(p.min + (p.p25 - p.min) * 0.3),
-    p25: p.p25,
-    p50: p.p50,
-    p75: p.p75,
-    p95: Math.round(p.p90 + (p.max - p.p90) * 0.4),
   }
 }
 
@@ -260,7 +242,7 @@ export function StatsChart({
             >
               <p className="text-xs text-muted-foreground">{tooltip.label}</p>
               <p className="font-mono text-foreground">
-                {currency ? `${currency} ` : ""}
+                {view !== "tenure" && view !== "termination" ? `${currency} ` : ""}
                 {view === "tenure"
                   ? formatTenureDays(tooltip.value)
                   : tooltip.value.toLocaleString("es-NI")}

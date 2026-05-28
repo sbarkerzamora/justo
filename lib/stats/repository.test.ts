@@ -54,7 +54,6 @@ describe("CountryStats type", () => {
       salary: { min: 0, p25: 0, p50: 0, p75: 0, p90: 0, max: 0 },
       tenure: { min: 0, p25: 0, p50: 0, p75: 0, p90: 0, max: 0 },
       net: { min: 0, p25: 0, p50: 0, p75: 0, p90: 0, max: 0 },
-      legalCorpusVersion: "",
     }
 
     expect(empty.totalSettlements).toBe(0)

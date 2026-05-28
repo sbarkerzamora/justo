@@ -42,9 +42,9 @@ export function StatsClientSection({
 
   return (
     <div className="space-y-5">
-      <div className="grid grid-cols-3 gap-4">
+      <div className="grid grid-cols-2 gap-4 sm:grid-cols-4">
         {highlights.map((h) => (
-          <div key={h.value} className="text-center">
+          <div key={h.label} className="text-center">
             <p className="text-2xl font-semibold tracking-tight text-foreground">
               {h.value}
             </p>
@@ -97,6 +97,10 @@ function getHighlights(
           ? formatTenureDays(stats.tenure.p50)
           : "—",
       label: labels.medianTenure,
+    },
+    {
+      value: `${currency} ${Math.round(stats.net.p50).toLocaleString("es-NI")}`,
+      label: labels.medianNet,
     },
   ]
 }
