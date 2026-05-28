@@ -160,7 +160,7 @@ export async function getCountryStats(
   }
 }
 
-function emptyStats(countryCode: CountryCode): CountryStats {
+export function emptyStats(countryCode: CountryCode): CountryStats {
   return {
     countryCode,
     totalSettlements: 0,

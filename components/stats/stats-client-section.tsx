@@ -6,6 +6,7 @@ import {
   IconCalendarClock,
   IconCash,
   IconFileDescription,
+  IconUsers,
 } from "@tabler/icons-react"
 import { cn } from "@/lib/utils"
 import { StatsChart, formatTenureDays } from "@/components/stats/StatsChart"
@@ -18,16 +19,49 @@ interface FilterDef {
   label: string
 }
 
+function safeNumber(n: number): string {
+  return Number.isFinite(n) ? Math.round(n).toLocaleString("es-NI") : "—"
+}
+
+function safeCurrency(n: number, currency: string): string {
+  if (!Number.isFinite(n)) return "—"
+  return `${currency} ${Math.round(n).toLocaleString("es-NI")}`
+}
+
+function HighlightCard({
+  icon,
+  value,
+  label,
+}: {
+  icon: React.ReactNode
+  value: string
+  label: string
+}) {
+  return (
+    <div className="flex flex-col items-center gap-1 rounded-xl border border-border/50 bg-card/50 px-3 py-3">
+      <span className="text-muted-foreground/40">{icon}</span>
+      <span className="text-xl font-semibold tabular-nums text-foreground">
+        {value}
+      </span>
+      <span className="text-[0.65rem] uppercase tracking-wider text-muted-foreground">
+        {label}
+      </span>
+    </div>
+  )
+}
+
 export function StatsClientSection({
   stats,
   currency,
   filters,
   labels,
+  isLoading = false,
 }: {
   stats: CountryStats
   currency: string
   filters: { salary: string; tenure: string; net: string; termination: string }
   labels: { cases: string; medianSalary: string; medianTenure: string; medianNet: string }
+  isLoading?: boolean
 }) {
   const [view, setView] = useState<ChartView>("salary")
 
@@ -38,18 +72,15 @@ export function StatsClientSection({
     { key: "termination", icon: <IconFileDescription className="size-4" />, label: filters.termination },
   ]
 
-  const highlights = getHighlights(stats, currency, labels)
+  const highlights = isLoading
+    ? getLoadingHighlights(labels)
+    : getHighlights(stats, currency, labels)
 
   return (
     <div className="space-y-5">
-      <div className="grid grid-cols-2 gap-4 sm:grid-cols-4">
+      <div className="grid grid-cols-2 gap-3 sm:grid-cols-4">
         {highlights.map((h) => (
-          <div key={h.label} className="text-center">
-            <p className="text-2xl font-semibold tracking-tight text-foreground">
-              {h.value}
-            </p>
-            <p className="mt-0.5 text-xs text-muted-foreground">{h.label}</p>
-          </div>
+          <HighlightCard key={h.label} {...h} />
         ))}
       </div>
 
@@ -72,9 +103,20 @@ export function StatsClientSection({
         ))}
       </div>
 
-      <StatsChart stats={stats} view={view} currency={currency} />
+      <StatsChart stats={stats} view={view} isLoading={isLoading} />
     </div>
   )
+}
+
+function getLoadingHighlights(
+  labels: { cases: string; medianSalary: string; medianTenure: string; medianNet: string }
+) {
+  return [
+    { icon: <IconUsers className="size-5" />, value: "—", label: labels.cases },
+    { icon: <IconCoin className="size-5" />, value: "—", label: labels.medianSalary },
+    { icon: <IconCalendarClock className="size-5" />, value: "—", label: labels.medianTenure },
+    { icon: <IconCash className="size-5" />, value: "—", label: labels.medianNet },
+  ]
 }
 
 function getHighlights(
@@ -84,22 +126,26 @@ function getHighlights(
 ) {
   return [
     {
-      value: stats.totalSettlements.toLocaleString("es-NI"),
+      icon: <IconUsers className="size-5" />,
+      value: safeNumber(stats.totalSettlements),
       label: labels.cases,
     },
     {
-      value: `${currency} ${Math.round(stats.salary.p50).toLocaleString("es-NI")}`,
+      icon: <IconCoin className="size-5" />,
+      value: safeCurrency(stats.salary.p50, currency),
       label: labels.medianSalary,
     },
     {
+      icon: <IconCalendarClock className="size-5" />,
       value:
-        stats.tenure.p50 > 0
+        Number.isFinite(stats.tenure.p50) && stats.tenure.p50 > 0
           ? formatTenureDays(stats.tenure.p50)
           : "—",
       label: labels.medianTenure,
     },
     {
-      value: `${currency} ${Math.round(stats.net.p50).toLocaleString("es-NI")}`,
+      icon: <IconCash className="size-5" />,
+      value: safeCurrency(stats.net.p50, currency),
       label: labels.medianNet,
     },
   ]

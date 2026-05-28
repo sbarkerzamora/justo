@@ -323,8 +323,6 @@ const countries: Record<CountryCode, CountryInfo> = {
 
 export const countryList = Object.values(countries)
 
-const validCountryCodes = Object.keys(countries) as CountryCode[]
-
 export const defaultCountry: CountryCode = "ni"
 
 export function isValidCountry(code: string): code is CountryCode {

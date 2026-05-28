@@ -3,10 +3,16 @@ import {
   IconInfoCircle,
 } from "@tabler/icons-react"
 import type { Locale } from "@/lib/i18n"
-import { getCountryStats } from "@/lib/stats/repository"
+import { getCountryStats, emptyStats } from "@/lib/stats/repository"
 import type { CountryCode } from "@/lib/settlement/types"
 import { StatsClientSection } from "@/components/stats/stats-client-section"
-import { StatsEmptyState } from "@/components/stats/StatsEmptyState"
+
+const STATS_TIMEOUT_MS = 800
+
+function withTimeout<T>(promise: Promise<T>, ms: number, fallback: T): Promise<T> {
+  const timer = new Promise<T>((resolve) => setTimeout(() => resolve(fallback), ms))
+  return Promise.race([promise, timer])
+}
 
 export async function CountryStatsSection({
   countryCode,
@@ -17,7 +23,11 @@ export async function CountryStatsSection({
 }) {
   if (!countryCode) return null
 
-  const stats = await getCountryStats(countryCode as CountryCode)
+  const stats = await withTimeout(
+    getCountryStats(countryCode as CountryCode),
+    STATS_TIMEOUT_MS,
+    emptyStats(countryCode as CountryCode)
+  )
   const hasData = stats.totalSettlements > 0
   const info = hasData
     ? getStatsInfo(locale, stats.totalSettlements)
@@ -38,16 +48,13 @@ export async function CountryStatsSection({
           </p>
         </header>
 
-        {hasData ? (
-          <StatsClientSection
-            stats={stats}
-            currency={getCurrencySymbol(stats.countryCode)}
-            filters={info.filters}
-            labels={info.labels}
-          />
-        ) : (
-          <StatsEmptyState />
-        )}
+        <StatsClientSection
+          stats={stats}
+          currency={getCurrencySymbol(stats.countryCode)}
+          filters={info.filters}
+          labels={info.labels}
+          isLoading={!hasData}
+        />
 
         <footer className="mt-6 flex items-start gap-2 border-t border-border pt-4">
           <IconInfoCircle className="mt-px size-3.5 shrink-0 text-muted-foreground" />
