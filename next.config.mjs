@@ -12,8 +12,8 @@ const contentSecurityPolicy = [
   "img-src 'self' data: https:",
   "font-src 'self' data:",
   "style-src 'self' 'unsafe-inline'",
-  "script-src 'self' 'unsafe-inline' 'unsafe-eval' https://static.cloudflareinsights.com https://vercel.live",
-  "script-src-elem 'self' 'unsafe-inline' https://static.cloudflareinsights.com https://vercel.live",
+  "script-src 'self' 'unsafe-inline' 'unsafe-eval' https://static.cloudflareinsights.com https://vercel.live https://cdnjs.buymeacoffee.com",
+  "script-src-elem 'self' 'unsafe-inline' https://static.cloudflareinsights.com https://vercel.live https://cdnjs.buymeacoffee.com",
   "connect-src 'self' https://openrouter.ai https://*.openrouter.ai",
 ].join("; ")
 
