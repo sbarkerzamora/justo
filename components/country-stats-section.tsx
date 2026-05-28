@@ -6,6 +6,7 @@ import type { Locale } from "@/lib/i18n"
 import { getCountryStats } from "@/lib/stats/repository"
 import type { CountryCode } from "@/lib/settlement/types"
 import { StatsClientSection } from "@/components/stats/stats-client-section"
+import { StatsEmptyState } from "@/components/stats/StatsEmptyState"
 
 export async function CountryStatsSection({
   countryCode,
@@ -17,9 +18,10 @@ export async function CountryStatsSection({
   if (!countryCode) return null
 
   const stats = await getCountryStats(countryCode as CountryCode)
-  if (stats.totalSettlements === 0) return null
-
-  const info = getStatsInfo(locale, stats.totalSettlements)
+  const hasData = stats.totalSettlements > 0
+  const info = hasData
+    ? getStatsInfo(locale, stats.totalSettlements)
+    : getEmptyInfo(locale)
 
   return (
     <section className="border-t border-border bg-background px-4 py-12 md:px-8 md:py-14">
@@ -36,12 +38,16 @@ export async function CountryStatsSection({
           </p>
         </header>
 
-        <StatsClientSection
-          stats={stats}
-          currency={getCurrencySymbol(stats.countryCode)}
-          filters={info.filters}
-          labels={info.labels}
-        />
+        {hasData ? (
+          <StatsClientSection
+            stats={stats}
+            currency={getCurrencySymbol(stats.countryCode)}
+            filters={info.filters}
+            labels={info.labels}
+          />
+        ) : (
+          <StatsEmptyState />
+        )}
 
         <footer className="mt-6 flex items-start gap-2 border-t border-border pt-4">
           <IconInfoCircle className="mt-px size-3.5 shrink-0 text-muted-foreground" />
@@ -50,6 +56,50 @@ export async function CountryStatsSection({
       </div>
     </section>
   )
+}
+
+function getEmptyInfo(locale: Locale) {
+  if (locale === "en") {
+    return {
+      title: "Settlement statistics",
+      description:
+        "Anonymous data will appear here as calculations are performed. No personal information is stored.",
+      disclaimer:
+        "Anonymous data for informational purposes. Does not constitute legal advice.",
+      filters: {
+        salary: "Salaries",
+        tenure: "Tenure",
+        net: "Net",
+        termination: "Termination",
+      },
+      labels: {
+        cases: "cases",
+        medianSalary: "median salary",
+        medianTenure: "median tenure",
+        medianNet: "median net",
+      },
+    }
+  }
+
+  return {
+    title: "Estadísticas de liquidaciones",
+    description:
+      "Aquí aparecerán datos anónimos conforme se realicen cálculos. No se almacena información personal.",
+    disclaimer:
+      "Datos anónimos con fines informativos. No constituye asesoría legal.",
+    filters: {
+      salary: "Salarios",
+      tenure: "Antigüedad",
+      net: "Neto",
+      termination: "Despido",
+    },
+    labels: {
+      cases: "casos",
+      medianSalary: "salario medio",
+      medianTenure: "antigüedad media",
+      medianNet: "neto medio",
+    },
+  }
 }
 
 function getStatsInfo(locale: Locale, total: number) {
