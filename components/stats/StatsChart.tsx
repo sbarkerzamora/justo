@@ -101,36 +101,27 @@ function getChartConfig(view: ChartView): ChartConfig {
 export function StatsChart({
   stats,
   view,
+  isLoading = false,
 }: {
   stats: CountryStats
   view: ChartView
+  isLoading?: boolean
 }) {
-  const data = getChartData(stats, view)
+  const data = isLoading ? [] : getChartData(stats, view)
   const chartConfig = getChartConfig(view)
 
-  const allZero = data.every((d) => d.value === 0)
-
-  if (allZero) {
-    return (
-      <div className="flex h-72 w-full items-center justify-center text-sm text-muted-foreground">
-        No hay suficientes datos para mostrar el gráfico.
-      </div>
-    )
-  }
-
   return (
-    <div className="w-full" style={{ height: 288 }}>
-      <EvilBarChart
-        data={data}
-        config={chartConfig}
-        className="h-full w-full"
-        animationType="left-to-right"
-      >
-        <XAxis dataKey="key" />
-        <YAxis tickLine={false} axisLine={false} />
-        <Tooltip />
-        <Bar dataKey="value" variant="default" />
-      </EvilBarChart>
-    </div>
+    <EvilBarChart
+      data={data}
+      config={chartConfig}
+      isLoading={isLoading}
+      className="h-72 w-full"
+      animationType="left-to-right"
+    >
+      <XAxis dataKey="key" />
+      <YAxis tickLine={false} axisLine={false} />
+      <Tooltip />
+      <Bar dataKey="value" variant="default" />
+    </EvilBarChart>
   )
 }

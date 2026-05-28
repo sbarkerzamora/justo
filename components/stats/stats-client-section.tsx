@@ -23,11 +23,13 @@ export function StatsClientSection({
   currency,
   filters,
   labels,
+  isLoading = false,
 }: {
   stats: CountryStats
   currency: string
   filters: { salary: string; tenure: string; net: string; termination: string }
   labels: { cases: string; medianSalary: string; medianTenure: string; medianNet: string }
+  isLoading?: boolean
 }) {
   const [view, setView] = useState<ChartView>("salary")
 
@@ -38,7 +40,7 @@ export function StatsClientSection({
     { key: "termination", icon: <IconFileDescription className="size-4" />, label: filters.termination },
   ]
 
-  const highlights = getHighlights(stats, currency, labels)
+  const highlights = isLoading ? getLoadingHighlights(labels) : getHighlights(stats, currency, labels)
 
   return (
     <div className="space-y-5">
@@ -72,9 +74,20 @@ export function StatsClientSection({
         ))}
       </div>
 
-      <StatsChart stats={stats} view={view} />
+      <StatsChart stats={stats} view={view} isLoading={isLoading} />
     </div>
   )
+}
+
+function getLoadingHighlights(
+  labels: { cases: string; medianSalary: string; medianTenure: string; medianNet: string }
+) {
+  return [
+    { value: "—", label: labels.cases },
+    { value: "—", label: labels.medianSalary },
+    { value: "—", label: labels.medianTenure },
+    { value: "—", label: labels.medianNet },
+  ]
 }
 
 function getHighlights(
