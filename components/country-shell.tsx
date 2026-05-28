@@ -4,6 +4,7 @@ import { useEffect, useRef, useState } from "react"
 import { useRouter } from "next/navigation"
 import { LlmHome } from "@/components/chat/llm-home"
 import { AnimatedGridPattern } from "@/components/ui/animated-grid-pattern"
+import { getCountryAccent } from "@/lib/country-accent"
 import type { Locale } from "@/lib/i18n"
 import { localizedCountryPath } from "@/lib/i18n"
 import { cn } from "@/lib/utils"
@@ -87,6 +88,7 @@ export function CountryShell({
           "relative h-svh transform-gpu overflow-hidden",
           isSpringing && "justo-hero-spring"
         )}
+        style={{ "--country-accent": getCountryAccent(countryCode) } as React.CSSProperties}
       >
       <AnimatedGridPattern
         numSquares={30}

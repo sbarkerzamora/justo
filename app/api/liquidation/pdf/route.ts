@@ -1,6 +1,7 @@
 import { NextResponse } from "next/server"
 
 import { buildSettlementPdf } from "@/lib/pdf/settlement-pdf"
+import { checkRateLimit } from "@/lib/rate-limit"
 import { settlementInputSchema } from "@/lib/settlement/schema"
 import { calculateNicaraguaSettlement } from "@/lib/settlement/ni/calculate"
 import { calculateGuatemalaSettlement } from "@/lib/settlement/gt/calculate"
@@ -30,6 +31,22 @@ const calculators: Record<string, (input: SettlementInput) => SettlementResult> 
 }
 
 export async function POST(request: Request) {
+  const clientIp =
+    request.headers.get("x-forwarded-for")?.split(",")[0]?.trim() ??
+    request.headers.get("x-real-ip") ??
+    "anonymous"
+
+  const { allowed, remaining } = await checkRateLimit("pdf", clientIp)
+  if (!allowed) {
+    return NextResponse.json(
+      { error: "Demasiadas solicitudes. Intenta de nuevo en unos segundos." },
+      {
+        status: 429,
+        headers: { "Retry-After": "60", "X-RateLimit-Remaining": String(remaining) },
+      }
+    )
+  }
+
   let payload: unknown
 
   try {

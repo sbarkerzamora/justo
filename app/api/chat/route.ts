@@ -5,11 +5,15 @@ import {
   zodSchema,
   type UIMessage,
 } from "ai"
-import { readdir, readFile } from "node:fs/promises"
 import { join } from "node:path"
 import { z } from "zod"
 
 import { getChatModelConfig } from "@/lib/ai/chat-provider"
+import {
+  readCountryCorpus,
+  readLegalCorpusFile,
+} from "@/lib/ai/legal-corpus-cache"
+import { checkRateLimit } from "@/lib/rate-limit"
 import { SettlementInput, SettlementResult } from "@/lib/settlement/types"
 import { calculateNicaraguaSettlement } from "@/lib/settlement/ni/calculate"
 import { calculateGuatemalaSettlement } from "@/lib/settlement/gt/calculate"
@@ -216,9 +220,6 @@ const calculators: Record<
   cl: calculateChileSettlement,
 }
 
-const legalCorpusCache = new Map<string, string>()
-const countryCorpusCache = new Map<string, CorpusDocument[]>()
-
 type CorpusDocument = {
   filename: string
   topic: string
@@ -299,17 +300,6 @@ const tokenize = (value: string): string[] => {
   return [...expanded]
 }
 
-const readLegalCorpusFile = async (filePath: string) => {
-  const cached = legalCorpusCache.get(filePath)
-  if (cached) {
-    return cached
-  }
-
-  const content = await readFile(filePath, "utf8")
-  legalCorpusCache.set(filePath, content)
-  return content
-}
-
 const stripFrontmatter = (content: string): string => {
   const frontmatterEnd = content.startsWith("---")
     ? content.indexOf("---", 3)
@@ -317,29 +307,6 @@ const stripFrontmatter = (content: string): string => {
   return frontmatterEnd !== -1
     ? content.slice(frontmatterEnd + 3).trim()
     : content.trim()
-}
-
-const readCountryCorpus = async (
-  countryCode: string
-): Promise<CorpusDocument[]> => {
-  const cached = countryCorpusCache.get(countryCode)
-  if (cached) {
-    return cached
-  }
-
-  const dir = countryDirMap[countryCode] ?? countryCode
-  const corpusDir = join(process.cwd(), "content", "legal", dir)
-  const filenames = (await readdir(corpusDir)).filter(
-    (name) => name.endsWith(".md") && name.toLowerCase() !== "readme.md"
-  )
-
-  const docs = filenames.map((filename) => ({
-    filename,
-    topic: filename.replace(/\.md$/i, ""),
-  }))
-
-  countryCorpusCache.set(countryCode, docs)
-  return docs
 }
 
 const scoreCorpusDocument = (
@@ -558,6 +525,22 @@ REGLAS ESTRICTAS:
 }
 
 export async function POST(request: Request) {
+  const clientIp =
+    request.headers.get("x-forwarded-for")?.split(",")[0]?.trim() ??
+    request.headers.get("x-real-ip") ??
+    "anonymous"
+
+  const { allowed, remaining } = await checkRateLimit("chat", clientIp)
+  if (!allowed) {
+    return Response.json(
+      { error: "Demasiadas solicitudes. Intenta de nuevo en unos segundos." },
+      {
+        status: 429,
+        headers: { "Retry-After": "60", "X-RateLimit-Remaining": String(remaining) },
+      }
+    )
+  }
+
   let body: unknown
 
   try {
