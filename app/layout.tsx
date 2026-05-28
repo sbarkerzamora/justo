@@ -1,5 +1,6 @@
 import { Geist_Mono, Nunito_Sans } from "next/font/google"
 import type { Metadata } from "next"
+import Script from "next/script"
 
 import "./globals.css"
 import { RootProvider } from "fumadocs-ui/provider/next"
@@ -69,6 +70,19 @@ export default function RootLayout({
           dangerouslySetInnerHTML={{
             __html: JSON.stringify(organizationJsonLd),
           }}
+        />
+        <Script
+          data-name="BMC-Widget"
+          data-cfasync="false"
+          src="https://cdnjs.buymeacoffee.com/1.0.0/widget.prod.min.js"
+          data-id="stephanbarker"
+          data-description="Support me on Buy me a coffee!"
+          data-message=""
+          data-color="#FF5F5F"
+          data-position="Right"
+          data-x_margin="18"
+          data-y_margin="18"
+          strategy="afterInteractive"
         />
       </body>
     </html>
