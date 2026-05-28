@@ -1,24 +1,13 @@
 import { notFound } from "next/navigation"
 import { getCountryInfo, isValidCountry } from "@/lib/countries"
 import { CountryShell } from "@/components/country-shell"
-import { CountrySeoContent } from "@/components/country-seo-content"
+import { CountrySeoContent, type SeoData } from "@/components/country-seo-content"
 import { type Locale, isValidLocale } from "@/lib/i18n"
 import { getSiteUrl } from "@/lib/site-url"
 
 const SITE_URL = getSiteUrl()
 
-const seoByCountry: Record<
-  string,
-  {
-    primaryKeyword: string
-    h1: string
-    intro: string
-    benefits: string[]
-    formulaSummary: string
-    docs: { label: string; href: string }[]
-    faqs: { question: string; answer: string }[]
-  }
-> = {
+const seoByCountry: Record<string, SeoData> = {
   ni: {
     primaryKeyword: "calculadora de liquidación laboral Nicaragua",
     h1: "Calculadora de liquidación laboral en Nicaragua",
@@ -417,7 +406,7 @@ export default async function CountryPage({
   )
 }
 
-function buildDefaultSeo(info: { name: string }) {
+function buildDefaultSeo(info: { name: string }): SeoData {
   return {
     primaryKeyword: `calculadora laboral ${info.name}`,
     h1: `Calculadora laboral en ${info.name}`,
@@ -446,7 +435,7 @@ function buildDefaultSeo(info: { name: string }) {
   }
 }
 
-function buildDefaultSeoEn(info: { name: string }) {
+function buildDefaultSeoEn(info: { name: string }): SeoData {
   return {
     primaryKeyword: `${info.name} labor settlement calculator`,
     h1: `${info.name} labor settlement calculator`,
@@ -486,7 +475,7 @@ function buildJsonLd({
   country: string
   countryName: string
   pageUrl: string
-  seo: ReturnType<typeof buildDefaultSeo>
+  seo: SeoData
 }) {
   return [
     {
