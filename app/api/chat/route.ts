@@ -10,10 +10,12 @@ import { z } from "zod"
 
 import { getChatModelConfig } from "@/lib/ai/chat-provider"
 import {
+  countryDirMap,
   readCountryCorpus,
   readLegalCorpusFile,
 } from "@/lib/ai/legal-corpus-cache"
 import { checkRateLimit } from "@/lib/rate-limit"
+import { getClientIp } from "@/lib/request-utils"
 import { SettlementInput, SettlementResult } from "@/lib/settlement/types"
 import { calculateNicaraguaSettlement } from "@/lib/settlement/ni/calculate"
 import { calculateGuatemalaSettlement } from "@/lib/settlement/gt/calculate"
@@ -53,10 +55,6 @@ const countryMeta: Record<string, { name: string; law: string }> = {
   pe: { name: "Perú", law: "Ley General de Trabajo" },
   ar: { name: "Argentina", law: "Ley de Contrato de Trabajo 20.744" },
   cl: { name: "Chile", law: "Código del Trabajo (DFL 1)" },
-}
-
-const countryDirMap: Record<string, string> = {
-  gt: "gua",
 }
 
 const countryTopicFiles: Record<string, string[]> = {
@@ -525,18 +523,19 @@ REGLAS ESTRICTAS:
 }
 
 export async function POST(request: Request) {
-  const clientIp =
-    request.headers.get("x-forwarded-for")?.split(",")[0]?.trim() ??
-    request.headers.get("x-real-ip") ??
-    "anonymous"
+  const clientIp = getClientIp(request)
 
-  const { allowed, remaining } = await checkRateLimit("chat", clientIp)
+  const { allowed, remaining, reset } = await checkRateLimit("chat", clientIp)
   if (!allowed) {
+    const retryAfter = Math.max(1, Math.ceil((reset - Date.now()) / 1000))
     return Response.json(
       { error: "Demasiadas solicitudes. Intenta de nuevo en unos segundos." },
       {
         status: 429,
-        headers: { "Retry-After": "60", "X-RateLimit-Remaining": String(remaining) },
+        headers: {
+          "Retry-After": String(retryAfter),
+          "X-RateLimit-Remaining": String(remaining),
+        },
       }
     )
   }

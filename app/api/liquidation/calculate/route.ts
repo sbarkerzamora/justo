@@ -1,6 +1,7 @@
 import { NextResponse } from "next/server"
 
 import { checkRateLimit } from "@/lib/rate-limit"
+import { getClientIp } from "@/lib/request-utils"
 import { SettlementInput } from "@/lib/settlement/types"
 import { settlementInputSchema } from "@/lib/settlement/schema"
 import { calculateNicaraguaSettlement } from "@/lib/settlement/ni/calculate"
@@ -31,18 +32,19 @@ const calculators: Record<string, (input: SettlementInput) => SettlementResult> 
 }
 
 export async function POST(request: Request) {
-  const clientIp =
-    request.headers.get("x-forwarded-for")?.split(",")[0]?.trim() ??
-    request.headers.get("x-real-ip") ??
-    "anonymous"
+  const clientIp = getClientIp(request)
 
-  const { allowed, remaining } = await checkRateLimit("calculate", clientIp)
+  const { allowed, remaining, reset } = await checkRateLimit("calculate", clientIp)
   if (!allowed) {
+    const retryAfter = Math.max(1, Math.ceil((reset - Date.now()) / 1000))
     return NextResponse.json(
       { error: "Demasiadas solicitudes. Intenta de nuevo en unos segundos." },
       {
         status: 429,
-        headers: { "Retry-After": "60", "X-RateLimit-Remaining": String(remaining) },
+        headers: {
+          "Retry-After": String(retryAfter),
+          "X-RateLimit-Remaining": String(remaining),
+        },
       }
     )
   }

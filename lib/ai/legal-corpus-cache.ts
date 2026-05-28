@@ -17,7 +17,7 @@ type CorpusDocument = {
   topic: string
 }
 
-const countryDirMap: Record<string, string> = {
+export const countryDirMap: Record<string, string> = {
   gt: "gua",
 }
 
