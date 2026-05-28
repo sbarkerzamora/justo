@@ -9,6 +9,9 @@ export const settlementInputSchema = z.object({
   unusedVacationDays: z.number().min(0).max(30),
   startDate: z.string().min(10),
   endDate: z.string().min(10),
+  terminationType: z
+    .enum(["renuncia", "despido_justificado", "despido_injustificado", "mutuo_acuerdo", "otro"])
+    .optional(),
 })
 
 export type SettlementInputPayload = z.infer<typeof settlementInputSchema>
