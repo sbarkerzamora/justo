@@ -1672,7 +1672,7 @@ function HomeHeader({
         <button
           type="button"
           onClick={onReset}
-          className="inline-flex h-8 items-center justify-center rounded-lg border border-border bg-card px-3 text-xs font-semibold text-foreground hover:bg-accent max-sm:h-7 max-sm:px-2"
+          className="inline-flex h-8 items-center justify-center rounded-lg border border-border bg-card px-3 text-xs font-semibold text-foreground hover:border-country-accent/15 hover:bg-accent max-sm:h-7 max-sm:px-2"
         >
           <span className="max-sm:hidden">{copy.newConversation}</span>
           <span className="sm:hidden">+</span>
@@ -1824,10 +1824,10 @@ function WelcomeEmptyState({
 }) {
   return (
     <div className="flex max-w-md flex-col items-center gap-y-3 text-center py-3 duration-300 motion-safe:animate-in motion-safe:fade-in motion-safe:slide-in-from-bottom-1">
-      <div className="size-14 overflow-hidden rounded-full border border-border bg-card shadow-sm motion-safe:animate-in motion-safe:duration-200 motion-safe:fade-in motion-safe:slide-in-from-bottom-1">
+      <div className="size-14 overflow-hidden rounded-full border border-country-accent/10 bg-card shadow-sm motion-safe:animate-in motion-safe:duration-200 motion-safe:fade-in motion-safe:slide-in-from-bottom-1">
         <Orb className="size-14" agentState={orbState} colors={orbColors} />
       </div>
-      <div className="inline-flex items-center gap-2 rounded-full border border-border bg-card px-3 py-1 text-xs font-medium text-muted-foreground motion-safe:animate-in motion-safe:duration-200 motion-safe:fade-in motion-safe:slide-in-from-bottom-1">
+      <div className="inline-flex items-center gap-2 rounded-full border border-country-accent/10 bg-card px-3 py-1 text-xs font-medium text-muted-foreground motion-safe:animate-in motion-safe:duration-200 motion-safe:fade-in motion-safe:slide-in-from-bottom-1">
         <Image
           src={`https://flagcdn.com/w40/${cc}.png`}
           alt={countryName}
@@ -1851,7 +1851,7 @@ function WelcomeEmptyState({
               type="button"
               onClick={() => onExampleClick(q)}
               disabled={isLoading}
-              className="block w-full rounded-xl border border-border bg-card px-3 py-2 text-left text-xs text-foreground transition-colors duration-200 hover:bg-accent hover:text-primary disabled:cursor-not-allowed disabled:opacity-50"
+              className="block w-full rounded-xl border border-border bg-card px-3 py-2 text-left text-xs text-foreground transition-colors duration-200 hover:border-country-accent/20 hover:bg-accent hover:text-primary hover:shadow-[0_0_12px_-3px_var(--country-accent)] disabled:cursor-not-allowed disabled:opacity-50"
             >
               {q}
             </button>
@@ -1862,7 +1862,7 @@ function WelcomeEmptyState({
         type="button"
         onClick={onStartFlow}
         disabled={isLoading}
-        className="inline-flex items-center gap-2 rounded-2xl bg-primary px-6 py-3 text-sm font-semibold text-primary-foreground shadow-lg transition-all duration-200 hover:translate-y-[-1px] disabled:cursor-not-allowed disabled:opacity-50 motion-safe:animate-in motion-safe:fade-in motion-safe:slide-in-from-bottom-1"
+        className="inline-flex items-center gap-2 rounded-2xl bg-primary px-6 py-3 text-sm font-semibold text-primary-foreground shadow-lg transition-all duration-200 hover:translate-y-[-1px] hover:shadow-[0_8px_24px_-6px_var(--country-accent)] disabled:cursor-not-allowed disabled:opacity-50 motion-safe:animate-in motion-safe:fade-in motion-safe:slide-in-from-bottom-1"
       >
         <IconCalculator className="size-4" />
         {copy.startGuided}
