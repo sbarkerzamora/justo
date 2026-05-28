@@ -407,9 +407,8 @@ export default async function CountryPage({
 
   return (
     <>
-      <CountryShell countryCode={country} locale={locale}>
-        <CountrySeoContent countryName={info.name} seo={seo} locale={locale} />
-      </CountryShell>
+      <CountryShell countryCode={country} locale={locale} />
+      <CountrySeoContent countryName={info.name} seo={seo} locale={locale} />
       <script
         type="application/ld+json"
         dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}

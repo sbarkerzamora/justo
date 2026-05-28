@@ -1,6 +1,6 @@
 "use client"
 
-import { useEffect, useRef, useState, type ReactNode } from "react"
+import { useEffect, useRef, useState } from "react"
 import { useRouter } from "next/navigation"
 import { LlmHome } from "@/components/chat/llm-home"
 import { AnimatedGridPattern } from "@/components/ui/animated-grid-pattern"
@@ -11,11 +11,9 @@ import { cn } from "@/lib/utils"
 export function CountryShell({
   countryCode,
   locale,
-  children,
 }: {
   countryCode: string
   locale: Locale
-  children?: ReactNode
 }) {
   const { push } = useRouter()
   const [isSpringing, setIsSpringing] = useState(false)
@@ -83,10 +81,10 @@ export function CountryShell({
 
   return (
     <>
-      <style>{`html,body{overflow:hidden}`}</style>
+      <style>{`html{overflow-y:scroll;scrollbar-width:none!important}html::-webkit-scrollbar{display:none!important}`}</style>
       <div
         className={cn(
-          "scrollbar-hidden relative h-svh transform-gpu overflow-y-auto",
+          "relative h-svh transform-gpu overflow-hidden",
           isSpringing && "justo-hero-spring"
         )}
       >
@@ -127,7 +125,6 @@ export function CountryShell({
           ? "Swipe for legal explanation"
           : "Desliza para ver la explicación legal"}
       </div>
-      {children}
     </div>
     </>
   )

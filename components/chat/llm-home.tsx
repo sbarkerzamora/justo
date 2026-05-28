@@ -1820,7 +1820,7 @@ function WelcomeEmptyState({
   orbColors: [string, string]
 }) {
   return (
-    <div className="flex min-h-full flex-1 items-center justify-center px-4 py-8">
+    <div className="flex min-h-full items-center justify-center px-4 py-5">
       <div className="flex max-w-md flex-col items-center gap-y-5 text-center duration-300 motion-safe:animate-in motion-safe:fade-in motion-safe:slide-in-from-bottom-1">
         <div className="size-16 overflow-hidden rounded-full border border-border bg-card shadow-sm motion-safe:animate-in motion-safe:duration-200 motion-safe:fade-in motion-safe:slide-in-from-bottom-1">
           <Orb className="size-16" agentState={orbState} colors={orbColors} />
