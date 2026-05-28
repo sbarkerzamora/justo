@@ -3,6 +3,7 @@
 import { useEffect } from "react"
 import { useRouter } from "next/navigation"
 import { AnimatedGridPattern } from "@/components/ui/animated-grid-pattern"
+import { Orb } from "@/components/ui/orb"
 import { countryList, defaultCountry, isValidCountry } from "@/lib/countries"
 import {
   defaultLocale,
@@ -69,8 +70,8 @@ export function LocationGate() {
         )}
       />
       <div className="relative z-10 flex min-h-svh items-center justify-center px-4">
-        <div className="rounded-2xl border border-border bg-card/85 px-5 py-4 text-sm text-muted-foreground shadow-sm backdrop-blur-md motion-safe:animate-in motion-safe:duration-200 motion-safe:fade-in motion-safe:slide-in-from-bottom-2">
-          Justo...
+        <div className="rounded-2xl border border-border bg-card/85 px-5 py-4 shadow-sm backdrop-blur-md motion-safe:animate-in motion-safe:duration-200 motion-safe:fade-in motion-safe:slide-in-from-bottom-2">
+          <Orb className="size-14" agentState="thinking" colors={["#4F86C6", "#A8C8E8"]} />
         </div>
       </div>
     </div>
