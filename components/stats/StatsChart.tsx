@@ -107,14 +107,38 @@ export function StatsChart({
   view: ChartView
   isLoading?: boolean
 }) {
-  const data = isLoading ? [] : getChartData(stats, view)
+  if (isLoading) {
+    return (
+      <EvilBarChart
+        data={[]}
+        config={getChartConfig(view)}
+        isLoading
+        className="h-72 w-full"
+      >
+        <XAxis dataKey="key" />
+        <YAxis tickLine={false} axisLine={false} />
+        <Tooltip />
+        <Bar dataKey="value" variant="default" />
+      </EvilBarChart>
+    )
+  }
+
+  const data = getChartData(stats, view)
+
+  if (data.length === 0) {
+    return (
+      <div className="flex h-72 w-full items-center justify-center text-sm text-muted-foreground">
+        No hay datos de tipo de despido aún.
+      </div>
+    )
+  }
+
   const chartConfig = getChartConfig(view)
 
   return (
     <EvilBarChart
       data={data}
       config={chartConfig}
-      isLoading={isLoading}
       className="h-72 w-full"
       animationType="left-to-right"
     >
