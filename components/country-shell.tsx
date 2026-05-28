@@ -81,7 +81,7 @@ export function CountryShell({
 
   return (
     <>
-      <style>{`html{overflow-y:scroll;scrollbar-width:none!important}html::-webkit-scrollbar{display:none!important}`}</style>
+      <style>{`html{overflow-y:scroll;scrollbar-width:none !important}html::-webkit-scrollbar{display:none !important}`}</style>
       <div
         className={cn(
           "relative h-svh transform-gpu overflow-hidden",
