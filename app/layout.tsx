@@ -65,16 +65,10 @@ export default function RootLayout({
         <RootProvider search={{ preload: false }}>
           <ThemeProvider>{children}</ThemeProvider>
         </RootProvider>
-        <script
-          type="application/ld+json"
-          dangerouslySetInnerHTML={{
-            __html: JSON.stringify(organizationJsonLd),
-          }}
-        />
         <Script
+          src="https://cdnjs.buymeacoffee.com/1.0.0/widget.prod.min.js"
           data-name="BMC-Widget"
           data-cfasync="false"
-          src="https://cdnjs.buymeacoffee.com/1.0.0/widget.prod.min.js"
           data-id="stephanbarker"
           data-description="Support me on Buy me a coffee!"
           data-message=""
@@ -82,7 +76,13 @@ export default function RootLayout({
           data-position="Right"
           data-x_margin="18"
           data-y_margin="18"
-          strategy="afterInteractive"
+          strategy="lazyOnload"
+        />
+        <script
+          type="application/ld+json"
+          dangerouslySetInnerHTML={{
+            __html: JSON.stringify(organizationJsonLd),
+          }}
         />
       </body>
     </html>
