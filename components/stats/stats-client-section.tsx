@@ -72,7 +72,7 @@ export function StatsClientSection({
         ))}
       </div>
 
-      <StatsChart stats={stats} view={view} currency={currency} />
+      <StatsChart stats={stats} view={view} />
     </div>
   )
 }
