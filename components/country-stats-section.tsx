@@ -6,6 +6,7 @@ import type { Locale } from "@/lib/i18n"
 import { getCountryStats, emptyStats } from "@/lib/stats/repository"
 import type { CountryCode } from "@/lib/settlement/types"
 import { StatsClientSection } from "@/components/stats/stats-client-section"
+import { BackgroundRippleEffect } from "@/components/ui/background-ripple-effect"
 
 const STATS_TIMEOUT_MS = 800
 
@@ -34,8 +35,9 @@ export async function CountryStatsSection({
     : getEmptyInfo(locale)
 
   return (
-    <section className="border-t border-border bg-background px-4 py-12 md:px-8 md:py-14">
-      <div className="mx-auto max-w-4xl">
+    <section className="relative overflow-hidden border-t border-border bg-background px-4 py-12 md:px-8 md:py-14">
+      <BackgroundRippleEffect />
+      <div className="relative z-10 mx-auto max-w-4xl">
         <header className="mb-8">
           <div className="flex items-center gap-2.5">
             <IconChartBar className="size-5 text-muted-foreground" />
