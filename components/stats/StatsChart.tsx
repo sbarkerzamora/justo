@@ -1,5 +1,14 @@
+"use client"
+
+import {
+  EvilBarChart,
+  Bar,
+  XAxis,
+  YAxis,
+  Tooltip,
+} from "@/components/evilcharts/charts/bar-chart"
+import type { ChartConfig } from "@/components/evilcharts/ui/chart"
 import type { CountryStats } from "@/lib/stats/types"
-import { BarChartMultiVertical } from "@/components/stats/BarChartMultiVertical"
 
 export type ChartView = "salary" | "tenure" | "net" | "termination"
 
@@ -19,6 +28,13 @@ const VIEW_COLORS: Record<ChartView, string> = {
   termination: "#F5C6D0",
 }
 
+const VIEW_LABELS: Record<ChartView, string> = {
+  salary: "Salario",
+  tenure: "Antigüedad",
+  net: "Neto",
+  termination: "Despidos",
+}
+
 export function formatTenureDays(days: number): string {
   const years = Math.floor(days / 365)
   const months = Math.floor((days % 365) / 30)
@@ -26,42 +42,60 @@ export function formatTenureDays(days: number): string {
   return `${months}m`
 }
 
-function getChartData(stats: CountryStats, view: ChartView) {
+interface ChartDatum extends Record<string, unknown> {
+  key: string
+  value: number
+}
+
+function getChartData(stats: CountryStats, view: ChartView): ChartDatum[] {
   switch (view) {
     case "salary":
       return [
-        { key: "Mín", values: [stats.salary.min] },
-        { key: "P25", values: [stats.salary.p25] },
-        { key: "Mediana", values: [stats.salary.p50] },
-        { key: "P75", values: [stats.salary.p75] },
-        { key: "Máx", values: [stats.salary.max] },
+        { key: "Mín", value: stats.salary.min },
+        { key: "P25", value: stats.salary.p25 },
+        { key: "Mediana", value: stats.salary.p50 },
+        { key: "P75", value: stats.salary.p75 },
+        { key: "Máx", value: stats.salary.max },
       ]
     case "tenure":
       return [
-        { key: "P25", values: [stats.tenure.p25] },
-        { key: "Mediana", values: [stats.tenure.p50] },
-        { key: "P75", values: [stats.tenure.p75] },
-        { key: "P90", values: [stats.tenure.p90] },
-        { key: "Máx", values: [stats.tenure.max] },
+        { key: "P25", value: stats.tenure.p25 },
+        { key: "Mediana", value: stats.tenure.p50 },
+        { key: "P75", value: stats.tenure.p75 },
+        { key: "P90", value: stats.tenure.p90 },
+        { key: "Máx", value: stats.tenure.max },
       ]
     case "net":
       return [
-        { key: "Mín", values: [stats.net.min] },
-        { key: "P25", values: [stats.net.p25] },
-        { key: "Mediana", values: [stats.net.p50] },
-        { key: "P75", values: [stats.net.p75] },
-        { key: "Máx", values: [stats.net.max] },
+        { key: "Mín", value: stats.net.min },
+        { key: "P25", value: stats.net.p25 },
+        { key: "Mediana", value: stats.net.p50 },
+        { key: "P75", value: stats.net.p75 },
+        { key: "Máx", value: stats.net.max },
       ]
     case "termination": {
       const entries = Object.entries(stats.byTerminationType)
       return entries.map(([key, value]) => ({
         key: TERMINATION_LABELS[key] ?? key,
-        values: [value],
+        value,
       }))
     }
     default:
       return []
   }
+}
+
+function getChartConfig(view: ChartView): ChartConfig {
+  const color = VIEW_COLORS[view]
+  return {
+    value: {
+      label: VIEW_LABELS[view],
+      colors: {
+        light: [color],
+        dark: [color],
+      },
+    },
+  } satisfies ChartConfig
 }
 
 export function StatsChart({
@@ -72,7 +106,20 @@ export function StatsChart({
   view: ChartView
 }) {
   const data = getChartData(stats, view)
-  const color = VIEW_COLORS[view]
+  const chartConfig = getChartConfig(view)
 
-  return <BarChartMultiVertical data={data} colors={[color]} />
+  return (
+    <EvilBarChart
+      data={data}
+      config={chartConfig}
+      className="h-72 w-full"
+      barRadius={6}
+      animationType="left-to-right"
+    >
+      <XAxis dataKey="key" />
+      <YAxis tickLine={false} axisLine={false} />
+      <Tooltip />
+      <Bar dataKey="value" variant="default" glowing />
+    </EvilBarChart>
+  )
 }
