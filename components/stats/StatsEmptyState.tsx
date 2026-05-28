@@ -53,13 +53,6 @@ const STYLES = `
 }
 `
 
-if (typeof document !== "undefined" && !document.getElementById(STYLE_ID)) {
-  const style = document.createElement("style")
-  style.id = STYLE_ID
-  style.textContent = STYLES
-  document.head.appendChild(style)
-}
-
 function readMs(name: string, fallback: number): number {
   if (typeof document === "undefined") return fallback
   const raw = getComputedStyle(document.documentElement)
@@ -74,6 +67,14 @@ export function StatsEmptyState() {
   const ref = useRef<HTMLSpanElement>(null)
   const busy = useRef(false)
   const timer = useRef<ReturnType<typeof setInterval> | null>(null)
+
+  useEffect(() => {
+    if (document.getElementById(STYLE_ID)) return
+    const style = document.createElement("style")
+    style.id = STYLE_ID
+    style.textContent = STYLES
+    document.head.appendChild(style)
+  }, [])
 
   useEffect(() => {
     timer.current = setInterval(() => {

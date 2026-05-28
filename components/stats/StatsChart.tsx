@@ -97,14 +97,6 @@ export function StatsChart({
     y: number
   } | null>(null)
 
-  if (stats.totalSettlements === 0) {
-    return (
-      <div className="flex h-72 items-center justify-center text-sm text-muted-foreground">
-        No hay suficientes datos aún.
-      </div>
-    )
-  }
-
   const data = getChartData(stats, view)
   if (data.length === 0) {
     return (

@@ -59,57 +59,49 @@ export async function CountryStatsSection({
 }
 
 function getEmptyInfo(locale: Locale) {
+  const base = getSharedCopy(locale)
+
   if (locale === "en") {
     return {
+      ...base,
       title: "Settlement statistics",
       description:
         "Anonymous data will appear here as calculations are performed. No personal information is stored.",
-      disclaimer:
-        "Anonymous data for informational purposes. Does not constitute legal advice.",
-      filters: {
-        salary: "Salaries",
-        tenure: "Tenure",
-        net: "Net",
-        termination: "Termination",
-      },
-      labels: {
-        cases: "cases",
-        medianSalary: "median salary",
-        medianTenure: "median tenure",
-        medianNet: "median net",
-      },
     }
   }
 
   return {
+    ...base,
     title: "Estadísticas de liquidaciones",
     description:
       "Aquí aparecerán datos anónimos conforme se realicen cálculos. No se almacena información personal.",
-    disclaimer:
-      "Datos anónimos con fines informativos. No constituye asesoría legal.",
-    filters: {
-      salary: "Salarios",
-      tenure: "Antigüedad",
-      net: "Neto",
-      termination: "Despido",
-    },
-    labels: {
-      cases: "casos",
-      medianSalary: "salario medio",
-      medianTenure: "antigüedad media",
-      medianNet: "neto medio",
-    },
   }
 }
 
 function getStatsInfo(locale: Locale, total: number) {
+  const base = getSharedCopy(locale)
   const count = total.toLocaleString(locale === "en" ? "en" : "es-NI")
 
   if (locale === "en") {
     return {
+      ...base,
       title: `Settlement data — ${count} calculations`,
       description:
         "Anonymous statistics based on real calculations. No personal information is stored — only salary ranges, tenure, and net outcomes.",
+    }
+  }
+
+  return {
+    ...base,
+    title: `Datos de liquidaciones — ${count} cálculos`,
+    description:
+      "Estadísticas anónimas basadas en cálculos reales. No se almacena información personal — solo rangos de salario, antigüedad y montos netos.",
+  }
+}
+
+function getSharedCopy(locale: Locale) {
+  if (locale === "en") {
+    return {
       disclaimer:
         "Anonymous data for informational purposes. Does not constitute legal advice.",
       filters: {
@@ -128,9 +120,6 @@ function getStatsInfo(locale: Locale, total: number) {
   }
 
   return {
-    title: `Datos de liquidaciones — ${count} cálculos`,
-    description:
-      "Estadísticas anónimas basadas en cálculos reales. No se almacena información personal — solo rangos de salario, antigüedad y montos netos.",
     disclaimer:
       "Datos anónimos con fines informativos. No constituye asesoría legal.",
     filters: {
