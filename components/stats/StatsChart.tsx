@@ -109,17 +109,19 @@ export function StatsChart({
   const chartConfig = getChartConfig(view)
 
   return (
-    <EvilBarChart
-      data={data}
-      config={chartConfig}
-      className="h-72 w-full"
-      barRadius={6}
-      animationType="left-to-right"
-    >
-      <XAxis dataKey="key" />
-      <YAxis tickLine={false} axisLine={false} />
-      <Tooltip />
-      <Bar dataKey="value" variant="default" glowing />
-    </EvilBarChart>
+    <div className="w-full" style={{ height: 288 }}>
+      <EvilBarChart
+        data={data}
+        config={chartConfig}
+        className="h-full w-full"
+        barRadius={6}
+        animationType="left-to-right"
+      >
+        <XAxis dataKey="key" />
+        <YAxis tickLine={false} axisLine={false} />
+        <Tooltip />
+        <Bar dataKey="value" variant="default" glowing />
+      </EvilBarChart>
+    </div>
   )
 }
