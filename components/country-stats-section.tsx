@@ -6,15 +6,9 @@ import type { Locale } from "@/lib/i18n"
 import { getCountryStats, emptyStats } from "@/lib/stats/repository"
 import type { CountryCode } from "@/lib/settlement/types"
 import { StatsClientSection } from "@/components/stats/stats-client-section"
-import Threads from "@/components/Threads"
-import { getCountryOrbColors } from "@/lib/country-orb-colors"
+import { BackgroundRippleEffect } from "@/components/ui/background-ripple-effect"
 
 const STATS_TIMEOUT_MS = 800
-
-function hexToRgb(hex: string): [number, number, number] {
-  const v = parseInt(hex.replace("#", ""), 16)
-  return [(v >> 16) / 255, ((v >> 8) & 0xff) / 255, (v & 0xff) / 255]
-}
 
 function withTimeout<T>(promise: Promise<T>, ms: number, fallback: T): Promise<T> {
   const timer = new Promise<T>((resolve) => setTimeout(() => resolve(fallback), ms))
@@ -39,18 +33,10 @@ export async function CountryStatsSection({
   const info = hasData
     ? getStatsInfo(locale, stats.totalSettlements)
     : getEmptyInfo(locale)
-  const orbColors = getCountryOrbColors(countryCode)
 
   return (
     <section className="relative overflow-hidden border-t border-border bg-background px-4 py-12 md:px-8 md:py-14">
-      <div className="absolute inset-0">
-        <Threads
-          color={hexToRgb(orbColors[0])}
-          amplitude={1}
-          distance={0}
-          enableMouseInteraction
-        />
-      </div>
+      <BackgroundRippleEffect />
       <div className="relative z-10 mx-auto max-w-4xl">
         <header className="mb-8">
           <div className="flex items-center gap-2.5">
