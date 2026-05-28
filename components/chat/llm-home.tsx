@@ -978,11 +978,8 @@ function LlmHomeView(props: {
             stepIdx={stepIdx}
           />
         ) : null}
-        <div
-          ref={messagesContainerRef}
-          className="min-h-0 flex-1 space-y-3 overflow-y-auto px-2 pb-4 max-sm:px-1 [scrollbar-gutter:stable]"
-        >
-          {messages.length === 0 ? (
+        {messages.length === 0 ? (
+          <div className="flex min-h-0 flex-1 items-center justify-center px-2 pb-4 max-sm:px-1">
             <WelcomeEmptyState
               cc={cc}
               countryName={countryName}
@@ -994,8 +991,13 @@ function LlmHomeView(props: {
               orbState={orbState}
               orbColors={orbColors}
             />
-          ) : null}
-          {messages.map((m) => (
+          </div>
+        ) : (
+          <div
+            ref={messagesContainerRef}
+            className="min-h-0 flex-1 space-y-3 overflow-y-auto px-2 pb-4 max-sm:px-1 [scrollbar-gutter:stable]"
+          >
+            {messages.map((m) => (
             <div
               key={m.id}
               className={
@@ -1071,7 +1073,8 @@ function LlmHomeView(props: {
             />
           ) : null}
           <div ref={messagesEndRef} />
-        </div>
+          </div>
+        )}
       </section>
       <div className="fixed inset-x-0 bottom-0 z-30 border-t border-border/70 bg-background px-4 pt-3 shadow-lg motion-safe:animate-in motion-safe:duration-200 motion-safe:fade-in motion-safe:slide-in-from-bottom-2 md:px-8">
         <Composer
@@ -1820,53 +1823,51 @@ function WelcomeEmptyState({
   orbColors: [string, string]
 }) {
   return (
-    <div className="flex min-h-full flex-1 items-center justify-center px-4 py-8">
-      <div className="flex max-w-md flex-col items-center gap-y-5 text-center duration-300 motion-safe:animate-in motion-safe:fade-in motion-safe:slide-in-from-bottom-1">
-        <div className="size-16 overflow-hidden rounded-full border border-border bg-card shadow-sm motion-safe:animate-in motion-safe:duration-200 motion-safe:fade-in motion-safe:slide-in-from-bottom-1">
-          <Orb className="size-16" agentState={orbState} colors={orbColors} />
-        </div>
-        <div className="inline-flex items-center gap-2 rounded-full border border-border bg-card px-3 py-1 text-xs font-medium text-muted-foreground motion-safe:animate-in motion-safe:duration-200 motion-safe:fade-in motion-safe:slide-in-from-bottom-1">
-          <Image
-            src={`https://flagcdn.com/w40/${cc}.png`}
-            alt={countryName}
-            width={16}
-            height={12}
-            className="h-3 w-4 rounded-[1px] border border-border object-cover"
-          />
-          {countryName}
-        </div>
-        <p className="text-sm leading-relaxed text-foreground motion-safe:animate-in motion-safe:duration-200 motion-safe:fade-in motion-safe:slide-in-from-bottom-1">
-          {copy.welcome(countryName)}
-        </p>
-        <div className="space-y-2 text-left motion-safe:animate-in motion-safe:duration-200 motion-safe:fade-in motion-safe:slide-in-from-bottom-1">
-          <p className="text-[11px] font-semibold tracking-widest text-muted-foreground uppercase">
-            {copy.examplesHeading}
-          </p>
-          <div className="space-y-1.5">
-            {examples.slice(0, 3).map((q) => (
-              <button
-                key={q}
-                type="button"
-                onClick={() => onExampleClick(q)}
-                disabled={isLoading}
-                className="block w-full rounded-xl border border-border bg-card px-3 py-2 text-left text-xs text-foreground transition-colors duration-200 hover:bg-accent hover:text-primary disabled:cursor-not-allowed disabled:opacity-50"
-              >
-                {q}
-              </button>
-            ))}
-          </div>
-        </div>
-        <button
-          type="button"
-          onClick={onStartFlow}
-          disabled={isLoading}
-          className="inline-flex items-center gap-2 rounded-2xl bg-primary px-6 py-3 text-sm font-semibold text-primary-foreground shadow-lg transition-all duration-200 hover:translate-y-[-1px] disabled:cursor-not-allowed disabled:opacity-50 motion-safe:animate-in motion-safe:fade-in motion-safe:slide-in-from-bottom-1"
-        >
-          <IconCalculator className="size-4" />
-          {copy.startGuided}
-          <IconSparkles className="size-4" />
-        </button>
+    <div className="flex max-w-md flex-col items-center gap-y-3 text-center py-3 duration-300 motion-safe:animate-in motion-safe:fade-in motion-safe:slide-in-from-bottom-1">
+      <div className="size-14 overflow-hidden rounded-full border border-border bg-card shadow-sm motion-safe:animate-in motion-safe:duration-200 motion-safe:fade-in motion-safe:slide-in-from-bottom-1">
+        <Orb className="size-14" agentState={orbState} colors={orbColors} />
       </div>
+      <div className="inline-flex items-center gap-2 rounded-full border border-border bg-card px-3 py-1 text-xs font-medium text-muted-foreground motion-safe:animate-in motion-safe:duration-200 motion-safe:fade-in motion-safe:slide-in-from-bottom-1">
+        <Image
+          src={`https://flagcdn.com/w40/${cc}.png`}
+          alt={countryName}
+          width={16}
+          height={12}
+          className="h-3 w-4 rounded-[1px] border border-border object-cover"
+        />
+        {countryName}
+      </div>
+      <p className="text-xs leading-relaxed text-foreground motion-safe:animate-in motion-safe:duration-200 motion-safe:fade-in motion-safe:slide-in-from-bottom-1">
+        {copy.welcome(countryName)}
+      </p>
+      <div className="space-y-1 text-left motion-safe:animate-in motion-safe:duration-200 motion-safe:fade-in motion-safe:slide-in-from-bottom-1">
+        <p className="text-[11px] font-semibold tracking-widest text-muted-foreground uppercase">
+          {copy.examplesHeading}
+        </p>
+        <div className="space-y-1">
+          {examples.slice(0, 2).map((q) => (
+            <button
+              key={q}
+              type="button"
+              onClick={() => onExampleClick(q)}
+              disabled={isLoading}
+              className="block w-full rounded-xl border border-border bg-card px-3 py-2 text-left text-xs text-foreground transition-colors duration-200 hover:bg-accent hover:text-primary disabled:cursor-not-allowed disabled:opacity-50"
+            >
+              {q}
+            </button>
+          ))}
+        </div>
+      </div>
+      <button
+        type="button"
+        onClick={onStartFlow}
+        disabled={isLoading}
+        className="inline-flex items-center gap-2 rounded-2xl bg-primary px-6 py-3 text-sm font-semibold text-primary-foreground shadow-lg transition-all duration-200 hover:translate-y-[-1px] disabled:cursor-not-allowed disabled:opacity-50 motion-safe:animate-in motion-safe:fade-in motion-safe:slide-in-from-bottom-1"
+      >
+        <IconCalculator className="size-4" />
+        {copy.startGuided}
+        <IconSparkles className="size-4" />
+      </button>
     </div>
   )
 }

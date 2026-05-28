@@ -80,12 +80,14 @@ export function CountryShell({
   }, [])
 
   return (
-    <div
-      className={cn(
-        "relative h-svh transform-gpu",
-        isSpringing && "justo-hero-spring"
-      )}
-    >
+    <>
+      <style>{`html{overflow-y:scroll;scrollbar-width:none !important}html::-webkit-scrollbar{display:none !important}`}</style>
+      <div
+        className={cn(
+          "relative h-svh transform-gpu overflow-hidden",
+          isSpringing && "justo-hero-spring"
+        )}
+      >
       <AnimatedGridPattern
         numSquares={30}
         maxOpacity={0.08}
@@ -124,5 +126,6 @@ export function CountryShell({
           : "Desliza para ver la explicación legal"}
       </div>
     </div>
+    </>
   )
 }
