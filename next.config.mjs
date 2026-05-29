@@ -14,7 +14,7 @@ const contentSecurityPolicy = [
   "style-src 'self' 'unsafe-inline'",
   "script-src 'self' 'unsafe-inline' 'unsafe-eval' https://static.cloudflareinsights.com https://vercel.live https://cdnjs.buymeacoffee.com",
   "script-src-elem 'self' 'unsafe-inline' https://static.cloudflareinsights.com https://vercel.live https://cdnjs.buymeacoffee.com",
-  "connect-src 'self' https://openrouter.ai https://*.openrouter.ai https://*.buymeacoffee.com",
+  "connect-src 'self' https://openrouter.ai https://*.openrouter.ai https://plausible.io https://*.buymeacoffee.com",
   "frame-src 'self' https://www.buymeacoffee.com",
 ].join("; ")
 
