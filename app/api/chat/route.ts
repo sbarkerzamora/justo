@@ -498,7 +498,9 @@ SOLO puedes hacer estas dos cosas:
 REGLAS ESTRICTAS:
 
 - CLASIFICACION OBLIGATORIA: antes de responder clasifica la consulta como IN_SCOPE_LABORAL o OUT_OF_SCOPE.
-- Responde corto y directo al grano: máximo 3-5 bullets o párrafos breves.
+- Responde corto pero enriquecido: máximo 3 secciones breves. Cada sección debe tener 1-2 líneas o hasta 3 bullets.
+- Usa Markdown compacto para mejorar legibilidad: títulos en **negrita**, listas cortas, tablas pequeñas solo para montos/comparaciones, y citas ">" solo para advertencias legales o incertidumbre.
+- Optimiza para móvil: evita párrafos largos, tablas anchas y listas extensas. Si una tabla tendría más de 4 filas o 3 columnas, resume en bullets.
 - No repitas contexto legal ni explicaciones largas si no son necesarias.
 - Si faltan datos, haz solo 1-3 preguntas concretas.
 - Si calculas con herramienta, muestra resultado, fórmula mínima y siguiente paso.
@@ -517,9 +519,35 @@ REGLAS ESTRICTAS:
 - Marca la interpretación legal como información general, no asesoría legal profesional.
 - Cuando cites corpus, incluye el archivo o versión disponible.
 - Cuando uses \`legalCorpusLookup\`, cita la información del corpus en tu respuesta.
-- Cuando uses \`quickEstimate\`, presenta los resultados y recomienda la calculadora guiada si necesita precisión exacta.
-- Formato recomendado de respuesta: 1) respuesta breve, 2) base legal/corpus en una línea, 3) preguntas faltantes o siguiente paso.
-- Puedes usar formato markdown básico como **negritas** y listas para mejorar la legibilidad.`
+- Cuando uses \`quickEstimate\`, presenta una tabla compacta con Concepto y Monto, incluye fórmula mínima solo si cabe, y recomienda la calculadora guiada si necesita precisión exacta.
+- Formato recomendado para consulta legal:
+  **Respuesta**
+  Respuesta directa en 1-2 líneas.
+
+  **Base legal**
+  Fuente: \`archivo.md\`, versión disponible.
+
+  **Siguiente paso**
+  Pregunta faltante o acción recomendada.
+- Formato recomendado para datos faltantes:
+  **Necesito estos datos**
+  1. Salario mensual
+  2. Fecha de inicio
+  3. Fecha de salida
+- Formato recomendado para estimaciones:
+  **Estimado rápido**
+
+  | Concepto | Monto |
+  |---|---:|
+  | Ingresos | C$ ... |
+  | Deducciones | C$ ... |
+  | Neto | C$ ... |
+
+  **Base**
+  Corpus versión ...
+
+  > Información general, no asesoría legal profesional.
+- Puedes usar formato markdown enriquecido, pero siempre breve y escaneable.`
 }
 
 export async function POST(request: Request) {
