@@ -2,7 +2,6 @@
 
 import { useEffect } from "react"
 import { usePathname } from "next/navigation"
-import { init, track } from "@plausible-analytics/tracker"
 
 const enabled = process.env.NEXT_PUBLIC_PLAUSIBLE_ENABLED === "true"
 const domain = process.env.NEXT_PUBLIC_PLAUSIBLE_DOMAIN
@@ -22,22 +21,36 @@ export function PlausibleAnalytics() {
   useEffect(() => {
     if (!enabled || !domain || !endpoint || !pathname) return
 
-    if (!isInitialized) {
-      init({
-        domain,
-        endpoint,
-        autoCapturePageviews: false,
-        captureOnLocalhost: false,
-        logging: false,
-      })
-      isInitialized = true
+    let cancelled = false
+
+    const trackPageview = async () => {
+      const { init, track } = await import("@plausible-analytics/tracker")
+
+      if (cancelled) return
+
+      if (!isInitialized) {
+        init({
+          domain,
+          endpoint,
+          autoCapturePageviews: false,
+          captureOnLocalhost: false,
+          logging: false,
+        })
+        isInitialized = true
+      }
+
+      const url = getPageUrl(pathname)
+      if (lastTrackedUrl === url) return
+
+      lastTrackedUrl = url
+      track("pageview", { url, interactive: false })
     }
 
-    const url = getPageUrl(pathname)
-    if (lastTrackedUrl === url) return
+    void trackPageview()
 
-    lastTrackedUrl = url
-    track("pageview", { url, interactive: false })
+    return () => {
+      cancelled = true
+    }
   }, [pathname])
 
   return null
