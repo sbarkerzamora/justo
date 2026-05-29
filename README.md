@@ -15,9 +15,22 @@
 </p>
 
 <p align="center">
-  <strong>Asistente laboral open source para Centroamérica</strong><br />
-  Consulta legal contextual + calculadora guiada de liquidación laboral con trazabilidad jurídica.
+  <strong>Asistente laboral open source para Centroamérica y América Latina</strong><br />
+  Chat laboral con IA + calculadora determinística de liquidación + trazabilidad legal por país.
 </p>
+
+---
+
+## Qué es Justo
+
+Justo ayuda a trabajadores a entender sus derechos laborales y estimar liquidaciones con explicaciones claras, fórmulas verificables y referencias al corpus legal del país seleccionado.
+
+El producto separa dos responsabilidades:
+
+- **Chat con IA**: orienta, responde preguntas laborales y explica conceptos usando el corpus legal.
+- **Calculadora laboral**: no usa IA para calcular. Los montos se generan con lógica determinística en el servidor, organizada por jurisdicción.
+
+> Justo es informativo y no reemplaza asesoría legal profesional.
 
 ---
 
@@ -25,73 +38,68 @@
 
 | | Funcionalidad |
 |---|---|
-| 🤖 | **Chat legal contextual** — Consulta derechos, prestaciones y deducciones con referencias al corpus legal del país seleccionado. |
-| 🧮 | **Calculadora guiada de liquidación** — Completa paso a paso los datos del trabajador y obtén el cálculo completo. |
-| 🌎 | **Multi-país** — 11 países: Centroamérica + México, Colombia, Perú, Argentina y Chile. Cada uno con su propia legislación. |
-| 📄 | **PDF profesional** — Reporte descargable con header, tabla de ingresos/deducciones, resumen ejecutivo y firmas. |
-| ⚖️ | **Trazabilidad legal** — Cada concepto muestra su fórmula de cálculo y el artículo de ley que lo respalda. |
-| 🔒 | **Sin datos en servidor** — Toda la información permanece en tu navegador (localStorage). |
-| 🌙 | **Tema oscuro** — Compatible con modo claro y oscuro. |
-
-### Novedades recientes
-
-- **Rutas por país**: navegación directa por código (`/ni`, `/gt`, `/sv`, etc.) con shell específico por jurisdicción.
-- **SEO técnico**: se agregaron `sitemap` y `robots` + metadata dinámica para páginas por país.
-- **Ajustes React/Next**: migración de enlaces internos a `next/link`, banderas a `next/image` y refactor de `LlmHome` en subcomponentes para mejor mantenibilidad.
-- **Mejoras de rendimiento**: hoist de `Intl.NumberFormat`, paralelización de operaciones independientes y optimizaciones en generación de PDF.
+| 🤖 | **Chat laboral con IA** — Responde consultas sobre derechos, prestaciones, indemnizaciones, vacaciones, aguinaldo y deducciones con referencias al corpus legal. |
+| 🧮 | **Calculadora determinística** — Calcula liquidaciones en servidor con reglas explícitas por país; el modelo no inventa aritmética legal. |
+| 🌎 | **11 países soportados** — Nicaragua, Guatemala, El Salvador, Honduras, Costa Rica, Panamá, México, Colombia, Perú, Argentina y Chile. |
+| 📄 | **PDF imprimible** — Reporte con resumen, ingresos, deducciones, neto total, versión del corpus, aviso legal y líneas de firma. |
+| ⚖️ | **Trazabilidad legal** — Cada concepto puede incluir fórmula, referencia legal y versión del corpus utilizado. |
+| 💬 | **Respuestas enriquecidas** — Markdown seguro, tablas compactas, fórmulas, fuentes legales y avisos optimizados para móvil. |
+| 🔒 | **Privacidad por defecto** — Sin cuentas de usuario ni persistencia de casos por defecto. Evitar PII en logs de producción es parte del contrato del proyecto. |
+| 📊 | **Analytics opcional** — Plausible self-hosted puede activarse con variables públicas; está deshabilitado por defecto. |
+| 🌙 | **Tema claro/oscuro** — UI responsive con soporte de tema del sistema. |
 
 ---
 
 ## Cómo funciona
 
-```
+```text
   ┌─────────────────────────────────────────────────────────────┐
-  │  1. Abres la app → Seleccionas tu país                      │
-  │  2. Consultas legales libres o presionas "Iniciar cálculo"  │
-  │  3. Completas: nombre, salario, fechas, vacaciones          │
-  │  4. Revisas el resumen y confirmas                          │
-  │  5. Obtienes desglose completo + PDF descargable            │
+  │  1. Abres la app y eliges país e idioma                     │
+  │  2. Preguntas al chat o presionas "Iniciar cálculo"         │
+  │  3. Capturas salario, fechas, vacaciones y frecuencia       │
+  │  4. Confirmas los datos antes de calcular                   │
+  │  5. Obtienes desglose, fórmulas, fuentes y PDF              │
   └─────────────────────────────────────────────────────────────┘
 ```
 
-### En detalle
-
-1. **Selección de país** — Al abrir la app, elige tu país o permite la detección automática por ubicación.
-2. **Chat legal** — Escribe cualquier pregunta sobre derechos laborales, indemnizaciones o deducciones. El asistente responde con referencias al corpus legal.
-3. **Cálculo guiado** — Presiona "Iniciar cálculo" y completa los datos del trabajador: nombre, salario mensual, fechas de inicio y salida, vacaciones pendientes y frecuencia de pago.
-4. **Confirmación** — Revisa el resumen de datos capturados antes de calcular. Puedes editar cualquier campo.
-5. **Resultado** — El motor determinístico calcula: indemnización, aguinaldo, vacaciones, salario proporcional y deducciones (INSS/ISSS/IGSS/IHSS/CCSS según país).
-6. **PDF** — Descarga un reporte profesional con desglose, fórmulas, base legal y espacios para firmas.
+1. **Selección de país** — La app permite elegir jurisdicción y genera rutas localizadas como `/es/ni` o `/en/ni`.
+2. **Chat laboral** — El usuario consulta derechos laborales. La IA debe usar el corpus legal y pedir datos faltantes cuando sea necesario.
+3. **Cálculo guiado** — El flujo captura datos mínimos: trabajador, empleador, salario mensual, fechas, vacaciones pendientes y frecuencia de pago.
+4. **Cálculo determinístico** — El servidor ejecuta el motor del país correspondiente en `lib/settlement/{country}/`.
+5. **Resultado y PDF** — Se muestra el neto estimado, ingresos, deducciones, fórmulas y un PDF descargable.
 
 ---
 
 ## Países soportados
 
-| País | Código | Moneda | Legislación | Versión |
+| País | Código | Moneda | Legislación base | Versión |
 |---|---|---|---|---|
-| Nicaragua | `ni` | NIO (Córdoba) | Ley No. 185 | `ni-v0.2.0` |
-| Guatemala | `gt` | GTQ (Quetzal) | Decreto 1441 | `gt-v0.1.0` |
-| Honduras | `hn` | HNL (Lempira) | Decreto 189-59 | `hn-v0.1.0` |
+| Nicaragua | `ni` | NIO | Ley No. 185 | `ni-v0.2.0` |
+| Guatemala | `gt` | GTQ | Decreto 1441 | `gt-v0.1.0` |
 | El Salvador | `sv` | USD | Código de Trabajo | `sv-v0.1.0` |
-| Costa Rica | `cr` | CRC (Colón) | Código de Trabajo | `cr-v0.1.0` |
-| Panamá | `pa` | USD | Decreto 252 | `pa-v0.1.0` |
-| México | `mx` | MXN (Peso) | LFT | `mx-v0.1.0` |
-| Colombia | `co` | COP (Peso) | CST | `co-v0.1.0` |
-| Perú | `pe` | PEN (Sol) | Ley General de Trabajo | `pe-v0.1.0` |
-| Argentina | `ar` | ARS (Peso) | LCT Ley 20.744 | `ar-v0.1.0` |
-| Chile | `cl` | CLP (Peso) | Código del Trabajo | `cl-v0.1.0` |
+| Honduras | `hn` | HNL | Decreto 189-59 | `hn-v0.1.0` |
+| Costa Rica | `cr` | CRC | Código de Trabajo | `cr-v0.1.0` |
+| Panamá | `pa` | USD | Código de Trabajo | `pa-v0.1.0` |
+| México | `mx` | MXN | Ley Federal del Trabajo | `mx-v0.1.0` |
+| Colombia | `co` | COP | Código Sustantivo del Trabajo | `co-v0.1.0` |
+| Perú | `pe` | PEN | Ley General de Trabajo | `pe-v0.1.0` |
+| Argentina | `ar` | ARS | Ley de Contrato de Trabajo 20.744 | `ar-v0.1.0` |
+| Chile | `cl` | CLP | Código del Trabajo | `cl-v0.1.0` |
 
 ---
 
-## Tech Stack
+## Stack técnico
 
 - **Framework**: Next.js 16 + React 19
-- **UI**: assistant-ui (`@assistant-ui/react`) + Tailwind CSS v4
-- **AI**: Vercel AI SDK v6 (`ai`) + OpenRouter gateway
-- **Docs**: Fumadocs (`fumadocs-core` + `fumadocs-ui`)
+- **UI**: assistant-ui, Tailwind CSS v4, Radix UI
+- **Chat IA**: Vercel AI SDK v6 con OpenRouter o NVIDIA
+- **Cálculos**: TypeScript determinístico por jurisdicción
+- **Docs**: Fumadocs + MDX
 - **PDF**: `pdf-lib`
-- **Animaciones**: `motion` + `tw-animate-css`
-- **Lenguaje**: TypeScript
+- **Analytics**: Plausible self-hosted opcional con `@plausible-analytics/tracker`
+- **Rate limiting/cache**: Upstash Redis opcional/recomendado en producción
+- **Validación**: Zod
+- **Runtime de tests**: Bun
 
 ---
 
@@ -109,29 +117,43 @@
 pnpm install
 ```
 
-### Configurar variables de entorno
+### Variables de entorno
 
-Copia `.env.example` a `.env.local` y configura tu proveedor de IA:
+Copia el ejemplo y configura tus claves:
 
 ```bash
 cp .env.example .env.local
 ```
 
-Variables requeridas:
+Variables principales:
 
 | Variable | Descripción |
 |---|---|
-| `AI_PROVIDER` | Proveedor de chat: `openrouter` o `nvidia` |
-| `OPENROUTER_API_KEY` | Tu API key de OpenRouter |
-| `OPENROUTER_BASE_URL` | URL base (default ya incluido) |
-| `OPENROUTER_MODEL` | Modelo a usar (ej: `openai/gpt-4o-mini`) |
-| `NVIDIA_API_KEY` | Tu API key de NVIDIA, si usas `AI_PROVIDER=nvidia` |
-| `NVIDIA_MODEL` | Modelo NVIDIA a usar |
+| `AI_PROVIDER` | Proveedor del chat: `openrouter` o `nvidia`. |
+| `OPENROUTER_API_KEY` | API key de OpenRouter. |
+| `OPENROUTER_BASE_URL` | URL base compatible con OpenAI. |
+| `OPENROUTER_MODEL` | Modelo del chat. |
+| `NVIDIA_API_KEY` | API key de NVIDIA si `AI_PROVIDER=nvidia`. |
+| `NVIDIA_BASE_URL` | URL base de NVIDIA. |
+| `NVIDIA_MODEL` | Modelo NVIDIA. |
+| `NVIDIA_TEMPERATURE` | Temperatura del modelo NVIDIA. |
+| `NVIDIA_TOP_P` | Top-p del modelo NVIDIA. |
+| `NVIDIA_MAX_OUTPUT_TOKENS` | Máximo de tokens de salida. |
+| `NVIDIA_THINKING_ENABLED` | Habilita/deshabilita razonamiento si el modelo lo soporta. |
+| `NVIDIA_REASONING_BUDGET` | Presupuesto de razonamiento si aplica. |
+| `NEXT_PUBLIC_APP_NAME` | Nombre público de la app. |
+| `NEXT_PUBLIC_SITE_URL` | URL canónica para SEO, sitemap y metadata. |
+| `UPSTASH_REDIS_REST_URL` | Redis REST URL para rate limiting/cache. |
+| `UPSTASH_REDIS_REST_TOKEN` | Token REST de Upstash. |
+| `STATS_RETENTION_DAYS` | Días de retención para estadísticas anónimas. |
+| `NEXT_PUBLIC_PLAUSIBLE_ENABLED` | Activa Plausible si es `true`. Default: `false`. |
+| `NEXT_PUBLIC_PLAUSIBLE_DOMAIN` | Dominio configurado en Plausible. Dejar vacío hasta producción. |
+| `NEXT_PUBLIC_PLAUSIBLE_ENDPOINT` | Endpoint self-hosted de eventos, ej. `https://analytics.example.com/api/event`. Requerido si Plausible está habilitado. |
 
-### Ejecutar
+### Ejecutar en desarrollo
 
 ```bash
-bun run dev
+pnpm dev
 ```
 
 Abrir `http://localhost:3000`.
@@ -140,56 +162,70 @@ Abrir `http://localhost:3000`.
 
 ## Estructura del proyecto
 
-```
+```text
 app/
-├── [country]/                    # Ruta dinámica por país (ej: /ni)
-│   ├── layout.tsx                # Layout por jurisdicción
-│   └── page.tsx                  # Home de país (metadata dinámica)
+├── [locale]/[country]/             # Rutas localizadas por país, ej: /es/ni
+│   ├── layout.tsx                  # Metadata por jurisdicción
+│   └── page.tsx                    # Home del país
 ├── api/
-│   ├── chat/                     # LLM chat via OpenRouter
-│   └── liquidation/
-│       ├── calculate/            # Cálculo determinístico (por país)
-│       └── pdf/                  # Generación de PDF
-├── docs/                         # Documentación (Fumadocs)
-├── robots.ts                     # Robots policy
-├── sitemap.ts                    # Sitemap generado por app router
-└── page.tsx                      # Entrada: selector/redirección de país
+│   ├── chat/                       # Chat IA con corpus legal y herramientas
+│   ├── liquidation/
+│   │   ├── calculate/              # Cálculo determinístico por countryCode
+│   │   └── pdf/                    # Generación de PDF
+│   └── search/                     # Búsqueda de documentación/corpus
+├── docs/                           # Documentación Fumadocs
+├── robots.ts
+├── sitemap.ts
+└── page.tsx                        # Entrada principal / selector de ubicación
 components/
-├── chat/llm-home.tsx             # Interfaz de chat + calculadora
-├── location-dialog.tsx           # Selección de país
-├── location-gate.tsx             # Guardia de ubicación
-├── docs-footer.tsx               # Footer de documentación
-├── docs-nav-title.tsx            # Nav de docs con país
-└── ui/                           # Componentes shadcn/ui
+├── chat/                           # UI del chat, Markdown y flujo guiado
+├── plausible-analytics.tsx         # Tracking opcional de Plausible
+├── location-gate.tsx               # Selección/detección de país
+├── theme-provider.tsx
+└── ui/                             # Componentes visuales reutilizables
 content/
-├── legal/{ni,gt,hn,sv,cr,pa,mx,co,pe,ar,cl}/   # Corpus legal por país
-└── docs/                         # Documentación en MDX
+├── legal/{ni,gt,sv,hn,cr,pa,mx,co,pe,ar,cl}/  # Corpus legal por país
+└── docs/                           # Documentación MDX
 lib/
-├── settlement/{ni,gt,hn,sv,cr,pa,mx,co,pe,ar,cl}/  # Motores de cálculo
-├── pdf/settlement-pdf.ts         # Generación de PDF
-└── source.tsx                    # Fuente estática de Fumadocs
+├── settlement/{ni,gt,sv,hn,cr,pa,mx,co,pe,ar,cl}/  # Motores por país
+├── ai/                             # Configuración de proveedor y corpus
+├── pdf/settlement-pdf.ts
+└── countries.ts                    # Metadata de países
 ```
 
 ---
 
-## API Endpoints
+## API endpoints
 
 | Endpoint | Descripción |
 |---|---|
-| `POST /api/chat` | Consulta legal asistida por LLM vía OpenRouter |
-| `POST /api/liquidation/calculate` | Cálculo determinístico de liquidación (rutea por `countryCode`) |
-| `POST /api/liquidation/pdf` | Genera PDF descargable con el resultado |
+| `POST /api/chat` | Chat laboral con IA, corpus legal y herramientas determinísticas. |
+| `POST /api/liquidation/calculate` | Calcula liquidación con motor determinístico por país. |
+| `POST /api/liquidation/pdf` | Genera PDF descargable con resultado, fórmulas y firmas. |
+| `POST /api/search` | Busca contenido en documentación/corpus para la experiencia docs. |
 
 ---
 
-## ⚠️ Aviso legal
+## Seguridad legal y privacidad
+
+- El chat usa IA para orientar y explicar; no debe inventar leyes, tasas ni artículos.
+- La calculadora no usa IA para la aritmética: los cálculos salen de lógica determinística en servidor.
+- El corpus Markdown en `content/legal/` es la fuente de verdad del MVP para referencias.
+- Las API keys del proveedor de IA y Redis nunca deben exponerse al cliente.
+- No hay cuentas ni persistencia de casos por defecto.
+- Plausible está deshabilitado por defecto. Cuando se activa, usa el endpoint self-hosted configurado y registra pageviews sin query string.
+- Para producción, evita registrar PII en logs de servidor.
+
+---
+
+## Aviso legal
 
 > **Este proyecto es informativo y no constituye asesoría legal profesional.**
 >
-> - Los cálculos y la información proporcionada deben verificarse contra la normativa oficial vigente de cada país.
-> - Las tasas de deducciones (INSS, IGSS, ISSS, IHSS, CCSS, AFP, EPS, ONP, SARA, PAMI, AFC, ISR, etc.) son valores propuestos y requieren confirmación con las entidades oficiales correspondientes.
-> - Para casos complejos, disputados o de alto valor, se recomienda contratar los servicios de un abogado laboral o contador profesional en la jurisdicción correspondiente.
-> - Este software se proporciona "tal cual", sin garantías de ningún tipo, expresas o implícitas.
+> - Los cálculos y respuestas deben verificarse contra la normativa oficial vigente de cada país.
+> - Las tasas, deducciones y reglas pueden cambiar y requieren revisión legal/contable.
+> - Para casos complejos, disputados o de alto valor, consulta a un abogado laboral o contador profesional en la jurisdicción correspondiente.
+> - El software se entrega "tal cual", sin garantías de ningún tipo.
 
 ---
 
@@ -199,23 +235,24 @@ Las contribuciones son bienvenidas.
 
 1. Haz fork del repositorio.
 2. Crea una rama: `feat/tu-cambio`.
-3. Agrega tests para cambios en fórmulas o comportamiento.
-4. Abre un Pull Request con contexto y referencias legales cuando corresponda.
+3. Agrega tests para cambios de fórmulas, reglas o comportamiento.
+4. Incluye referencias legales cuando modifiques corpus o lógica por país.
+5. Abre un Pull Request con contexto claro.
 
 ### Verificaciones locales
 
 ```bash
-bun run typecheck
-bun run lint
-bun run test
-bun run build
+pnpm typecheck
+pnpm lint
+bun test
+pnpm build
 ```
 
 ---
 
 ## Documentación
 
-- Documentación de la app en `/docs`
+- App docs: `/docs`
 - Páginas legales por país: `/docs/legal/{nicaragua,guatemala,honduras,elsalvador,costarica,panama,mexico,colombia,peru,argentina,chile}`
 - Corpus legal fuente: `content/legal/`
 
@@ -224,27 +261,33 @@ bun run build
 ## Despliegue en Vercel
 
 1. Importa el repositorio en Vercel.
-2. Configura las variables de entorno:
-   - `OPENROUTER_API_KEY`
-   - `OPENROUTER_BASE_URL`
-   - `OPENROUTER_MODEL`
-3. Despliega `main` como rama de producción.
+2. Configura variables de IA, site URL y Redis si aplica.
+3. Si activas Plausible self-hosted, define:
+   - `NEXT_PUBLIC_PLAUSIBLE_ENABLED=true`
+   - `NEXT_PUBLIC_PLAUSIBLE_DOMAIN=<dominio configurado en Plausible>`
+   - `NEXT_PUBLIC_PLAUSIBLE_ENDPOINT=https://<tu-plausible>/api/event`
+4. Despliega la rama de producción.
 
 Después del deploy, verifica:
-- [ ] Las consultas legales responden correctamente.
-- [ ] El flujo guiado de liquidación se completa para cada país.
-- [ ] La descarga de PDF funciona desde la tarjeta de resultado.
+
+- [ ] El chat responde con corpus legal y mantiene respuestas breves.
+- [ ] El flujo guiado calcula correctamente para cada país soportado.
+- [ ] La descarga de PDF funciona desde el resultado.
+- [ ] Plausible self-hosted recibe pageviews solo si está habilitado.
 
 ---
 
 ## Roadmap
 
-- [x] Nicaragua, Guatemala, Honduras, El Salvador, Costa Rica, Panamá
-- [x] México, Colombia, Perú, Argentina, Chile
-- [ ] Harden legal corpus and deduction rules across all jurisdictions
-- [ ] Add automated tests for all formula branches per country
-- [ ] Add thread persistence and case history
-- [ ] UI/UX refinements and responsive improvements
+- [x] Soporte inicial para 11 países
+- [x] Chat laboral con IA y corpus legal
+- [x] Calculadora guiada con PDF descargable
+- [x] Respuestas enriquecidas y responsive en el chat
+- [ ] Auditoría legal/contable por jurisdicción
+- [ ] Tests exhaustivos por fórmula y rama de cálculo
+- [ ] Persistencia opcional de casos e historial
+- [ ] Mejoras de accesibilidad y revisión WCAG
+- [ ] Más documentación pública del corpus legal
 
 ---
 
