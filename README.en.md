@@ -45,7 +45,7 @@ The product separates two responsibilities:
 | ⚖️ | **Legal traceability** — Each concept can include formula, legal reference, and legal corpus version. |
 | 💬 | **Rich responses** — Safe Markdown, compact tables, formulas, legal sources, and mobile-optimized notices. |
 | 🔒 | **Privacy by default** — No user accounts or case persistence by default. Avoiding PII in production logs is part of the project contract. |
-| 📊 | **Optional analytics** — Plausible can be enabled through public environment variables; it is disabled by default. |
+| 📊 | **Optional analytics** — Self-hosted Plausible can be enabled through public environment variables; it is disabled by default. |
 | 🌙 | **Light/dark theme** — Responsive UI with system theme support. |
 
 ---
@@ -96,7 +96,7 @@ The product separates two responsibilities:
 - **Calculations**: Deterministic TypeScript by jurisdiction
 - **Docs**: Fumadocs + MDX
 - **PDF**: `pdf-lib`
-- **Analytics**: Optional Plausible with `@plausible-analytics/tracker`
+- **Analytics**: Optional self-hosted Plausible with `@plausible-analytics/tracker`
 - **Rate limiting/cache**: Upstash Redis optional/recommended in production
 - **Validation**: Zod
 - **Test runtime**: Bun
@@ -148,7 +148,7 @@ Main variables:
 | `STATS_RETENTION_DAYS` | Retention days for anonymous stats. |
 | `NEXT_PUBLIC_PLAUSIBLE_ENABLED` | Enables Plausible if `true`. Default: `false`. |
 | `NEXT_PUBLIC_PLAUSIBLE_DOMAIN` | Domain configured in Plausible. Leave empty until production. |
-| `NEXT_PUBLIC_PLAUSIBLE_ENDPOINT` | Event endpoint. Default: `https://plausible.io/api/event`. |
+| `NEXT_PUBLIC_PLAUSIBLE_ENDPOINT` | Self-hosted event endpoint, e.g. `https://analytics.example.com/api/event`. Required when Plausible is enabled. |
 
 ### Run Locally
 
@@ -213,7 +213,7 @@ lib/
 - The Markdown corpus in `content/legal/` is the MVP source of truth for references.
 - AI provider and Redis API keys must never be exposed to the client.
 - There are no user accounts or case persistence by default.
-- Plausible is disabled by default and only tracks pageviews without query strings when enabled.
+- Plausible is disabled by default. When enabled, it uses the configured self-hosted endpoint and tracks pageviews without query strings.
 - In production, avoid logging PII on server boundaries.
 
 ---
@@ -262,9 +262,10 @@ pnpm build
 
 1. Import the repository in Vercel.
 2. Configure AI variables, site URL, and Redis if applicable.
-3. If enabling Plausible, define:
+3. If enabling self-hosted Plausible, define:
    - `NEXT_PUBLIC_PLAUSIBLE_ENABLED=true`
    - `NEXT_PUBLIC_PLAUSIBLE_DOMAIN=<domain configured in Plausible>`
+   - `NEXT_PUBLIC_PLAUSIBLE_ENDPOINT=https://<your-plausible>/api/event`
 4. Deploy the production branch.
 
 After deployment, verify:
@@ -272,7 +273,7 @@ After deployment, verify:
 - [ ] Chat answers use the legal corpus and stay concise.
 - [ ] The guided flow calculates correctly for each supported country.
 - [ ] PDF download works from the result.
-- [ ] Plausible receives pageviews only when enabled.
+- [ ] Self-hosted Plausible receives pageviews only when enabled.
 
 ---
 

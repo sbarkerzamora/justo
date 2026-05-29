@@ -20,12 +20,12 @@ export function PlausibleAnalytics() {
   const pathname = usePathname()
 
   useEffect(() => {
-    if (!enabled || !domain || !pathname) return
+    if (!enabled || !domain || !endpoint || !pathname) return
 
     if (!isInitialized) {
       init({
         domain,
-        endpoint: endpoint || undefined,
+        endpoint,
         autoCapturePageviews: false,
         captureOnLocalhost: false,
         logging: false,

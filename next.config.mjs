@@ -4,6 +4,29 @@ import { fileURLToPath } from "node:url"
 const rootDir = path.dirname(fileURLToPath(import.meta.url))
 const isProd = process.env.NODE_ENV === "production"
 
+const getPlausibleEndpointOrigin = () => {
+  const endpoint = process.env.NEXT_PUBLIC_PLAUSIBLE_ENDPOINT
+  if (!endpoint) return null
+
+  try {
+    return new URL(endpoint).origin
+  } catch {
+    return null
+  }
+}
+
+const plausibleEndpointOrigin = getPlausibleEndpointOrigin()
+const connectSources = [
+  "'self'",
+  "https://openrouter.ai",
+  "https://*.openrouter.ai",
+  "https://*.buymeacoffee.com",
+]
+
+if (plausibleEndpointOrigin) {
+  connectSources.push(plausibleEndpointOrigin)
+}
+
 const contentSecurityPolicy = [
   "default-src 'self'",
   "base-uri 'self'",
@@ -14,7 +37,7 @@ const contentSecurityPolicy = [
   "style-src 'self' 'unsafe-inline'",
   "script-src 'self' 'unsafe-inline' 'unsafe-eval' https://static.cloudflareinsights.com https://vercel.live https://cdnjs.buymeacoffee.com",
   "script-src-elem 'self' 'unsafe-inline' https://static.cloudflareinsights.com https://vercel.live https://cdnjs.buymeacoffee.com",
-  "connect-src 'self' https://openrouter.ai https://*.openrouter.ai https://plausible.io https://*.buymeacoffee.com",
+  `connect-src ${connectSources.join(" ")}`,
   "frame-src 'self' https://www.buymeacoffee.com",
 ].join("; ")
 

@@ -45,7 +45,7 @@ El producto separa dos responsabilidades:
 | ⚖️ | **Trazabilidad legal** — Cada concepto puede incluir fórmula, referencia legal y versión del corpus utilizado. |
 | 💬 | **Respuestas enriquecidas** — Markdown seguro, tablas compactas, fórmulas, fuentes legales y avisos optimizados para móvil. |
 | 🔒 | **Privacidad por defecto** — Sin cuentas de usuario ni persistencia de casos por defecto. Evitar PII en logs de producción es parte del contrato del proyecto. |
-| 📊 | **Analytics opcional** — Plausible puede activarse con variables públicas; está deshabilitado por defecto. |
+| 📊 | **Analytics opcional** — Plausible self-hosted puede activarse con variables públicas; está deshabilitado por defecto. |
 | 🌙 | **Tema claro/oscuro** — UI responsive con soporte de tema del sistema. |
 
 ---
@@ -96,7 +96,7 @@ El producto separa dos responsabilidades:
 - **Cálculos**: TypeScript determinístico por jurisdicción
 - **Docs**: Fumadocs + MDX
 - **PDF**: `pdf-lib`
-- **Analytics**: Plausible opcional con `@plausible-analytics/tracker`
+- **Analytics**: Plausible self-hosted opcional con `@plausible-analytics/tracker`
 - **Rate limiting/cache**: Upstash Redis opcional/recomendado en producción
 - **Validación**: Zod
 - **Runtime de tests**: Bun
@@ -148,7 +148,7 @@ Variables principales:
 | `STATS_RETENTION_DAYS` | Días de retención para estadísticas anónimas. |
 | `NEXT_PUBLIC_PLAUSIBLE_ENABLED` | Activa Plausible si es `true`. Default: `false`. |
 | `NEXT_PUBLIC_PLAUSIBLE_DOMAIN` | Dominio configurado en Plausible. Dejar vacío hasta producción. |
-| `NEXT_PUBLIC_PLAUSIBLE_ENDPOINT` | Endpoint de eventos. Default: `https://plausible.io/api/event`. |
+| `NEXT_PUBLIC_PLAUSIBLE_ENDPOINT` | Endpoint self-hosted de eventos, ej. `https://analytics.example.com/api/event`. Requerido si Plausible está habilitado. |
 
 ### Ejecutar en desarrollo
 
@@ -213,7 +213,7 @@ lib/
 - El corpus Markdown en `content/legal/` es la fuente de verdad del MVP para referencias.
 - Las API keys del proveedor de IA y Redis nunca deben exponerse al cliente.
 - No hay cuentas ni persistencia de casos por defecto.
-- Plausible está deshabilitado por defecto y solo registra pageviews sin query string cuando se activa.
+- Plausible está deshabilitado por defecto. Cuando se activa, usa el endpoint self-hosted configurado y registra pageviews sin query string.
 - Para producción, evita registrar PII en logs de servidor.
 
 ---
@@ -262,9 +262,10 @@ pnpm build
 
 1. Importa el repositorio en Vercel.
 2. Configura variables de IA, site URL y Redis si aplica.
-3. Si activas Plausible, define:
+3. Si activas Plausible self-hosted, define:
    - `NEXT_PUBLIC_PLAUSIBLE_ENABLED=true`
    - `NEXT_PUBLIC_PLAUSIBLE_DOMAIN=<dominio configurado en Plausible>`
+   - `NEXT_PUBLIC_PLAUSIBLE_ENDPOINT=https://<tu-plausible>/api/event`
 4. Despliega la rama de producción.
 
 Después del deploy, verifica:
@@ -272,7 +273,7 @@ Después del deploy, verifica:
 - [ ] El chat responde con corpus legal y mantiene respuestas breves.
 - [ ] El flujo guiado calcula correctamente para cada país soportado.
 - [ ] La descarga de PDF funciona desde el resultado.
-- [ ] Plausible recibe pageviews solo si está habilitado.
+- [ ] Plausible self-hosted recibe pageviews solo si está habilitado.
 
 ---
 
