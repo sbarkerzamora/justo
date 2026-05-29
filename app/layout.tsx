@@ -6,6 +6,7 @@ import "./globals.css"
 import { RootProvider } from "fumadocs-ui/provider/next"
 import { ThemeProvider } from "@/components/theme-provider"
 import { LangUpdater } from "@/components/lang-updater"
+import { PlausibleAnalytics } from "@/components/plausible-analytics"
 import { cn } from "@/lib/utils"
 import { getSiteUrl } from "@/lib/site-url"
 
@@ -62,6 +63,7 @@ export default function RootLayout({
     >
       <body>
         <LangUpdater />
+        <PlausibleAnalytics />
         <RootProvider search={{ preload: false }}>
           <ThemeProvider>{children}</ThemeProvider>
         </RootProvider>
