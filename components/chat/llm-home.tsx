@@ -995,7 +995,7 @@ function LlmHomeView(props: {
         ) : (
           <div
             ref={messagesContainerRef}
-            className="min-h-0 flex-1 space-y-3 overflow-y-auto px-2 pb-4 max-sm:px-1 [scrollbar-gutter:stable]"
+            className="min-h-0 flex-1 space-y-2.5 overflow-y-auto px-2 pb-4 max-sm:px-1 sm:space-y-3 [scrollbar-gutter:stable]"
           >
             {messages.map((m) => (
             <div
@@ -1004,7 +1004,7 @@ function LlmHomeView(props: {
                 (m.role === "user"
                   ? "flex justify-end"
                   : "flex justify-start") +
-                " duration-200 motion-safe:animate-in motion-safe:fade-in motion-safe:slide-in-from-bottom-1"
+                " min-w-0 duration-200 motion-safe:animate-in motion-safe:fade-in motion-safe:slide-in-from-bottom-1"
               }
             >
               {m.role === "assistant" ? (
@@ -1013,8 +1013,8 @@ function LlmHomeView(props: {
               <div
                 className={
                   m.role === "user"
-                    ? "max-w-[85%] rounded-2xl bg-primary px-4 py-2.5 text-sm whitespace-pre-line text-primary-foreground"
-                    : "max-w-[88%] rounded-2xl border border-border bg-card px-4 py-2.5 text-sm leading-relaxed text-foreground"
+                    ? "min-w-0 max-w-[88%] rounded-2xl bg-primary px-3 py-2.5 text-sm whitespace-pre-line text-primary-foreground sm:max-w-[85%] sm:px-4"
+                    : "min-w-0 max-w-[92%] rounded-2xl border border-border bg-card px-3 py-2.5 text-sm leading-relaxed text-foreground sm:max-w-[88%] sm:px-4"
                 }
               >
                 <ChatMarkdown text={m.text} />
@@ -1110,8 +1110,8 @@ function JustoOrbAvatar({
   orbColors: [string, string]
 }) {
   return (
-    <div className="mr-2 size-8 shrink-0 overflow-hidden rounded-full border border-border bg-card shadow-sm">
-      <Orb className="size-8" agentState={orbState} colors={orbColors} />
+    <div className="mr-1.5 size-7 shrink-0 overflow-hidden rounded-full border border-border bg-card shadow-sm sm:mr-2 sm:size-8">
+      <Orb className="size-7 sm:size-8" agentState={orbState} colors={orbColors} />
     </div>
   )
 }
