@@ -1,166 +1,109 @@
-import type { ReactNode } from "react"
+import ReactMarkdown, { type Components } from "react-markdown"
+import remarkGfm from "remark-gfm"
 
-type Segment =
-  | { type: "text"; content: string }
-  | { type: "bold"; content: string }
-  | { type: "italic"; content: string }
-  | { type: "code"; content: string }
-  | { type: "link"; content: string; href: string }
-
-const parseInline = (text: string): (string | Segment)[] => {
-  const parts: (string | Segment)[] = []
-  const regex = /(\*\*|__)(.+?)\1|(\*|_)(.+?)\3|`(.+?)`|\[([^\]]+)\]\(([^)]+)\)/g
-  let lastIndex = 0
-  let match: RegExpExecArray | null
-
-  while ((match = regex.exec(text)) !== null) {
-    if (match.index > lastIndex) {
-      parts.push(text.slice(lastIndex, match.index))
-    }
-
-    if (match[1]) {
-      parts.push({ type: "bold", content: match[2] })
-    } else if (match[3]) {
-      parts.push({ type: "italic", content: match[4] })
-    } else if (match[5]) {
-      parts.push({ type: "code", content: match[5] })
-    } else if (match[6] && match[7]) {
-      parts.push({ type: "link", content: match[6], href: match[7] })
-    }
-
-    lastIndex = match.index + match[0].length
-  }
-
-  if (lastIndex < text.length) {
-    parts.push(text.slice(lastIndex))
-  }
-
-  return parts
+const safeHref = (href: string | undefined) => {
+  if (!href) return "#"
+  if (/^(https?:|mailto:|\/)/i.test(href)) return href
+  return "#"
 }
 
-const renderSegment = (seg: string | Segment, key: string): ReactNode => {
-  if (typeof seg === "string") return seg
-  if (seg.type === "bold") return <strong key={key}>{seg.content}</strong>
-  if (seg.type === "italic") return <em key={key}>{seg.content}</em>
-  if (seg.type === "code")
-    return (
-      <code
-        key={key}
-        className="rounded-md bg-muted px-1.5 py-0.5 font-mono text-xs"
-      >
-        {seg.content}
-      </code>
-    )
-  if (seg.type === "link") {
-    const isExternal = /^https?:\/\//.test(seg.href)
+const markdownComponents: Components = {
+  h1: ({ children }) => (
+    <h3 className="mt-3 mb-1 text-base font-semibold tracking-tight text-current first:mt-0">
+      {children}
+    </h3>
+  ),
+  h2: ({ children }) => (
+    <h3 className="mt-3 mb-1 text-sm font-semibold tracking-tight text-current first:mt-0">
+      {children}
+    </h3>
+  ),
+  h3: ({ children }) => (
+    <h4 className="mt-2.5 mb-1 text-sm font-medium text-current first:mt-0">
+      {children}
+    </h4>
+  ),
+  p: ({ children }) => <p className="my-1.5 leading-relaxed">{children}</p>,
+  strong: ({ children }) => (
+    <strong className="font-semibold text-current">{children}</strong>
+  ),
+  ul: ({ children }) => (
+    <ul className="my-1.5 list-disc space-y-1 pl-5 marker:text-current">
+      {children}
+    </ul>
+  ),
+  ol: ({ children }) => (
+    <ol className="my-1.5 list-decimal space-y-1 pl-5 marker:text-current">
+      {children}
+    </ol>
+  ),
+  li: ({ children }) => <li className="pl-0.5 leading-relaxed">{children}</li>,
+  a: ({ children, href }) => {
+    const resolvedHref = safeHref(href)
+    const isExternal = /^https?:\/\//i.test(resolvedHref)
+
     return (
       <a
-        key={key}
-        href={seg.href}
-        className="underline decoration-muted-foreground/50 underline-offset-2 hover:text-primary"
+        href={resolvedHref}
+        className="font-medium underline decoration-current/50 underline-offset-2 transition-opacity hover:opacity-80"
         {...(isExternal ? { target: "_blank", rel: "noreferrer noopener" } : {})}
       >
-        {seg.content}
+        {children}
       </a>
     )
-  }
-  return seg.content
+  },
+  blockquote: ({ children }) => (
+    <blockquote className="my-2 rounded-xl border border-current/15 bg-current/5 px-3 py-2 text-xs leading-relaxed text-current">
+      {children}
+    </blockquote>
+  ),
+  hr: () => <hr className="my-3 border-current/15" />,
+  code: ({ children, className }) => {
+    const isBlock = className?.startsWith("language-")
+
+    if (!isBlock) {
+      return (
+        <code className="rounded-md bg-current/10 px-1.5 py-0.5 font-mono text-[0.8em] text-current">
+          {children}
+        </code>
+      )
+    }
+
+    return (
+      <code className="block overflow-x-auto whitespace-pre rounded-xl bg-current/10 p-3 font-mono text-xs leading-relaxed text-current">
+        {children}
+      </code>
+    )
+  },
+  pre: ({ children }) => <pre className="my-2 min-w-0">{children}</pre>,
+  table: ({ children }) => (
+    <div className="my-2 max-w-full overflow-x-auto rounded-xl border border-current/15 bg-current/5">
+      <table className="min-w-max border-collapse text-xs">{children}</table>
+    </div>
+  ),
+  thead: ({ children }) => <thead className="bg-current/10">{children}</thead>,
+  th: ({ children }) => (
+    <th className="border-b border-current/15 px-3 py-2 text-left font-semibold text-current last:text-right">
+      {children}
+    </th>
+  ),
+  td: ({ children }) => (
+    <td className="border-b border-current/15 px-3 py-2 align-top text-current last:text-right">
+      {children}
+    </td>
+  ),
 }
 
-const headerMatch = /^(#{1,3})\s+(.+)/
-const numberedListMatch = /^(\d+)\.\s+(.+)/
-
 export function ChatMarkdown({ text }: { text: string }) {
-  const lines = text.split("\n")
-  const elements: ReactNode[] = []
-  let listItems: ReactNode[] | null = null
-  let listType: "ul" | "ol" | null = null
-  let listKey = 0
-  let elementKey = 0
-  let nodeKey = 0
-
-  const flushList = () => {
-    if (!listItems) return
-    const Tag = listType === "ol" ? "ol" : "ul"
-      elements.push(
-        <Tag key={`list-${listKey++}`} className={`space-y-0.5 ${listType === "ul" ? "list-disc" : "list-decimal"} pl-5`}>
-          {listItems}
-        </Tag>,
-      )
-    listItems = null
-    listType = null
-  }
-
-  for (let i = 0; i < lines.length; i++) {
-    const line = lines[i]
-    const trimmed = line.trim()
-
-    // Headers
-    const hMatch = trimmed.match(headerMatch)
-    if (hMatch) {
-      flushList()
-      const level = hMatch[1].length as 1 | 2 | 3
-      const segments = parseInline(hMatch[2])
-      const Tag = level === 1 ? "h3" : level === 2 ? "h4" : "h5"
-      const size = level === 1 ? "text-base font-semibold" : level === 2 ? "text-sm font-semibold" : "text-sm font-medium"
-      elements.push(
-        <Tag key={`h-${nodeKey++}`} className={`mt-4 mb-1 ${size}`}>
-          {segments.map((s) => renderSegment(s, `h-${elementKey++}`))}
-        </Tag>,
-      )
-      continue
-    }
-
-    // Unordered list
-    const ulMatch = trimmed.match(/^[-*]\s+(.+)/)
-    if (ulMatch) {
-      if (!listItems || listType !== "ul") {
-        flushList()
-        listItems = []
-        listType = "ul"
-      }
-      const segments = parseInline(ulMatch[1])
-      listItems.push(
-        <li key={`li-${nodeKey++}`}>
-          {segments.map((s) => renderSegment(s, `ul-${elementKey++}`))}
-        </li>,
-      )
-      continue
-    }
-
-    // Ordered list
-    const olMatch = trimmed.match(numberedListMatch)
-    if (olMatch) {
-      if (!listItems || listType !== "ol") {
-        flushList()
-        listItems = []
-        listType = "ol"
-      }
-      const segments = parseInline(olMatch[2])
-      listItems.push(
-        <li key={`li-${nodeKey++}`}>
-          {segments.map((s) => renderSegment(s, `ol-${elementKey++}`))}
-        </li>,
-      )
-      continue
-    }
-
-    flushList()
-
-    if (trimmed === "") {
-      elements.push(<br key={`br-${nodeKey++}`} />)
-      continue
-    }
-
-    const segments = parseInline(trimmed)
-    elements.push(
-      <p key={`p-${nodeKey++}`} className="[&:not(:first-child)]:mt-2">
-        {segments.map((s) => renderSegment(s, `p-${elementKey++}`))}
-      </p>,
-    )
-  }
-
-  flushList()
-
-  return <>{elements}</>
+  return (
+    <div className="min-w-0 break-words [&>*:first-child]:mt-0 [&>*:last-child]:mb-0">
+      <ReactMarkdown
+        remarkPlugins={[remarkGfm]}
+        skipHtml
+        components={markdownComponents}
+      >
+        {text}
+      </ReactMarkdown>
+    </div>
+  )
 }
