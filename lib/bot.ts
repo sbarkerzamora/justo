@@ -24,6 +24,7 @@ function getBot(): Chat {
     state: new UpstashRedisState(),
     dedupeTtlMs: 600_000,
     streamingUpdateIntervalMs: 500,
+    onLockConflict: "force",
     logger: "info",
   })
 
