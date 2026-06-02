@@ -13,18 +13,9 @@ import {
   COUNTRY_NAMES,
 } from "@/lib/bot-copy"
 
-const COUNTRY_FLAGS: Record<string, string> = {
-  ni: "🇳🇮",
-  gt: "🇬🇹",
-  sv: "🇸🇻",
-  hn: "🇭🇳",
-  cr: "🇨🇷",
-  pa: "🇵🇦",
-  mx: "🇲🇽",
-  co: "🇨🇴",
-  pe: "🇵🇪",
-  ar: "🇦🇷",
-  cl: "🇨🇱",
+const countryFlag = (cc: string): string => {
+  const entry = COUNTRY_NAMES[cc]
+  return entry ? entry.slice(0, 4) : ""
 }
 
 const COUNTRY_LIST =
@@ -144,11 +135,12 @@ function getBot(): Chat {
   // --- Country code via text (e.g. user sends "gt") ---
 
   botInstance.onNewMessage(/^[a-z]{2}$/i, async (thread, message) => {
+    if (thread.isDM) return
     const cc = message.text.toLowerCase()
     if (!countryMeta[cc]) return
     await thread.setState({ country: cc } as Record<string, unknown>)
     const name = countryMeta[cc]!.name
-    const flag = COUNTRY_FLAGS[cc] ?? ""
+    const flag = countryFlag(cc)
     await thread.post({ markdown: COUNTRY_CHANGED(name, flag) })
   })
 
@@ -163,10 +155,9 @@ function getBot(): Chat {
   })
 
   botInstance.onSlashCommand("status", async (event) => {
-    const cc = DEFAULT_COUNTRY
-    const meta = countryMeta[cc]
+    const meta = countryMeta[DEFAULT_COUNTRY]
     if (!meta) {
-      await event.channel.post("País no configurado.")
+      await event.channel.post("Justo está operativo.")
       return
     }
     await event.channel.post({

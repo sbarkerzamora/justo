@@ -41,9 +41,7 @@ export const PLACEHOLDER = "Justo está preparando tu respuesta... ✍️"
 export const ERROR_MESSAGE = "Hubo un problema al procesar tu consulta. Intenta de nuevo en unos segundos."
 
 export const COUNTRY_CHANGED = (name: string, flag: string) =>
-  `País cambiado a ${flag} *${name}*. Todas tus consultas ahora se basan en la legislación laboral de ${name}.`
-
-export const UNKNOWN_COUNTRY = "País no soportado. Usa /pais para ver los países disponibles."
+  `${flag} País cambiado a *${name}*. Tus consultas ahora usan la legislación laboral de ${name}.`
 
 export const STATUS = (
   country: string,
