@@ -27,6 +27,7 @@ pnpm build
 - `apps/web`: public Next.js app, route handlers, UI, docs integration, PDF route and chat experience.
 - `packages/core`: deterministic calculation authority, settlement types, schemas, helpers and country formulas.
 - `packages/tools`: open source labor tools registry and tool metadata.
+- `packages/pdf`: open source basic PDF generation.
 - `content/legal`: legal corpus used as the MVP source of truth for references.
 
 ## Adding Or Changing Calculations
@@ -44,6 +45,13 @@ pnpm build
 - Use `availability: "coming_soon"` for roadmap tools without implementation.
 - Keep general labor tools open source.
 - Add tests for registry behavior and any new calculation behavior.
+
+## Updating PDFs
+
+- Keep basic open source PDF generation in `packages/pdf`.
+- Consume settlement types from `@justo/core` instead of redefining payloads.
+- Do not add Pro branding, private templates or enterprise workflow logic to the public PDF package.
+- Add tests that at least verify valid PDF bytes are generated for valid inputs.
 
 ## Updating Legal Corpus
 

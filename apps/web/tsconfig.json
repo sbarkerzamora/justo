@@ -25,6 +25,8 @@
     "paths": {
       "@justo/core": ["../../packages/core/src/index.ts"],
       "@justo/core/*": ["../../packages/core/src/*"],
+      "@justo/pdf": ["../../packages/pdf/src/index.ts"],
+      "@justo/pdf/*": ["../../packages/pdf/src/*"],
       "@justo/tools": ["../../packages/tools/src/index.ts"],
       "@justo/tools/*": ["../../packages/tools/src/*"],
       "@/*": ["./*"]

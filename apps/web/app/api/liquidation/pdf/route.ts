@@ -1,7 +1,7 @@
 import { NextResponse } from "next/server"
+import { buildSettlementPdf } from "@justo/pdf"
 import { calculateSettlement, settlementTool } from "@justo/tools"
 
-import { buildSettlementPdf } from "@/lib/pdf/settlement-pdf"
 import { checkRateLimit } from "@/lib/rate-limit"
 import { getClientIp } from "@/lib/request-utils"
 

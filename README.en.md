@@ -196,6 +196,9 @@ packages/tools/
 ├── src/settlement.ts               # Settlement tool
 ├── src/types.ts                    # Shared tool contract
 └── package.json                    # @justo/tools package
+packages/pdf/
+├── src/settlement-pdf.ts           # Basic settlement PDF
+└── package.json                    # @justo/pdf package
 content/
 ├── legal/{ni,gt,sv,hn,cr,pa,mx,co,pe,ar,cl}/  # Legal corpus by country
 └── docs/                           # MDX documentation
@@ -207,7 +210,8 @@ pnpm-workspace.yaml                 # OSS monorepo
 
 - `packages/core`: calculation authority. Types, schemas, helpers, and formulas by jurisdiction live here.
 - `packages/tools`: registry of open labor tools. It consumes `@justo/core` for calculations.
-- `apps/web`: public Next.js experience. It consumes `@justo/core` and `@justo/tools`; it must not duplicate legal formulas.
+- `packages/pdf`: open source basic PDF generation. It consumes types from `@justo/core`.
+- `apps/web`: public Next.js experience. It consumes `@justo/core`, `@justo/tools`, and `@justo/pdf`; it must not duplicate legal formulas.
 - `content/legal`: MVP source of truth for legal references and AI corpus retrieval.
 
 ---

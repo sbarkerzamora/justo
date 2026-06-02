@@ -8,6 +8,7 @@ Justo is organized as an open source monorepo. The public repository should rema
 apps/web        Public Next.js app
 packages/core   Deterministic legal calculation engine
 packages/tools  Open source labor tools registry
+packages/pdf    Open source basic PDF generation
 content/legal   Legal corpus by jurisdiction
 docs            Repository-level engineering documentation
 ```
@@ -62,15 +63,33 @@ It owns:
 - Chat UI and guided calculation flow.
 - Public marketplace pages under `/tools`.
 - Docs UI under `/docs`.
-- PDF generation route for the public app.
+- PDF route for the public app.
 - Web-only infrastructure like Redis, rate limiting and provider config.
 
 Rules:
 
-- Consume `@justo/core` and `@justo/tools` instead of duplicating legal logic.
+- Consume `@justo/core`, `@justo/tools` and `@justo/pdf` instead of duplicating legal logic.
 - Keep API keys on the server only.
 - Avoid logging personal identifiable information in production.
 - Confirm captured inputs before calculating.
+
+### `packages/pdf`
+
+`@justo/pdf` owns basic open source PDF generation.
+
+It owns:
+
+- Basic settlement PDF layout.
+- Signature lines.
+- Timestamp and corpus version display.
+- Informational disclaimer text.
+
+Rules:
+
+- Consume types from `@justo/core`.
+- Do not perform legal calculations here.
+- Do not add Pro branding or private workflow logic here.
+- Keep output suitable for the public/self-hosted app.
 
 ### `content/legal`
 

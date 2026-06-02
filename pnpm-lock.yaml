@@ -26,6 +26,9 @@ importers:
       '@justo/core':
         specifier: workspace:*
         version: link:packages/core
+      '@justo/pdf':
+        specifier: workspace:*
+        version: link:packages/pdf
       '@justo/tools':
         specifier: workspace:*
         version: link:packages/tools
@@ -86,9 +89,6 @@ importers:
       next-themes:
         specifier: ^0.4.6
         version: 0.4.6(react-dom@19.2.6(react@19.2.6))(react@19.2.6)
-      pdf-lib:
-        specifier: ^1.17.1
-        version: 1.17.1
       radix-ui:
         specifier: ^1.4.3
         version: 1.4.3(@types/react-dom@19.2.3(@types/react@19.2.15))(@types/react@19.2.15)(react-dom@19.2.6(react@19.2.6))(react@19.2.6)
@@ -183,6 +183,9 @@ importers:
       '@justo/core':
         specifier: workspace:*
         version: link:../../packages/core
+      '@justo/pdf':
+        specifier: workspace:*
+        version: link:../../packages/pdf
       '@justo/tools':
         specifier: workspace:*
         version: link:../../packages/tools
@@ -243,9 +246,6 @@ importers:
       next-themes:
         specifier: ^0.4.6
         version: 0.4.6(react-dom@19.2.6(react@19.2.6))(react@19.2.6)
-      pdf-lib:
-        specifier: ^1.17.1
-        version: 1.17.1
       radix-ui:
         specifier: ^1.4.3
         version: 1.4.3(@types/react-dom@19.2.3(@types/react@19.2.15))(@types/react@19.2.15)(react-dom@19.2.6(react@19.2.6))(react@19.2.6)
@@ -310,6 +310,15 @@ importers:
       zod:
         specifier: ^4.1.12
         version: 4.4.3
+
+  packages/pdf:
+    dependencies:
+      '@justo/core':
+        specifier: workspace:*
+        version: link:../core
+      pdf-lib:
+        specifier: ^1.17.1
+        version: 1.17.1
 
   packages/tools:
     dependencies:

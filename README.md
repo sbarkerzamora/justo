@@ -196,6 +196,9 @@ packages/tools/
 ├── src/settlement.ts               # Herramienta de liquidación laboral
 ├── src/types.ts                    # Contrato común de herramientas
 └── package.json                    # Paquete @justo/tools
+packages/pdf/
+├── src/settlement-pdf.ts           # PDF básico de liquidación
+└── package.json                    # Paquete @justo/pdf
 content/
 ├── legal/{ni,gt,sv,hn,cr,pa,mx,co,pe,ar,cl}/  # Corpus legal por país
 └── docs/                           # Documentación MDX
@@ -206,7 +209,8 @@ pnpm-workspace.yaml                 # Monorepo OSS
 
 - `packages/core`: autoridad de cálculo. Aquí viven tipos, schemas, helpers y fórmulas por jurisdicción.
 - `packages/tools`: registry de herramientas laborales abiertas. Consume `@justo/core` para cálculos.
-- `apps/web`: experiencia pública Next.js. Consume `@justo/core` y `@justo/tools`; no debe duplicar fórmulas legales.
+- `packages/pdf`: generación de PDFs básicos open source. Consume tipos desde `@justo/core`.
+- `apps/web`: experiencia pública Next.js. Consume `@justo/core`, `@justo/tools` y `@justo/pdf`; no debe duplicar fórmulas legales.
 - `content/legal`: fuente de verdad del MVP para referencias legales y corpus consultado por la IA.
 
 ---
