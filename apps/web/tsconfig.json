@@ -23,15 +23,15 @@
     "baseUrl": ".",
     "types": ["bun"],
     "paths": {
-      "@justo/core": ["./packages/core/src/index.ts"],
-      "@justo/core/*": ["./packages/core/src/*"],
-      "@justo/tools": ["./packages/tools/src/index.ts"],
-      "@justo/tools/*": ["./packages/tools/src/*"],
-      "@/*": ["./apps/web/*"]
+      "@justo/core": ["../../packages/core/src/index.ts"],
+      "@justo/core/*": ["../../packages/core/src/*"],
+      "@justo/tools": ["../../packages/tools/src/index.ts"],
+      "@justo/tools/*": ["../../packages/tools/src/*"],
+      "@/*": ["./*"]
     }
   },
   "include": [
-    "apps/web/next-env.d.ts",
+    "next-env.d.ts",
     "**/*.ts",
     "**/*.tsx",
     ".next/types/**/*.ts",

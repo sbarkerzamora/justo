@@ -1,6 +1,6 @@
 # Justo
 
-![Justo](public/images/og-image.png)
+![Justo](apps/web/public/images/og-image.png)
 
 <p align="center">
   <a href="LICENSE"><img src="https://img.shields.io/badge/license-MIT-blue.svg" alt="License MIT" /></a>
@@ -16,7 +16,7 @@
 
 <p align="center">
   <strong>Asistente laboral open source para Centroamérica y América Latina</strong><br />
-  Chat laboral con IA + calculadora determinística de liquidación + trazabilidad legal por país.
+  Chat laboral con IA + herramientas laborales open source + cálculos determinísticos + trazabilidad legal por país.
 </p>
 
 ---
@@ -28,7 +28,8 @@ Justo ayuda a trabajadores a entender sus derechos laborales y estimar liquidaci
 El producto separa dos responsabilidades:
 
 - **Chat con IA**: orienta, responde preguntas laborales y explica conceptos usando el corpus legal.
-- **Calculadora laboral**: no usa IA para calcular. Los montos se generan con lógica determinística en el servidor, organizada por jurisdicción.
+- **Herramientas laborales OSS**: calculadoras, documentos y checklists abiertos, registrados en `packages/tools`.
+- **Motor determinístico**: no usa IA para calcular. Los montos se generan con lógica determinística en `packages/core`, organizada por jurisdicción.
 
 > Justo es informativo y no reemplaza asesoría legal profesional.
 
@@ -39,6 +40,7 @@ El producto separa dos responsabilidades:
 | | Funcionalidad |
 |---|---|
 | 🤖 | **Chat laboral con IA** — Responde consultas sobre derechos, prestaciones, indemnizaciones, vacaciones, aguinaldo y deducciones con referencias al corpus legal. |
+| 🧰 | **Marketplace OSS de herramientas** — `/tools` lista herramientas laborales abiertas, disponibles y próximas. |
 | 🧮 | **Calculadora determinística** — Calcula liquidaciones en servidor con reglas explícitas por país; el modelo no inventa aritmética legal. |
 | 🌎 | **11 países soportados** — Nicaragua, Guatemala, El Salvador, Honduras, Costa Rica, Panamá, México, Colombia, Perú, Argentina y Chile. |
 | 📄 | **PDF imprimible** — Reporte con resumen, ingresos, deducciones, neto total, versión del corpus, aviso legal y líneas de firma. |
@@ -65,7 +67,7 @@ El producto separa dos responsabilidades:
 1. **Selección de país** — La app permite elegir jurisdicción y genera rutas localizadas como `/es/ni` o `/en/ni`.
 2. **Chat laboral** — El usuario consulta derechos laborales. La IA debe usar el corpus legal y pedir datos faltantes cuando sea necesario.
 3. **Cálculo guiado** — El flujo captura datos mínimos: trabajador, empleador, salario mensual, fechas, vacaciones pendientes y frecuencia de pago.
-4. **Cálculo determinístico** — El servidor ejecuta el motor del país correspondiente en `lib/settlement/{country}/`.
+4. **Cálculo determinístico** — El servidor ejecuta el motor del país correspondiente desde `packages/core/src/settlement/{country}/`.
 5. **Resultado y PDF** — Se muestra el neto estimado, ingresos, deducciones, fórmulas y un PDF descargable.
 
 ---
@@ -100,6 +102,16 @@ El producto separa dos responsabilidades:
 - **Rate limiting/cache**: Upstash Redis opcional/recomendado en producción
 - **Validación**: Zod
 - **Runtime de tests**: Bun
+
+---
+
+## Modelo open source
+
+Justo usa un modelo open-core híbrido, pero este repositorio público debe ser útil por sí mismo.
+
+- **Abierto en este repo**: corpus legal, cálculos determinísticos, herramientas laborales generales, PDF básico, app pública y self-hosting.
+- **Fuera de este repo por ahora**: asistente interno de RRHH, paquete de caso para revisión profesional, Convex, billing, auditoría empresarial e integraciones Pro.
+- **Regla de producto**: las herramientas laborales generales son open source; la monetización futura viene de operación empresarial, no de ocultar fórmulas legales.
 
 ---
 
@@ -163,35 +175,39 @@ Abrir `http://localhost:3000`.
 ## Estructura del proyecto
 
 ```text
-app/
-├── [locale]/[country]/             # Rutas localizadas por país, ej: /es/ni
-│   ├── layout.tsx                  # Metadata por jurisdicción
-│   └── page.tsx                    # Home del país
-├── api/
-│   ├── chat/                       # Chat IA con corpus legal y herramientas
-│   ├── liquidation/
-│   │   ├── calculate/              # Cálculo determinístico por countryCode
-│   │   └── pdf/                    # Generación de PDF
-│   └── search/                     # Búsqueda de documentación/corpus
-├── docs/                           # Documentación Fumadocs
-├── robots.ts
-├── sitemap.ts
-└── page.tsx                        # Entrada principal / selector de ubicación
-components/
-├── chat/                           # UI del chat, Markdown y flujo guiado
-├── plausible-analytics.tsx         # Tracking opcional de Plausible
-├── location-gate.tsx               # Selección/detección de país
-├── theme-provider.tsx
-└── ui/                             # Componentes visuales reutilizables
+apps/web/
+├── app/
+│   ├── [locale]/[country]/         # Rutas localizadas por país, ej: /es/ni
+│   ├── api/                        # Chat, cálculo, PDF, búsqueda y webhooks
+│   ├── docs/                       # Documentación Fumadocs
+│   ├── tools/                      # Marketplace público de herramientas OSS
+│   ├── robots.ts
+│   ├── sitemap.ts
+│   └── page.tsx                    # Entrada principal / selector de ubicación
+├── components/                     # UI de la app pública
+├── lib/                            # Infra web: IA, Redis, PDF, países, docs
+├── public/                         # Assets públicos
+└── package.json                    # Paquete @justo/web
+packages/core/
+├── src/settlement/                 # Motores determinísticos por país
+└── package.json                    # Paquete @justo/core
+packages/tools/
+├── src/registry.ts                 # Registry de herramientas laborales OSS
+├── src/settlement.ts               # Herramienta de liquidación laboral
+├── src/types.ts                    # Contrato común de herramientas
+└── package.json                    # Paquete @justo/tools
 content/
 ├── legal/{ni,gt,sv,hn,cr,pa,mx,co,pe,ar,cl}/  # Corpus legal por país
 └── docs/                           # Documentación MDX
-lib/
-├── settlement/{ni,gt,sv,hn,cr,pa,mx,co,pe,ar,cl}/  # Motores por país
-├── ai/                             # Configuración de proveedor y corpus
-├── pdf/settlement-pdf.ts
-└── countries.ts                    # Metadata de países
+pnpm-workspace.yaml                 # Monorepo OSS
 ```
+
+### Responsabilidades
+
+- `packages/core`: autoridad de cálculo. Aquí viven tipos, schemas, helpers y fórmulas por jurisdicción.
+- `packages/tools`: registry de herramientas laborales abiertas. Consume `@justo/core` para cálculos.
+- `apps/web`: experiencia pública Next.js. Consume `@justo/core` y `@justo/tools`; no debe duplicar fórmulas legales.
+- `content/legal`: fuente de verdad del MVP para referencias legales y corpus consultado por la IA.
 
 ---
 
@@ -203,6 +219,8 @@ lib/
 | `POST /api/liquidation/calculate` | Calcula liquidación con motor determinístico por país. |
 | `POST /api/liquidation/pdf` | Genera PDF descargable con resultado, fórmulas y firmas. |
 | `POST /api/search` | Busca contenido en documentación/corpus para la experiencia docs. |
+
+Estas rutas son parte de la app pública/self-hosted. No son la API comercial Pro.
 
 ---
 
@@ -253,8 +271,10 @@ pnpm build
 ## Documentación
 
 - App docs: `/docs`
+- Marketplace OSS de herramientas: `/tools`
 - Páginas legales por país: `/docs/legal/{nicaragua,guatemala,honduras,elsalvador,costarica,panama,mexico,colombia,peru,argentina,chile}`
 - Corpus legal fuente: `content/legal/`
+- Arquitectura del monorepo: `docs/architecture.md`
 
 ---
 

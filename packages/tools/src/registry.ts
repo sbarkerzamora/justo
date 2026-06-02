@@ -1,0 +1,192 @@
+import type { CountryCode } from "@justo/core"
+import { settlementTool } from "./settlement"
+import type { JustoTool } from "./types"
+
+const allCountries = [
+  "ni",
+  "gt",
+  "hn",
+  "sv",
+  "cr",
+  "pa",
+  "mx",
+  "co",
+  "pe",
+  "ar",
+  "cl",
+] as const satisfies readonly CountryCode[]
+
+const informationalDisclaimer =
+  "Herramienta laboral open source en roadmap. Su resultado será informativo y no sustituirá asesoría legal o contable profesional."
+
+const comingSoonTool = (
+  tool: Omit<
+    JustoTool,
+    | "availability"
+    | "countrySupport"
+    | "legalReferences"
+    | "corpusVersion"
+    | "disclaimer"
+  > & {
+    countrySupport?: readonly CountryCode[]
+    legalReferences?: readonly string[]
+  }
+): JustoTool => ({
+  ...tool,
+  availability: "coming_soon",
+  countrySupport: tool.countrySupport ?? allCountries,
+  legalReferences:
+    tool.legalReferences ?? ["Corpus legal público de Justo por jurisdicción"],
+  corpusVersion: "roadmap",
+  disclaimer: informationalDisclaimer,
+})
+
+export const tools = [
+  settlementTool,
+  comingSoonTool({
+    id: "salary-net",
+    slug: "salario-neto",
+    name: "Salario neto",
+    shortDescription: "Estima salario neto después de deducciones laborales.",
+    longDescription:
+      "Calculadora abierta para entender deducciones aplicables y estimar el pago neto según país.",
+    category: "calculation",
+    inputRequirements: [
+      "País",
+      "Salario bruto",
+      "Frecuencia de pago",
+      "Deducciones aplicables",
+    ],
+    outputSummary: [
+      "Salario bruto",
+      "Deducciones",
+      "Salario neto",
+      "Referencias legales",
+    ],
+  }),
+  comingSoonTool({
+    id: "vacations",
+    slug: "vacaciones",
+    name: "Vacaciones",
+    shortDescription: "Calcula vacaciones acumuladas, gozadas y pendientes.",
+    longDescription:
+      "Herramienta para estimar días y montos de vacaciones según reglas laborales de cada jurisdicción.",
+    category: "calculation",
+    inputRequirements: [
+      "País",
+      "Fecha de inicio",
+      "Fecha de corte",
+      "Días gozados",
+      "Salario",
+    ],
+    outputSummary: [
+      "Días acumulados",
+      "Días pendientes",
+      "Monto estimado",
+      "Referencias legales",
+    ],
+  }),
+  comingSoonTool({
+    id: "bonus",
+    slug: "aguinaldo-decimo-bono",
+    name: "Aguinaldo / décimo / bono",
+    shortDescription: "Estima pagos proporcionales de bonos laborales por país.",
+    longDescription:
+      "Calculadora abierta para aguinaldo, décimo, bono 14 u obligaciones equivalentes según jurisdicción.",
+    category: "calculation",
+    inputRequirements: ["País", "Salario", "Periodo trabajado", "Fecha de corte"],
+    outputSummary: ["Monto proporcional", "Fórmula", "Referencias legales"],
+  }),
+  comingSoonTool({
+    id: "overtime",
+    slug: "horas-extra",
+    name: "Horas extra",
+    shortDescription: "Calcula recargos por horas extra y jornadas especiales.",
+    longDescription:
+      "Herramienta abierta para estimar pagos por tiempo extraordinario según reglas de jornada de cada país.",
+    category: "calculation",
+    inputRequirements: ["País", "Salario", "Horas trabajadas", "Tipo de jornada"],
+    outputSummary: ["Horas reconocidas", "Recargo", "Monto total", "Referencias legales"],
+  }),
+  comingSoonTool({
+    id: "termination-simulator",
+    slug: "simulador-terminacion",
+    name: "Simulador de terminación",
+    shortDescription: "Compara escenarios básicos de salida laboral.",
+    longDescription:
+      "Simulador abierto para comparar renuncia, despido justificado, despido injustificado u otros escenarios según país.",
+    category: "calculation",
+    inputRequirements: [
+      "País",
+      "Salario",
+      "Fechas",
+      "Vacaciones",
+      "Tipos de terminación",
+    ],
+    outputSummary: [
+      "Comparación de escenarios",
+      "Diferencias estimadas",
+      "Referencias legales",
+    ],
+  }),
+  comingSoonTool({
+    id: "basic-settlement-document",
+    slug: "finiquito-basico",
+    name: "Generador básico de finiquito",
+    shortDescription: "Genera un documento básico con resumen y firmas.",
+    longDescription:
+      "Documento abierto para imprimir un resumen básico de liquidación con datos del caso, montos, timestamp y firmas.",
+    category: "document",
+    inputRequirements: [
+      "Datos del trabajador",
+      "Datos del empleador",
+      "Resultado de cálculo",
+      "Fecha",
+    ],
+    outputSummary: ["Resumen", "Montos", "Firmas", "Disclaimer"],
+  }),
+  comingSoonTool({
+    id: "labor-checklist",
+    slug: "checklist-laboral",
+    name: "Checklist laboral",
+    shortDescription: "Revisa pasos básicos de cumplimiento laboral.",
+    longDescription:
+      "Checklist abierto para ordenar requisitos mínimos de contratación, terminación y documentación laboral.",
+    category: "checklist",
+    inputRequirements: ["País", "Tipo de proceso", "Datos básicos del caso"],
+    outputSummary: ["Tareas pendientes", "Riesgos básicos", "Referencias"],
+  }),
+  comingSoonTool({
+    id: "hiring-assistant",
+    slug: "asistente-contratacion",
+    name: "Asistente básico de contratación",
+    shortDescription: "Guía abierta para preparar una contratación laboral.",
+    longDescription:
+      "Asistente abierto para orientar sobre datos y documentos básicos antes de iniciar una relación laboral.",
+    category: "assistant",
+    inputRequirements: [
+      "País",
+      "Tipo de contratación",
+      "Salario",
+      "Jornada",
+      "Fecha de inicio",
+    ],
+    outputSummary: [
+      "Datos requeridos",
+      "Documentos sugeridos",
+      "Puntos de revisión",
+    ],
+  }),
+] as const satisfies readonly JustoTool[]
+
+export function getTools(): readonly JustoTool[] {
+  return tools
+}
+
+export function getAvailableTools(): readonly JustoTool[] {
+  return tools.filter((tool) => tool.availability === "available")
+}
+
+export function getToolBySlug(slug: string): JustoTool | undefined {
+  return tools.find((tool) => tool.slug === slug)
+}
