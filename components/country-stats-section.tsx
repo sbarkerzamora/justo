@@ -52,7 +52,7 @@ export async function CountryStatsSection({
 
         <StatsClientSection
           stats={stats}
-          currency={getCurrencySymbol(stats.countryCode)}
+          currency={getCurrencyCode(stats.countryCode)}
           filters={info.filters}
           labels={info.labels}
           isLoading={!hasData}
@@ -146,20 +146,21 @@ function getSharedCopy(locale: Locale) {
   }
 }
 
-function getCurrencySymbol(code: string): string {
-  const symbols: Record<string, string> = {
-    NIO: "C$",
-    GTQ: "Q",
-    HNL: "L",
-    USD: "$",
-    CRC: "₡",
-    MXN: "$",
-    COP: "$",
-    PEN: "S/",
-    ARS: "$",
-    CLP: "$",
+function getCurrencyCode(country: CountryCode): string {
+  const map: Record<CountryCode, string> = {
+    ni: "NIO",
+    gt: "GTQ",
+    hn: "HNL",
+    sv: "USD",
+    cr: "CRC",
+    pa: "USD",
+    mx: "MXN",
+    co: "COP",
+    pe: "PEN",
+    ar: "ARS",
+    cl: "CLP",
   }
-  return symbols[code] ?? code
+  return map[country]
 }
 
 export type StatsFilterInfo = ReturnType<typeof getStatsInfo>

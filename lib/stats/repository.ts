@@ -91,13 +91,13 @@ async function getPercentiles(key: string): Promise<PercentileData> {
 
     const members = await Promise.all(
       indices.map((idx) =>
-        r.zrange<{ member: string; score: number }[]>(key, idx, idx, {
+        r.zrange<(string | number)[]>(key, idx, idx, {
           withScores: true,
         })
       )
     )
 
-    const results = members.map((m) => (m && m.length > 0 ? m[0].score : 0))
+    const results = members.map((m) => (m && m.length > 1 ? (m[1] as number) : 0))
 
     return {
       min: results[0],

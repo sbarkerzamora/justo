@@ -20,12 +20,17 @@ interface FilterDef {
 }
 
 function safeNumber(n: number): string {
-  return Number.isFinite(n) ? Math.round(n).toLocaleString("es-NI") : "—"
+  if (!Number.isFinite(n)) return "—"
+  return new Intl.NumberFormat("es-NI", { maximumFractionDigits: 0 }).format(n)
 }
 
 function safeCurrency(n: number, currency: string): string {
   if (!Number.isFinite(n)) return "—"
-  return `${currency} ${Math.round(n).toLocaleString("es-NI")}`
+  return new Intl.NumberFormat("es-NI", {
+    style: "currency",
+    currency,
+    maximumFractionDigits: 0,
+  }).format(n)
 }
 
 function HighlightCard({
@@ -38,13 +43,15 @@ function HighlightCard({
   label: string
 }) {
   return (
-    <div className="flex flex-col items-center gap-1 rounded-xl border border-border/50 bg-card/50 px-3 py-3">
-      <span className="text-muted-foreground/40">{icon}</span>
-      <span className="text-xl font-semibold tabular-nums text-foreground">
+    <div className="flex flex-col rounded-xl bg-card px-4 py-4 border-t-2 border-t-border/40">
+      <div className="mb-2.5 flex items-center justify-between">
+        <span className="text-[0.65rem] font-semibold uppercase tracking-[0.08em] text-muted-foreground/80">
+          {label}
+        </span>
+        <span className="text-muted-foreground/15">{icon}</span>
+      </div>
+      <span className="text-2xl font-semibold tabular-nums leading-none text-foreground">
         {value}
-      </span>
-      <span className="text-[0.65rem] uppercase tracking-wider text-muted-foreground">
-        {label}
       </span>
     </div>
   )
@@ -78,7 +85,7 @@ export function StatsClientSection({
 
   return (
     <div className="space-y-5">
-      <div className="grid grid-cols-2 gap-3 sm:grid-cols-4">
+      <div className="grid grid-cols-2 gap-4 sm:grid-cols-4">
         {highlights.map((h) => (
           <HighlightCard key={h.label} {...h} />
         ))}
@@ -112,10 +119,10 @@ function getLoadingHighlights(
   labels: { cases: string; medianSalary: string; medianTenure: string; medianNet: string }
 ) {
   return [
-    { icon: <IconUsers className="size-5" />, value: "—", label: labels.cases },
-    { icon: <IconCoin className="size-5" />, value: "—", label: labels.medianSalary },
-    { icon: <IconCalendarClock className="size-5" />, value: "—", label: labels.medianTenure },
-    { icon: <IconCash className="size-5" />, value: "—", label: labels.medianNet },
+    { icon: <IconUsers className="size-4" />, value: "—", label: labels.cases },
+    { icon: <IconCoin className="size-4" />, value: "—", label: labels.medianSalary },
+    { icon: <IconCalendarClock className="size-4" />, value: "—", label: labels.medianTenure },
+    { icon: <IconCash className="size-4" />, value: "—", label: labels.medianNet },
   ]
 }
 
@@ -126,25 +133,22 @@ function getHighlights(
 ) {
   return [
     {
-      icon: <IconUsers className="size-5" />,
+      icon: <IconUsers className="size-4" />,
       value: safeNumber(stats.totalSettlements),
       label: labels.cases,
     },
     {
-      icon: <IconCoin className="size-5" />,
+      icon: <IconCoin className="size-4" />,
       value: safeCurrency(stats.salary.p50, currency),
       label: labels.medianSalary,
     },
     {
-      icon: <IconCalendarClock className="size-5" />,
-      value:
-        Number.isFinite(stats.tenure.p50) && stats.tenure.p50 > 0
-          ? formatTenureDays(stats.tenure.p50)
-          : "—",
+      icon: <IconCalendarClock className="size-4" />,
+      value: formatTenureDays(stats.tenure.p50),
       label: labels.medianTenure,
     },
     {
-      icon: <IconCash className="size-5" />,
+      icon: <IconCash className="size-4" />,
       value: safeCurrency(stats.net.p50, currency),
       label: labels.medianNet,
     },

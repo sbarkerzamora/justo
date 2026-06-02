@@ -1,7 +1,5 @@
 import { Geist_Mono, Nunito_Sans } from "next/font/google"
 import type { Metadata } from "next"
-import Script from "next/script"
-
 import "./globals.css"
 import { RootProvider } from "fumadocs-ui/provider/next"
 import { ThemeProvider } from "@/components/theme-provider"
@@ -67,7 +65,7 @@ export default function RootLayout({
         <RootProvider search={{ preload: false }}>
           <ThemeProvider>{children}</ThemeProvider>
         </RootProvider>
-        <Script
+        <script
           src="https://cdnjs.buymeacoffee.com/1.0.0/widget.prod.min.js"
           data-name="BMC-Widget"
           data-cfasync="false"
@@ -75,10 +73,10 @@ export default function RootLayout({
           data-description="Support me on Buy me a coffee!"
           data-message=""
           data-color="#FF5F5F"
-          data-position="Right"
+          data-position="Left"
           data-x_margin="18"
           data-y_margin="18"
-          strategy="lazyOnload"
+          defer
         />
         <script
           type="application/ld+json"

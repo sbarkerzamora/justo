@@ -36,10 +36,13 @@ const VIEW_LABELS: Record<ChartView, string> = {
 }
 
 export function formatTenureDays(days: number): string {
+  if (!Number.isFinite(days) || days <= 0) return "—"
   const years = Math.floor(days / 365)
   const months = Math.floor((days % 365) / 30)
-  if (years > 0) return `${years}a ${months}m`
-  return `${months}m`
+  if (years > 0 && months > 0) return `${years}\u00a0a\u00a0${months}\u00a0m`
+  if (years > 0) return `${years}\u00a0${years === 1 ? "año" : "años"}`
+  if (months > 0) return `${months}\u00a0${months === 1 ? "mes" : "meses"}`
+  return "<\u00a01\u00a0mes"
 }
 
 interface ChartDatum extends Record<string, unknown> {
