@@ -1,6 +1,6 @@
 import { Chat, toAiMessages } from "chat"
 import { createTelegramAdapter } from "@chat-adapter/telegram"
-import { createRedisState } from "@chat-adapter/state-redis"
+import { UpstashRedisState } from "@/lib/chat-state"
 import { generateLaborResponse } from "@/lib/ai/respond"
 
 let botInstance: Chat | null = null
@@ -21,7 +21,7 @@ function getBot(): Chat {
     adapters: {
       telegram: createTelegramAdapter(),
     },
-    state: createRedisState(),
+    state: new UpstashRedisState(),
     dedupeTtlMs: 600_000,
     streamingUpdateIntervalMs: 500,
     logger: "info",
