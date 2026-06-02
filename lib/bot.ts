@@ -1,4 +1,4 @@
-import { Chat } from "chat"
+import { Chat, toAiMessages } from "chat"
 import { createTelegramAdapter } from "@chat-adapter/telegram"
 import { createRedisState } from "@chat-adapter/state-redis"
 import { generateLaborResponse } from "@/lib/ai/respond"
@@ -55,9 +55,15 @@ function getBot(): Chat {
     if (!message.isMention && !thread.isDM) return
     await thread.startTyping()
 
+    const { messages } = await thread.adapter.fetchMessages(thread.id, {
+      limit: 20,
+    })
+    const history = await toAiMessages(messages)
+
     const streamResult = await generateLaborResponse({
       countryCode: "ni",
       userMessageText: message.text,
+      modelMessages: history as Parameters<typeof generateLaborResponse>[0]["modelMessages"],
     })
 
     await thread.post(streamResult.fullStream)

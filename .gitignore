@@ -21,6 +21,8 @@
 # misc
 .DS_Store
 *.pem
+tmp/
+.marscode/
 
 # debug
 npm-debug.log*
