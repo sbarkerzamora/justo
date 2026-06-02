@@ -12,10 +12,22 @@
       "skillPath": "assistant-ui/skills/assistant-ui/SKILL.md",
       "computedHash": "cfce3ce8c4c2da38f0fc8e881af677efa8166d379862541f79c54e66f1a599d5"
     },
+    "bklit-ui": {
+      "source": "bklit/bklit-ui",
+      "sourceType": "github",
+      "skillPath": "skills/bklit-ui/SKILL.md",
+      "computedHash": "ace89f8b9a6d5d8f0367307f886cb9654065356db537df7b57b3d849aa503534"
+    },
     "bun": {
       "source": "midudev/autoskills",
       "sourceType": "autoskills-registry",
       "computedHash": "1386ed5490ed278e38312a416c9aa074dbe3849f32ae7f841e4142fef5d4df94"
+    },
+    "chat-sdk": {
+      "source": "vercel/chat",
+      "sourceType": "github",
+      "skillPath": "skills/chat/SKILL.md",
+      "computedHash": "c7277fe8be96a8a1eea9e2cc373ebfed21b79e666565e587562dcdfbae65cced"
     },
     "cloud": {
       "source": "assistant-ui/skills",
@@ -135,6 +147,12 @@
       "sourceType": "github",
       "skillPath": "assistant-ui/skills/update/SKILL.md",
       "computedHash": "9ce8f6ff9d76fb1fa3101da8240b805da09836bf6aad9a1bc3f671060de461a7"
+    },
+    "upstash": {
+      "source": "upstash/skills",
+      "sourceType": "github",
+      "skillPath": "skills/upstash/SKILL.md",
+      "computedHash": "d10c5c93733bf706e920c46c04d2bfa0815fde108a1fc233ba6a25330828d1e8"
     },
     "use-ai-sdk": {
       "source": "vercel/ai",

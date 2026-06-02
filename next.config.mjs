@@ -38,7 +38,7 @@ const contentSecurityPolicy = [
   "script-src 'self' 'unsafe-inline' 'unsafe-eval' https://static.cloudflareinsights.com https://vercel.live https://cdnjs.buymeacoffee.com",
   "script-src-elem 'self' 'unsafe-inline' https://static.cloudflareinsights.com https://vercel.live https://cdnjs.buymeacoffee.com",
   `connect-src ${connectSources.join(" ")}`,
-  "frame-src 'self' https://www.buymeacoffee.com",
+  "frame-src 'self' https://www.buymeacoffee.com https://buymeacoffee.com",
 ].join("; ")
 
 /** @type {import('next').NextConfig} */
