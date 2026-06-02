@@ -35,7 +35,7 @@ export const SUPPORTED_COUNTRIES = [
   "cl",
 ] as const
 
-const countryMeta: Record<string, { name: string; law: string }> = {
+export const countryMeta: Record<string, { name: string; law: string }> = {
   ni: { name: "Nicaragua", law: "Ley No. 185 (Código del Trabajo)" },
   gt: { name: "Guatemala", law: "Decreto 1441 (Código de Trabajo)" },
   sv: { name: "El Salvador", law: "Código de Trabajo" },
@@ -493,6 +493,8 @@ REGLAS ESTRICTAS:
   Corpus version ...
 
   > Informacion general, no asesoria legal profesional.
+- Usa emojis con moderacion para estructurar la respuesta: 📋 para conceptos o listas, ⚠️ para advertencias, ✅ para pasos o confirmaciones. Maximo 1-2 emojis por seccion. No uses emojis decorativos.
+- Respuesta maxima: ~3000 caracteres. Si necesitas mas espacio, resume o divide en puntos clave.
 - Puedes usar formato markdown enriquecido, pero siempre breve y escaneable.`
 }
 
