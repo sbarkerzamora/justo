@@ -20,6 +20,7 @@ import {
   IconTrendingUp,
   IconTrendingDown,
   IconFileText,
+  IconAlertCircle,
 } from "@tabler/icons-react"
 import { calculateSettlement } from "@justo/tools"
 import type { CountryCode } from "@justo/core"
@@ -62,6 +63,7 @@ interface SettlementToolState {
   editVacations: string
   editStartDate: string
   editEndDate: string
+  error: string | null
 }
 
 type Action =
@@ -70,6 +72,7 @@ type Action =
   | { type: "setResult"; result: ReturnType<typeof calculateSettlement> | null }
   | { type: "setEditMode"; editMode: EditMode }
   | { type: "setEditField"; field: "editSalary" | "editVacations" | "editStartDate" | "editEndDate"; value: string }
+  | { type: "setError"; error: string | null }
   | { type: "reset"; countryCode: string }
 
 const initialState = (cc: string): SettlementToolState => ({
@@ -90,6 +93,7 @@ const initialState = (cc: string): SettlementToolState => ({
   editVacations: "",
   editStartDate: "",
   editEndDate: "",
+  error: null,
 })
 
 function reducer(state: SettlementToolState, action: Action): SettlementToolState {
@@ -104,6 +108,8 @@ function reducer(state: SettlementToolState, action: Action): SettlementToolStat
       return { ...state, editMode: action.editMode }
     case "setEditField":
       return { ...state, [action.field]: action.value }
+    case "setError":
+      return { ...state, error: action.error }
     case "reset":
       return initialState(action.countryCode)
     default:
@@ -158,7 +164,7 @@ export function SettlementTool({
   const [inputValue, setInputValue] = useState("")
   const inputRef = useRef<HTMLInputElement>(null)
 
-  const { step, form, result, editMode } = state
+  const { step, form, result, editMode, error } = state
 
   const askText = useCallback((s: SettlementStep) => {
     const map: Record<string, string> = {
@@ -249,8 +255,9 @@ export function SettlementTool({
       const result = calculateSettlement(payload)
       dispatch({ type: "setResult", result })
       dispatch({ type: "setStep", step: "done" })
-    } catch {
-      // handle error
+      dispatch({ type: "setError", error: null })
+    } catch (err) {
+      dispatch({ type: "setError", error: err instanceof Error ? err.message : "Error al calcular" })
     }
   }
 
@@ -292,7 +299,7 @@ export function SettlementTool({
     const url = URL.createObjectURL(blob)
     const a = document.createElement("a")
     a.href = url
-    a.download = "liquidacion-nicaragua.pdf"
+    a.download = `liquidacion-${countryCode}.pdf`
     a.click()
     URL.revokeObjectURL(url)
   }
@@ -385,6 +392,12 @@ export function SettlementTool({
           </div>
         ) : step === "confirm" ? (
           <div className="space-y-4 overflow-y-auto">
+            {error ? (
+              <div className="flex items-center gap-2 rounded-xl border border-rose-200 bg-rose-50 px-4 py-3 text-sm text-rose-700">
+                <IconAlertCircle className="size-4 shrink-0" />
+                {error}
+              </div>
+            ) : null}
             <ConfirmPanelTool
               form={form}
               fmt={fmt}

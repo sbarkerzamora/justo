@@ -1,7 +1,7 @@
 import { Ratelimit } from "@upstash/ratelimit"
 import { redis } from "@/lib/redis"
 
-type RateLimitPreset = "chat" | "pdf" | "calculate" | "vacations-calculate"
+type RateLimitPreset = "chat" | "pdf" | "calculate" | "vacations-calculate" | "vacations-pdf"
 
 const presets: Record<
   RateLimitPreset,
@@ -11,6 +11,7 @@ const presets: Record<
   pdf: { requests: 20, window: "60 s" },
   calculate: { requests: 60, window: "60 s" },
   "vacations-calculate": { requests: 60, window: "60 s" },
+  "vacations-pdf": { requests: 20, window: "60 s" },
 }
 
 const limiters = new Map<

@@ -8,7 +8,7 @@ import { getClientIp } from "@/lib/request-utils"
 export async function POST(request: Request) {
   const clientIp = getClientIp(request)
 
-  const { allowed, remaining, reset } = await checkRateLimit("pdf", clientIp)
+  const { allowed, remaining, reset } = await checkRateLimit("vacations-pdf", clientIp)
   if (!allowed) {
     const retryAfter = Math.max(1, Math.ceil((reset - Date.now()) / 1000))
     return NextResponse.json(
