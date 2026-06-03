@@ -79,6 +79,11 @@ type HomeCopy = {
   recalculateHint: string
   fallbackReason: string
   fallback: (docsLink: string, errorMessage?: string) => string
+  settlementWelcomeTitle: string
+  settlementWelcomeDescription: string
+  vacationsWelcomeTitle: string
+  vacationsWelcomeDescription: string
+  startButton: string
 }
 
 export const homeCopy: Record<Locale, HomeCopy> = {
@@ -181,6 +186,11 @@ export const homeCopy: Record<Locale, HomeCopy> = {
         : "El proveedor de IA no completo la respuesta."
       return `${reason}\n\nPuedo seguir ayudandote. Intenta de nuevo en un momento o revisa el marco legal aqui: [Abrir documentacion](${docsLink})`
     },
+    settlementWelcomeTitle: "Calculadora de liquidación",
+    settlementWelcomeDescription: "Calcula tu liquidación laboral con fórmulas transparentes y referencias legales. Te guiaremos paso a paso.",
+    vacationsWelcomeTitle: "Calculadora de vacaciones",
+    vacationsWelcomeDescription: "Calcula el monto de tus vacaciones acumuladas con fórmulas claras y trazabilidad legal.",
+    startButton: "Comenzar",
   },
   en: {
     preparing: "Preparing Justo...",
@@ -280,5 +290,10 @@ export const homeCopy: Record<Locale, HomeCopy> = {
         : "The AI provider did not complete the response."
       return `${reason}\n\nI can keep helping. Try again in a moment or review the legal framework here: [Open documentation](${docsLink})`
     },
+    settlementWelcomeTitle: "Settlement Calculator",
+    settlementWelcomeDescription: "Calculate your labor settlement with transparent formulas and legal references. We'll guide you step by step.",
+    vacationsWelcomeTitle: "Vacation Calculator",
+    vacationsWelcomeDescription: "Calculate your accrued vacation amount with clear formulas and legal traceability.",
+    startButton: "Start",
   },
 }

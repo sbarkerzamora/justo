@@ -1,5 +1,6 @@
 import { streamText, tool, zodSchema, type ModelMessage } from "ai"
 import { calculateSettlement } from "@justo/tools"
+import { calculateVacations } from "@justo/tools"
 import { join } from "node:path"
 import { z } from "zod"
 
@@ -636,6 +637,63 @@ export async function generateLaborResponse(input: {
             })
           } catch (e) {
             return `Error al calcular el estimado: ${e instanceof Error ? e.message : "error desconocido"}. Usa la calculadora guiada para un calculo mas preciso.`
+          }
+        },
+      }),
+      quickVacationEstimate: tool({
+        description: `Calcula un estimado de vacaciones acumuladas, gozadas y pendientes usando el motor deterministico. Solo disponible para Nicaragua (ni). Usala cuando el usuario pregunte sobre dias de vacaciones, vacaciones pendientes o pago de vacaciones.`,
+        inputSchema: zodSchema(
+          z.object({
+            monthlySalary: z
+              .number()
+              .positive()
+              .describe("Salario mensual del trabajador"),
+            startDate: z
+              .string()
+              .describe("Fecha de inicio laboral en formato YYYY-MM-DD"),
+            endDate: z
+              .string()
+              .describe("Fecha de corte o salida en formato YYYY-MM-DD"),
+            usedVacationDays: z
+              .number()
+              .min(0)
+              .max(30)
+              .optional()
+              .default(0)
+              .describe("Dias de vacaciones ya gozados (opcional)"),
+          })
+        ),
+        execute: async ({
+          monthlySalary,
+          startDate,
+          endDate,
+          usedVacationDays,
+        }) => {
+          if (countryCode !== "ni") {
+            return "El calculo de vacaciones solo esta disponible para Nicaragua actualmente."
+          }
+
+          try {
+            const result = calculateVacations({
+              countryCode: "ni",
+              monthlySalary,
+              startDate,
+              endDate,
+              usedVacationDays,
+            })
+            return JSON.stringify({
+              currency: result.currency,
+              accruedVacationDays: result.accruedVacationDays,
+              usedVacationDays: result.usedVacationDays,
+              pendingVacationDays: result.pendingVacationDays,
+              dailySalary: result.dailySalary,
+              amount: result.amount,
+              formula: result.formula,
+              legalReference: result.legalReference,
+              legalCorpusVersion: result.legalCorpusVersion,
+            })
+          } catch (e) {
+            return `Error al calcular vacaciones: ${e instanceof Error ? e.message : "error desconocido"}. Usa la calculadora guiada para un calculo mas preciso.`
           }
         },
       }),

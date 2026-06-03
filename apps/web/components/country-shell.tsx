@@ -1,22 +1,21 @@
 "use client"
 
 import { useEffect, useRef, useState } from "react"
-import { useRouter } from "next/navigation"
 import { LlmHome } from "@/components/chat/llm-home"
 import { AnimatedGridPattern } from "@/components/ui/animated-grid-pattern"
 import { getCountryAccent } from "@/lib/country-accent"
 import type { Locale } from "@/lib/i18n"
-import { localizedCountryPath } from "@/lib/i18n"
 import { cn } from "@/lib/utils"
 
 export function CountryShell({
   countryCode,
   locale,
+  initialTool,
 }: {
   countryCode: string
   locale: Locale
+  initialTool?: "settlement" | "vacations"
 }) {
-  const { push } = useRouter()
   const [isSpringing, setIsSpringing] = useState(false)
   const springTimeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null)
   const touchStartYRef = useRef<number | null>(null)
@@ -85,7 +84,7 @@ export function CountryShell({
       <style>{`html{overflow-y:scroll;scrollbar-width:none !important}html::-webkit-scrollbar{display:none !important}`}</style>
       <div
         className={cn(
-          "relative h-svh transform-gpu overflow-hidden",
+          "relative min-h-full overflow-y-auto",
           isSpringing && "justo-hero-spring"
         )}
         style={{ "--country-accent": getCountryAccent(countryCode) } as React.CSSProperties}
@@ -97,35 +96,15 @@ export function CountryShell({
         repeatDelay={1}
         className={cn(
           "mask-[radial-gradient(800px_circle_at_center,white,transparent)]",
-          "fixed inset-0 h-full w-full"
+          "absolute inset-0 z-0"
         )}
       />
-      <div className="relative z-10">
+      <div className="relative z-10 flex flex-1 flex-col min-h-0">
         <LlmHome
           countryCode={countryCode}
           locale={locale}
-          onChangeCountry={(nextCountryCode) => {
-            try {
-              localStorage.setItem("justo-country", nextCountryCode)
-            } catch {
-              /* noop */
-            }
-            push(localizedCountryPath(locale, nextCountryCode))
-          }}
-          onChangeLocale={(nextLocale) => {
-            try {
-              localStorage.setItem("justo-locale", nextLocale)
-            } catch {
-              /* noop */
-            }
-            push(localizedCountryPath(nextLocale, countryCode))
-          }}
+          initialTool={initialTool}
         />
-      </div>
-      <div className="pointer-events-none absolute inset-x-0 bottom-28 z-20 flex justify-center px-4 text-center text-[11px] font-medium tracking-widest text-muted-foreground uppercase motion-safe:animate-pulse max-sm:bottom-24">
-        {locale === "en"
-          ? "Swipe for legal explanation"
-          : "Desliza para ver la explicación legal"}
       </div>
     </div>
     </>

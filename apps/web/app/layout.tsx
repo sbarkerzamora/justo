@@ -4,6 +4,7 @@ import "./globals.css"
 import { RootProvider } from "fumadocs-ui/provider/next"
 import { ThemeProvider } from "@/components/theme-provider"
 import { LangUpdater } from "@/components/lang-updater"
+import { AppShell } from "@/components/app-shell"
 import { PlausibleAnalytics } from "@/components/plausible-analytics"
 import { cn } from "@/lib/utils"
 import { getSiteUrl } from "@/lib/site-url"
@@ -63,7 +64,9 @@ export default function RootLayout({
         <LangUpdater />
         <PlausibleAnalytics />
         <RootProvider search={{ preload: false }}>
-          <ThemeProvider>{children}</ThemeProvider>
+          <ThemeProvider>
+            <AppShell>{children}</AppShell>
+          </ThemeProvider>
         </RootProvider>
         <script
           src="https://cdnjs.buymeacoffee.com/1.0.0/widget.prod.min.js"
