@@ -11,13 +11,13 @@ import {
 import { countryList } from "@/lib/countries"
 import Image from "next/image"
 
-export function AnonCountrySelector({ current }: { current: string }) {
+export function GuideCountrySelector({ current }: { current: string }) {
   const { push } = useRouter()
 
   return (
     <Select
       value={current}
-      onValueChange={(cc) => push(`/anon-stats?country=${cc}`)}
+      onValueChange={(cc) => push(`/guia-laboral?country=${cc}`)}
     >
       <SelectTrigger
         aria-label="Seleccionar pais"

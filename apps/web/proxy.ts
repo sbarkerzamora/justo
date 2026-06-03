@@ -12,7 +12,7 @@ export function proxy(request: NextRequest) {
     pathname.startsWith("/api") ||
     pathname.startsWith("/docs") ||
     pathname.startsWith("/tools") ||
-    pathname.startsWith("/anon-stats") ||
+    pathname.startsWith("/guia-laboral") ||
     pathname === "/favicon.ico" ||
     pathname === "/robots.txt" ||
     pathname === "/sitemap.xml"

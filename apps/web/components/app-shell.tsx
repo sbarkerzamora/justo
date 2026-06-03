@@ -1,6 +1,6 @@
 "use client"
 
-import { useState, createContext, useContext, useCallback } from "react"
+import { useState, useEffect, createContext, useContext, useCallback } from "react"
 import Link from "next/link"
 import { usePathname, useRouter } from "next/navigation"
 import { useTheme } from "next-themes"
@@ -87,7 +87,7 @@ const sidebarIcons: Record<string, React.ReactNode> = {
   "Calculadora de liquidacion": <IconCalculator className="h-5 w-5 shrink-0" />,
   "Calculadora de vacaciones": <IconBeach className="h-5 w-5 shrink-0" />,
   Herramientas: <IconTools className="h-5 w-5 shrink-0" />,
-  Estadisticas: <IconChartBar className="h-5 w-5 shrink-0" />,
+  "Guia laboral": <IconChartBar className="h-5 w-5 shrink-0" />,
   "Marco legal": <IconBook className="h-5 w-5 shrink-0" />,
 }
 
@@ -107,6 +107,8 @@ export function AppShell({
   const { country, locale } = useStoredCountry(pathname, initialLocale, initialCountry)
   const { push } = useRouter()
   const { resolvedTheme, setTheme } = useTheme()
+  const [mounted, setMounted] = useState(false)
+  useEffect(() => setMounted(true), [])
   const toggleMobile = useCallback(() => setMobileOpen((p) => !p), [])
 
   if (isDocs) return <>{children}</>
@@ -123,7 +125,7 @@ export function AppShell({
     { label: "Calculadora de liquidacion", href: `${homePath}?tool=settlement` },
     { label: "Calculadora de vacaciones", href: `${homePath}?tool=vacations` },
     { label: "Herramientas", href: "/tools" },
-    { label: "Estadisticas", href: "/anon-stats" },
+    { label: "Guia laboral", href: "/guia-laboral" },
     { label: "Marco legal", href: "/docs/legal" },
   ]
 
@@ -355,7 +357,9 @@ export function AppShell({
                   onClick={() => setTheme(resolvedTheme === "dark" ? "light" : "dark")}
                   className="inline-flex size-8 items-center justify-center rounded-lg border border-border bg-card text-foreground transition-colors hover:bg-accent"
                 >
-                  {resolvedTheme === "dark" ? (
+                  {!mounted ? (
+                    <div className="size-4 rounded-full border border-border" />
+                  ) : resolvedTheme === "dark" ? (
                     <IconSun className="size-4" />
                   ) : (
                     <IconMoon className="size-4" />
@@ -446,13 +450,17 @@ function ThemeToggle({
   resolvedTheme?: string
   setTheme: (theme: string) => void
 }) {
+  const [mounted, setMounted] = useState(false)
+  useEffect(() => setMounted(true), [])
   return (
     <button
       type="button"
       onClick={() => setTheme(resolvedTheme === "dark" ? "light" : "dark")}
       className="inline-flex h-7 w-7 items-center justify-center rounded-lg border border-sidebar-border text-sidebar-foreground/70 transition-colors hover:bg-sidebar-accent hover:text-sidebar-foreground"
     >
-      {resolvedTheme === "dark" ? (
+      {!mounted ? (
+        <div className="size-3.5 rounded-full border border-sidebar-border" />
+      ) : resolvedTheme === "dark" ? (
         <IconSun className="size-3.5" />
       ) : (
         <IconMoon className="size-3.5" />

@@ -56,5 +56,14 @@ export default function sitemap(): MetadataRoute.Sitemap {
     }
   }
 
+  for (const country of countryList) {
+    entries.push({
+      url: `${SITE_URL}/guia-laboral?country=${country.code}`,
+      lastModified: LAST_MODIFIED,
+      changeFrequency: "weekly",
+      priority: 0.8,
+    })
+  }
+
   return [...entries, ...getDocsEntries()]
 }

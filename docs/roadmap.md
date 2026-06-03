@@ -5,7 +5,7 @@
 - [x] App shell con sidebar global.
 - [x] Herramientas invocables desde chat (query param `?tool=settlement|vacations`).
 - [x] Flujo vacaciones Nicaragua con endpoint determinístico.
-- [x] Ruta `/anon-stats` con explicación "cómo funciona" y estadísticas anónimas.
+- [x] Ruta `/guia-laboral` (antes `/anon-stats`) con explicación "cómo funciona" y estadísticas anónimas.
 - [x] Página principal por país solo muestra hero de chat.
 
 ## Next
@@ -33,7 +33,7 @@
 | PDF OSS (`@justo/pdf`) | Done | PDF básico imprimible. |
 | App Web (`@justo/web`) | Done | Next.js 16, Tailwind v4, shadcn, chat AI. |
 | Sidebar global | Done | Aceternity sidebar, no se muestra en `/docs`. |
-| `/anon-stats` | Done | Cómo funciona + estadísticas anónimas. |
+| `/guia-laboral` (antes `/anon-stats`) | Done | Cómo funciona + estadísticas anónimas. |
 | Vacations NI | Done | Flujo guiado + endpoint determinístico + tool backend. |
 | Settlement NI+10 | Done | 11 países con liquidación laboral determinística. |
 | `justo-pro` repo | Later | No crear todavía. |
