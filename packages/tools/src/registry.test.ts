@@ -21,6 +21,8 @@ describe("tools registry", () => {
       "vacations",
       "salary-net",
       "bonus",
+      "termination-simulator",
+      "contract",
     ])
   })
 

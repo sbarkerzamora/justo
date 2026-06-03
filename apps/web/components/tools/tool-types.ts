@@ -67,6 +67,36 @@ export type BonusFormData = {
   endDate: string
 }
 
+export type TerminationFormData = {
+  countryCode: string
+  monthlySalary: number
+  startDate: string
+  endDate: string
+}
+
+export type ContractFormData = {
+  countryCode: string
+  celebrationPlace: string
+  workerName: string
+  workerId: string
+  workerAddress: string
+  employerName: string
+  employerId: string
+  employerRepresentative: string
+  employerAddress: string
+  jobTitle: string
+  jobDescription: string
+  workLocation: string
+  jornada: "diurna" | "mixta" | "nocturna"
+  contractType: "indeterminado" | "plazo_fijo" | "obra_determinada"
+  startDate: string
+  endDate?: string
+  monthlySalary: number
+  paymentFrequency: "mensual" | "quincenal" | "semanal"
+  paymentMethod: "unidad_tiempo" | "destajo" | "comision" | "otro"
+  trialPeriodDays?: number
+}
+
 export type SettlementApiResponse = {
   input: SettlementForm
   result: {

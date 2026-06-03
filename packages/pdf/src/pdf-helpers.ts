@@ -193,6 +193,50 @@ export function drawTableRow(
   return y - rowH
 }
 
+export function drawWrappedText(
+  page: PDFPage,
+  text: string,
+  x: number,
+  y: number,
+  maxWidth: number,
+  opts: {
+    size?: number
+    bold?: boolean
+    color?: [number, number, number]
+    fontSet: FontSet
+    lineHeight?: number
+  }
+): { y: number; lines: number } {
+  const f = opts.bold ? opts.fontSet.bold : opts.fontSet.font
+  const size = opts.size ?? 11
+  const lh = opts.lineHeight ?? size + 4
+  const color = opts.color ? rgb(...opts.color) : COLORS.text
+  const words = text.split(/\s+/)
+  let line = ""
+  let lines = 0
+  let cy = y
+
+  for (const word of words) {
+    const testLine = line ? `${line} ${word}` : word
+    const w = f.widthOfTextAtSize(testLine, size)
+    if (w > maxWidth && line) {
+      page.drawText(line, { x, y: cy, size, font: f, color })
+      cy -= lh
+      lines++
+      line = word
+    } else {
+      line = testLine
+    }
+  }
+  if (line) {
+    page.drawText(line, { x, y: cy, size, font: f, color })
+    cy -= lh
+    lines++
+  }
+
+  return { y: cy, lines }
+}
+
 export function drawFooter(
   page: PDFPage,
   y: number,

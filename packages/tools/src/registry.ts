@@ -1,7 +1,9 @@
 import type { CountryCode } from "@justo/core"
 import { bonusTool } from "./bonus"
+import { contractTool } from "./contract"
 import { salaryNetTool } from "./salary-net"
 import { settlementTool } from "./settlement"
+import { terminationTool } from "./termination"
 import type { JustoTool, JustoToolCountryOverride, JustoToolAvailability, JustoToolCategory } from "./types"
 import { vacationsTool } from "./vacations"
 
@@ -60,27 +62,8 @@ export const tools = [
     inputRequirements: ["País", "Salario", "Horas trabajadas", "Tipo de jornada"],
     outputSummary: ["Horas reconocidas", "Recargo", "Monto total", "Referencias legales"],
   }),
-  comingSoonTool({
-    id: "termination-simulator",
-    slug: "simulador-terminacion",
-    name: "Simulador de terminación",
-    shortDescription: "Compara escenarios básicos de salida laboral.",
-    longDescription:
-      "Simulador abierto para comparar renuncia, despido justificado, despido injustificado u otros escenarios según país.",
-    category: "calculation",
-    inputRequirements: [
-      "País",
-      "Salario",
-      "Fechas",
-      "Vacaciones",
-      "Tipos de terminación",
-    ],
-    outputSummary: [
-      "Comparación de escenarios",
-      "Diferencias estimadas",
-      "Referencias legales",
-    ],
-  }),
+  terminationTool,
+  contractTool,
   comingSoonTool({
     id: "basic-settlement-document",
     slug: "finiquito-basico",
