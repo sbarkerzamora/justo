@@ -285,7 +285,12 @@ export function SalaryNetTool({
     const response = await fetch("/api/salary-net/pdf", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ countryCode, grossSalary, frequency }),
+      body: JSON.stringify({
+        countryCode,
+        grossSalary,
+        frequency,
+        ...(countryCode === "pe" ? { pensionSystem } : {}),
+      }),
     })
     if (!response.ok) return
     const blob = await response.blob()
