@@ -45,13 +45,13 @@ export const getMexicoTerminationParams = (): TerminationParams => ({
           {
             label: "Indemnización anual Art. 50 (12 días por año)",
             amount: ctx.dailySalary * indAnual,
-            formula: `${ctx.dailySalary} x ${ctx.fullYears} × 12 días`,
+            formula: `${ctx.dailySalary} x ${ctx.fullYears} x 12 días`,
             legalReference: "LFT Art. 50",
           },
           {
             label: "Prima de antigüedad Art. 162 (12 días por año)",
             amount: ctx.dailySalary * prima,
-            formula: `${ctx.dailySalary} x ${ctx.fullYears} × 12 días`,
+            formula: `${ctx.dailySalary} x ${ctx.fullYears} x 12 días`,
             legalReference: "LFT Art. 162",
           },
         ]

@@ -59,6 +59,8 @@ export interface ContractResult {
   trialPeriodDays: number | null
   countryCode: CountryCode
   currency: CurrencyCode
+  workerIdLabel: string
+  employerIdLabel: string
   sections: ContractSection[]
   generatedAt: string
   legalCorpusVersion: string

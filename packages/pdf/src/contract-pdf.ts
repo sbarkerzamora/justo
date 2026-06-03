@@ -50,11 +50,7 @@ function drawPageHeader(page: any, result: ContractResult, pageNum: number, tota
       size: 8, color: [0.55, 0.55, 0.55], align: "right", fontSet,
     })
   }
-  line(H - 58)
-}
-
-function line(y: number) {
-  // stub — no-op, we draw lines inline
+  hr(page, H - 58)
 }
 
 function hr(page: any, y: number, w?: number, c?: [number, number, number]) {
@@ -102,11 +98,12 @@ export const buildContractPdf = async (
   const fontSet = await loadFonts(pdf)
   const locale = currencyLocaleMap[result.currency] ?? "es-NI"
   const info = countryLaw[result.countryCode] ?? countryLaw.ni
+  let pageCount = 0
 
   const dateStr = new Date(result.generatedAt).toLocaleDateString(locale)
 
   const preambleParas = [
-    `En ${result.celebrationPlace}, a ${result.celebrationDate}, comparecen por una parte ${result.employerName}, identificado con ${result.countryCode === "ar" ? "CUIT" : "RUC"} No. ${result.employerId}, representado legalmente por ${result.employerRepresentative}, del domicilio de ${result.employerAddress}, a quien en adelante se denominará EL EMPLEADOR; y por otra parte ${result.workerName}, identificado con ${result.countryCode === "mx" ? "CURP" : "cédula de identidad"} No. ${result.workerId}, del domicilio de ${result.workerAddress}, a quien en adelante se denominará EL TRABAJADOR.`,
+    `En ${result.celebrationPlace}, a ${result.celebrationDate}, comparecen por una parte ${result.employerName}, identificado con ${result.employerIdLabel} No. ${result.employerId}, representado legalmente por ${result.employerRepresentative}, del domicilio de ${result.employerAddress}, a quien en adelante se denominará EL EMPLEADOR; y por otra parte ${result.workerName}, identificado con ${result.workerIdLabel} No. ${result.workerId}, del domicilio de ${result.workerAddress}, a quien en adelante se denominará EL TRABAJADOR.`,
     `Las partes, de común acuerdo, convienen en suscribir el presente Contrato Individual de Trabajo, que se regirá por las disposiciones contenidas en las cláusulas siguientes y por ${info.law} (${info.articles}).`,
   ]
 
@@ -226,7 +223,7 @@ export const buildContractPdf = async (
   y = noteResult.y - 6
 
   const empLine = `${result.employerName} · Representante legal: ${result.employerRepresentative}`
-  const wkLine = `${result.workerName} · ${result.countryCode === "mx" ? "CURP" : "Cédula"}: ${result.workerId}`
+  const wkLine = `${result.workerName} · ${result.workerIdLabel}: ${result.workerId}`
 
   drawText(page, "EL EMPLEADOR", left, y, { size: 10, bold: true, fontSet })
   drawText(page, empLine, left, y - 14, { size: 8, color: [0.45, 0.45, 0.45], fontSet })
@@ -280,14 +277,12 @@ function drawPartiesBox(
   return cy - 4
 }
 
-let pageCount = 0
-
 function addPage(
   pdf: any, fontSet: any, currentPage: any, result: ContractResult,
   _pageNum: number, totalPages: number,
 ): number {
-  pageCount++
   const page = pdf.addPage([W, H])
-  drawPageHeader(page, result, pageCount + 1, totalPages, fontSet)
+  const pageNum = 1 + Math.min(999, Math.max(0, pdf.getPageCount() - 1))
+  drawPageHeader(page, result, pageNum, totalPages, fontSet)
   return H - 80
 }

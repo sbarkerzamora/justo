@@ -53,7 +53,7 @@ export const getPanamaTerminationParams = (): TerminationParams => ({
           lines.push({
             label: "Indemnización Art. 225 (23.8 días/año primeros 10, luego 7 días/año)",
             amount: ctx.dailySalary * indemnDays,
-            formula: `${ctx.dailySalary} x (min(${fullYrs},10)×23.8 + max(${fullYrs}-10,0)×7) días`,
+            formula: `${ctx.dailySalary} x (min(${fullYrs},10)x23.8 + max(${fullYrs}-10,0)x7) días`,
             legalReference: "Código de Trabajo Art. 225",
           })
         }

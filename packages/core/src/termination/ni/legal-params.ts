@@ -20,21 +20,26 @@ export const getNicaraguaTerminationParams = (): TerminationParams => ({
       type: "despido_injustificado",
       applicable: true,
       buildLines: (ctx) => {
-        const firstTramoDays = Math.min(ctx.fullYears, 3) * 30
-        const secondTramoDays = Math.max(ctx.fullYears - 3, 0) * 20
-        const totalDays = Math.min(150, Math.max(30, firstTramoDays + secondTramoDays))
+        const fullYears = ctx.fullYears
+        const fraction = ctx.tenureYears - fullYears
 
-        const fractionalDays =
-          ctx.tenureYears - ctx.fullYears > 0
-            ? Math.round((ctx.tenureYears - ctx.fullYears) * totalDays)
+        const baseDays =
+          Math.min(fullYears, 3) * 30 + Math.max(fullYears - 3, 0) * 20
+
+        const fracDays =
+          fraction > 0
+            ? fullYears < 3
+              ? fraction * 30
+              : fraction * 20
             : 0
-        const effectiveDays = Math.min(150, Math.max(30, totalDays + fractionalDays))
+
+        const totalDays = Math.min(150, Math.max(30, baseDays + fracDays))
 
         return [
           makeIndemnityLine(
             "Indemnización Art. 45 (30/20 días por año)",
             ctx.dailySalary,
-            effectiveDays,
+            totalDays,
             "Ley 185 Arts. 42, 43 y 45",
           ),
         ]

@@ -17,8 +17,8 @@ const countryCodes = [
 export const bonusInputSchema = z.object({
   countryCode: z.enum(countryCodes),
   monthlySalary: z.number().positive(),
-  startDate: z.string().min(10),
-  endDate: z.string().min(10),
+  startDate: z.string().regex(/^\d{4}-\d{2}-\d{2}$/),
+  endDate: z.string().regex(/^\d{4}-\d{2}-\d{2}$/),
 })
 
 export type BonusInputPayload = z.infer<typeof bonusInputSchema>

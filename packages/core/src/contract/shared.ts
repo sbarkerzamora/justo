@@ -193,6 +193,8 @@ export function buildContract(
     trialPeriodDays: input.trialPeriodDays ?? null,
     countryCode: input.countryCode,
     currency: params.currency,
+    workerIdLabel: params.workerIdLabel,
+    employerIdLabel: params.employerIdLabel,
     sections,
     generatedAt: new Date().toISOString(),
     legalCorpusVersion: params.corpusVersion,
