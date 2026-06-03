@@ -32,6 +32,12 @@ import {
   FrequencyPicker,
   stepOrder,
 } from "@/components/tools/settlement-panels"
+import {
+  formatCurrencyInput,
+  formatDateInput,
+  formatNumberInput,
+  parseCurrencyInput,
+} from "@/components/tools/input-formatters"
 
 export type SettlementStep =
   | "welcome"
@@ -168,7 +174,13 @@ export function SettlementTool({
   }, [copy, currencyLabel])
 
   const applyField = (field: keyof SettlementForm, value: string): boolean => {
-    if (field === "monthlySalary" || field === "unusedVacationDays") {
+    if (field === "monthlySalary") {
+      const n = parseCurrencyInput(value)
+      if (Number.isNaN(n) || n < 0) return false
+      dispatch({ type: "patchForm", patch: { [field]: n } as Partial<SettlementForm> })
+      return true
+    }
+    if (field === "unusedVacationDays") {
       const n = Number(value)
       if (Number.isNaN(n) || n < 0) return false
       dispatch({ type: "patchForm", patch: { [field]: n } as Partial<SettlementForm> })
@@ -190,6 +202,13 @@ export function SettlementTool({
     if (v.length < 2) return false
     dispatch({ type: "patchForm", patch: { [field]: v } as Partial<SettlementForm> })
     return true
+  }
+
+  const getFormattedInputValue = (s: SettlementStep, value: string): string => {
+    if (s === "monthlySalary") return formatCurrencyInput(value)
+    if (s === "startDate" || s === "endDate") return formatDateInput(value)
+    if (s === "unusedVacationDays") return formatNumberInput(value)
+    return value
   }
 
   const advance = () => {
@@ -350,19 +369,6 @@ export function SettlementTool({
             startLabel={copy.startButton}
             onStart={() => dispatch({ type: "setStep", step: "employeeName" })}
           />
-        ) : step === "confirm" ? (
-          <div className="space-y-4 overflow-y-auto">
-            <ConfirmPanelTool
-              form={form}
-              fmt={fmt}
-              copy={copy}
-              onConfirmAction={onConfirmAction}
-            />
-          </div>
-        ) : step === "frequency" ? (
-          <div className="space-y-4 overflow-y-auto">
-            <FrequencyPicker onSelect={onFrequencySelect} copy={copy} />
-          </div>
         ) : editMode ? (
           <div className="space-y-4 overflow-y-auto">
             <EditPanelTool
@@ -376,6 +382,19 @@ export function SettlementTool({
               saveEdit={saveEdit}
               copy={copy}
             />
+          </div>
+        ) : step === "confirm" ? (
+          <div className="space-y-4 overflow-y-auto">
+            <ConfirmPanelTool
+              form={form}
+              fmt={fmt}
+              copy={copy}
+              onConfirmAction={onConfirmAction}
+            />
+          </div>
+        ) : step === "frequency" ? (
+          <div className="space-y-4 overflow-y-auto">
+            <FrequencyPicker onSelect={onFrequencySelect} copy={copy} />
           </div>
         ) : result && step === "done" ? (
           <div className="space-y-4 overflow-y-auto">
@@ -398,13 +417,22 @@ export function SettlementTool({
               <input
                 ref={inputRef}
                 value={inputValue}
-                onChange={(e) => setInputValue(e.target.value)}
+                onChange={(e) => setInputValue(getFormattedInputValue(step, e.target.value))}
                 onKeyDown={(e) => {
                   if (e.key === "Enter") {
                     e.preventDefault()
                     handleSubmit()
                   }
                 }}
+                inputMode={
+                  step === "monthlySalary"
+                    ? "decimal"
+                    : step === "startDate" || step === "endDate"
+                      ? "numeric"
+                      : step === "unusedVacationDays"
+                        ? "numeric"
+                        : "text"
+                }
                 placeholder={copy.askPlaceholder}
                 className="h-12 w-full rounded-2xl border border-border bg-card px-4 text-sm text-foreground placeholder:text-muted-foreground outline-none transition-colors focus:border-foreground/30"
               />
@@ -551,22 +579,22 @@ function EditPanelTool({
       {editMode === "salary" ? (
         <label className="grid gap-2 text-sm">
           <span className="text-foreground">{copy.newMonthlySalary}</span>
-          <input inputMode="decimal" value={editSalary} onChange={(e) => onSetEditField("editSalary", e.target.value)} className="h-10 rounded-xl border border-border bg-background px-3 text-foreground outline-none focus:border-foreground/30" />
+          <input inputMode="decimal" value={editSalary} onChange={(e) => onSetEditField("editSalary", formatCurrencyInput(e.target.value))} className="h-10 rounded-xl border border-border bg-background px-3 text-foreground outline-none focus:border-foreground/30" />
         </label>
       ) : editMode === "vacations" ? (
         <label className="grid gap-2 text-sm">
           <span className="text-foreground">{copy.newVacationDays}</span>
-          <input inputMode="numeric" value={editVacations} onChange={(e) => onSetEditField("editVacations", e.target.value)} className="h-10 rounded-xl border border-border bg-background px-3 text-foreground outline-none focus:border-foreground/30" />
+          <input inputMode="numeric" value={editVacations} onChange={(e) => onSetEditField("editVacations", formatNumberInput(e.target.value))} className="h-10 rounded-xl border border-border bg-background px-3 text-foreground outline-none focus:border-foreground/30" />
         </label>
       ) : editMode === "dates" ? (
         <div className="grid gap-3 text-sm">
           <label className="grid gap-1.5">
             <span className="text-foreground">{copy.startDate}</span>
-            <input inputMode="numeric" pattern="[0-9/]*" value={editStartDate} onChange={(e) => onSetEditField("editStartDate", e.target.value)} className="h-10 rounded-xl border border-border bg-background px-3 text-foreground outline-none focus:border-foreground/30" />
+            <input inputMode="numeric" pattern="[0-9/]*" value={editStartDate} onChange={(e) => onSetEditField("editStartDate", formatDateInput(e.target.value))} className="h-10 rounded-xl border border-border bg-background px-3 text-foreground outline-none focus:border-foreground/30" />
           </label>
           <label className="grid gap-1.5">
             <span className="text-foreground">{copy.endDate}</span>
-            <input inputMode="numeric" pattern="[0-9/]*" value={editEndDate} onChange={(e) => onSetEditField("editEndDate", e.target.value)} className="h-10 rounded-xl border border-border bg-background px-3 text-foreground outline-none focus:border-foreground/30" />
+            <input inputMode="numeric" pattern="[0-9/]*" value={editEndDate} onChange={(e) => onSetEditField("editEndDate", formatDateInput(e.target.value))} className="h-10 rounded-xl border border-border bg-background px-3 text-foreground outline-none focus:border-foreground/30" />
           </label>
         </div>
       ) : null}

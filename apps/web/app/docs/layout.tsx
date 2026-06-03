@@ -1,4 +1,5 @@
 import type { ReactNode } from "react"
+import { RootProvider } from "fumadocs-ui/provider/next"
 import { DocsLayout } from "fumadocs-ui/layouts/docs"
 import { IconCalculator, IconGavel } from "@tabler/icons-react"
 import { source } from "@/lib/source"
@@ -7,7 +8,7 @@ import { DocsFooter } from "@/components/docs-footer"
 
 export default function Layout({ children }: { children: ReactNode }) {
   return (
-    <>
+    <RootProvider search={{ preload: false }}>
       <DocsLayout
         tree={source.pageTree}
         containerProps={{
@@ -35,6 +36,6 @@ export default function Layout({ children }: { children: ReactNode }) {
         {children}
       </DocsLayout>
       <DocsFooter />
-    </>
+    </RootProvider>
   )
 }

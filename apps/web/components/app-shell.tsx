@@ -7,8 +7,9 @@ import { useTheme } from "next-themes"
 import Image from "next/image"
 import { cn } from "@/lib/utils"
 import { countryList, isValidCountry } from "@/lib/countries"
-import { localizedCountryPath, isValidLocale } from "@/lib/i18n"
+import { localizedCountryPath, isValidLocale, type Locale } from "@/lib/i18n"
 import { getCountryAccent } from "@/lib/country-accent"
+import { homeCopy } from "@/lib/home-copy"
 import {
   Select,
   SelectContent,
@@ -26,7 +27,6 @@ import {
   IconBrandGithub,
   IconMoon,
   IconSun,
-  IconRocket,
   IconX,
   IconArrowRight,
   IconCash,
@@ -36,13 +36,19 @@ import {
   IconFile,
   IconClipboardCheck,
   IconUserPlus,
+  IconMenu2,
+  IconBuilding,
 } from "@tabler/icons-react"
 
 type SidebarCtx = { open: boolean; setOpen: (v: boolean) => void }
 const SidebarCtx = createContext<SidebarCtx>({ open: true, setOpen: () => {} })
 export function useSidebarOpen() { return useContext(SidebarCtx) }
 
-function useStoredCountry(pathname: string) {
+function useStoredCountry(
+  pathname: string,
+  initialLocale?: string,
+  initialCountry?: string
+) {
   const segments = pathname.split("/").filter(Boolean)
   const countryFromPath =
     segments.length >= 2 && isValidLocale(segments[0]) && isValidCountry(segments[1])
@@ -54,14 +60,19 @@ function useStoredCountry(pathname: string) {
       : null
 
   const [stored] = useState(() => {
-    if (typeof window === "undefined") return { country: "ni", locale: "es" }
+    if (typeof window === "undefined") {
+      return {
+        country: initialCountry ?? "ni",
+        locale: initialLocale ?? "es",
+      }
+    }
     try {
       return {
-        country: localStorage.getItem("justo-country") ?? "ni",
-        locale: localStorage.getItem("justo-locale") ?? "es",
+        country: localStorage.getItem("justo-country") ?? initialCountry ?? "ni",
+        locale: localStorage.getItem("justo-locale") ?? initialLocale ?? "es",
       }
     } catch {
-      return { country: "ni", locale: "es" }
+      return { country: initialCountry ?? "ni", locale: initialLocale ?? "es" }
     }
   })
 
@@ -80,12 +91,20 @@ const sidebarIcons: Record<string, React.ReactNode> = {
   "Marco legal": <IconBook className="h-5 w-5 shrink-0" />,
 }
 
-export function AppShell({ children }: { children: React.ReactNode }) {
+export function AppShell({
+  children,
+  initialLocale,
+  initialCountry,
+}: {
+  children: React.ReactNode
+  initialLocale?: string
+  initialCountry?: string
+}) {
   const pathname = usePathname()
   const isDocs = pathname.startsWith("/docs")
   const [open, setOpen] = useState(true)
   const [mobileOpen, setMobileOpen] = useState(false)
-  const { country, locale } = useStoredCountry(pathname)
+  const { country, locale } = useStoredCountry(pathname, initialLocale, initialCountry)
   const { push } = useRouter()
   const { resolvedTheme, setTheme } = useTheme()
   const toggleMobile = useCallback(() => setMobileOpen((p) => !p), [])
@@ -135,14 +154,14 @@ export function AppShell({ children }: { children: React.ReactNode }) {
       </div>
 
       {open ? (
-        <div className="mb-3 rounded-lg border border-sidebar-border bg-sidebar-accent/50 px-3 py-2">
-          <div className="flex items-center gap-1.5 text-[10px] font-semibold uppercase tracking-[0.12em] text-sidebar-foreground/70">
-            <IconRocket className="size-3" />
-            Proximamente
-          </div>
-          <p className="mt-0.5 text-[11px] leading-snug text-sidebar-foreground/80">
-            Justo IA para empresas
-          </p>
+        <div className="group mb-2 flex items-center gap-2 rounded-lg border border-sidebar-border bg-sidebar-accent/40 px-2.5 py-1.5 transition-colors hover:border-sidebar-foreground/15 hover:bg-sidebar-accent/60">
+          <IconBuilding className="size-3.5 shrink-0 text-primary" />
+          <span className="truncate text-[11px] font-medium text-sidebar-foreground">
+            {homeCopy[locale as Locale].hrCtaTitle}
+          </span>
+          <span className="ml-auto inline-flex shrink-0 items-center rounded bg-primary/10 px-1 py-0.5 text-[8px] font-semibold uppercase tracking-wider text-primary">
+            {homeCopy[locale as Locale].hrCtaBadge}
+          </span>
         </div>
       ) : null}
 
@@ -268,7 +287,7 @@ export function AppShell({ children }: { children: React.ReactNode }) {
                   className="inline-flex size-8 items-center justify-center rounded-lg text-foreground transition-colors hover:bg-accent md:hidden"
                   aria-label="Abrir menu"
                 >
-                  <IconTools className="size-4" />
+                  <IconMenu2 className="size-4" />
                 </button>
                 <Link href="/" className="flex items-center gap-2">
                   <div

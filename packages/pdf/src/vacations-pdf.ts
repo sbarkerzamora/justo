@@ -1,5 +1,5 @@
 import { PDFDocument } from "pdf-lib"
-import type { SettlementInput, SettlementResult } from "@justo/core"
+import type { VacationInput, VacationResult } from "@justo/core"
 import {
   loadFonts,
   drawText,
@@ -8,8 +8,6 @@ import {
   drawSectionTitle,
   drawKeyValue,
   drawSignatureBoxes,
-  drawTableHeader,
-  drawTableRow,
   drawFooter,
 } from "./pdf-helpers"
 
@@ -29,9 +27,9 @@ const currencyFormatters: Record<string, Intl.NumberFormat> = {
 const money = (amount: number, currencyCode: string) =>
   (currencyFormatters[currencyCode] ?? currencyFormatters.NIO).format(amount)
 
-export const buildSettlementPdf = async (
-  input: SettlementInput,
-  result: SettlementResult,
+export const buildVacationsPdf = async (
+  input: VacationInput,
+  result: VacationResult,
 ) => {
   const pdf = await PDFDocument.create()
   const page = pdf.addPage([595.28, 841.89])
@@ -44,7 +42,7 @@ export const buildSettlementPdf = async (
   let y = H - 48
 
   // ── HEADER ──
-  drawText(page, "LIQUIDACION LABORAL", left, y, { size: 24, bold: true, fontSet })
+  drawText(page, "VACACIONES", left, y, { size: 24, bold: true, fontSet })
   y -= 32
   drawText(page, `Reporte generado automaticamente · ${result.currency}`, left, y, {
     size: 10,
@@ -63,21 +61,20 @@ export const buildSettlementPdf = async (
   // ── DATOS DEL CASO ──
   y = drawSectionTitle(page, "Datos del caso", left, y - 12, fontSet)
   const cardY = y + 4
-  const cardH = 90
+  const cardH = 72
   drawBox(page, left - 4, cardY - cardH + 4, right - left + 8, cardH, {
     borderColor: [0.85, 0.85, 0.85],
     borderWidth: 1,
     fillColor: [0.98, 0.98, 0.98],
   })
   y = cardY - 10
-  y = drawKeyValue(page, "Trabajador:", input.employeeName, left, y, fontSet)
-  y = drawKeyValue(page, "Empleador:", input.employerName, left, y, fontSet)
   y = drawKeyValue(page, "Salario mensual:", money(input.monthlySalary, result.currency), left, y, fontSet)
-  y = drawKeyValue(page, "Antiguedad:", result.tenureText, left, y, fontSet)
+  y = drawKeyValue(page, "Periodo:", `${input.startDate} -> ${input.endDate}`, left, y, fontSet)
+  y = drawKeyValue(page, "Dias gozados:", `${input.usedVacationDays} dias`, left, y, fontSet)
   y -= 4
 
-  // ── RESUMEN EJECUTIVO ──
-  y = drawSectionTitle(page, "Resumen ejecutivo", left, y - 8, fontSet)
+  // ── RESULTADO ──
+  y = drawSectionTitle(page, "Resultado", left, y - 8, fontSet)
 
   const netBoxH = 56
   const netBoxY = y - netBoxH
@@ -86,16 +83,21 @@ export const buildSettlementPdf = async (
     borderWidth: 1.5,
     fillColor: [1, 1, 1],
   })
-  drawText(page, "NETO A RECIBIR", left + 16, netBoxY + 34, { size: 11, bold: true, fontSet })
-  const netAmountStr = money(result.netTotal, result.currency)
-  drawText(page, netAmountStr, right - 16, netBoxY + 28, { size: 20, bold: true, align: "right", fontSet })
+  drawText(page, "MONTO ESTIMADO", left + 16, netBoxY + 34, { size: 11, bold: true, fontSet })
+  const amountStr = money(result.amount, result.currency)
+  drawText(page, amountStr, right - 16, netBoxY + 28, { size: 20, bold: true, align: "right", fontSet })
 
-  drawText(page, `Total ingresos: ${money(result.grossIncome, result.currency)}`, left + 16, netBoxY + 10, {
+  drawText(page, `Dias acumulados: ${result.accruedVacationDays}`, left + 16, netBoxY + 10, {
     size: 9,
     color: [0.55, 0.55, 0.55],
     fontSet,
   })
-  drawText(page, `Total deducciones: ${money(result.totalDeductions, result.currency)}`, left + 220, netBoxY + 10, {
+  drawText(page, `Dias pendientes: ${result.pendingVacationDays}`, left + 220, netBoxY + 10, {
+    size: 9,
+    color: [0.55, 0.55, 0.55],
+    fontSet,
+  })
+  drawText(page, `Salario diario: ${money(result.dailySalary, result.currency)}`, left + 380, netBoxY + 10, {
     size: 9,
     color: [0.55, 0.55, 0.55],
     fontSet,
@@ -103,68 +105,39 @@ export const buildSettlementPdf = async (
 
   y = netBoxY - 12
 
-  // ── INGRESOS ──
-  y = drawSectionTitle(page, "Ingresos", left, y - 8, fontSet)
+  // ── DETALLE ──
+  y = drawSectionTitle(page, "Detalle", left, y - 8, fontSet)
 
-  const col1 = left + 4
-  const col2 = left + 140
-  const col3 = left + 300
-  const col4 = right - 4
+  const detailCardH = 80
+  const detailCardY = y - detailCardH
+  drawBox(page, left - 4, detailCardY + 4, right - left + 8, detailCardH, {
+    borderColor: [0.85, 0.85, 0.85],
+    borderWidth: 1,
+    fillColor: [0.98, 0.98, 0.98],
+  })
 
-  y = drawTableHeader(page, [
-    { label: "Concepto", x: col1 },
-    { label: "Formula", x: col2 },
-    { label: "Base legal", x: col3 },
-    { label: "Monto", x: col4 },
-  ], y, left, right, fontSet)
-
-  for (const line of result.incomes) {
-    y = drawTableRow(page, [
-      { text: line.label, x: col1 },
-      { text: line.formula, x: col2, size: 8 },
-      { text: line.legalReference, x: col3, size: 8 },
-      { text: money(line.amount, result.currency), x: col4, bold: true },
-    ], y, left, right, fontSet)
-  }
-
-  y = y - 4
-  drawText(page, `Total ingresos: ${money(result.grossIncome, result.currency)}`, right - 4, y, {
-    size: 11,
-    bold: true,
-    align: "right",
+  drawText(page, "Formula aplicada", left, detailCardY + detailCardH - 14, {
+    size: 10,
+    color: [0.45, 0.45, 0.45],
     fontSet,
   })
-  y -= 6
-  drawLine(page, left, y, right, y, { color: [0.85, 0.85, 0.85], width: 0.5 })
-
-  // ── DEDUCCIONES ──
-  y = drawSectionTitle(page, "Deducciones", left, y - 8, fontSet)
-
-  y = drawTableHeader(page, [
-    { label: "Concepto", x: col1 },
-    { label: "Formula", x: col2 },
-    { label: "Base legal", x: col3 },
-    { label: "Monto", x: col4 },
-  ], y, left, right, fontSet)
-
-  for (const line of result.deductions) {
-    y = drawTableRow(page, [
-      { text: line.label, x: col1 },
-      { text: line.formula, x: col2, size: 8 },
-      { text: line.legalReference, x: col3, size: 8 },
-      { text: money(line.amount, result.currency), x: col4, bold: true },
-    ], y, left, right, fontSet)
-  }
-
-  y = y - 4
-  drawText(page, `Total deducciones: ${money(result.totalDeductions, result.currency)}`, right - 4, y, {
-    size: 11,
+  drawText(page, result.formula, left, detailCardY + detailCardH - 32, {
+    size: 10,
     bold: true,
-    align: "right",
     fontSet,
   })
-  y -= 6
-  drawLine(page, left, y, right, y, { color: [0.85, 0.85, 0.85], width: 0.5 })
+
+  drawText(page, "Referencia legal", left, detailCardY + detailCardH - 52, {
+    size: 10,
+    color: [0.45, 0.45, 0.45],
+    fontSet,
+  })
+  drawText(page, result.legalReference, left, detailCardY + detailCardH - 68, {
+    size: 9,
+    fontSet,
+  })
+
+  y = detailCardY - 12
 
   // ── FIRMAS ──
   y = drawSectionTitle(page, "Firmas", left, y - 8, fontSet)

@@ -2,6 +2,8 @@
 
 import type { ReactNode } from "react"
 import { useReducer, useState, useCallback, useRef } from "react"
+import Image from "next/image"
+import Link from "next/link"
 import {
   IconArrowLeft,
   IconArrowRight,
@@ -14,24 +16,45 @@ import {
   IconFileText,
   IconReceipt,
   IconSun,
+  IconDownload,
+  IconEdit,
+  IconAlertCircle,
 } from "@tabler/icons-react"
 import { calculateVacations } from "@justo/tools"
+import type { CountryCode } from "@justo/core"
 import type { Locale } from "@/lib/i18n"
 import { homeCopy } from "@/lib/home-copy"
 import type { VacationFormData } from "@/components/tools/tool-types"
+import {
+  formatCurrencyInput,
+  formatDateInput,
+  formatNumberInput,
+  parseCurrencyInput,
+} from "@/components/tools/input-formatters"
 
 export type VacationStep = "welcome" | "monthlySalary" | "startDate" | "endDate" | "usedVacationDays" | "confirm" | "done"
+
+type VacationEditMode = null | "salary" | "dates" | "vacations"
 
 interface VacationToolState {
   step: VacationStep
   form: VacationFormData
   result: ReturnType<typeof calculateVacations> | null
+  editMode: VacationEditMode
+  editSalary: string
+  editStartDate: string
+  editEndDate: string
+  editVacations: string
+  error: string | null
 }
 
 type Action =
   | { type: "setStep"; step: VacationStep }
   | { type: "patchForm"; patch: Partial<VacationFormData> }
   | { type: "setResult"; result: ReturnType<typeof calculateVacations> | null }
+  | { type: "setEditMode"; editMode: VacationEditMode }
+  | { type: "setEditField"; field: "editSalary" | "editStartDate" | "editEndDate" | "editVacations"; value: string }
+  | { type: "setError"; error: string | null }
   | { type: "reset"; countryCode: string }
 
 const initialState = (cc: string): VacationToolState => ({
@@ -44,16 +67,28 @@ const initialState = (cc: string): VacationToolState => ({
     usedVacationDays: 0,
   },
   result: null,
+  editMode: null,
+  editSalary: "",
+  editStartDate: "",
+  editEndDate: "",
+  editVacations: "",
+  error: null,
 })
 
 function reducer(state: VacationToolState, action: Action): VacationToolState {
   switch (action.type) {
     case "setStep":
-      return { ...state, step: action.step }
+      return { ...state, step: action.step, error: null }
     case "patchForm":
       return { ...state, form: { ...state.form, ...action.patch } }
     case "setResult":
       return { ...state, result: action.result }
+    case "setEditMode":
+      return { ...state, editMode: action.editMode, error: null }
+    case "setEditField":
+      return { ...state, [action.field]: action.value }
+    case "setError":
+      return { ...state, error: action.error }
     case "reset":
       return initialState(action.countryCode)
     default:
@@ -84,6 +119,7 @@ const stepIndex = (step: VacationStep) => {
 
 export function VacationsTool({
   countryCode,
+  countryName,
   locale,
   currencyLabel,
   fmt,
@@ -103,7 +139,7 @@ export function VacationsTool({
   const [inputValue, setInputValue] = useState("")
   const inputRef = useRef<HTMLInputElement>(null)
 
-  const { step, form, result } = state
+  const { step, form, result, editMode, error } = state
 
   const askText = useCallback((s: VacationStep) => {
     const map: Record<string, string> = {
@@ -121,19 +157,32 @@ export function VacationsTool({
   }
 
   const applyField = (field: keyof VacationFormData, value: string): boolean => {
-    if (field === "monthlySalary" || field === "usedVacationDays") {
-      const n = Number(value)
+    if (field === "monthlySalary") {
+      const n = parseCurrencyInput(value)
       if (!Number.isFinite(n) || n <= 0) return false
       dispatch({ type: "patchForm", patch: { [field]: n } as Partial<VacationFormData> })
       return true
     }
+    if (field === "usedVacationDays") {
+      const n = Number(value)
+      if (!Number.isFinite(n) || n < 0) return false
+      dispatch({ type: "patchForm", patch: { [field]: n } as Partial<VacationFormData> })
+      return true
+    }
     if (field === "startDate" || field === "endDate") {
-      const iso = toIsoDate(value)
+      const iso = toIsoDate(value.trim())
       if (!iso) return false
-      dispatch({ type: "patchForm", patch: { [field]: iso } as Partial<VacationFormData> })
+      dispatch({ type: "patchForm", patch: { [field]: value.trim() } as Partial<VacationFormData> })
       return true
     }
     return true
+  }
+
+  const getFormattedInputValue = (s: VacationStep, value: string): string => {
+    if (s === "monthlySalary") return formatCurrencyInput(value)
+    if (s === "startDate" || s === "endDate") return formatDateInput(value)
+    if (s === "usedVacationDays") return formatNumberInput(value)
+    return value
   }
 
   const advance = () => {
@@ -157,14 +206,78 @@ export function VacationsTool({
   }
 
   const runCalculation = () => {
-    if (form.endDate < form.startDate) return
+    const startIso = toIsoDate(form.startDate)
+    const endIso = toIsoDate(form.endDate)
+    if (!startIso || !endIso) {
+      dispatch({ type: "setError", error: copy.invalidDates })
+      return
+    }
+    if (endIso < startIso) {
+      dispatch({ type: "setError", error: copy.endBeforeStart })
+      return
+    }
     try {
-      const result = calculateVacations({ ...form, countryCode: countryCode as "ni" })
+      const result = calculateVacations({
+        ...form,
+        startDate: startIso,
+        endDate: endIso,
+        countryCode: countryCode as CountryCode,
+      })
       dispatch({ type: "setResult", result })
       dispatch({ type: "setStep", step: "done" })
-    } catch {
-      // handle error
+      dispatch({ type: "setError", error: null })
+    } catch (err) {
+      dispatch({ type: "setError", error: err instanceof Error ? err.message : copy.calculationFailed })
     }
+  }
+
+  const onConfirmAction = (action: "confirm" | "salary" | "dates" | "vacations") => {
+    if (action === "confirm") {
+      runCalculation()
+      return
+    }
+    dispatch({ type: "setEditMode", editMode: action })
+    if (action === "salary") dispatch({ type: "setEditField", field: "editSalary", value: String(form.monthlySalary || "") })
+    if (action === "dates") {
+      dispatch({ type: "setEditField", field: "editStartDate", value: form.startDate })
+      dispatch({ type: "setEditField", field: "editEndDate", value: form.endDate })
+    }
+    if (action === "vacations") dispatch({ type: "setEditField", field: "editVacations", value: String(form.usedVacationDays || 0) })
+  }
+
+  const saveEdit = () => {
+    if (editMode === "salary" && !applyField("monthlySalary", state.editSalary)) {
+      dispatch({ type: "setError", error: copy.invalidData })
+      return
+    }
+    if (editMode === "vacations" && !applyField("usedVacationDays", state.editVacations)) {
+      dispatch({ type: "setError", error: copy.invalidData })
+      return
+    }
+    if (editMode === "dates") {
+      if (!applyField("startDate", state.editStartDate) || !applyField("endDate", state.editEndDate)) {
+        dispatch({ type: "setError", error: copy.invalidDates })
+        return
+      }
+    }
+    dispatch({ type: "setEditMode", editMode: null })
+    dispatch({ type: "setError", error: null })
+  }
+
+  const onExportPdf = async () => {
+    const response = await fetch("/api/vacations/pdf", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify(form),
+    })
+    if (!response.ok) return
+    const blob = await response.blob()
+    const url = URL.createObjectURL(blob)
+    const a = document.createElement("a")
+    a.href = url
+    a.download = `vacaciones-${countryCode}.pdf`
+    a.click()
+    URL.revokeObjectURL(url)
   }
 
   const handleComplete = () => {
@@ -214,6 +327,22 @@ export function VacationsTool({
         <div className="h-1.5 rounded-full bg-muted">
           <div className="h-1.5 rounded-full bg-primary transition-all duration-300" style={{ width: `${(stepIndex(step) / 6) * 100}%` }} />
         </div>
+        <div className="flex items-center gap-1.5 text-[11px] text-muted-foreground">
+          <Image
+            src={`https://flagcdn.com/w40/${countryCode}.png`}
+            alt={countryName}
+            width={14}
+            height={10}
+            className="h-2.5 w-3.5 rounded-[1px] border border-border object-cover"
+          />
+          <span>{copy.calculatingUnder(countryName)}</span>
+          <Link
+            href="/docs"
+            className="ml-auto underline underline-offset-2 hover:text-foreground"
+          >
+            {copy.legalDocs}
+          </Link>
+        </div>
       </div>
 
       <div className="min-h-0 flex-1 py-2">
@@ -231,13 +360,39 @@ export function VacationsTool({
             startLabel={copy.startButton}
             onStart={() => dispatch({ type: "setStep", step: "monthlySalary" })}
           />
+        ) : editMode ? (
+          <div className="space-y-4 overflow-y-auto">
+            {error ? (
+              <div className="flex items-center gap-2 rounded-xl border border-rose-200 bg-rose-50 px-4 py-3 text-sm text-rose-700">
+                <IconAlertCircle className="size-4 shrink-0" />
+                {error}
+              </div>
+            ) : null}
+            <EditPanel
+              editMode={editMode}
+              editSalary={state.editSalary}
+              editVacations={state.editVacations}
+              editStartDate={state.editStartDate}
+              editEndDate={state.editEndDate}
+              onSetEditField={(field, value) => dispatch({ type: "setEditField", field: field as "editSalary" | "editVacations" | "editStartDate" | "editEndDate", value })}
+              onSetEditMode={(mode) => dispatch({ type: "setEditMode", editMode: mode })}
+              saveEdit={saveEdit}
+              copy={copy}
+            />
+          </div>
         ) : step === "confirm" ? (
           <div className="space-y-4 overflow-y-auto">
+            {error ? (
+              <div className="flex items-center gap-2 rounded-xl border border-rose-200 bg-rose-50 px-4 py-3 text-sm text-rose-700">
+                <IconAlertCircle className="size-4 shrink-0" />
+                {error}
+              </div>
+            ) : null}
             <ConfirmPanel
               form={form}
               fmt={fmt}
               copy={copy}
-              onConfirm={runCalculation}
+              onConfirmAction={onConfirmAction}
             />
           </div>
         ) : result && step === "done" ? (
@@ -249,6 +404,7 @@ export function VacationsTool({
               locale={locale}
               onRestart={() => dispatch({ type: "reset", countryCode })}
               onComplete={handleComplete}
+              onExportPdf={onExportPdf}
             />
           </div>
         ) : (
@@ -260,13 +416,22 @@ export function VacationsTool({
               <input
                 ref={inputRef}
                 value={inputValue}
-                onChange={(e) => setInputValue(e.target.value)}
+                onChange={(e) => setInputValue(getFormattedInputValue(step, e.target.value))}
                 onKeyDown={(e) => {
                   if (e.key === "Enter") {
                     e.preventDefault()
                     handleSubmit()
                   }
                 }}
+                inputMode={
+                  step === "monthlySalary"
+                    ? "decimal"
+                    : step === "startDate" || step === "endDate"
+                      ? "numeric"
+                      : step === "usedVacationDays"
+                        ? "numeric"
+                        : "text"
+                }
                 placeholder={copy.askPlaceholder}
                 className="h-12 w-full rounded-2xl border border-border bg-card px-4 text-sm text-foreground placeholder:text-muted-foreground outline-none transition-colors focus:border-foreground/30"
               />
@@ -348,12 +513,12 @@ function ConfirmPanel({
   form,
   fmt,
   copy,
-  onConfirm,
+  onConfirmAction,
 }: {
   form: VacationFormData
   fmt: (v: number) => string
   copy: (typeof homeCopy)[Locale]
-  onConfirm: () => void
+  onConfirmAction: (action: "confirm" | "salary" | "dates" | "vacations") => void
 }) {
   return (
     <div className="w-full rounded-2xl border border-border bg-card p-5 shadow-sm motion-safe:animate-in motion-safe:duration-200 motion-safe:fade-in motion-safe:slide-in-from-bottom-1">
@@ -363,18 +528,97 @@ function ConfirmPanel({
       </div>
       <div className="grid gap-2 text-sm">
         <SummaryRow icon={<IconCoin className="size-4 text-muted-foreground" />} label={copy.salary} value={fmt(form.monthlySalary)} />
-        <SummaryRow icon={<IconCalendar className="size-4 text-muted-foreground" />} label={copy.dates} value={`${form.startDate} → ${form.endDate}`} />
+        <SummaryRow icon={<IconCalendar className="size-4 text-muted-foreground" />} label={copy.dates} value={`${form.startDate} -> ${form.endDate}`} />
         <SummaryRow icon={<IconBeach className="size-4 text-muted-foreground" />} label={copy.vacations} value={`${form.usedVacationDays} días`} />
       </div>
-      <div className="mt-5">
+      <div className="mt-5 flex flex-wrap gap-2">
         <button
           type="button"
-          onClick={onConfirm}
+          onClick={() => onConfirmAction("confirm")}
           className="inline-flex items-center gap-2 rounded-xl bg-primary px-4 py-2.5 text-sm font-medium text-primary-foreground shadow-sm transition-opacity hover:opacity-90"
         >
           <IconCheck className="size-4" />
           {copy.confirmAndCalculate}
         </button>
+        <button
+          type="button"
+          onClick={() => onConfirmAction("salary")}
+          className="inline-flex items-center gap-2 rounded-xl border border-border bg-card px-4 py-2.5 text-sm font-medium text-foreground transition-colors hover:bg-accent"
+        >
+          <IconEdit className="size-4" />
+          {copy.editSalary}
+        </button>
+        <button
+          type="button"
+          onClick={() => onConfirmAction("dates")}
+          className="inline-flex items-center gap-2 rounded-xl border border-border bg-card px-4 py-2.5 text-sm font-medium text-foreground transition-colors hover:bg-accent"
+        >
+          <IconEdit className="size-4" />
+          {copy.editDates}
+        </button>
+        <button
+          type="button"
+          onClick={() => onConfirmAction("vacations")}
+          className="inline-flex items-center gap-2 rounded-xl border border-border bg-card px-4 py-2.5 text-sm font-medium text-foreground transition-colors hover:bg-accent"
+        >
+          <IconEdit className="size-4" />
+          {copy.editVacations}
+        </button>
+      </div>
+    </div>
+  )
+}
+
+type VacationEditModeType = null | "salary" | "dates" | "vacations"
+
+function EditPanel({
+  editMode,
+  editSalary,
+  editVacations,
+  editStartDate,
+  editEndDate,
+  onSetEditField,
+  onSetEditMode,
+  saveEdit,
+  copy,
+}: {
+  editMode: VacationEditModeType
+  editSalary: string
+  editVacations: string
+  editStartDate: string
+  editEndDate: string
+  onSetEditField: (field: string, value: string) => void
+  onSetEditMode: (mode: VacationEditModeType) => void
+  saveEdit: () => void
+  copy: (typeof homeCopy)[Locale]
+}) {
+  return (
+    <div className="w-full rounded-2xl border border-border bg-card p-5 shadow-sm motion-safe:animate-in motion-safe:duration-200 motion-safe:fade-in motion-safe:slide-in-from-bottom-1">
+      {editMode === "salary" ? (
+        <label className="grid gap-2 text-sm">
+          <span className="text-foreground">{copy.newMonthlySalary}</span>
+          <input inputMode="decimal" value={editSalary} onChange={(e) => onSetEditField("editSalary", formatCurrencyInput(e.target.value))} className="h-10 rounded-xl border border-border bg-background px-3 text-foreground outline-none focus:border-foreground/30" />
+        </label>
+      ) : editMode === "vacations" ? (
+        <label className="grid gap-2 text-sm">
+          <span className="text-foreground">{copy.newVacationDays}</span>
+          <input inputMode="numeric" value={editVacations} onChange={(e) => onSetEditField("editVacations", formatNumberInput(e.target.value))} className="h-10 rounded-xl border border-border bg-background px-3 text-foreground outline-none focus:border-foreground/30" />
+        </label>
+      ) : editMode === "dates" ? (
+        <div className="grid gap-3 text-sm">
+          <label className="grid gap-1.5">
+            <span className="text-foreground">{copy.startDate}</span>
+            <input inputMode="numeric" pattern="[0-9/]*" value={editStartDate} onChange={(e) => onSetEditField("editStartDate", formatDateInput(e.target.value))} className="h-10 rounded-xl border border-border bg-background px-3 text-foreground outline-none focus:border-foreground/30" />
+          </label>
+          <label className="grid gap-1.5">
+            <span className="text-foreground">{copy.endDate}</span>
+            <input inputMode="numeric" pattern="[0-9/]*" value={editEndDate} onChange={(e) => onSetEditField("editEndDate", formatDateInput(e.target.value))} className="h-10 rounded-xl border border-border bg-background px-3 text-foreground outline-none focus:border-foreground/30" />
+          </label>
+        </div>
+      ) : null}
+      <div className="mt-4 flex gap-2">
+        <button type="button" onClick={saveEdit} className="inline-flex items-center gap-2 rounded-xl bg-primary px-4 py-2.5 text-sm font-medium text-primary-foreground shadow-sm transition-opacity hover:opacity-90">{copy.saveChanges}</button>
+        <button type="button" onClick={() => onSetEditMode(null)} className="inline-flex items-center gap-2 rounded-xl border border-border bg-card px-4 py-2.5 text-sm font-medium text-foreground transition-colors hover:bg-accent">{copy.cancel}</button>
       </div>
     </div>
   )
@@ -387,6 +631,7 @@ function ResultPanel({
   locale,
   onRestart,
   onComplete,
+  onExportPdf,
 }: {
   result: ReturnType<typeof calculateVacations>
   fmt: (v: number) => string
@@ -394,6 +639,7 @@ function ResultPanel({
   locale: Locale
   onRestart: () => void
   onComplete: () => void
+  onExportPdf: () => Promise<void>
 }) {
   return (
     <div className="w-full space-y-4 motion-safe:animate-in motion-safe:duration-200 motion-safe:fade-in motion-safe:slide-in-from-bottom-1">
@@ -474,6 +720,9 @@ function ResultPanel({
       </div>
 
       <div className="flex flex-wrap gap-2">
+        <button type="button" onClick={() => void onExportPdf()} className="inline-flex items-center gap-2 rounded-xl border border-border bg-card px-4 py-2.5 text-sm font-medium text-foreground transition-colors hover:bg-accent">
+          <IconDownload className="size-4" /> {copy.downloadPdf}
+        </button>
         <button type="button" onClick={onRestart} className="inline-flex items-center gap-2 rounded-xl bg-primary px-4 py-2.5 text-sm font-medium text-primary-foreground shadow-sm transition-opacity hover:opacity-90">
           <IconRefresh className="size-4" /> {copy.calculateAgain}
         </button>

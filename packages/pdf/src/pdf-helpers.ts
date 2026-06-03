@@ -1,0 +1,221 @@
+import { PDFDocument, PDFPage, rgb, StandardFonts } from "pdf-lib"
+
+export const COLORS = {
+  text: rgb(0.1, 0.1, 0.1),
+  muted: rgb(0.45, 0.45, 0.45),
+  light: rgb(0.65, 0.65, 0.65),
+  border: rgb(0.85, 0.85, 0.85),
+  bg: rgb(0.97, 0.97, 0.97),
+  tableHeaderBg: rgb(0.94, 0.94, 0.94),
+  white: rgb(1, 1, 1),
+  black: rgb(0, 0, 0),
+}
+
+export type FontSet = { font: any; bold: any }
+
+export async function loadFonts(pdf: PDFDocument): Promise<FontSet> {
+  const [font, bold] = await Promise.all([
+    pdf.embedFont(StandardFonts.Helvetica),
+    pdf.embedFont(StandardFonts.HelveticaBold),
+  ])
+  return { font, bold }
+}
+
+export function drawText(
+  page: PDFPage,
+  content: string,
+  x: number,
+  y: number,
+  opts: {
+    size?: number
+    bold?: boolean
+    color?: [number, number, number]
+    align?: "left" | "right"
+    fontSet: FontSet
+  }
+) {
+  const f = opts.bold ? opts.fontSet.bold : opts.fontSet.font
+  const size = opts.size ?? 11
+  const color = opts.color ? rgb(...opts.color) : COLORS.text
+  let px = x
+  if (opts.align === "right") {
+    px = x - f.widthOfTextAtSize(content, size)
+  }
+  page.drawText(content, { x: px, y, size, font: f, color })
+}
+
+export function drawLine(
+  page: PDFPage,
+  x1: number,
+  y1: number,
+  x2: number,
+  y2: number,
+  opts?: { color?: [number, number, number]; width?: number }
+) {
+  page.drawLine({
+    start: { x: x1, y: y1 },
+    end: { x: x2, y: y2 },
+    thickness: opts?.width ?? 0.5,
+    color: opts?.color ? rgb(...opts.color) : COLORS.border,
+  })
+}
+
+export function drawBox(
+  page: PDFPage,
+  x: number,
+  y: number,
+  w: number,
+  h: number,
+  opts?: {
+    borderColor?: [number, number, number]
+    borderWidth?: number
+    fillColor?: [number, number, number]
+  }
+) {
+  if (opts?.fillColor) {
+    page.drawRectangle({ x, y, width: w, height: h, color: rgb(...opts.fillColor) })
+  }
+  if (opts?.borderColor && (opts.borderWidth ?? 0) > 0) {
+    page.drawRectangle({
+      x,
+      y,
+      width: w,
+      height: h,
+      borderColor: rgb(...opts.borderColor),
+      borderWidth: opts.borderWidth,
+    })
+  }
+}
+
+export function drawSectionTitle(
+  page: PDFPage,
+  title: string,
+  x: number,
+  y: number,
+  fontSet: FontSet
+): number {
+  drawText(page, title, x, y, { size: 13, bold: true, fontSet })
+  const newY = y - 18
+  drawLine(page, x, newY + 8, x + 499, newY + 8, { color: [0.85, 0.85, 0.85], width: 0.5 })
+  return newY
+}
+
+export function drawKeyValue(
+  page: PDFPage,
+  label: string,
+  value: string,
+  x: number,
+  y: number,
+  fontSet: FontSet,
+  valueX?: number
+): number {
+  drawText(page, label, x, y, { size: 10, color: [0.45, 0.45, 0.45], fontSet })
+  drawText(page, value, valueX ?? x + 140, y, { size: 11, bold: true, fontSet })
+  return y - 18
+}
+
+export function drawSignatureBoxes(
+  page: PDFPage,
+  y: number,
+  left: number,
+  fontSet: FontSet
+): number {
+  const boxW = 220
+  const boxH = 60
+  const gap = 50
+  const sigY = y - boxH
+
+  const drawOne = (label: string, xPos: number) => {
+    drawBox(page, xPos, sigY, boxW, boxH, {
+      borderColor: [0.75, 0.75, 0.75],
+      borderWidth: 1,
+    })
+    drawLine(page, xPos + 10, sigY + 20, xPos + boxW - 10, sigY + 20, {
+      color: [0.1, 0.1, 0.1],
+      width: 1,
+    })
+    drawText(page, label, xPos + 10, sigY + 4, {
+      size: 10,
+      color: [0.45, 0.45, 0.45],
+      fontSet,
+    })
+    drawText(page, "Firma", xPos + 10, sigY + 24, {
+      size: 9,
+      color: [0.45, 0.45, 0.45],
+      fontSet,
+    })
+  }
+
+  drawOne("Trabajador", left)
+  drawOne("Empleador", left + boxW + gap)
+
+  return sigY - 16
+}
+
+export function drawTableHeader(
+  page: PDFPage,
+  columns: { label: string; x: number }[],
+  y: number,
+  left: number,
+  right: number,
+  fontSet: FontSet
+): number {
+  const hdrH = 20
+  drawBox(page, left - 4, y - hdrH + 4, right - left + 8, hdrH, {
+    fillColor: [0.94, 0.94, 0.94],
+  })
+  for (const col of columns) {
+    drawText(page, col.label, col.x, y - 2, { size: 9, bold: true, fontSet })
+  }
+  return y - hdrH
+}
+
+export function drawTableRow(
+  page: PDFPage,
+  cells: { text: string; x: number; bold?: boolean; size?: number }[],
+  y: number,
+  left: number,
+  right: number,
+  fontSet: FontSet
+): number {
+  const rowH = 20
+  for (const cell of cells) {
+    drawText(page, cell.text, cell.x, y - 2, {
+      size: cell.size ?? 9,
+      bold: cell.bold,
+      fontSet,
+    })
+  }
+  drawLine(page, left, y - rowH + 4, right, y - rowH + 4, {
+    color: [0.9, 0.9, 0.9],
+    width: 0.3,
+  })
+  return y - rowH
+}
+
+export function drawFooter(
+  page: PDFPage,
+  y: number,
+  left: number,
+  right: number,
+  fontSet: FontSet
+): number {
+  drawLine(page, left, y, right, y, { color: [0.85, 0.85, 0.85], width: 0.5 })
+  let cy = y - 14
+  drawText(
+    page,
+    "Aviso: Este reporte es una estimacion asistida generada por Justo. Debe validarse con normativa vigente y asesoria profesional.",
+    left,
+    cy,
+    { size: 8, color: [0.55, 0.55, 0.55], fontSet }
+  )
+  cy -= 14
+  drawText(
+    page,
+    "Justo · github.com/sbarkerzamora/justo · Codigo abierto (MIT)",
+    left,
+    cy,
+    { size: 8, color: [0.55, 0.55, 0.55], fontSet }
+  )
+  return cy
+}

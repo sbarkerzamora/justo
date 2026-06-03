@@ -1,13 +1,15 @@
 import { Geist_Mono, Nunito_Sans } from "next/font/google"
 import type { Metadata } from "next"
+import { headers } from "next/headers"
 import "./globals.css"
-import { RootProvider } from "fumadocs-ui/provider/next"
 import { ThemeProvider } from "@/components/theme-provider"
 import { LangUpdater } from "@/components/lang-updater"
 import { AppShell } from "@/components/app-shell"
 import { PlausibleAnalytics } from "@/components/plausible-analytics"
 import { cn } from "@/lib/utils"
 import { getSiteUrl } from "@/lib/site-url"
+import { isValidLocale } from "@/lib/i18n"
+import { isValidCountry } from "@/lib/countries"
 
 const SITE_URL = getSiteUrl()
 
@@ -44,14 +46,22 @@ const fontMono = Geist_Mono({
   variable: "--font-mono",
 })
 
-export default function RootLayout({
+export default async function RootLayout({
   children,
 }: Readonly<{
   children: React.ReactNode
 }>) {
+  const headersList = await headers()
+  const invokePath = headersList.get("x-invoke-path") || "/"
+  const segments = invokePath.split("/").filter(Boolean)
+  const localeFromPath =
+    segments.length >= 1 && isValidLocale(segments[0]) ? segments[0] : null
+  const countryFromPath =
+    segments.length >= 2 && isValidCountry(segments[1]) ? segments[1] : null
+
   return (
     <html
-      lang="es"
+      lang={localeFromPath ?? "es"}
       suppressHydrationWarning
       className={cn(
         "antialiased",
@@ -63,11 +73,14 @@ export default function RootLayout({
       <body>
         <LangUpdater />
         <PlausibleAnalytics />
-        <RootProvider search={{ preload: false }}>
-          <ThemeProvider>
-            <AppShell>{children}</AppShell>
-          </ThemeProvider>
-        </RootProvider>
+        <ThemeProvider>
+          <AppShell
+            initialLocale={localeFromPath ?? undefined}
+            initialCountry={countryFromPath ?? undefined}
+          >
+            {children}
+          </AppShell>
+        </ThemeProvider>
         <script
           src="https://cdnjs.buymeacoffee.com/1.0.0/widget.prod.min.js"
           data-name="BMC-Widget"

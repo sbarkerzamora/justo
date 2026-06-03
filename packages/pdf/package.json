@@ -5,7 +5,8 @@
   "private": true,
   "exports": {
     ".": "./src/index.ts",
-    "./settlement": "./src/settlement-pdf.ts"
+    "./settlement": "./src/settlement-pdf.ts",
+    "./vacations": "./src/vacations-pdf.ts"
   },
   "dependencies": {
     "@justo/core": "workspace:*",

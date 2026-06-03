@@ -84,6 +84,9 @@ type HomeCopy = {
   vacationsWelcomeTitle: string
   vacationsWelcomeDescription: string
   startButton: string
+  hrCtaTitle: string
+  hrCtaDescription: string
+  hrCtaBadge: string
 }
 
 export const homeCopy: Record<Locale, HomeCopy> = {
@@ -191,6 +194,9 @@ export const homeCopy: Record<Locale, HomeCopy> = {
     vacationsWelcomeTitle: "Calculadora de vacaciones",
     vacationsWelcomeDescription: "Calcula el monto de tus vacaciones acumuladas con fórmulas claras y trazabilidad legal.",
     startButton: "Comenzar",
+    hrCtaTitle: "Justo para RRHH",
+    hrCtaDescription: "Herramientas avanzadas para gestión de talento, nómina y cumplimiento laboral.",
+    hrCtaBadge: "Próximamente",
   },
   en: {
     preparing: "Preparing Justo...",
@@ -295,5 +301,8 @@ export const homeCopy: Record<Locale, HomeCopy> = {
     vacationsWelcomeTitle: "Vacation Calculator",
     vacationsWelcomeDescription: "Calculate your accrued vacation amount with clear formulas and legal traceability.",
     startButton: "Start",
+    hrCtaTitle: "Justo for HR",
+    hrCtaDescription: "Advanced tools for talent management, payroll and labor compliance.",
+    hrCtaBadge: "Coming soon",
   },
 }

@@ -1,9 +1,7 @@
 import type { CountryCode, CurrencyCode } from "../settlement"
 
-export type VacationCountryCode = Extract<CountryCode, "ni">
-
 export interface VacationInput {
-  countryCode: VacationCountryCode
+  countryCode: CountryCode
   monthlySalary: number
   startDate: string
   endDate: string

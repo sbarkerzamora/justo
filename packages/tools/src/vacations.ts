@@ -1,21 +1,41 @@
 import {
   calculateNicaraguaVacations,
+  type CountryCode,
   vacationInputSchema,
   type VacationInput,
   type VacationResult,
 } from "@justo/core"
 import type { CalculationTool } from "./types"
 
+// Placeholder: all countries currently use Nicaragua's calculation as baseline
+// until jurisdiction-specific vacation formulas are implemented.
+const vacationCalculators: Record<
+  CountryCode,
+  (input: VacationInput) => VacationResult
+> = {
+  ar: calculateNicaraguaVacations,
+  cl: calculateNicaraguaVacations,
+  co: calculateNicaraguaVacations,
+  cr: calculateNicaraguaVacations,
+  gt: calculateNicaraguaVacations,
+  hn: calculateNicaraguaVacations,
+  mx: calculateNicaraguaVacations,
+  ni: calculateNicaraguaVacations,
+  pa: calculateNicaraguaVacations,
+  pe: calculateNicaraguaVacations,
+  sv: calculateNicaraguaVacations,
+}
+
 export const vacationsTool: CalculationTool<VacationInput, VacationResult> = {
   id: "vacations",
   slug: "vacaciones",
   name: "Vacaciones",
-  shortDescription: "Calcula vacaciones acumuladas, gozadas y pendientes en Nicaragua.",
+  shortDescription: "Calcula vacaciones acumuladas, gozadas y pendientes.",
   longDescription:
-    "Herramienta abierta para estimar días acumulados, días pendientes y monto de vacaciones con base en salario mensual y periodo trabajado en Nicaragua.",
+    "Herramienta abierta para estimar días acumulados, días pendientes y monto de vacaciones con base en salario mensual y periodo trabajado.",
   category: "calculation",
   availability: "available",
-  countrySupport: ["ni"],
+  countrySupport: Object.keys(vacationCalculators) as CountryCode[],
   inputRequirements: [
     "País",
     "Salario mensual",
@@ -42,9 +62,11 @@ export const vacationsTool: CalculationTool<VacationInput, VacationResult> = {
 }
 
 export function calculateVacations(input: VacationInput): VacationResult {
-  if (input.countryCode !== "ni") {
+  const calculator = vacationCalculators[input.countryCode]
+
+  if (!calculator) {
     throw new Error(`Pais no soportado: ${input.countryCode}`)
   }
 
-  return calculateNicaraguaVacations(input)
+  return calculator(input)
 }
