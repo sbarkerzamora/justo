@@ -1,0 +1,15 @@
+{
+  "name": "@justo/pdf",
+  "version": "0.0.1",
+  "type": "module",
+  "private": true,
+  "exports": {
+    ".": "./src/index.ts",
+    "./settlement": "./src/settlement-pdf.ts",
+    "./vacations": "./src/vacations-pdf.ts"
+  },
+  "dependencies": {
+    "@justo/core": "workspace:*",
+    "pdf-lib": "^1.17.1"
+  }
+}

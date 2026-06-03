@@ -1,0 +1,14 @@
+{
+  "name": "@justo/tools",
+  "version": "0.0.1",
+  "type": "module",
+  "private": true,
+  "exports": {
+    ".": "./src/index.ts",
+    "./settlement": "./src/settlement.ts"
+  },
+  "dependencies": {
+    "@justo/core": "workspace:*",
+    "zod": "^4.1.12"
+  }
+}

@@ -1,0 +1,13 @@
+{
+  "name": "@justo/core",
+  "version": "0.0.1",
+  "type": "module",
+  "private": true,
+  "exports": {
+    ".": "./src/index.ts",
+    "./settlement": "./src/settlement/index.ts"
+  },
+  "dependencies": {
+    "zod": "^4.1.12"
+  }
+}
