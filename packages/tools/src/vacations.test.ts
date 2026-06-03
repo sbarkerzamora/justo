@@ -7,7 +7,8 @@ describe("vacationsTool", () => {
     expect(vacationsTool.id).toBe("vacations")
     expect(vacationsTool.slug).toBe("vacaciones")
     expect(vacationsTool.availability).toBe("available")
-    expect(vacationsTool.countrySupport).toEqual(["ni"])
+    expect(vacationsTool.countrySupport).toContain("ni")
+    expect(vacationsTool.countrySupport.length).toBe(11)
 
     const result = calculateVacations({
       countryCode: "ni",

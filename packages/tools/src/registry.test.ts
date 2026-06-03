@@ -27,6 +27,7 @@ describe("tools registry", () => {
 
     expect(tool?.id).toBe("vacations")
     expect(tool?.availability).toBe("available")
-    expect(tool?.countrySupport).toEqual(["ni"])
+    expect(tool?.countrySupport).toContain("ni")
+    expect(tool?.countrySupport.length).toBe(11)
   })
 })
