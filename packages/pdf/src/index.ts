@@ -1,2 +1,3 @@
 export * from "./settlement-pdf"
 export * from "./vacations-pdf"
+export * from "./salary-net-pdf"

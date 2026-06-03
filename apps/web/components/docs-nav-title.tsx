@@ -9,19 +9,23 @@ import { getLegalDocsLink } from "@/lib/legal-docs-link"
 function NavTitleInner() {
   const { push } = useRouter()
   const searchParams = useSearchParams()
-  const [storedCountry] = useState<string | null>(() => {
-    try {
-      return localStorage.getItem("justo-country")
-    } catch {
-      return null
-    }
-  })
+  const [storedCountry, setStoredCountry] = useState<string | null>(null)
   const fromUrl = searchParams.get("country")
+
+  useEffect(() => {
+    try {
+      const stored = localStorage.getItem("justo-country")
+      if (stored) setStoredCountry(stored)
+    } catch {
+      /* noop */
+    }
+  }, [])
 
   useEffect(() => {
     if (!fromUrl) return
     try {
       localStorage.setItem("justo-country", fromUrl)
+      setStoredCountry(fromUrl)
     } catch {
       /* noop */
     }

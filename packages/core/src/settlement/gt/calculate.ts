@@ -3,7 +3,7 @@ import { SettlementInput, SettlementLine, SettlementResult } from "../types"
 import { getGuatemalaLegalRates } from "./legal-params"
 
 const CURRENCY = "GTQ" as const
-const LEGAL_CORPUS_VERSION = "gt-v0.1.0"
+const LEGAL_CORPUS_VERSION = "gt-v0.2.0"
 
 export const calculateGuatemalaSettlement = (
   input: SettlementInput,

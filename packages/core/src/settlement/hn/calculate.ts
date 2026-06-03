@@ -3,7 +3,7 @@ import { SettlementInput, SettlementLine, SettlementResult } from "../types"
 import { getHondurasLegalRates } from "./legal-params"
 
 const CURRENCY = "HNL" as const
-const LEGAL_CORPUS_VERSION = "hn-v0.1.0"
+const LEGAL_CORPUS_VERSION = "hn-v0.2.0"
 
 export const calculateHondurasSettlement = (
   input: SettlementInput,

@@ -1,7 +1,7 @@
 ---
 country: co
 topic: deducciones
-version: co-v0.1.0
+version: co-v0.2.0
 status: proposed
 source: "Codigo Sustantivo del Trabajo Art. 150 + Ley 100 de 1993"
 last_reviewed: "2026-05-11"
@@ -13,6 +13,10 @@ last_reviewed: "2026-05-11"
 
 - Art. 150: Deducciones autorizadas y topes.
 - Ley 100 de 1993: Seguridad social obligatoria.
+
+## texto_legal
+
+**Artículo 150. Descuentos permitidos.** Son permitidos los descuentos y retenciones por conceptos de cuotas sindicales y de cooperativas y cajas de ahorro, autorizadas en forma legal; de cuotas con destino al seguro social obligatorio, y de sanciones disciplinarias impuestas de conformidad con el reglamento del trabajo debidamente aprobado.
 
 ## regla_operativa
 

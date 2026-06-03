@@ -15,7 +15,7 @@ describe("calculateArgentinaSettlement", () => {
       endDate: "2026-05-11",
     })
 
-    expect(result.legalCorpusVersion).toBe("ar-v0.1.0")
+    expect(result.legalCorpusVersion).toBe("ar-v0.2.0")
     expect(result.incomes.length).toBe(5)
     expect(result.incomes[0]?.label).toBe("Indemnizacion (Art. 245)")
     expect(result.incomes[1]?.label).toBe("Preaviso")

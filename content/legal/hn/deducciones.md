@@ -1,7 +1,7 @@
 ---
 country: hn
 topic: deducciones
-version: hn-v0.1.0
+version: hn-v0.2.0
 status: proposed
 source: "Codigo de Trabajo Decreto 189-59 + normativa IHSS vigente"
 last_reviewed: "2026-05-11"

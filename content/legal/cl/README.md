@@ -1,6 +1,6 @@
 # Corpus Legal Chile (MVP)
 
-Version: `cl-v0.1.0`
+Version: `cl-v0.2.0`
 
 ## Set normativo
 

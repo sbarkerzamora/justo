@@ -3,7 +3,7 @@ import { SettlementInput, SettlementLine, SettlementResult } from "../types"
 import { getArgentinaLegalRates } from "./legal-params"
 
 const CURRENCY = "ARS" as const
-const LEGAL_CORPUS_VERSION = "ar-v0.1.0"
+const LEGAL_CORPUS_VERSION = "ar-v0.2.0"
 
 const vacationDaysByYear = (years: number): number => {
   if (years < 5) return 14

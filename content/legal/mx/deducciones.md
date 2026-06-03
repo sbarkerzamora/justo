@@ -1,7 +1,7 @@
 ---
 country: mx
 topic: deducciones
-version: mx-v0.1.0
+version: mx-v0.2.0
 status: proposed
 source: "Ley Federal del Trabajo Art. 110 + Ley del Seguro Social"
 last_reviewed: "2026-05-11"
@@ -14,6 +14,24 @@ last_reviewed: "2026-05-11"
 - Art. 110: Deducciones autorizadas y limites.
 - Ley del Seguro Social: cotizacion IMSS.
 - Ley del INFONAVIT: aportacion patronal del 5% (no descontada al trabajador).
+
+## texto_legal
+
+**Artículo 110.-** Los descuentos en los salarios de los trabajadores, están prohibidos salvo en los casos y con los requisitos siguientes:
+
+I. Pago de deudas contraídas con el patrón por anticipo de salarios, pagos hechos con exceso al trabajador, errores, pérdidas, averías o adquisición de artículos producidos por la empresa o establecimiento. La cantidad exigible en ningún caso podrá ser mayor del importe de los salarios de un mes y el descuento será al que convengan el trabajador y el patrón, sin que pueda ser mayor del treinta por ciento del excedente del salario mínimo;
+
+II. Pago de la renta a que se refiere el artículo 151 que no podrá exceder del quince por ciento del salario.
+
+III. Pago de abonos para cubrir préstamos provenientes del Fondo Nacional de la Vivienda para los Trabajadores destinados a la adquisición, construcción, reparación, ampliación o mejoras de casas habitación o al pago de pasivos adquiridos por estos conceptos. ...
+
+IV. Pago de cuotas para la constitución y fomento de sociedades cooperativas y de cajas de ahorro, siempre que los trabajadores manifiesten expresa y libremente su conformidad y que no sean mayores del treinta por ciento del excedente del salario mínimo;
+
+V. Pago de pensiones alimenticias en favor de acreedores alimentarios, decretado por la autoridad competente. ...
+
+VI. Pago de las cuotas sindicales ordinarias previstas en los estatutos de los sindicatos.
+
+VII. Pago de abonos para cubrir créditos garantizados por el Instituto a que se refiere el artículo 103 Bis de esta Ley, destinados a la adquisición de bienes de consumo, o al pago de servicios. Estos descuentos deberán haber sido aceptados libremente por el trabajador y no podrán exceder del veinte por ciento del salario.
 
 ## regla_operativa
 

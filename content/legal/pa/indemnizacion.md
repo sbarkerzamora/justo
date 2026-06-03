@@ -1,7 +1,7 @@
 ---
 country: pa
 topic: indemnizacion
-version: pa-v0.1.0
+version: pa-v0.2.0
 status: proposed
 source: "Codigo de Trabajo de Panama"
 last_reviewed: "2026-05-11"
@@ -14,6 +14,26 @@ last_reviewed: "2026-05-11"
 - Art. 224: Prima de antiguedad (1 semana/ano, toda terminacion).
 - Art. 225: Indemnizacion por despido injustificado.
 - Art. 212: Preaviso (30 dias para trabajadores exceptuados).
+
+## texto_legal
+
+**Artículo 212. Preaviso.** Se exceptúan de lo dispuesto en el artículo anterior, los siguientes casos:
+- Trabajadores que tengan menos de dos años de servicios continuos.
+- Trabajadores domésticos.
+- Trabajadores permanentes o de planta, de pequeñas empresas, agrícolas, pecuarias, agroindustriales o manufactureras.
+- Trabajadores en naves dedicadas al servicio internacional.
+- Aprendices.
+- Trabajadores de establecimiento en ventas de mercancía al por menor y empresa con cinco o menos trabajadores, salvo el caso de los establecimientos financieros de seguros y bienes raíces.
+
+En los casos a que se refiere este artículo, además de pagar al trabajador la indemnización prevista en el artículo 225, el empleador deberá notificarle el despido con treinta días de anticipación o abonarle la suma correspondiente al preaviso.
+
+**Artículo 224. Prima de antigüedad.** A la terminación de todo contrato por tiempo indefinido, cualquiera que sea la causa de terminación, el trabajador tendrá derecho a recibir de su empleador una prima de antigüedad, a razón de una semana de salario por cada año laborado, desde el inicio de la relación de trabajo. En el evento de que algún año de servicio no se cumpliera entero desde el inicio de la relación o en los años subsiguientes, tendrá derecho a la parte proporcional correspondiente.
+
+**Artículo 225. Indemnización por despido injustificado.** Sin perjuicio de lo dispuesto en el artículo anterior, si se tratase de contrato por tiempo indefinido cuya terminación fuese por despido injustificado o sin la autorización previa necesaria, el trabajador que opte por la indemnización cuando el juzgador haya resuelto al pago de ésta, tendrá derecho a recibir de su empleador una indemnización conforme a la siguiente escala:
+
+Para las relaciones de trabajo que se inicien a partir de la vigencia de la presente ley, la indemnización será el equivalente a 3.4 semanas de salario por cada año laborado en los diez primeros años; y cada año posterior a los diez años, será indemnizado con el equivalente de una semana de salario por cada año. Estas indemnizaciones no podrán combinarse con ninguna otra escala.
+
+En ambos casos, de no cumplirse algún año completo, se pagará la proporcionalidad correspondiente.
 
 ## regla_operativa
 

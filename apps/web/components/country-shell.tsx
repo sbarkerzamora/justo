@@ -14,7 +14,7 @@ export function CountryShell({
 }: {
   countryCode: string
   locale: Locale
-  initialTool?: "settlement" | "vacations"
+  initialTool?: "settlement" | "vacations" | "salary-net"
 }) {
   const [isSpringing, setIsSpringing] = useState(false)
   const springTimeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null)

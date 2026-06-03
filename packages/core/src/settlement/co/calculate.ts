@@ -3,7 +3,7 @@ import { SettlementInput, SettlementLine, SettlementResult } from "../types"
 import { getColombiaLegalRates } from "./legal-params"
 
 const CURRENCY = "COP" as const
-const LEGAL_CORPUS_VERSION = "co-v0.1.0"
+const LEGAL_CORPUS_VERSION = "co-v0.2.0"
 
 export const calculateColombiaSettlement = (
   input: SettlementInput,

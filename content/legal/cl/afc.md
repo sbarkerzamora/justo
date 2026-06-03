@@ -1,7 +1,7 @@
 ---
 country: cl
 topic: afc
-version: cl-v0.1.0
+version: cl-v0.2.0
 status: proposed
 source: "Ley 19.728 (Seguro de Cesantia)"
 last_reviewed: "2026-05-11"

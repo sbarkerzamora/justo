@@ -1,6 +1,6 @@
 # Corpus Legal Costa Rica (MVP)
 
-Version: `cr-v0.1.0`
+Version: `cr-v0.2.0`
 
 ## Set normativo
 

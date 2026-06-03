@@ -1,6 +1,6 @@
 # Corpus Legal Honduras (MVP)
 
-Version: `hn-v0.1.0`
+Version: `hn-v0.2.0`
 
 ## Set normativo
 

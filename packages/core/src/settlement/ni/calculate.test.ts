@@ -33,7 +33,7 @@ describe("calculateNicaraguaSettlement", () => {
       endDate: "2026-05-11",
     })
 
-    expect(result.legalCorpusVersion).toBe("ni-v0.2.0")
+    expect(result.legalCorpusVersion).toBe("ni-v0.3.0")
     expect(result.deductions.length).toBe(2)
     expect(result.deductions[0]?.legalReference).toContain("Art. 88")
     expect(result.deductions[1]?.legalReference).toContain("Art. 97")

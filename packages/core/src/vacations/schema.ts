@@ -10,6 +10,7 @@ export const vacationInputSchema = z.object({
   startDate: z.string().min(10),
   endDate: z.string().min(10),
   usedVacationDays: z.number().min(0).max(365),
+  seniorityYears: z.number().min(0).optional(),
 })
 
 export type VacationInputPayload = z.infer<typeof vacationInputSchema>

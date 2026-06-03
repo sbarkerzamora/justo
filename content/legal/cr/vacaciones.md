@@ -1,7 +1,7 @@
 ---
 country: cr
 topic: vacaciones
-version: cr-v0.1.0
+version: cr-v0.2.0
 status: proposed
 source: "Codigo de Trabajo de Costa Rica"
 last_reviewed: "2026-05-11"
@@ -13,6 +13,24 @@ last_reviewed: "2026-05-11"
 
 - Art. 153: 2 semanas (14 dias) por cada 50 semanas de servicio.
 - Art. 156: No compensables en dinero, excepto al terminar la relacion.
+
+## texto_legal
+
+**ARTÍCULO 153.-** Todo trabajador tiene derecho a vacaciones anuales remuneradas, cuyo mínimo se fija en dos semanas por cada cincuenta semanas de labores continuas, al servicio de un mismo patrono.
+
+En caso de terminación del contrato de trabajo antes de cumplir el período de las cincuenta semanas, el trabajador tendrá derecho, como mínimo, a un día de vacaciones por cada mes trabajado, que se le pagará en el momento del retiro de su trabajo.
+
+No interrumpirán la continuidad del trabajo, las licencias sin goce de salario, los descansos otorgados por el presente Código, sus reglamentos y sus leyes conexas, las enfermedades justificadas, la prórroga o renovación inmediata del contrato de trabajo, ni ninguna otra causa análoga que no termine con éste.
+
+**ARTÍCULO 156.-** Las vacaciones serán absolutamente incompensables, salvo las siguientes excepciones:
+
+a) Cuando el trabajador cese en su trabajo por cualquier causa, tendrá derecho a recibir en dinero el importe correspondiente por las vacaciones no disfrutadas.
+
+b) Cuando el trabajo sea ocasional o a destajo.
+
+c) Cuando por alguna circunstancia justificada el trabajador no haya disfrutado de sus vacaciones, podrá convenir con el patrono el pago del exceso del mínimo de dos semanas de vacaciones por cada cincuenta semanas, siempre que no supere el equivalente a tres períodos acumulados. Esta compensación no podrá otorgarse, si el trabajador ha recibido este beneficio en los dos años anteriores.
+
+Sin perjuicio de lo establecido en los incisos anteriores, el patrono velará porque sus empleados gocen de las vacaciones a las cuales tengan derecho anualmente. En todo caso, se respetarán los derechos adquiridos en materia de vacaciones.
 
 ## regla_operativa
 

@@ -1,4 +1,5 @@
 export * from "./registry"
 export * from "./settlement"
+export * from "./salary-net"
 export * from "./types"
 export * from "./vacations"

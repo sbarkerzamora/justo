@@ -1,7 +1,7 @@
 ---
 country: pe
 topic: onp-afp
-version: pe-v0.1.0
+version: pe-v0.2.0
 status: proposed
 source: "Ley 26790 y D.L. 19990 (Sistema de Pensiones Peruano)"
 last_reviewed: "2026-05-11"

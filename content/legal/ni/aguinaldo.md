@@ -1,7 +1,7 @@
 ---
 country: ni
 topic: aguinaldo
-version: ni-v0.2.0
+version: ni-v0.3.0
 status: active
 source: "Codigo del Trabajo, Ley No. 185"
 ---
@@ -14,6 +14,18 @@ source: "Codigo del Trabajo, Ley No. 185"
 - Art. 94: base de calculo (ultimo salario o salario mas alto de ultimos 6 meses en modalidad variable).
 - Art. 95: oportunidad de pago.
 - Art. 97: exencion de impuesto, descuentos, cotizaciones y deducciones.
+
+## texto_legal
+
+**Artículo 93.-** Todo trabajador tiene derecho a que su empleador le pague un mes de salario adicional después de un año de trabajo continuo, o la parte proporcional que corresponda al período de tiempo trabajado, mayor de un mes y menor de un año.
+
+Se entiende por salario adicional o décimo-tercer mes la remuneración en dinero recibido por el trabajador en concepto de salario ordinario conforme este Código.
+
+**Artículo 94.-** El salario adicional anual o décimo tercer mes se pagará conforme al último mes de salario recibido, salvo cuando se devengare salario por comisiones, obra, al destajo y cualquier otra modalidad compleja; en estos casos se pagará conforme el salario más alto recibido durante los últimos seis meses.
+
+**Artículo 95.-** El décimo-tercer mes deberá ser pagado dentro de los primeros diez días del mes de diciembre de cada año, o dentro de los primeros diez días después de terminado el contrato de trabajo. En caso de no hacerlo el empleador pagará al trabajador una indemnización equivalente al valor de un día de trabajo por cada día de retraso.
+
+**Artículo 97.-** El salario correspondiente al décimo tercer mes es inembargable, salvo para el cumplimiento de las obligaciones de prestar alimentos, tiene la misma protección que el salario mínimo, y estará exento del pago de todo impuesto, descuentos, cotizaciones y deducciones de cualquier especie.
 
 ## regla_operativa
 

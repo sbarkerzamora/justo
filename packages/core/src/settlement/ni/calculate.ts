@@ -3,7 +3,7 @@ import { SettlementInput, SettlementLine, SettlementResult } from "../types"
 import { getNicaraguaLegalRates } from "./legal-params"
 
 const CURRENCY = "NIO" as const
-const LEGAL_CORPUS_VERSION = "ni-v0.2.0"
+const LEGAL_CORPUS_VERSION = "ni-v0.3.0"
 
 export const calculateNicaraguaSettlement = (
   input: SettlementInput,

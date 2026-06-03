@@ -31,7 +31,7 @@ function makeResult(overrides?: Partial<SettlementResult>): SettlementResult {
     totalDeductions: 1875,
     netTotal: 28125,
     generatedAt: new Date().toISOString(),
-    legalCorpusVersion: "ni-v0.2.0",
+    legalCorpusVersion: "ni-v0.3.0",
     ...overrides,
   }
 }
@@ -98,7 +98,7 @@ describe("buildAnonymousRecord", () => {
     expect(record.currency).toBe("NIO")
     expect(record.countryCode).toBe("ni")
     expect(record.frequency).toBe("mensual")
-    expect(record.legalCorpusVersion).toBe("ni-v0.2.0")
+    expect(record.legalCorpusVersion).toBe("ni-v0.3.0")
   })
 
   it("sets timestamp to current time", () => {

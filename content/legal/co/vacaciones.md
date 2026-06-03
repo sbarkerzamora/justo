@@ -1,7 +1,7 @@
 ---
 country: co
 topic: vacaciones
-version: co-v0.1.0
+version: co-v0.2.0
 status: proposed
 source: "Codigo Sustantivo del Trabajo de Colombia"
 last_reviewed: "2026-05-11"
@@ -13,6 +13,16 @@ last_reviewed: "2026-05-11"
 
 - Art. 186: 15 dias habiles consecutivos de vacaciones por cada ano.
 - Art. 189: Proporcional al terminar la relacion laboral si se ha trabajado mas de 3 meses.
+
+## texto_legal
+
+**Artículo 186. Duración.** Los trabajadores que hubieren prestado sus servicios durante un año tienen derecho a quince (15) días hábiles consecutivos de vacaciones remuneradas.
+
+Los profesionales y ayudantes que trabajan en establecimientos privados dedicados a la lucha contra la tuberculosis, y los ocupados en la aplicación de rayos X, tienen derecho a gozar de quince (15) días de vacaciones remuneradas por cada seis (6) meses de servicios prestados.
+
+**Artículo 189. Compensación en dinero.** Empleador y trabajador, podrán acordar por escrito, previa solicitud del trabajador, que se pague en dinero hasta la mitad de las vacaciones.
+
+Cuando el contrato de trabajo termine sin que el trabajador hubiere disfrutado de vacaciones, la compensación de éstas en dinero procederá por año cumplido de servicio y proporcionalmente por fracción de año, siempre que este exceda de tres meses.
 
 ## regla_operativa
 

@@ -1,7 +1,7 @@
 ---
 country: ni
 topic: vacaciones
-version: ni-v0.2.0
+version: ni-v0.3.0
 status: active
 source: "Codigo del Trabajo, Ley No. 185"
 ---
@@ -13,6 +13,22 @@ source: "Codigo del Trabajo, Ley No. 185"
 - Art. 76: 15 dias de vacaciones por cada 6 meses de trabajo ininterrumpido.
 - Art. 77: al terminar, se pagan salarios y prestaciones proporcionales acumuladas.
 - Art. 78: vacaciones se pagan con base en ultimo salario ordinario (o promedio ultimos 6 meses si variable).
+
+## texto_legal
+
+**Artículo 76.-** Todo trabajador tiene derecho a disfrutar de quince días de descanso continuo y remunerado en concepto de vacaciones, por cada seis meses de trabajo ininterrumpido al servicio de un mismo empleador.
+
+Los trabajadores al servicio del Estado y sus Instituciones disfrutarán de vacaciones con goce de salario desde el Sábado Ramos al Domingo de Pascuas inclusive; del veinticuatro de Diciembre al Primero de Enero inclusive; y de dieciséis días más durante el año.
+
+En todos los casos, por interés del empleador o del trabajador o cuando se trate de las labores cíclicas del campo o de servicios que por su naturaleza no deban interrumpirse, la época de disfrute de las vacaciones podrá convenirse en fecha distinta a la que corresponda.
+
+Es obligación de los empleadores elaborar el calendario de vacaciones y darlo a conocer a sus trabajadores.
+
+**Artículo 77.-** Cuando se ponga término al contrato de trabajo, o relación laboral, el trabajador tendrá derecho a que se le paguen los salarios y la parte proporcional de sus prestaciones de ley acumuladas durante el tiempo trabajado.
+
+**Artículo 78.-** Las vacaciones se pagarán calculándolas en base al último salario ordinario devengado por el trabajador.
+
+En caso de salario variables, se calculará en base al salario ordinario promedio de los últimos seis meses.
 
 ## regla_operativa
 

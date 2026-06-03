@@ -1,7 +1,7 @@
 ---
 country: cl
 topic: salario-proporcional
-version: cl-v0.1.0
+version: cl-v0.2.0
 status: proposed
 source: "Codigo del Trabajo de Chile"
 last_reviewed: "2026-05-11"

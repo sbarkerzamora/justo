@@ -3,6 +3,7 @@
 import {
   IconCalculator,
   IconBeach,
+  IconCoins,
   IconMessageCircle,
   IconSparkles,
   IconTools,
@@ -29,12 +30,18 @@ import { useChatUI } from "@/components/chat/use-chat-ui"
 import { PureMultimodalInput } from "@/components/ui/multimodal-ai-chat-input"
 import { cn } from "@/lib/utils"
 import { SettlementTool } from "@/components/tools/settlement"
+import { SalaryNetTool } from "@/components/tools/salary-net"
 import { VacationsTool } from "@/components/tools/vacations"
 
 type Role = "user" | "assistant"
 type ChatMessage = { id: string; role: Role; text: string }
 
-type AppMode = "chat" | "settlement" | "vacations"
+type AppMode = "chat" | "settlement" | "vacations" | "salary-net"
+
+const validToolParams = new Set(["settlement", "vacations", "salary-net"])
+function isValidToolParam(v: string): v is AppMode {
+  return validToolParams.has(v)
+}
 
 const numberFormatters: Record<string, Intl.NumberFormat> = {
   NIO: new Intl.NumberFormat("es-NI", { style: "currency", currency: "NIO" }),
@@ -70,11 +77,13 @@ const shouldStartGuidedFlow = (text: string, locale: Locale) => {
     (es && normalized.includes("calcular mi liquidacion")) ||
     (es && normalized.includes("liquidacion completa")) ||
     (es && normalized.includes("paso a paso")) ||
+    (es && normalized.includes("salario neto")) ||
     normalized.includes("start guided") ||
     normalized.includes("guided calculation") ||
     normalized.includes("calculate my settlement") ||
     normalized.includes("step by step") ||
-    normalized.includes("full settlement")
+    normalized.includes("full settlement") ||
+    normalized.includes("net salary")
   )
 }
 
@@ -85,7 +94,7 @@ export function LlmHome({
 }: {
   countryCode?: string
   locale: Locale
-  initialTool?: "settlement" | "vacations"
+  initialTool?: "settlement" | "vacations" | "salary-net"
 }) {
   const cc = countryCode ?? "ni"
   const copy = homeCopy[locale]
@@ -123,8 +132,19 @@ export function LlmHome({
     const tool = initialTool ?? toolFromUrl
     if (tool === "settlement") return "settlement"
     if (tool === "vacations") return "vacations"
+    if (tool === "salary-net") return "salary-net"
     return "chat"
   })
+
+  const prevToolFromUrl = useRef<string | null>(undefined)
+  if (prevToolFromUrl.current === undefined) {
+    prevToolFromUrl.current = toolFromUrl
+  } else if (toolFromUrl !== prevToolFromUrl.current) {
+    prevToolFromUrl.current = toolFromUrl
+    if (toolFromUrl && isValidToolParam(toolFromUrl)) {
+      setMode(toolFromUrl)
+    }
+  }
 
   const messagesEndRef = useRef<HTMLDivElement | null>(null)
   const messagesContainerRef = useRef<HTMLDivElement | null>(null)
@@ -459,14 +479,22 @@ function LlmHomeView(props: {
                     <IconCalculator className="size-3.5" />
                     {locale === "en" ? "Calculate settlement" : "Calcular liquidacion"}
                   </button>
-                  <button
-                    type="button"
-                    onClick={() => setMode("vacations")}
-                    className="inline-flex items-center gap-1.5 rounded-full border border-border bg-card px-3 py-1.5 text-xs font-medium text-muted-foreground transition-colors hover:border-foreground/20 hover:text-foreground"
-                  >
-                    <IconBeach className="size-3.5" />
-                    {locale === "en" ? "Calculate vacations" : "Calcular vacaciones"}
-                  </button>
+         <button
+          type="button"
+          onClick={() => setMode("vacations")}
+          className="inline-flex items-center gap-1.5 rounded-full border border-border bg-card px-3 py-1.5 text-xs font-medium text-muted-foreground transition-colors hover:border-foreground/20 hover:text-foreground"
+        >
+          <IconBeach className="size-3.5" />
+          {locale === "en" ? "Calculate vacations" : "Calcular vacaciones"}
+        </button>
+        <button
+          type="button"
+          onClick={() => setMode("salary-net")}
+          className="inline-flex items-center gap-1.5 rounded-full border border-border bg-card px-3 py-1.5 text-xs font-medium text-muted-foreground transition-colors hover:border-foreground/20 hover:text-foreground"
+        >
+          <IconCoins className="size-3.5" />
+          {locale === "en" ? "Net salary" : "Salario neto"}
+        </button>
                   <button
                     type="button"
                     onClick={() => { window.location.href = "/tools" }}
@@ -496,6 +524,16 @@ function LlmHomeView(props: {
           )
         ) : mode === "settlement" ? (
           <SettlementTool
+            countryCode={cc}
+            countryName={countryName}
+            locale={locale}
+            currencyLabel={currencyLabel}
+            fmt={fmt}
+            onComplete={onToolComplete}
+            onCancel={onToolCancel}
+          />
+        ) : mode === "salary-net" ? (
+          <SalaryNetTool
             countryCode={cc}
             countryName={countryName}
             locale={locale}
@@ -640,6 +678,14 @@ function WelcomeEmptyState({
         >
           <IconBeach className="size-3.5" />
           {locale === "en" ? "Calculate vacations" : "Calcular vacaciones"}
+        </button>
+        <button
+          type="button"
+          onClick={() => setMode("salary-net")}
+          className="inline-flex items-center gap-1.5 rounded-full border border-border bg-card px-3 py-1.5 text-xs font-medium text-muted-foreground transition-colors hover:border-foreground/20 hover:text-foreground"
+        >
+          <IconCoins className="size-3.5" />
+          {locale === "en" ? "Net salary" : "Salario neto"}
         </button>
         <button
           type="button"

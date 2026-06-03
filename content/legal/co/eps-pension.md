@@ -1,7 +1,7 @@
 ---
 country: co
 topic: eps-pension
-version: co-v0.1.0
+version: co-v0.2.0
 status: proposed
 source: "Ley 100 de 1993 (Sistema de Seguridad Social)"
 last_reviewed: "2026-05-11"

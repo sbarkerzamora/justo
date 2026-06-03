@@ -14,6 +14,7 @@ import {
   IconTools,
   IconArrowRight,
 } from "@tabler/icons-react"
+import { countryLabels } from "@/lib/tools-common"
 
 export const metadata: Metadata = {
   title: "Herramientas laborales abiertas | Justo",
@@ -31,20 +32,6 @@ const categoryLabels: Record<JustoTool["category"], string> = {
 const statusLabels: Record<JustoTool["availability"], string> = {
   available: "Disponible",
   coming_soon: "Proximamente",
-}
-
-const countryLabels: Record<string, string> = {
-  ar: "Argentina",
-  cl: "Chile",
-  co: "Colombia",
-  cr: "Costa Rica",
-  gt: "Guatemala",
-  hn: "Honduras",
-  mx: "Mexico",
-  ni: "Nicaragua",
-  pa: "Panama",
-  pe: "Peru",
-  sv: "El Salvador",
 }
 
 const toolIcons: Record<string, React.ReactNode> = {

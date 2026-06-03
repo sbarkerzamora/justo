@@ -209,7 +209,7 @@ const docsSource = defineSource<JustoPageData, { title?: string; pages?: string[
               aplicables y ejemplos practicos por rubro.
             </p>
             <p className="text-sm text-muted-foreground">
-              Version del corpus: <code>ni-v0.2.0</code>
+              Version del corpus: <code>ni-v0.3.0</code>
             </p>
             <ul className="grid gap-2 sm:grid-cols-2">
               <li><Link className="block rounded-lg border border-border bg-card px-3 py-2 hover:bg-accent" href="/docs/legal/nicaragua/indemnizacion">💼 Indemnizacion</Link></li>
@@ -294,7 +294,7 @@ monto_indemnizacion = salario_diario * dias_indemnizacion`}</code></pre>
             </section>
             <section>
               <h2 className="text-base font-semibold">Vigencia</h2>
-              <p className="text-sm text-muted-foreground">Ley No. 185, Arts. 42, 43, 45. Corpus: <code>ni-v0.2.0</code></p>
+              <p className="text-sm text-muted-foreground">Ley No. 185, Arts. 42, 43, 45. Corpus: <code>ni-v0.3.0</code></p>
             </section>
           </div>
         ),
@@ -350,7 +350,7 @@ monto_indemnizacion = salario_diario * dias_indemnizacion`}</code></pre>
             </section>
             <section>
               <h2 className="text-base font-semibold">Vigencia</h2>
-              <p className="text-sm text-muted-foreground">Ley No. 185, Arts. 93, 94, 95, 97. Corpus: <code>ni-v0.2.0</code></p>
+              <p className="text-sm text-muted-foreground">Ley No. 185, Arts. 93, 94, 95, 97. Corpus: <code>ni-v0.3.0</code></p>
             </section>
           </div>
         ),
@@ -407,7 +407,7 @@ vacaciones_pendientes = salario_diario * dias_vacaciones_pendientes`}</code></pr
             </section>
             <section>
               <h2 className="text-base font-semibold">Vigencia</h2>
-              <p className="text-sm text-muted-foreground">Ley No. 185, Arts. 76, 77, 78. Corpus: <code>ni-v0.2.0</code></p>
+              <p className="text-sm text-muted-foreground">Ley No. 185, Arts. 76, 77, 78. Corpus: <code>ni-v0.3.0</code></p>
             </section>
           </div>
         ),
@@ -463,7 +463,7 @@ salario_proporcional = salario_diario * dias_salario_pendiente`}</code></pre>
             </section>
             <section>
               <h2 className="text-base font-semibold">Vigencia</h2>
-              <p className="text-sm text-muted-foreground">Ley No. 185, Arts. 42, 81, 84, 86. Corpus: <code>ni-v0.2.0</code></p>
+              <p className="text-sm text-muted-foreground">Ley No. 185, Arts. 42, 81, 84, 86. Corpus: <code>ni-v0.3.0</code></p>
             </section>
           </div>
         ),
@@ -534,7 +534,7 @@ neto = ingreso_bruto - total_deducciones`}</code></pre>
             </section>
             <section>
               <h2 className="text-base font-semibold">Vigencia</h2>
-              <p className="text-sm text-muted-foreground">Ley No. 185 Arts. 88 y 97 + normativa INSS e IR vigente. Corpus: <code>ni-v0.2.0</code></p>
+              <p className="text-sm text-muted-foreground">Ley No. 185 Arts. 88 y 97 + normativa INSS e IR vigente. Corpus: <code>ni-v0.3.0</code></p>
             </section>
           </div>
         ),
@@ -588,7 +588,7 @@ neto = ingreso_bruto - total_deducciones`}</code></pre>
             </section>
             <section>
               <h2 className="text-base font-semibold">Vigencia</h2>
-              <p className="text-sm text-muted-foreground">Ley de Seguridad Social + normativa INSS. Tasa: 7% (set propuesto). Corpus: <code>ni-v0.2.0</code></p>
+              <p className="text-sm text-muted-foreground">Ley de Seguridad Social + normativa INSS. Tasa: 7% (set propuesto). Corpus: <code>ni-v0.3.0</code></p>
             </section>
           </div>
         ),
@@ -643,7 +643,7 @@ neto = ingreso_bruto - total_deducciones`}</code></pre>
             </section>
             <section>
               <h2 className="text-base font-semibold">Vigencia</h2>
-              <p className="text-sm text-muted-foreground">Ley de Concertacion Tributaria. Tasa: 1.5% (set propuesto, pendiente confirmacion). Corpus: <code>ni-v0.2.0</code></p>
+              <p className="text-sm text-muted-foreground">Ley de Concertacion Tributaria. Tasa: 1.5% (set propuesto, pendiente confirmacion). Corpus: <code>ni-v0.3.0</code></p>
             </section>
           </div>
         ),
@@ -665,7 +665,7 @@ neto = ingreso_bruto - total_deducciones`}</code></pre>
               el motor de calculo, los articulos aplicables y ejemplos practicos por rubro.
             </p>
             <p className="text-sm text-muted-foreground">
-              Version del corpus: <code>gt-v0.1.0</code>
+              Version del corpus: <code>gt-v0.2.0</code>
             </p>
             <ul className="grid gap-2 sm:grid-cols-2">
               <li><Link className="block rounded-lg border border-border bg-card px-3 py-2 hover:bg-accent" href="/docs/legal/guatemala/indemnizacion">💼 Indemnizacion por antiguedad</Link></li>
@@ -737,7 +737,7 @@ monto_indemnizacion = salario_diario * dias_indemnizacion`}</code></pre>
             </section>
             <section>
               <h2 className="text-base font-semibold">Vigencia</h2>
-              <p className="text-sm text-muted-foreground">Codigo de Trabajo Decreto 1441, Arts. 78-82. Corpus: <code>gt-v0.1.0</code></p>
+              <p className="text-sm text-muted-foreground">Codigo de Trabajo Decreto 1441, Arts. 78-82. Corpus: <code>gt-v0.2.0</code></p>
             </section>
           </div>
         ),
@@ -798,7 +798,7 @@ bono14_proporcional = salario_mensual * (dias_periodo / 365)`}</code></pre>
             </section>
             <section>
               <h2 className="text-base font-semibold">Vigencia</h2>
-              <p className="text-sm text-muted-foreground">Decreto 76-78 y Decreto 42-92. Corpus: <code>gt-v0.1.0</code></p>
+              <p className="text-sm text-muted-foreground">Decreto 76-78 y Decreto 42-92. Corpus: <code>gt-v0.2.0</code></p>
             </section>
           </div>
         ),
@@ -853,7 +853,7 @@ vacaciones_pendientes = salario_diario * dias_vacaciones_pendientes`}</code></pr
             </section>
             <section>
               <h2 className="text-base font-semibold">Vigencia</h2>
-              <p className="text-sm text-muted-foreground">Codigo de Trabajo Decreto 1441, Art. 130. Corpus: <code>gt-v0.1.0</code></p>
+              <p className="text-sm text-muted-foreground">Codigo de Trabajo Decreto 1441, Art. 130. Corpus: <code>gt-v0.2.0</code></p>
             </section>
           </div>
         ),
@@ -904,7 +904,7 @@ salario_proporcional = salario_diario * dias_trabajados`}</code></pre>
             </section>
             <section>
               <h2 className="text-base font-semibold">Vigencia</h2>
-              <p className="text-sm text-muted-foreground">Codigo de Trabajo Decreto 1441, Arts. 68-76. Corpus: <code>gt-v0.1.0</code></p>
+              <p className="text-sm text-muted-foreground">Codigo de Trabajo Decreto 1441, Arts. 68-76. Corpus: <code>gt-v0.2.0</code></p>
             </section>
           </div>
         ),
@@ -955,7 +955,7 @@ total_deducciones = igss_laboral + isr_laboral`}</code></pre>
             </section>
             <section>
               <h2 className="text-base font-semibold">Vigencia</h2>
-              <p className="text-sm text-muted-foreground">Codigo de Trabajo Art. 88 + Ley IGSS + Ley ISR. Corpus: <code>gt-v0.1.0</code></p>
+              <p className="text-sm text-muted-foreground">Codigo de Trabajo Art. 88 + Ley IGSS + Ley ISR. Corpus: <code>gt-v0.2.0</code></p>
             </section>
           </div>
         ),
@@ -996,7 +996,7 @@ total_deducciones = igss_laboral + isr_laboral`}</code></pre>
             </section>
             <section>
               <h2 className="text-base font-semibold">Vigencia</h2>
-              <p className="text-sm text-muted-foreground">Ley del IGSS. Tasa: 4.83% (pendiente confirmacion oficial). Corpus: <code>gt-v0.1.0</code></p>
+              <p className="text-sm text-muted-foreground">Ley del IGSS. Tasa: 4.83% (pendiente confirmacion oficial). Corpus: <code>gt-v0.2.0</code></p>
             </section>
           </div>
         ),
@@ -1041,7 +1041,7 @@ total_deducciones = igss_laboral + isr_laboral`}</code></pre>
             </section>
             <section>
               <h2 className="text-base font-semibold">Vigencia</h2>
-              <p className="text-sm text-muted-foreground">Ley del ISR. Tasa: 5% simplificada (pendiente tabla progresiva oficial). Corpus: <code>gt-v0.1.0</code></p>
+              <p className="text-sm text-muted-foreground">Ley del ISR. Tasa: 5% simplificada (pendiente tabla progresiva oficial). Corpus: <code>gt-v0.2.0</code></p>
             </section>
           </div>
         ),
@@ -1063,7 +1063,7 @@ total_deducciones = igss_laboral + isr_laboral`}</code></pre>
               articulos aplicables y ejemplos practicos por rubro.
             </p>
             <p className="text-sm text-muted-foreground">
-              Version del corpus: <code>hn-v0.1.0</code>
+              Version del corpus: <code>hn-v0.2.0</code>
             </p>
             <ul className="grid gap-2 sm:grid-cols-2">
               <li><Link className="block rounded-lg border border-border bg-card px-3 py-2 hover:bg-accent" href="/docs/legal/honduras/indemnizacion">💼 Indemnizacion por antiguedad</Link></li>
@@ -1140,7 +1140,7 @@ monto_indemnizacion = salario_diario * dias_indemnizacion`}</code></pre>
             </section>
             <section>
               <h2 className="text-base font-semibold">Vigencia</h2>
-              <p className="text-sm text-muted-foreground">Codigo de Trabajo Decreto 189-59, Arts. 116, 120, 123. Corpus: <code>hn-v0.1.0</code></p>
+              <p className="text-sm text-muted-foreground">Codigo de Trabajo Decreto 189-59, Arts. 116, 120, 123. Corpus: <code>hn-v0.2.0</code></p>
             </section>
           </div>
         ),
@@ -1197,7 +1197,7 @@ monto_indemnizacion = salario_diario * dias_indemnizacion`}</code></pre>
             </section>
             <section>
               <h2 className="text-base font-semibold">Vigencia</h2>
-              <p className="text-sm text-muted-foreground">Decreto 133-92. Corpus: <code>hn-v0.1.0</code></p>
+              <p className="text-sm text-muted-foreground">Decreto 133-92. Corpus: <code>hn-v0.2.0</code></p>
             </section>
           </div>
         ),
@@ -1256,7 +1256,7 @@ vacaciones_pendientes = salario_diario * dias_vacaciones_pendientes`}</code></pr
             </section>
             <section>
               <h2 className="text-base font-semibold">Vigencia</h2>
-              <p className="text-sm text-muted-foreground">Codigo de Trabajo Decreto 189-59, Arts. 346, 349, 352. Corpus: <code>hn-v0.1.0</code></p>
+              <p className="text-sm text-muted-foreground">Codigo de Trabajo Decreto 189-59, Arts. 346, 349, 352. Corpus: <code>hn-v0.2.0</code></p>
             </section>
           </div>
         ),
@@ -1308,7 +1308,7 @@ salario_proporcional = salario_diario * dias_trabajados`}</code></pre>
             </section>
             <section>
               <h2 className="text-base font-semibold">Vigencia</h2>
-              <p className="text-sm text-muted-foreground">Codigo de Trabajo Decreto 189-59, Arts. 322 y 378. Corpus: <code>hn-v0.1.0</code></p>
+              <p className="text-sm text-muted-foreground">Codigo de Trabajo Decreto 189-59, Arts. 322 y 378. Corpus: <code>hn-v0.2.0</code></p>
             </section>
           </div>
         ),
@@ -1353,7 +1353,7 @@ total_deducciones = ihss_laboral`}</code></pre>
             </section>
             <section>
               <h2 className="text-base font-semibold">Vigencia</h2>
-              <p className="text-sm text-muted-foreground">Codigo de Trabajo Art. 667 + Ley del IHSS. Corpus: <code>hn-v0.1.0</code></p>
+              <p className="text-sm text-muted-foreground">Codigo de Trabajo Art. 667 + Ley del IHSS. Corpus: <code>hn-v0.2.0</code></p>
             </section>
           </div>
         ),
@@ -1393,7 +1393,7 @@ total_deducciones = ihss_laboral`}</code></pre>
             </section>
             <section>
               <h2 className="text-base font-semibold">Vigencia</h2>
-              <p className="text-sm text-muted-foreground">Ley del IHSS. Tasa: 3.5% (pendiente confirmacion oficial). Corpus: <code>hn-v0.1.0</code></p>
+              <p className="text-sm text-muted-foreground">Ley del IHSS. Tasa: 3.5% (pendiente confirmacion oficial). Corpus: <code>hn-v0.2.0</code></p>
             </section>
           </div>
         ),
@@ -1415,7 +1415,7 @@ total_deducciones = ihss_laboral`}</code></pre>
               el motor de calculo, los articulos aplicables y ejemplos practicos por rubro.
             </p>
             <p className="text-sm text-muted-foreground">
-              Version del corpus: <code>sv-v0.1.0</code> | Moneda: USD
+              Version del corpus: <code>sv-v0.2.0</code> | Moneda: USD
             </p>
             <ul className="grid gap-2 sm:grid-cols-2">
               <li><Link className="block rounded-lg border border-border bg-card px-3 py-2 hover:bg-accent" href="/docs/legal/elsalvador/indemnizacion">💼 Indemnizacion por despido</Link></li>
@@ -1487,7 +1487,7 @@ monto_indemnizacion = salario_diario * dias_indemnizacion`}</code></pre>
             </section>
             <section>
               <h2 className="text-base font-semibold">Vigencia</h2>
-              <p className="text-sm text-muted-foreground">Codigo de Trabajo de El Salvador, Arts. 58 y 59. Corpus: <code>sv-v0.1.0</code></p>
+              <p className="text-sm text-muted-foreground">Codigo de Trabajo de El Salvador, Arts. 58 y 59. Corpus: <code>sv-v0.2.0</code></p>
             </section>
           </div>
         ),
@@ -1552,7 +1552,7 @@ aguinaldo_prop. = (salario / 30) * escala * (dias_periodo / 365)`}</code></pre>
             </section>
             <section>
               <h2 className="text-base font-semibold">Vigencia</h2>
-              <p className="text-sm text-muted-foreground">Codigo de Trabajo Arts. 196-202. Corpus: <code>sv-v0.1.0</code></p>
+              <p className="text-sm text-muted-foreground">Codigo de Trabajo Arts. 196-202. Corpus: <code>sv-v0.2.0</code></p>
             </section>
           </div>
         ),
@@ -1608,7 +1608,7 @@ vacaciones_pendientes = salario_diario * dias_vacaciones_pendientes * 1.30`}</co
             </section>
             <section>
               <h2 className="text-base font-semibold">Vigencia</h2>
-              <p className="text-sm text-muted-foreground">Codigo de Trabajo de El Salvador, Arts. 177 y 187. Corpus: <code>sv-v0.1.0</code></p>
+              <p className="text-sm text-muted-foreground">Codigo de Trabajo de El Salvador, Arts. 177 y 187. Corpus: <code>sv-v0.2.0</code></p>
             </section>
           </div>
         ),
@@ -1653,7 +1653,7 @@ salario_proporcional = salario_diario * dias_trabajados`}</code></pre>
             </section>
             <section>
               <h2 className="text-base font-semibold">Vigencia</h2>
-              <p className="text-sm text-muted-foreground">Codigo de Trabajo de El Salvador. Corpus: <code>sv-v0.1.0</code></p>
+              <p className="text-sm text-muted-foreground">Codigo de Trabajo de El Salvador. Corpus: <code>sv-v0.2.0</code></p>
             </section>
           </div>
         ),
@@ -1704,7 +1704,7 @@ total = isss + afp
             </section>
             <section>
               <h2 className="text-base font-semibold">Vigencia</h2>
-              <p className="text-sm text-muted-foreground">Codigo de Trabajo Art. 132 + Ley ISSS + Ley SAP. Corpus: <code>sv-v0.1.0</code></p>
+              <p className="text-sm text-muted-foreground">Codigo de Trabajo Art. 132 + Ley ISSS + Ley SAP. Corpus: <code>sv-v0.2.0</code></p>
             </section>
           </div>
         ),
@@ -1741,7 +1741,7 @@ total = isss + afp
             </section>
             <section>
               <h2 className="text-base font-semibold">Vigencia</h2>
-              <p className="text-sm text-muted-foreground">Ley del ISSS. Tasa: 3% (pendiente confirmacion). Corpus: <code>sv-v0.1.0</code></p>
+              <p className="text-sm text-muted-foreground">Ley del ISSS. Tasa: 3% (pendiente confirmacion). Corpus: <code>sv-v0.2.0</code></p>
             </section>
           </div>
         ),
@@ -1778,7 +1778,7 @@ total = isss + afp
             </section>
             <section>
               <h2 className="text-base font-semibold">Vigencia</h2>
-              <p className="text-sm text-muted-foreground">Decreto 927 (Ley SAP). Tasa: 7.25% (pendiente confirmacion). Corpus: <code>sv-v0.1.0</code></p>
+              <p className="text-sm text-muted-foreground">Decreto 927 (Ley SAP). Tasa: 7.25% (pendiente confirmacion). Corpus: <code>sv-v0.2.0</code></p>
             </section>
           </div>
         ),
@@ -1800,7 +1800,7 @@ total = isss + afp
               motor de calculo, los articulos aplicables y ejemplos practicos por rubro.
             </p>
             <p className="text-sm text-muted-foreground">
-              Version del corpus: <code>cr-v0.1.0</code> | Moneda: CRC (Colon)
+              Version del corpus: <code>cr-v0.2.0</code> | Moneda: CRC (Colon)
             </p>
             <ul className="grid gap-2 sm:grid-cols-2">
               <li><Link className="block rounded-lg border border-border bg-card px-3 py-2 hover:bg-accent" href="/docs/legal/costarica/indemnizacion">💼 Cesantia y Preaviso</Link></li>
@@ -1875,7 +1875,7 @@ monto_preaviso = salario_diario * dias_preaviso`}</code></pre>
             </section>
             <section>
               <h2 className="text-base font-semibold">Vigencia</h2>
-              <p className="text-sm text-muted-foreground">Codigo de Trabajo de Costa Rica, Arts. 28, 29, 30. Corpus: <code>cr-v0.1.0</code></p>
+              <p className="text-sm text-muted-foreground">Codigo de Trabajo de Costa Rica, Arts. 28, 29, 30. Corpus: <code>cr-v0.2.0</code></p>
             </section>
           </div>
         ),
@@ -1933,7 +1933,7 @@ monto_preaviso = salario_diario * dias_preaviso`}</code></pre>
             </section>
             <section>
               <h2 className="text-base font-semibold">Vigencia</h2>
-              <p className="text-sm text-muted-foreground">Ley No. 2412. Corpus: <code>cr-v0.1.0</code></p>
+              <p className="text-sm text-muted-foreground">Ley No. 2412. Corpus: <code>cr-v0.2.0</code></p>
             </section>
           </div>
         ),
@@ -1989,7 +1989,7 @@ vacaciones_pendientes = salario_diario * dias_vacaciones_pendientes`}</code></pr
             </section>
             <section>
               <h2 className="text-base font-semibold">Vigencia</h2>
-              <p className="text-sm text-muted-foreground">Codigo de Trabajo de Costa Rica, Arts. 153 y 156. Corpus: <code>cr-v0.1.0</code></p>
+              <p className="text-sm text-muted-foreground">Codigo de Trabajo de Costa Rica, Arts. 153 y 156. Corpus: <code>cr-v0.2.0</code></p>
             </section>
           </div>
         ),
@@ -2034,7 +2034,7 @@ salario_proporcional = salario_diario * dias_trabajados`}</code></pre>
             </section>
             <section>
               <h2 className="text-base font-semibold">Vigencia</h2>
-              <p className="text-sm text-muted-foreground">Codigo de Trabajo de Costa Rica. Corpus: <code>cr-v0.1.0</code></p>
+              <p className="text-sm text-muted-foreground">Codigo de Trabajo de Costa Rica. Corpus: <code>cr-v0.2.0</code></p>
             </section>
           </div>
         ),
@@ -2078,7 +2078,7 @@ total_deducciones = ccss_laboral`}</code></pre>
             </section>
             <section>
               <h2 className="text-base font-semibold">Vigencia</h2>
-              <p className="text-sm text-muted-foreground">Ley No. 17 (Ley Constitutiva de la CCSS). Corpus: <code>cr-v0.1.0</code></p>
+              <p className="text-sm text-muted-foreground">Ley No. 17 (Ley Constitutiva de la CCSS). Corpus: <code>cr-v0.2.0</code></p>
             </section>
           </div>
         ),
@@ -2118,7 +2118,7 @@ total_deducciones = ccss_laboral`}</code></pre>
             </section>
             <section>
               <h2 className="text-base font-semibold">Vigencia</h2>
-              <p className="text-sm text-muted-foreground">Ley No. 17. Tasa: 9.17% (pendiente confirmacion). Corpus: <code>cr-v0.1.0</code></p>
+              <p className="text-sm text-muted-foreground">Ley No. 17. Tasa: 9.17% (pendiente confirmacion). Corpus: <code>cr-v0.2.0</code></p>
             </section>
           </div>
         ),
@@ -2140,7 +2140,7 @@ total_deducciones = ccss_laboral`}</code></pre>
               usadas por el motor de calculo, los articulos aplicables y ejemplos practicos.
             </p>
             <p className="text-sm text-muted-foreground">
-              Version del corpus: <code>pa-v0.1.0</code> | Moneda: USD
+              Version del corpus: <code>pa-v0.2.0</code> | Moneda: USD
             </p>
             <ul className="grid gap-2 sm:grid-cols-2">
               <li><Link className="block rounded-lg border border-border bg-card px-3 py-2 hover:bg-accent" href="/docs/legal/panama/indemnizacion">💼 Indemnizacion y Prima de Antiguedad</Link></li>
@@ -2216,7 +2216,7 @@ indemnizacion = salario_diario * dias_indemnizacion`}</code></pre>
             </section>
             <section>
               <h2 className="text-base font-semibold">Vigencia</h2>
-              <p className="text-sm text-muted-foreground">Codigo de Trabajo de Panama, Arts. 224, 225. Corpus: <code>pa-v0.1.0</code></p>
+              <p className="text-sm text-muted-foreground">Codigo de Trabajo de Panama, Arts. 224, 225. Corpus: <code>pa-v0.2.0</code></p>
             </section>
           </div>
         ),
@@ -2269,7 +2269,7 @@ indemnizacion = salario_diario * dias_indemnizacion`}</code></pre>
             </section>
             <section>
               <h2 className="text-base font-semibold">Vigencia</h2>
-              <p className="text-sm text-muted-foreground">Ley 13 de 1994. Corpus: <code>pa-v0.1.0</code></p>
+              <p className="text-sm text-muted-foreground">Ley 13 de 1994. Corpus: <code>pa-v0.2.0</code></p>
             </section>
           </div>
         ),
@@ -2325,7 +2325,7 @@ vacaciones_pendientes = salario_diario * dias_vacaciones_pendientes`}</code></pr
             </section>
             <section>
               <h2 className="text-base font-semibold">Vigencia</h2>
-              <p className="text-sm text-muted-foreground">Codigo de Trabajo de Panama, Art. 54. Corpus: <code>pa-v0.1.0</code></p>
+              <p className="text-sm text-muted-foreground">Codigo de Trabajo de Panama, Art. 54. Corpus: <code>pa-v0.2.0</code></p>
             </section>
           </div>
         ),
@@ -2370,7 +2370,7 @@ salario_proporcional = salario_diario * dias_trabajados`}</code></pre>
             </section>
             <section>
               <h2 className="text-base font-semibold">Vigencia</h2>
-              <p className="text-sm text-muted-foreground">Codigo de Trabajo de Panama. Corpus: <code>pa-v0.1.0</code></p>
+              <p className="text-sm text-muted-foreground">Codigo de Trabajo de Panama. Corpus: <code>pa-v0.2.0</code></p>
             </section>
           </div>
         ),
@@ -2416,7 +2416,7 @@ total_deducciones = css_laboral
             </section>
             <section>
               <h2 className="text-base font-semibold">Vigencia</h2>
-              <p className="text-sm text-muted-foreground">Codigo de Trabajo Art. 161 + Ley Organica de la CSS. Corpus: <code>pa-v0.1.0</code></p>
+              <p className="text-sm text-muted-foreground">Codigo de Trabajo Art. 161 + Ley Organica de la CSS. Corpus: <code>pa-v0.2.0</code></p>
             </section>
           </div>
         ),
@@ -2453,7 +2453,7 @@ total_deducciones = css_laboral
             </section>
             <section>
               <h2 className="text-base font-semibold">Vigencia</h2>
-              <p className="text-sm text-muted-foreground">Ley Organica de la CSS. Tasa: 9.75% (pendiente confirmacion). Corpus: <code>pa-v0.1.0</code></p>
+              <p className="text-sm text-muted-foreground">Ley Organica de la CSS. Tasa: 9.75% (pendiente confirmacion). Corpus: <code>pa-v0.2.0</code></p>
             </section>
           </div>
         ),
@@ -2471,7 +2471,7 @@ total_deducciones = css_laboral
             <p className="text-sm text-muted-foreground">
               El sistema laboral mexicano se rige por la <strong>Ley Federal del Trabajo (LFT)</strong>,
               la <strong>Ley del Seguro Social (IMSS)</strong> y la <strong>Ley del INFONAVIT</strong>.
-              Version del corpus: <code>mx-v0.1.0</code> | Moneda: MXN.
+              Version del corpus: <code>mx-v0.2.0</code> | Moneda: MXN.
             </p>
             <ul className="grid gap-2 sm:grid-cols-2">
               <li><Link className="block rounded-lg border border-border bg-card px-3 py-2 hover:bg-accent" href="/docs/legal/mexico/indemnizacion">💼 Indemnizacion</Link></li>
@@ -2524,7 +2524,7 @@ total = salario_diario * 90 + salario_diario * anos * 12 + salario_diario * anos
             </section>
             <section>
               <h2 className="text-base font-semibold">Vigencia</h2>
-              <p className="text-sm text-muted-foreground">LFT Arts. 48, 50, 162. Corpus: <code>mx-v0.1.0</code></p>
+              <p className="text-sm text-muted-foreground">LFT Arts. 48, 50, 162. Corpus: <code>mx-v0.2.0</code></p>
             </section>
           </div>
         ),
@@ -2557,7 +2557,7 @@ total = salario_diario * 90 + salario_diario * anos * 12 + salario_diario * anos
             </section>
             <section>
               <h2 className="text-base font-semibold">Vigencia</h2>
-              <p className="text-sm text-muted-foreground">LFT Art. 87. Corpus: <code>mx-v0.1.0</code></p>
+              <p className="text-sm text-muted-foreground">LFT Art. 87. Corpus: <code>mx-v0.2.0</code></p>
             </section>
           </div>
         ),
@@ -2595,7 +2595,7 @@ total = salario_diario * 90 + salario_diario * anos * 12 + salario_diario * anos
             </section>
             <section>
               <h2 className="text-base font-semibold">Vigencia</h2>
-              <p className="text-sm text-muted-foreground">LFT Arts. 76-80. Corpus: <code>mx-v0.1.0</code></p>
+              <p className="text-sm text-muted-foreground">LFT Arts. 76-80. Corpus: <code>mx-v0.2.0</code></p>
             </section>
           </div>
         ),
@@ -2673,7 +2673,7 @@ total = salario_diario * 90 + salario_diario * anos * 12 + salario_diario * anos
             </section>
             <section>
               <h2 className="text-base font-semibold">Vigencia</h2>
-              <p className="text-sm text-muted-foreground">Ley del Seguro Social. Corpus: <code>mx-v0.1.0</code></p>
+              <p className="text-sm text-muted-foreground">Ley del Seguro Social. Corpus: <code>mx-v0.2.0</code></p>
             </section>
           </div>
         ),
@@ -2696,7 +2696,7 @@ total = salario_diario * 90 + salario_diario * anos * 12 + salario_diario * anos
               por rubro.
             </p>
             <p className="text-sm text-muted-foreground">
-              Version del corpus: <code>co-v0.1.0</code> | Moneda: COP (Peso colombiano)
+              Version del corpus: <code>co-v0.2.0</code> | Moneda: COP (Peso colombiano)
             </p>
             <ul className="grid gap-2 sm:grid-cols-2">
               <li><Link className="block rounded-lg border border-border bg-card px-3 py-2 hover:bg-accent" href="/docs/legal/colombia/cesantia">💰 Cesantia</Link></li>
@@ -2750,7 +2750,7 @@ total = cesantia + intereses`}</code></pre>
             </section>
             <section>
               <h2 className="text-base font-semibold">Vigencia</h2>
-              <p className="text-sm text-muted-foreground">Codigo Sustantivo del Trabajo Art. 249. Ley 52 de 1975. Corpus: <code>co-v0.1.0</code></p>
+              <p className="text-sm text-muted-foreground">Codigo Sustantivo del Trabajo Art. 249. Ley 52 de 1975. Corpus: <code>co-v0.2.0</code></p>
             </section>
           </div>
         ),
@@ -2798,7 +2798,7 @@ monto_indemnizacion = salario_diario * dias_indemnizacion`}</code></pre>
             </section>
             <section>
               <h2 className="text-base font-semibold">Vigencia</h2>
-              <p className="text-sm text-muted-foreground">Codigo Sustantivo del Trabajo Art. 64. Corpus: <code>co-v0.1.0</code></p>
+              <p className="text-sm text-muted-foreground">Codigo Sustantivo del Trabajo Art. 64. Corpus: <code>co-v0.2.0</code></p>
             </section>
           </div>
         ),
@@ -2843,7 +2843,7 @@ prima_proporcional = salario_diario * 30 * (dias_periodo / 365)`}</code></pre>
             </section>
             <section>
               <h2 className="text-base font-semibold">Vigencia</h2>
-              <p className="text-sm text-muted-foreground">Codigo Sustantivo del Trabajo Art. 306. Corpus: <code>co-v0.1.0</code></p>
+              <p className="text-sm text-muted-foreground">Codigo Sustantivo del Trabajo Art. 306. Corpus: <code>co-v0.2.0</code></p>
             </section>
           </div>
         ),
@@ -2889,7 +2889,7 @@ vacaciones_pendientes = salario_diario * dias_vacaciones_pendientes`}</code></pr
             </section>
             <section>
               <h2 className="text-base font-semibold">Vigencia</h2>
-              <p className="text-sm text-muted-foreground">Codigo Sustantivo del Trabajo Arts. 186, 189. Corpus: <code>co-v0.1.0</code></p>
+              <p className="text-sm text-muted-foreground">Codigo Sustantivo del Trabajo Arts. 186, 189. Corpus: <code>co-v0.2.0</code></p>
             </section>
           </div>
         ),
@@ -2924,7 +2924,7 @@ salario_proporcional = salario_diario * dias_trabajados`}</code></pre>
             </section>
             <section>
               <h2 className="text-base font-semibold">Vigencia</h2>
-              <p className="text-sm text-muted-foreground">Codigo Sustantivo del Trabajo. Corpus: <code>co-v0.1.0</code></p>
+              <p className="text-sm text-muted-foreground">Codigo Sustantivo del Trabajo. Corpus: <code>co-v0.2.0</code></p>
             </section>
           </div>
         ),
@@ -2974,7 +2974,7 @@ total_deducciones = eps + pension = base * 0.08`}</code></pre>
             </section>
             <section>
               <h2 className="text-base font-semibold">Vigencia</h2>
-              <p className="text-sm text-muted-foreground">Ley 100 de 1993, Arts. 20 y 204. Corpus: <code>co-v0.1.0</code></p>
+              <p className="text-sm text-muted-foreground">Ley 100 de 1993, Arts. 20 y 204. Corpus: <code>co-v0.2.0</code></p>
             </section>
           </div>
         ),
@@ -3022,7 +3022,7 @@ pension = base_cotizacion * 0.04`}</code></pre>
             </section>
             <section>
               <h2 className="text-base font-semibold">Vigencia</h2>
-              <p className="text-sm text-muted-foreground">Ley 100 de 1993. Tasas: EPS 4%, Pension 4%. Corpus: <code>co-v0.1.0</code></p>
+              <p className="text-sm text-muted-foreground">Ley 100 de 1993. Tasas: EPS 4%, Pension 4%. Corpus: <code>co-v0.2.0</code></p>
             </section>
           </div>
         ),
@@ -3039,7 +3039,7 @@ pension = base_cotizacion * 0.04`}</code></pre>
           <div className="space-y-6">
             <p className="text-sm text-muted-foreground">
               El sistema laboral colombiano se rige por el <strong>Codigo Sustantivo del Trabajo (CST)</strong>
-              y la <strong>Ley 100 de 1993</strong> (Seguridad Social). Version del corpus: <code>co-v0.1.0</code> | Moneda: COP.
+              y la <strong>Ley 100 de 1993</strong> (Seguridad Social). Version del corpus: <code>co-v0.2.0</code> | Moneda: COP.
             </p>
             <ul className="grid gap-2 sm:grid-cols-2">
               <li><Link className="block rounded-lg border border-border bg-card px-3 py-2 hover:bg-accent" href="/docs/legal/colombia/cesantia">💰 Cesantia</Link></li>
@@ -3086,7 +3086,7 @@ total = cesantia + intereses`}</code></pre>
               </div>
             </section>
             <section><h2 className="text-base font-semibold">Vigencia</h2>
-              <p className="text-sm text-muted-foreground">CST Arts. 249, 253 + Ley 52/1975. Corpus: <code>co-v0.1.0</code></p>
+              <p className="text-sm text-muted-foreground">CST Arts. 249, 253 + Ley 52/1975. Corpus: <code>co-v0.2.0</code></p>
             </section>
           </div>
         ),
@@ -3116,7 +3116,7 @@ total = cesantia + intereses`}</code></pre>
               </div>
             </section>
             <section><h2 className="text-base font-semibold">Vigencia</h2>
-              <p className="text-sm text-muted-foreground">CST Art. 64. Corpus: <code>co-v0.1.0</code></p>
+              <p className="text-sm text-muted-foreground">CST Art. 64. Corpus: <code>co-v0.2.0</code></p>
             </section>
           </div>
         ),
@@ -3145,7 +3145,7 @@ total = cesantia + intereses`}</code></pre>
               </div>
             </section>
             <section><h2 className="text-base font-semibold">Vigencia</h2>
-              <p className="text-sm text-muted-foreground">CST Art. 306. Corpus: <code>co-v0.1.0</code></p>
+              <p className="text-sm text-muted-foreground">CST Art. 306. Corpus: <code>co-v0.2.0</code></p>
             </section>
           </div>
         ),
@@ -3174,7 +3174,7 @@ total = cesantia + intereses`}</code></pre>
               </div>
             </section>
             <section><h2 className="text-base font-semibold">Vigencia</h2>
-              <p className="text-sm text-muted-foreground">CST Arts. 186, 189. Corpus: <code>co-v0.1.0</code></p>
+              <p className="text-sm text-muted-foreground">CST Arts. 186, 189. Corpus: <code>co-v0.2.0</code></p>
             </section>
           </div>
         ),
@@ -3264,7 +3264,7 @@ pension = base * 0.04`}</code></pre>
             <p className="text-sm text-muted-foreground">
               El sistema laboral peruano se rige por la <strong>Ley General de Trabajo</strong>,
               el <strong>D.L. 19990 (ONP)</strong> y la <strong>Ley 25897 (AFP)</strong>.
-              Version del corpus: <code>pe-v0.1.0</code> | Moneda: PEN.
+              Version del corpus: <code>pe-v0.2.0</code> | Moneda: PEN.
             </p>
             <ul className="grid gap-2 sm:grid-cols-2">
               <li><Link className="block rounded-lg border border-border bg-card px-3 py-2 hover:bg-accent" href="/docs/legal/peru/indemnizacion">💼 Indemnizacion</Link></li>
@@ -3309,7 +3309,7 @@ indemnizacion = (salario/30) * dias`}</code></pre>
               </div>
             </section>
             <section><h2 className="text-base font-semibold">Vigencia</h2>
-              <p className="text-sm text-muted-foreground">Art. 167. Corpus: <code>pe-v0.1.0</code></p>
+              <p className="text-sm text-muted-foreground">Art. 167. Corpus: <code>pe-v0.2.0</code></p>
             </section>
           </div>
         ),
@@ -3463,7 +3463,7 @@ indemnizacion = (salario/30) * dias`}</code></pre>
           <div className="space-y-6">
             <p className="text-sm text-muted-foreground">
               El sistema laboral argentino se rige por la <strong>Ley de Contrato de Trabajo (Ley 20.744)</strong>,
-              la <strong>Ley 23.041 (SAC)</strong> y las leyes previsionales. Version del corpus: <code>ar-v0.1.0</code> | Moneda: ARS.
+              la <strong>Ley 23.041 (SAC)</strong> y las leyes previsionales. Version del corpus: <code>ar-v0.2.0</code> | Moneda: ARS.
             </p>
             <ul className="grid gap-2 sm:grid-cols-2">
               <li><Link className="block rounded-lg border border-border bg-card px-3 py-2 hover:bg-accent" href="/docs/legal/argentina/indemnizacion">💼 Indemnizacion</Link></li>
@@ -3505,7 +3505,7 @@ indemnizacion = (salario/30) * dias`}</code></pre>
               </div>
             </section>
             <section><h2 className="text-base font-semibold">Vigencia</h2>
-              <p className="text-sm text-muted-foreground">Ley 20.744 Art. 245. Corpus: <code>ar-v0.1.0</code></p>
+              <p className="text-sm text-muted-foreground">Ley 20.744 Art. 245. Corpus: <code>ar-v0.2.0</code></p>
             </section>
           </div>
         ),
@@ -3539,7 +3539,7 @@ preaviso = (salario / 30) * dias`}</code></pre>
               </div>
             </section>
             <section><h2 className="text-base font-semibold">Vigencia</h2>
-              <p className="text-sm text-muted-foreground">LCT Arts. 231-233. Corpus: <code>ar-v0.1.0</code></p>
+              <p className="text-sm text-muted-foreground">LCT Arts. 231-233. Corpus: <code>ar-v0.2.0</code></p>
             </section>
           </div>
         ),
@@ -3663,7 +3663,7 @@ vacaciones = salario_vacacional * dias_pendientes`}</code></pre>
             <p className="text-sm text-muted-foreground">
               El sistema laboral chileno se rige por el <strong>Codigo del Trabajo (DFL 1)</strong>,
               el <strong>D.L. 3.500 (AFP)</strong>, la <strong>Ley 18.933 (FONASA/ISAPRE)</strong>
-              y la <strong>Ley 19.728 (AFC)</strong>. Version: <code>cl-v0.1.0</code> | Moneda: CLP.
+              y la <strong>Ley 19.728 (AFC)</strong>. Version: <code>cl-v0.2.0</code> | Moneda: CLP.
             </p>
             <ul className="grid gap-2 sm:grid-cols-2">
               <li><Link className="block rounded-lg border border-border bg-card px-3 py-2 hover:bg-accent" href="/docs/legal/chile/indemnizacion">💼 Indemnizacion</Link></li>

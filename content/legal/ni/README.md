@@ -1,6 +1,6 @@
 # Corpus Legal Nicaragua (MVP)
 
-Version: `ni-v0.2.0`
+Version: `ni-v0.3.0`
 
 Este directorio contiene la base legal y operativa del MVP de liquidacion laboral en Nicaragua.
 

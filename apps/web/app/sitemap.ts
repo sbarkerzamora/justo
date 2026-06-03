@@ -7,6 +7,8 @@ import { source } from "@/lib/source"
 const SITE_URL = getSiteUrl()
 const LAST_MODIFIED = new Date().toISOString().replace(/\.\d+Z$/, "+00:00")
 
+const toolSlugs = ["liquidacion-laboral", "vacaciones", "salario-neto"] as const
+
 function toDocsPath(slug?: string[]): string {
   if (!slug || slug.length === 0) return "/docs"
   return `/docs/${slug.join("/")}`
@@ -63,6 +65,23 @@ export default function sitemap(): MetadataRoute.Sitemap {
       changeFrequency: "weekly",
       priority: 0.8,
     })
+  }
+
+  for (const slug of toolSlugs) {
+    entries.push({
+      url: `${SITE_URL}/tools/${slug}`,
+      lastModified: LAST_MODIFIED,
+      changeFrequency: "weekly",
+      priority: 0.8,
+    })
+    for (const country of countryList) {
+      entries.push({
+        url: `${SITE_URL}/tools/${slug}?country=${country.code}`,
+        lastModified: LAST_MODIFIED,
+        changeFrequency: "weekly",
+        priority: 0.7,
+      })
+    }
   }
 
   return [...entries, ...getDocsEntries()]

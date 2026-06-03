@@ -1,6 +1,6 @@
 # Corpus Legal Guatemala (MVP)
 
-Version: `gt-v0.1.0`
+Version: `gt-v0.2.0`
 
 ## Set normativo
 
@@ -12,7 +12,12 @@ Version: `gt-v0.1.0`
 
 ## Archivos
 
-- `Leydeltrabajogua.md` (fuente espejo del Codigo de Trabajo)
+- `codigo-de-trabajo.md` (fuente espejo del Codigo de Trabajo, Decreto 1441)
+- `indemnizacion.md` (Arts. 78, 82)
+- `vacaciones.md` (Art. 130)
+- `aguinaldo.md` (Decreto 76-78, Decreto 42-92)
+- `salario-proporcional.md`
+- `deducciones.md` (Art. 88 + Ley IGSS + Ley ISR)
 - `igss.md`
 - `isr.md`
 
@@ -23,8 +28,8 @@ Cada archivo define `base_legal`, `regla_operativa`, `formula`, `variables`, `su
 ## Guia de uso para el asistente
 
 - País cubierto: Guatemala.
-- Fuente primaria local: `Leydeltrabajogua.md` (Código de Trabajo de Guatemala).
-- Documentos temáticos enriquecidos: `igss.md`, `isr.md`.
+- Fuente primaria local: `codigo-de-trabajo.md` (Código de Trabajo de Guatemala, Decreto 1441).
+- Documentos temáticos enriquecidos: `indemnizacion.md`, `vacaciones.md`, `aguinaldo.md`, `salario-proporcional.md`, `deducciones.md`, `igss.md`, `isr.md`.
 - Antes de responder, el LLM debe recuperar el documento temático más cercano y contrastarlo con la fuente primaria local cuando la pregunta solicite base legal o detalle normativo.
 - Para liquidaciones o estimaciones, debe preguntar primero por salario/base, fechas o antigüedad, tipo de terminación y pagos/días pendientes relevantes.
 - Si un documento tiene estado `proposed` o contiene tasas sujetas a norma administrativa, la respuesta debe marcar la necesidad de validación legal/contable vigente.

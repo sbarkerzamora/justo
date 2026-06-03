@@ -1,7 +1,7 @@
 ---
 country: sv
 topic: aguinaldo
-version: sv-v0.1.0
+version: sv-v0.2.0
 status: proposed
 source: "Codigo de Trabajo de El Salvador"
 last_reviewed: "2026-05-11"
@@ -16,6 +16,30 @@ last_reviewed: "2026-05-11"
 - Art. 198: Monto minimo escalonado segun antiguedad.
 - Art. 199: Base de calculo segun tipo de salario.
 - Art. 202: Pago proporcional al terminar relacion laboral.
+
+## texto_legal
+
+**Art. 196.-** Todo patrono está obligado a dar a sus trabajadores, en concepto de aguinaldo, una prima por cada año de trabajo.
+
+**Art. 197.-** Los patronos estarán obligados al pago completo de la prima en concepto de aguinaldo, cuando el trabajador tuviere un año o más de estar a su servicio.
+
+Los trabajadores que al día doce de diciembre no tuvieren un año de servir a un mismo patrono, tendrán derecho a que se les pague la parte proporcional al tiempo laborado de la cantidad que les habría correspondido si hubieren completado un año de servicios a la fecha indicada.
+
+**Art. 198.-** La cantidad mínima que deberá pagarse al trabajador como prima en concepto de aguinaldo será:
+
+1) Para quien tuviere un año y menos de tres años de servicio, la prestación equivalente al salario de quince días;
+
+2) Para quien tuviere tres años o más y menos de diez años de servicio, la prestación equivalente al salario de diecinueve días; y,
+
+3) Para quien tuviere diez o más años de servicio, una prestación equivalente al salario de veintiún días.
+
+**Art. 199.-** Para calcular la remuneración que el trabajador debe recibir en concepto de aguinaldo, se tomará en cuenta:
+
+1) El salario básico que devengue a la fecha en que debe pagarse el aguinaldo cuando el salario hubiese sido estipulado por unidad de tiempo; y,
+
+2) El salario básico que resulte de dividir los salarios ordinarios que el trabajador haya devengado durante los seis meses anteriores a la fecha en que debe pagarse el aguinaldo, entre el número de días laborables comprendidos en dicho período, cuando se trate de cualquier otra forma de estipulación del salario.
+
+**Art. 202.-** Cuando se declare terminado un contrato de trabajo con responsabilidad para el patrono, o cuando el trabajador fuere despedido de hecho sin causa legal, antes del día doce de diciembre, el trabajador tendrá derecho a que se le pague la remuneración de los días que, de manera proporcional al tiempo trabajado, le corresponda en concepto de aguinaldo.
 
 ## regla_operativa
 

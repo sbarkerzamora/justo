@@ -1,6 +1,6 @@
 # Corpus Legal Mexico (MVP)
 
-Version: `mx-v0.1.0`
+Version: `mx-v0.2.0`
 
 ## Set normativo
 

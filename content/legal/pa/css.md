@@ -1,7 +1,7 @@
 ---
 country: pa
 topic: css
-version: pa-v0.1.0
+version: pa-v0.2.0
 status: proposed
 source: "Ley Organica de la Caja de Seguro Social"
 last_reviewed: "2026-05-11"

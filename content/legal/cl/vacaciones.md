@@ -1,7 +1,7 @@
 ---
 country: cl
 topic: vacaciones
-version: cl-v0.1.0
+version: cl-v0.2.0
 status: proposed
 source: "Codigo del Trabajo de Chile"
 last_reviewed: "2026-05-11"
@@ -14,6 +14,26 @@ last_reviewed: "2026-05-11"
 - Art. 67: 15 dias habiles de vacaciones por cada ano.
 - Art. 68: Feriado progresivo: +1 dia cada 3 anos desde 10 anos.
 - Art. 73: Proporcional al terminar la relacion.
+
+## texto_legal
+
+**Artículo 67.** Los trabajadores con más de un año de servicio tendrán derecho a un feriado anual de quince días hábiles, con remuneración íntegra que se otorgará de acuerdo con las formalidades que establezca el reglamento.
+
+Los trabajadores que presten servicios en la Duodécima Región de Magallanes y de la Antártica Chilena, en la Undécima Región de Aysén del General Carlos Ibáñez del Campo, y en la Provincia de Palena, tendrán derecho a un feriado anual de veinte días hábiles.
+
+El feriado se concederá de preferencia en primavera o verano, considerándose las necesidades del servicio.
+
+**Artículo 68.** Todo trabajador, con diez años de trabajo, para uno o más empleadores, continuos o no, tendrá derecho a un día adicional de feriado por cada tres nuevos años trabajados, y este exceso será susceptible de negociación individual o colectiva.
+
+Con todo, sólo podrán hacerse valer hasta diez años de trabajo prestados a empleadores anteriores.
+
+**Artículo 73.** El feriado establecido en el artículo 67 no podrá compensarse en dinero.
+
+Sólo si el trabajador, teniendo los requisitos necesarios para hacer uso del feriado, deja de pertenecer por cualquiera circunstancia a la empresa, el empleador deberá compensarle el tiempo que por concepto de feriado le habría correspondido.
+
+Con todo, el trabajador cuyo contrato termine antes de completar el año de servicio que da derecho a feriado, percibirá una indemnización por ese beneficio, equivalente a la remuneración íntegra calculada en forma proporcional al tiempo que medie entre su contratación o la fecha que enteró la última anualidad y el término de sus funciones.
+
+En los casos a que se refieren los dos incisos anteriores, y en la compensación del exceso a que alude el artículo 68, las sumas que se paguen por estas causas al trabajador no podrán ser inferiores a las que resulten de aplicar lo dispuesto en el artículo 71.
 
 ## formula
 

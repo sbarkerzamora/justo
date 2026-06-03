@@ -83,6 +83,14 @@ type HomeCopy = {
   settlementWelcomeDescription: string
   vacationsWelcomeTitle: string
   vacationsWelcomeDescription: string
+  salaryNetWelcomeTitle: string
+  salaryNetWelcomeDescription: string
+  grossSalary: string
+  netResult: string
+  netPerPeriod: string
+  monthly: string
+  biweekly: string
+  weekly: string
   startButton: string
   hrCtaTitle: string
   hrCtaDescription: string
@@ -193,6 +201,14 @@ export const homeCopy: Record<Locale, HomeCopy> = {
     settlementWelcomeDescription: "Calcula tu liquidación laboral con fórmulas transparentes y referencias legales. Te guiaremos paso a paso.",
     vacationsWelcomeTitle: "Calculadora de vacaciones",
     vacationsWelcomeDescription: "Calcula el monto de tus vacaciones acumuladas con fórmulas claras y trazabilidad legal.",
+    salaryNetWelcomeTitle: "Calculadora de salario neto",
+    salaryNetWelcomeDescription: "Calcula tu salario neto después de deducciones legales (INSS, IR, ISSS, AFP, etc.) con fórmulas transparentes.",
+    grossSalary: "Salario bruto",
+    netResult: "Salario neto",
+    netPerPeriod: "Salario neto por período",
+    monthly: "Mensual",
+    biweekly: "Quincenal",
+    weekly: "Semanal",
     startButton: "Comenzar",
     hrCtaTitle: "Justo para RRHH",
     hrCtaDescription: "Herramientas avanzadas para gestión de talento, nómina y cumplimiento laboral.",
@@ -300,6 +316,14 @@ export const homeCopy: Record<Locale, HomeCopy> = {
     settlementWelcomeDescription: "Calculate your labor settlement with transparent formulas and legal references. We'll guide you step by step.",
     vacationsWelcomeTitle: "Vacation Calculator",
     vacationsWelcomeDescription: "Calculate your accrued vacation amount with clear formulas and legal traceability.",
+    salaryNetWelcomeTitle: "Net Salary Calculator",
+    salaryNetWelcomeDescription: "Calculate your net salary after legal deductions (INSS, IR, ISSS, AFP, etc.) with transparent formulas.",
+    grossSalary: "Gross salary",
+    netResult: "Net salary",
+    netPerPeriod: "Net salary by period",
+    monthly: "Monthly",
+    biweekly: "Biweekly",
+    weekly: "Weekly",
     startButton: "Start",
     hrCtaTitle: "Justo for HR",
     hrCtaDescription: "Advanced tools for talent management, payroll and labor compliance.",

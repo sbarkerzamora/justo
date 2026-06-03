@@ -21,6 +21,7 @@ import {
   IconMessageCircle,
   IconCalculator,
   IconBeach,
+  IconCoins,
   IconTools,
   IconChartBar,
   IconBook,
@@ -29,7 +30,6 @@ import {
   IconSun,
   IconX,
   IconArrowRight,
-  IconCash,
   IconGift,
   IconClock,
   IconSwitch,
@@ -86,6 +86,7 @@ const sidebarIcons: Record<string, React.ReactNode> = {
   Chat: <IconMessageCircle className="h-5 w-5 shrink-0" />,
   "Calculadora de liquidacion": <IconCalculator className="h-5 w-5 shrink-0" />,
   "Calculadora de vacaciones": <IconBeach className="h-5 w-5 shrink-0" />,
+  "Salario neto": <IconCoins className="h-5 w-5 shrink-0" />,
   Herramientas: <IconTools className="h-5 w-5 shrink-0" />,
   "Guia laboral": <IconChartBar className="h-5 w-5 shrink-0" />,
   "Marco legal": <IconBook className="h-5 w-5 shrink-0" />,
@@ -124,13 +125,13 @@ export function AppShell({
     { label: "Chat", href: homePath },
     { label: "Calculadora de liquidacion", href: `${homePath}?tool=settlement` },
     { label: "Calculadora de vacaciones", href: `${homePath}?tool=vacations` },
+    { label: "Salario neto", href: `${homePath}?tool=salary-net` },
     { label: "Herramientas", href: "/tools" },
     { label: "Guia laboral", href: "/guia-laboral" },
     { label: "Marco legal", href: "/docs/legal" },
   ]
 
   const comingSoonSidebarLinks = [
-    { labelEs: "Salario neto", labelEn: "Net salary", icon: <IconCash className="h-5 w-5 shrink-0" /> },
     { labelEs: "Aguinaldo / decimo / bono", labelEn: "Bonus / 13th salary", icon: <IconGift className="h-5 w-5 shrink-0" /> },
     { labelEs: "Horas extra", labelEn: "Overtime", icon: <IconClock className="h-5 w-5 shrink-0" /> },
     { labelEs: "Simulador de terminacion", labelEn: "Termination simulator", icon: <IconSwitch className="h-5 w-5 shrink-0" /> },

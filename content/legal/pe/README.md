@@ -1,6 +1,6 @@
 # Corpus Legal Peru (MVP)
 
-Version: `pe-v0.1.0`
+Version: `pe-v0.2.0`
 
 ## Set normativo
 

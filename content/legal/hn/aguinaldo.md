@@ -1,7 +1,7 @@
 ---
 country: hn
 topic: aguinaldo
-version: hn-v0.1.0
+version: hn-v0.2.0
 status: proposed
 source: "Ley del Decimotercer Mes (Decreto 133-92)"
 last_reviewed: "2026-05-11"

@@ -15,7 +15,7 @@ describe("calculateElSalvadorSettlement", () => {
       endDate: "2026-05-11",
     })
 
-    expect(result.legalCorpusVersion).toBe("sv-v0.1.0")
+    expect(result.legalCorpusVersion).toBe("sv-v0.2.0")
     expect(result.incomes.length).toBe(4)
     expect(result.incomes[0]?.label).toBe("Indemnizacion")
     expect(result.incomes[1]?.label).toBe("Aguinaldo proporcional")

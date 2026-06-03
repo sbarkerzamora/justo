@@ -1,7 +1,7 @@
 ---
 country: co
 topic: cesantia
-version: co-v0.1.0
+version: co-v0.2.0
 status: proposed
 source: "Codigo Sustantivo del Trabajo de Colombia"
 last_reviewed: "2026-05-11"
@@ -14,6 +14,14 @@ last_reviewed: "2026-05-11"
 - Art. 249: 1 mes (30 dias) de salario por cada ano de servicio, proporcional por fraccion.
 - Art. 253: Base: ultimo salario mensual o promedio del ultimo ano si hubo variaciones.
 - Ley 52 de 1975: Intereses del 12% anual sobre cesantias.
+
+## texto_legal
+
+**Artículo 249. Regla general.** Todo empleador está obligado a pagar a sus trabajadores, y a las demás personas que se indican en este Capítulo, al terminar el contrato de trabajo, como auxilio de cesantía, un mes de salario por cada año de servicios y proporcionalmente por fracción de año.
+
+**Artículo 253. Salario base para la liquidación de la cesantía.** Para liquidar el auxilio de cesantía se toma como base el último salario mensual devengado por el trabajador, siempre que no haya tenido variación en los tres (3) últimos meses. En el caso contrario y en el de los salarios variables, se tomará como base el promedio de lo devengado en el último año de servicios o en todo el tiempo servido si fuere menor de un año.
+
+Para el tiempo de servicios anterior al treinta y uno (31) de diciembre de mil novecientos sesenta y dos (1962) se aplicarán las normas vigentes hasta esa fecha.
 
 ## regla_operativa
 

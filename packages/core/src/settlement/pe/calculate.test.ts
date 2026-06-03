@@ -15,7 +15,7 @@ describe("calculatePeruSettlement", () => {
       endDate: "2026-05-11",
     })
 
-    expect(result.legalCorpusVersion).toBe("pe-v0.1.0")
+    expect(result.legalCorpusVersion).toBe("pe-v0.2.0")
     expect(result.incomes.length).toBe(5)
     expect(result.incomes[0]?.label).toBe("Indemnizacion por despido")
     expect(result.incomes[1]?.label).toBe("CTS")

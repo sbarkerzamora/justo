@@ -1,6 +1,7 @@
 import type { CountryCode } from "@justo/core"
+import { salaryNetTool } from "./salary-net"
 import { settlementTool } from "./settlement"
-import type { JustoTool } from "./types"
+import type { JustoTool, JustoToolCountryOverride, JustoToolAvailability, JustoToolCategory } from "./types"
 import { vacationsTool } from "./vacations"
 
 const allCountries = [
@@ -45,27 +46,7 @@ const comingSoonTool = (
 export const tools = [
   settlementTool,
   vacationsTool,
-  comingSoonTool({
-    id: "salary-net",
-    slug: "salario-neto",
-    name: "Salario neto",
-    shortDescription: "Estima salario neto después de deducciones laborales.",
-    longDescription:
-      "Calculadora abierta para entender deducciones aplicables y estimar el pago neto según país.",
-    category: "calculation",
-    inputRequirements: [
-      "País",
-      "Salario bruto",
-      "Frecuencia de pago",
-      "Deducciones aplicables",
-    ],
-    outputSummary: [
-      "Salario bruto",
-      "Deducciones",
-      "Salario neto",
-      "Referencias legales",
-    ],
-  }),
+  salaryNetTool,
   comingSoonTool({
     id: "bonus",
     slug: "aguinaldo-decimo-bono",
@@ -170,3 +151,23 @@ export function getAvailableTools(): readonly JustoTool[] {
 export function getToolBySlug(slug: string): JustoTool | undefined {
   return tools.find((tool) => tool.slug === slug)
 }
+
+export function getToolForCountry(
+  slug: string,
+  countryCode: CountryCode
+): JustoTool | undefined {
+  const tool = getToolBySlug(slug)
+  if (!tool) return undefined
+
+  const override = tool.countryOverrides?.[countryCode]
+  if (!override) return tool
+
+  return {
+    ...tool,
+    longDescription: override.longDescription ?? tool.longDescription,
+    legalReferences: override.legalReferences ?? tool.legalReferences,
+    corpusVersion: override.corpusVersion ?? tool.corpusVersion,
+  }
+}
+
+// Types are re-exported from index.ts via types.ts

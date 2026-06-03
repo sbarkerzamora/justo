@@ -13,7 +13,7 @@ const record: AnonymousSettlementRecord = {
   totalDeductions: 1875,
   netTotal: 28125,
   currency: "NIO",
-  legalCorpusVersion: "ni-v0.2.0",
+  legalCorpusVersion: "ni-v0.3.0",
   timestamp: Date.now(),
 }
 

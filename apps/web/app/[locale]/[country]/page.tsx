@@ -34,7 +34,7 @@ export default async function CountryPage({
 
   return (
     <>
-      <CountryShell countryCode={country} locale={locale} initialTool={tool as "settlement" | "vacations" | undefined} />
+      <CountryShell countryCode={country} locale={locale} initialTool={tool as "settlement" | "vacations" | "salary-net" | undefined} />
       <script
         type="application/ld+json"
         dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}

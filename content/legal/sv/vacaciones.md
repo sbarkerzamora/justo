@@ -1,7 +1,7 @@
 ---
 country: sv
 topic: vacaciones
-version: sv-v0.1.0
+version: sv-v0.2.0
 status: proposed
 source: "Codigo de Trabajo de El Salvador"
 last_reviewed: "2026-05-11"
@@ -13,6 +13,12 @@ last_reviewed: "2026-05-11"
 
 - Art. 177: 15 dias de vacaciones despues de 1 ano, con prima del 30%.
 - Art. 187: Pago proporcional al terminar la relacion laboral.
+
+## texto_legal
+
+**Art. 177.-** Después de un año de trabajo continuo en la misma empresa o establecimiento o bajo la dependencia de un mismo patrono, los trabajadores tendrán derecho a un período de vacaciones cuya duración será de quince días, los cuales serán remunerados con una prestación equivalente al salario ordinario correspondiente a dicho lapso más un 30% del mismo.
+
+**Art. 187.-** Cuando se declare terminado un contrato de trabajo con responsabilidad para el patrono, o cuando el trabajador fuere despedido de hecho sin causa legal, tendrá derecho a que se le pague la remuneración de los días que, de manera proporcional al tiempo trabajado, le correspondan en concepto de vacaciones. Pero si ya hubiere terminado el año continuo de servicio, aunque el contrato terminare sin responsabilidad para el patrono, éste deberá pagar al trabajador la retribución a que tiene derecho en concepto de vacaciones.
 
 ## regla_operativa
 

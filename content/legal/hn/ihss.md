@@ -1,7 +1,7 @@
 ---
 country: hn
 topic: ihss
-version: hn-v0.1.0
+version: hn-v0.2.0
 status: proposed
 source: "Ley del IHSS y reglamentacion administrativa vigente"
 last_reviewed: "2026-05-11"
