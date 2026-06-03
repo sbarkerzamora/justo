@@ -108,7 +108,7 @@ export function AppShell({
   const { push } = useRouter()
   const { resolvedTheme, setTheme } = useTheme()
   const [mounted, setMounted] = useState(false)
-  useEffect(() => setMounted(true), [])
+  useEffect(() => setMounted(true), []) // eslint-disable-line react-hooks/set-state-in-effect
   const toggleMobile = useCallback(() => setMobileOpen((p) => !p), [])
 
   if (isDocs) return <>{children}</>
@@ -451,7 +451,7 @@ function ThemeToggle({
   setTheme: (theme: string) => void
 }) {
   const [mounted, setMounted] = useState(false)
-  useEffect(() => setMounted(true), [])
+  useEffect(() => setMounted(true), []) // eslint-disable-line react-hooks/set-state-in-effect
   return (
     <button
       type="button"
