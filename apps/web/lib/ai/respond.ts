@@ -2,6 +2,7 @@ import { streamText, tool, zodSchema, type ModelMessage } from "ai"
 import { calculateSalaryNet } from "@justo/tools"
 import { calculateSettlement } from "@justo/tools"
 import { calculateVacations } from "@justo/tools"
+import { calculateBonus, calculateTermination } from "@justo/tools"
 import { join } from "node:path"
 import { z } from "zod"
 
@@ -681,6 +682,111 @@ export async function generateLaborResponse(input: {
           } catch (e) {
             return `Error al calcular salario neto: ${e instanceof Error ? e.message : "error desconocido"}. Usa la calculadora guiada para un calculo mas preciso.`
           }
+        },
+      }),
+      quickBonusEstimate: tool({
+        description: `Calcula un estimado de aguinaldo, décimo, bono 14, prima, SAC o gratificaciones proporcional en ${countryMeta[countryCode]?.name ?? "este pais"} usando el motor deterministico segun la ${countryMeta[countryCode]?.law ?? "ley local"}. Usala cuando el usuario pregunte sobre aguinaldo, decimo, bono, prima de servicios, gratificaciones o SAC.`,
+        inputSchema: zodSchema(
+          z.object({
+            monthlySalary: z
+              .number()
+              .positive()
+              .describe("Salario mensual del trabajador"),
+            startDate: z
+              .string()
+              .describe("Fecha de inicio del periodo en formato YYYY-MM-DD"),
+            endDate: z
+              .string()
+              .describe("Fecha de corte del periodo en formato YYYY-MM-DD"),
+          })
+        ),
+        execute: async ({ monthlySalary, startDate, endDate }) => {
+          try {
+            const result = calculateBonus({
+              countryCode: countryCode as "ni" | "sv" | "hn" | "gt" | "cr" | "pa" | "mx" | "co" | "pe" | "cl" | "ar",
+              monthlySalary,
+              startDate,
+              endDate,
+            })
+            return JSON.stringify({
+              currency: result.currency,
+              supported: result.supported,
+              lines: result.lines.map((l) => ({
+                label: l.label,
+                amount: l.amount,
+                formula: l.formula,
+                legalReference: l.legalReference,
+              })),
+              total: result.total,
+              periodDays: result.periodDays,
+              fallbackReason: result.fallbackReason,
+              legalCorpusVersion: result.legalCorpusVersion,
+            })
+          } catch (e) {
+            return `Error al calcular bono: ${e instanceof Error ? e.message : "error desconocido"}. Usa la calculadora guiada para un calculo mas preciso.`
+          }
+        },
+      }),
+      quickTerminationEstimate: tool({
+        description: `Compara escenarios de terminación en ${countryMeta[countryCode]?.name ?? "este pais"} (renuncia, despido justificado, despido injustificado, mutuo acuerdo) usando el motor determinístico según la ${countryMeta[countryCode]?.law ?? "ley local"}. Usala cuando el usuario pregunte "cuanto me pagan si renuncio", "cuanto me indemnizan si me despiden", "comparar escenarios de salida" o similares.`,
+        inputSchema: zodSchema(
+          z.object({
+            monthlySalary: z
+              .number()
+              .positive()
+              .describe("Salario mensual del trabajador"),
+            startDate: z
+              .string()
+              .describe("Fecha de inicio laboral en formato YYYY-MM-DD"),
+            endDate: z
+              .string()
+              .describe("Fecha de salida en formato YYYY-MM-DD"),
+          })
+        ),
+        execute: async ({ monthlySalary, startDate, endDate }) => {
+          try {
+            const result = calculateTermination({
+              countryCode: countryCode as "ni" | "sv" | "hn" | "gt" | "cr" | "pa" | "mx" | "co" | "pe" | "cl" | "ar",
+              monthlySalary,
+              startDate,
+              endDate,
+            })
+            return JSON.stringify({
+              currency: result.currency,
+              tenureYears: result.tenureYears,
+              scenarios: result.scenarios.map((s) => ({
+                type: s.type,
+                applicable: s.applicable,
+                total: s.total,
+                lines: s.lines.map((l) => ({
+                  label: l.label,
+                  amount: l.amount,
+                  formula: l.formula,
+                  legalReference: l.legalReference,
+                })),
+                note: s.note,
+              })),
+              legalCorpusVersion: result.legalCorpusVersion,
+            })
+          } catch (e) {
+            return `Error al comparar escenarios: ${e instanceof Error ? e.message : "error desconocido"}. Usa la calculadora guiada para un calculo mas preciso.`
+          }
+        },
+      }),
+      contractGeneratorGuide: tool({
+        description: `Informa al usuario sobre el generador de contratos de trabajo disponible para Nicaragua. Cuando el usuario pida generar un contrato de trabajo, menciona que puede usar la herramienta guiada "Generador de contratos" desde el menú de herramientas.`,
+        inputSchema: zodSchema(
+          z.object({
+            request: z.string().describe("La solicitud del usuario sobre el contrato"),
+          })
+        ),
+        execute: async () => {
+          return JSON.stringify({
+            available: true,
+            country: "Nicaragua",
+            guide: 'Puedo ayudarte a generar un contrato de trabajo paso a paso. Usa la herramienta "Generador de contratos" desde el menú de herramientas o haz clic en el botón "Contrato" para empezar.',
+            legalBasis: "Ley 185, Código del Trabajo de Nicaragua, Arts. 19-29",
+          })
         },
       }),
       quickVacationEstimate: tool({

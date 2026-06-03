@@ -8,7 +8,7 @@ import { source } from "@/lib/source"
 const SITE_URL = getSiteUrl()
 const LAST_MODIFIED = new Date().toISOString().replace(/\.\d+Z$/, "+00:00")
 
-const toolSlugs = ["liquidacion-laboral", "vacaciones", "salario-neto"] as const
+const toolSlugs = ["liquidacion-laboral", "vacaciones", "salario-neto", "aguinaldo-decimo-bono", "simulador-terminacion", "generador-contratos"] as const
 
 function toDocsPath(slug?: string[]): string {
   if (!slug || slug.length === 0) return "/docs"

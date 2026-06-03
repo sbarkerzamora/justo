@@ -4,6 +4,9 @@ import {
   IconCalculator,
   IconBeach,
   IconCoins,
+  IconGift,
+  IconDoorExit,
+  IconFileDescription,
   IconMessageCircle,
   IconSparkles,
   IconTools,
@@ -32,13 +35,16 @@ import { cn } from "@/lib/utils"
 import { SettlementTool } from "@/components/tools/settlement"
 import { SalaryNetTool } from "@/components/tools/salary-net"
 import { VacationsTool } from "@/components/tools/vacations"
+import { BonusTool } from "@/components/tools/bonus"
+import { TerminationTool } from "@/components/tools/termination"
+import { ContractTool } from "@/components/tools/contract"
 
 type Role = "user" | "assistant"
 type ChatMessage = { id: string; role: Role; text: string }
 
-type AppMode = "chat" | "settlement" | "vacations" | "salary-net"
+type AppMode = "chat" | "settlement" | "vacations" | "salary-net" | "bonus" | "termination" | "contract"
 
-const validToolParams = new Set(["settlement", "vacations", "salary-net"])
+const validToolParams = new Set(["settlement", "vacations", "salary-net", "bonus", "termination", "contract"])
 function isValidToolParam(v: string): v is AppMode {
   return validToolParams.has(v)
 }
@@ -133,6 +139,9 @@ export function LlmHome({
     if (tool === "settlement") return "settlement"
     if (tool === "vacations") return "vacations"
     if (tool === "salary-net") return "salary-net"
+    if (tool === "bonus") return "bonus"
+    if (tool === "termination") return "termination"
+    if (tool === "contract") return "contract"
     return "chat"
   })
 
@@ -487,17 +496,41 @@ function LlmHomeView(props: {
           <IconBeach className="size-3.5" />
           {locale === "en" ? "Calculate vacations" : "Calcular vacaciones"}
         </button>
-        <button
-          type="button"
-          onClick={() => setMode("salary-net")}
-          className="inline-flex items-center gap-1.5 rounded-full border border-border bg-card px-3 py-1.5 text-xs font-medium text-muted-foreground transition-colors hover:border-foreground/20 hover:text-foreground"
-        >
-          <IconCoins className="size-3.5" />
-          {locale === "en" ? "Net salary" : "Salario neto"}
-        </button>
                   <button
-                    type="button"
-                    onClick={() => { window.location.href = "/tools" }}
+                      type="button"
+                      onClick={() => setMode("salary-net")}
+                      className="inline-flex items-center gap-1.5 rounded-full border border-border bg-card px-3 py-1.5 text-xs font-medium text-muted-foreground transition-colors hover:border-foreground/20 hover:text-foreground"
+                    >
+                      <IconCoins className="size-3.5" />
+                      {locale === "en" ? "Net salary" : "Salario neto"}
+                    </button>
+                    <button
+                      type="button"
+                      onClick={() => setMode("bonus")}
+                      className="inline-flex items-center gap-1.5 rounded-full border border-border bg-card px-3 py-1.5 text-xs font-medium text-muted-foreground transition-colors hover:border-foreground/20 hover:text-foreground"
+                    >
+                      <IconGift className="size-3.5" />
+                      {locale === "en" ? "Bonus / 13th" : "Aguinaldo / décimo"}
+                    </button>
+                    <button
+                      type="button"
+                      onClick={() => setMode("termination")}
+                      className="inline-flex items-center gap-1.5 rounded-full border border-border bg-card px-3 py-1.5 text-xs font-medium text-muted-foreground transition-colors hover:border-foreground/20 hover:text-foreground"
+                    >
+                      <IconDoorExit className="size-3.5" />
+                      {locale === "en" ? "Termination scenarios" : "Escenarios de salida"}
+                    </button>
+                    <button
+                      type="button"
+                      onClick={() => setMode("contract")}
+                      className="inline-flex items-center gap-1.5 rounded-full border border-border bg-card px-3 py-1.5 text-xs font-medium text-muted-foreground transition-colors hover:border-foreground/20 hover:text-foreground"
+                    >
+                      <IconFileDescription className="size-3.5" />
+                      {locale === "en" ? "Contract" : "Contrato"}
+                    </button>
+          <button
+            type="button"
+            onClick={() => { window.location.href = "/tools" }}
                     className="inline-flex items-center gap-1.5 rounded-full border border-border bg-card px-3 py-1.5 text-xs font-medium text-muted-foreground transition-colors hover:border-foreground/20 hover:text-foreground"
                   >
                     <IconTools className="size-3.5" />
@@ -534,6 +567,36 @@ function LlmHomeView(props: {
           />
         ) : mode === "salary-net" ? (
           <SalaryNetTool
+            countryCode={cc}
+            countryName={countryName}
+            locale={locale}
+            currencyLabel={currencyLabel}
+            fmt={fmt}
+            onComplete={onToolComplete}
+            onCancel={onToolCancel}
+          />
+        ) : mode === "bonus" ? (
+          <BonusTool
+            countryCode={cc}
+            countryName={countryName}
+            locale={locale}
+            currencyLabel={currencyLabel}
+            fmt={fmt}
+            onComplete={onToolComplete}
+            onCancel={onToolCancel}
+          />
+        ) : mode === "termination" ? (
+          <TerminationTool
+            countryCode={cc}
+            countryName={countryName}
+            locale={locale}
+            currencyLabel={currencyLabel}
+            fmt={fmt}
+            onComplete={onToolComplete}
+            onCancel={onToolCancel}
+          />
+        ) : mode === "contract" ? (
+          <ContractTool
             countryCode={cc}
             countryName={countryName}
             locale={locale}
@@ -686,6 +749,30 @@ function WelcomeEmptyState({
         >
           <IconCoins className="size-3.5" />
           {locale === "en" ? "Net salary" : "Salario neto"}
+        </button>
+        <button
+          type="button"
+          onClick={() => setMode("bonus")}
+          className="inline-flex items-center gap-1.5 rounded-full border border-border bg-card px-3 py-1.5 text-xs font-medium text-muted-foreground transition-colors hover:border-foreground/20 hover:text-foreground"
+        >
+          <IconGift className="size-3.5" />
+          {locale === "en" ? "Bonus / 13th" : "Aguinaldo / décimo"}
+        </button>
+        <button
+          type="button"
+          onClick={() => setMode("termination")}
+          className="inline-flex items-center gap-1.5 rounded-full border border-border bg-card px-3 py-1.5 text-xs font-medium text-muted-foreground transition-colors hover:border-foreground/20 hover:text-foreground"
+        >
+          <IconDoorExit className="size-3.5" />
+          {locale === "en" ? "Termination scenarios" : "Escenarios de salida"}
+        </button>
+        <button
+          type="button"
+          onClick={() => setMode("contract")}
+          className="inline-flex items-center gap-1.5 rounded-full border border-border bg-card px-3 py-1.5 text-xs font-medium text-muted-foreground transition-colors hover:border-foreground/20 hover:text-foreground"
+        >
+          <IconFileDescription className="size-3.5" />
+          {locale === "en" ? "Contract" : "Contrato"}
         </button>
         <button
           type="button"

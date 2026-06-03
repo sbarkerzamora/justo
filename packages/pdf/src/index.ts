@@ -1,3 +1,6 @@
 export * from "./settlement-pdf"
 export * from "./vacations-pdf"
 export * from "./salary-net-pdf"
+export * from "./bonus-pdf"
+export * from "./termination-pdf"
+export * from "./contract-pdf"

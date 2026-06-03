@@ -83,6 +83,12 @@ type HomeCopy = {
   settlementWelcomeDescription: string
   vacationsWelcomeTitle: string
   vacationsWelcomeDescription: string
+  bonusWelcomeTitle: string
+  bonusWelcomeDescription: string
+  terminationWelcomeTitle: string
+  terminationWelcomeDescription: string
+  contractWelcomeTitle: string
+  contractWelcomeDescription: string
   salaryNetWelcomeTitle: string
   salaryNetWelcomeDescription: string
   grossSalary: string
@@ -201,6 +207,12 @@ export const homeCopy: Record<Locale, HomeCopy> = {
     settlementWelcomeDescription: "Calcula tu liquidación laboral con fórmulas transparentes y referencias legales. Te guiaremos paso a paso.",
     vacationsWelcomeTitle: "Calculadora de vacaciones",
     vacationsWelcomeDescription: "Calcula el monto de tus vacaciones acumuladas con fórmulas claras y trazabilidad legal.",
+    bonusWelcomeTitle: "Calculadora de aguinaldo / décimo / bono",
+    bonusWelcomeDescription: "Calcula montos proporcionales de aguinaldo, décimo, bono 14, prima, SAC o gratificaciones según tu país, con fórmulas transparentes y referencias legales.",
+    terminationWelcomeTitle: "Simulador de terminación",
+    terminationWelcomeDescription: "Compara escenarios de renuncia, despido justificado, despido injustificado y mutuo acuerdo. Incluye indemnización, preaviso y prima de antigüedad según tu país.",
+    contractWelcomeTitle: "Generador de contratos",
+    contractWelcomeDescription: "Genera un contrato individual de trabajo listo para imprimir y firmar. Captura datos del trabajador, empleador, puesto, jornada, duración y salario según la Ley 185 de Nicaragua.",
     salaryNetWelcomeTitle: "Calculadora de salario neto",
     salaryNetWelcomeDescription: "Calcula tu salario neto después de deducciones legales (INSS, IR, ISSS, AFP, etc.) con fórmulas transparentes.",
     grossSalary: "Salario bruto",
@@ -316,6 +328,12 @@ export const homeCopy: Record<Locale, HomeCopy> = {
     settlementWelcomeDescription: "Calculate your labor settlement with transparent formulas and legal references. We'll guide you step by step.",
     vacationsWelcomeTitle: "Vacation Calculator",
     vacationsWelcomeDescription: "Calculate your accrued vacation amount with clear formulas and legal traceability.",
+    bonusWelcomeTitle: "Bonus / 13th salary calculator",
+    bonusWelcomeDescription: "Calculate proportional amounts of aguinaldo, 13th salary, bonus 14, prima, SAC or gratifications by country, with transparent formulas and legal references.",
+    terminationWelcomeTitle: "Termination Simulator",
+    terminationWelcomeDescription: "Compare scenarios for resignation, justified dismissal, unjustified dismissal and mutual agreement. Includes severance, notice pay and seniority premium by country.",
+    contractWelcomeTitle: "Contract Generator",
+    contractWelcomeDescription: "Generate an individual employment contract ready to print and sign. Captures worker and employer data, job details, work schedule, duration and salary according to Nicaragua's Labor Code (Law 185).",
     salaryNetWelcomeTitle: "Net Salary Calculator",
     salaryNetWelcomeDescription: "Calculate your net salary after legal deductions (INSS, IR, ISSS, AFP, etc.) with transparent formulas.",
     grossSalary: "Gross salary",
