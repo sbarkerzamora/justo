@@ -1,6 +1,7 @@
 import type { CountryCode } from "@justo/core"
 import { settlementTool } from "./settlement"
 import type { JustoTool } from "./types"
+import { vacationsTool } from "./vacations"
 
 const allCountries = [
   "ni",
@@ -43,6 +44,7 @@ const comingSoonTool = (
 
 export const tools = [
   settlementTool,
+  vacationsTool,
   comingSoonTool({
     id: "salary-net",
     slug: "salario-neto",
@@ -61,28 +63,6 @@ export const tools = [
       "Salario bruto",
       "Deducciones",
       "Salario neto",
-      "Referencias legales",
-    ],
-  }),
-  comingSoonTool({
-    id: "vacations",
-    slug: "vacaciones",
-    name: "Vacaciones",
-    shortDescription: "Calcula vacaciones acumuladas, gozadas y pendientes.",
-    longDescription:
-      "Herramienta para estimar días y montos de vacaciones según reglas laborales de cada jurisdicción.",
-    category: "calculation",
-    inputRequirements: [
-      "País",
-      "Fecha de inicio",
-      "Fecha de corte",
-      "Días gozados",
-      "Salario",
-    ],
-    outputSummary: [
-      "Días acumulados",
-      "Días pendientes",
-      "Monto estimado",
       "Referencias legales",
     ],
   }),

@@ -16,6 +16,17 @@ describe("tools registry", () => {
 
   test("returns only available tools", () => {
     expect(getAvailableTools().every((tool) => tool.availability === "available")).toBe(true)
-    expect(getAvailableTools().map((tool) => tool.id)).toEqual(["settlement"])
+    expect(getAvailableTools().map((tool) => tool.id)).toEqual([
+      "settlement",
+      "vacations",
+    ])
+  })
+
+  test("finds vacations by slug", () => {
+    const tool = getToolBySlug("vacaciones")
+
+    expect(tool?.id).toBe("vacations")
+    expect(tool?.availability).toBe("available")
+    expect(tool?.countrySupport).toEqual(["ni"])
   })
 })
