@@ -1,7 +1,7 @@
 ---
 country: sv
 topic: deducciones
-version: sv-v0.1.0
+version: sv-v0.2.0
 status: proposed
 source: "Codigo de Trabajo Art. 132 + normativa ISSS y AFP vigente"
 last_reviewed: "2026-05-11"
@@ -14,6 +14,10 @@ last_reviewed: "2026-05-11"
 - Art. 132: Tope maximo de deducciones del 20% del salario.
 - Normativa ISSS vigente: cotizacion de salud.
 - Normativa AFP vigente: cotizacion previsional.
+
+## texto_legal
+
+**Art. 132.-** El salario no se puede compensar. Podrá retenerse hasta en un veinte por ciento para cubrir en conjunto obligaciones alimenticias, cuotas sindicales, cotización al seguro social e impuestos.
 
 ## regla_operativa
 

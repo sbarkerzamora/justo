@@ -1,7 +1,7 @@
 ---
 country: ar
 topic: vacaciones
-version: ar-v0.1.0
+version: ar-v0.2.0
 status: proposed
 source: "Ley 20.744 de Contrato de Trabajo"
 last_reviewed: "2026-05-11"
@@ -15,6 +15,30 @@ last_reviewed: "2026-05-11"
 - Art. 151: Requisito minimo de dias trabajados.
 - Art. 153: Proporcional al tiempo trabajado.
 - Art. 155: Pago a salario dividido 25 por dia.
+
+## texto_legal
+
+**Art. 150.** — Licencia ordinaria. El trabajador gozará de un período mínimo y continuado de descanso anual remunerado por los siguientes plazos:
+
+a) De catorce (14) días corridos cuando la antigüedad en el empleo no exceda de cinco (5) años.
+
+b) De veintiún (21) días corridos cuando siendo la antigüedad mayor de cinco (5) años no exceda de diez (10).
+
+c) De veintiocho (28) días corridos cuando la antigüedad siendo mayor de diez (10) años no exceda de veinte (20).
+
+d) De treinta y cinco (35) días corridos cuando la antigüedad exceda de veinte (20) años.
+
+**Art. 151.** — Requisitos para su goce. Comienzo de la licencia. El trabajador, para tener derecho cada año al beneficio establecido en el artículo 150 de esta ley, deberá haber prestado servicios durante la mitad, como mínimo, de los días hábiles comprendidos en el año calendario o aniversario respectivo.
+
+**Art. 153.** — Falta de tiempo mínimo. Licencia proporcional. Cuando el trabajador no llegase a totalizar el tiempo mínimo de trabajo previsto en el artículo 151 de esta ley, gozará de un período de descanso anual, en proporción de un (1) día de descanso por cada veinte (20) días de trabajo efectivo.
+
+**Art. 155.** — Retribución. El trabajador percibirá retribución durante el período de vacaciones, la que se determinará de la siguiente manera:
+
+a) Tratándose de trabajos remunerados con sueldo mensual, dividiendo por veinticinco (25) el importe del sueldo que perciba en el momento de su otorgamiento.
+
+b) Tratándose de trabajos remunerados por día o por hora, se abonará por cada día de vacación el importe que le hubiere correspondido percibir al trabajador en la jornada anterior a la fecha en que comience en el goce de las mismas.
+
+c) En caso de salario a destajo, comisiones individuales o colectivas, porcentajes u otras formas variables, de acuerdo al promedio de los sueldos devengados durante el año que corresponda al otorgamiento de las vacaciones o, a opción del trabajador, durante los últimos seis (6) meses de prestación de servicios.
 
 ## regla_operativa
 

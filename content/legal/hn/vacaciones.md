@@ -1,7 +1,7 @@
 ---
 country: hn
 topic: vacaciones
-version: hn-v0.1.0
+version: hn-v0.2.0
 status: proposed
 source: "Codigo de Trabajo de Honduras, Decreto 189-59"
 last_reviewed: "2026-05-11"
@@ -14,6 +14,24 @@ last_reviewed: "2026-05-11"
 - Art. 346: Dias de vacaciones segun anos de servicio.
 - Art. 349: Al terminar, se pagan vacaciones no gozadas.
 - Art. 352: Base de calculo = promedio ordinario ultimos 6 meses.
+
+## texto_legal
+
+**Artículo 346. Período de vacaciones.** El período de vacaciones remuneradas, a que tiene derecho todo trabajador después de cada año de trabajo continuo al servicio del mismo patrono, tendrá como duración mínima la que a continuación se expresa:
+
+a) Después de un (1) año de servicios continuos diez (10) días laborables consecutivos;
+
+b) Después de dos (2) años de servicios continuos, doce (12) días laborables consecutivos;
+
+c) Después de tres (3) años de servicios continuos, quince (15) días laborables consecutivos; y,
+
+d) Después de cuatro (4) años de servicios continuos veinte (20) días laborables consecutivos.
+
+**Artículo 349. Vacaciones no gozadas.** El trabajador que hubiere adquirido derecho a vacaciones y que antes de disfrutar de éstas cese en su trabajo por cualquier causa, recibirá el importe correspondiente en dinero.
+
+Cuando el contrato de trabajo termina antes del tiempo que da derecho a vacaciones, por causa imputable al patrono, el trabajador tendrá derecho a que se le pague la parte proporcional de la cantidad que debía habérsele pagado por vacaciones, en relación al tiempo trabajado.
+
+**Artículo 352. Base de cálculo.** Para calcular el salario que el trabajador debe recibir con motivo de sus vacaciones se tomará como base el promedio de las remuneraciones ordinarias devengadas por él durante los últimos seis (6) meses, o fracción de tiempo menor cuando el contrato no haya durado ese lapso, aumentado con el equivalente de su remuneración en especie, si la hubiere.
 
 ## regla_operativa
 

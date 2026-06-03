@@ -14,11 +14,33 @@ import {
   IconTools,
   IconArrowRight,
 } from "@tabler/icons-react"
+import { buildToolsItemListJsonLd } from "@/lib/tool-seo"
+import { countryLabels } from "@/lib/tools-common"
 
 export const metadata: Metadata = {
   title: "Herramientas laborales abiertas | Justo",
   description:
     "Calculadoras y asistentes laborales open source para liquidaciones, vacaciones, salario neto y cumplimiento laboral en Latinoamerica.",
+  alternates: {
+    canonical: "/tools",
+  },
+  openGraph: {
+    title: "Herramientas laborales abiertas | Justo",
+    description:
+      "Calculadoras y asistentes laborales open source para liquidaciones, vacaciones, salario neto y cumplimiento laboral en Latinoamerica.",
+    url: "/tools",
+    siteName: "Justo",
+    images: [{ url: "/images/og-image.png", width: 1200, height: 630 }],
+    locale: "es_419",
+    type: "website",
+  },
+  twitter: {
+    card: "summary_large_image",
+    title: "Herramientas laborales abiertas | Justo",
+    description:
+      "Calculadoras y asistentes laborales open source para liquidaciones, vacaciones, salario neto y cumplimiento laboral en Latinoamerica.",
+    images: ["/images/og-image.png"],
+  },
 }
 
 const categoryLabels: Record<JustoTool["category"], string> = {
@@ -31,20 +53,6 @@ const categoryLabels: Record<JustoTool["category"], string> = {
 const statusLabels: Record<JustoTool["availability"], string> = {
   available: "Disponible",
   coming_soon: "Proximamente",
-}
-
-const countryLabels: Record<string, string> = {
-  ar: "Argentina",
-  cl: "Chile",
-  co: "Colombia",
-  cr: "Costa Rica",
-  gt: "Guatemala",
-  hn: "Honduras",
-  mx: "Mexico",
-  ni: "Nicaragua",
-  pa: "Panama",
-  pe: "Peru",
-  sv: "El Salvador",
 }
 
 const toolIcons: Record<string, React.ReactNode> = {
@@ -77,7 +85,7 @@ function ToolCard({ tool }: { tool: JustoTool }) {
           {icon}
         </div>
         <div className="flex items-center gap-2">
-          <span className="text-[10px] font-semibold uppercase tracking-[0.16em] text-muted-foreground">
+          <span className="text-[10px] font-semibold tracking-[0.16em] text-muted-foreground uppercase">
             {categoryLabels[tool.category]}
           </span>
           <span className="block h-1 w-1 rounded-full bg-border" />
@@ -129,94 +137,106 @@ function ToolCard({ tool }: { tool: JustoTool }) {
 
 export default function ToolsPage() {
   const tools = getTools()
-  const availableTools = tools.filter((tool) => tool.availability === "available")
-  const upcomingTools = tools.filter((tool) => tool.availability === "coming_soon")
+  const availableTools = tools.filter(
+    (tool) => tool.availability === "available"
+  )
+  const upcomingTools = tools.filter(
+    (tool) => tool.availability === "coming_soon"
+  )
+  const jsonLd = buildToolsItemListJsonLd(availableTools)
 
   return (
-    <main className="min-h-screen bg-background">
-      <section className="mx-auto w-full max-w-5xl px-6 py-20 sm:py-28">
-        <div className="max-w-2xl space-y-4">
-          <div className="flex items-center gap-3 text-sm text-muted-foreground">
-            <IconTools className="size-4" />
-            <span className="font-mono text-xs tracking-[0.16em] uppercase">
-              Open source laboral
-            </span>
+    <>
+      <main className="min-h-screen bg-background">
+        <section className="mx-auto w-full max-w-5xl px-6 py-20 sm:py-28">
+          <div className="max-w-2xl space-y-4">
+            <div className="flex items-center gap-3 text-sm text-muted-foreground">
+              <IconTools className="size-4" />
+              <span className="font-mono text-xs tracking-[0.16em] uppercase">
+                Open source laboral
+              </span>
+            </div>
+
+            <h1 className="text-4xl leading-none font-semibold tracking-[-0.04em] text-foreground sm:text-5xl">
+              Herramientas
+              <br />
+              laborales abiertas
+            </h1>
+
+            <p className="max-w-[52ch] text-base leading-7 text-muted-foreground">
+              Calculos verificables, corpus legal versionado y self-hosting. La
+              monetizacion futura vive en operacion empresarial, no en ocultar
+              la ley.
+            </p>
           </div>
 
-          <h1 className="text-4xl font-semibold leading-none tracking-[-0.04em] text-foreground sm:text-5xl">
-            Herramientas
-            <br />
-            laborales abiertas
-          </h1>
-
-          <p className="max-w-[52ch] text-base leading-7 text-muted-foreground">
-            Calculos verificables, corpus legal versionado y self-hosting. La
-            monetizacion futura vive en operacion empresarial, no en ocultar la ley.
-          </p>
-        </div>
-
-        <div className="mt-12 flex flex-wrap gap-6 border-b border-border pb-12">
-          <div>
-            <span className="font-mono text-3xl font-semibold tabular-nums text-foreground">
-              {availableTools.length}
-            </span>
-            <span className="ml-2 text-sm text-muted-foreground">
-              herramientas disponibles
-            </span>
+          <div className="mt-12 flex flex-wrap gap-6 border-b border-border pb-12">
+            <div>
+              <span className="font-mono text-3xl font-semibold text-foreground tabular-nums">
+                {availableTools.length}
+              </span>
+              <span className="ml-2 text-sm text-muted-foreground">
+                herramientas disponibles
+              </span>
+            </div>
+            <div>
+              <span className="font-mono text-3xl font-semibold text-foreground tabular-nums">
+                {upcomingTools.length}
+              </span>
+              <span className="ml-2 text-sm text-muted-foreground">
+                en roadmap OSS
+              </span>
+            </div>
+            <div>
+              <span className="font-mono text-3xl font-semibold text-foreground tabular-nums">
+                11
+              </span>
+              <span className="ml-2 text-sm text-muted-foreground">
+                paises en la base
+              </span>
+            </div>
           </div>
-          <div>
-            <span className="font-mono text-3xl font-semibold tabular-nums text-foreground">
-              {upcomingTools.length}
-            </span>
-            <span className="ml-2 text-sm text-muted-foreground">
-              en roadmap OSS
-            </span>
+        </section>
+
+        <section className="mx-auto w-full max-w-5xl px-6 pb-16">
+          <h2 className="mb-8 font-mono text-xs font-semibold tracking-[0.2em] text-muted-foreground uppercase">
+            Disponible ahora
+          </h2>
+          <div className="grid gap-4 sm:grid-cols-2">
+            {availableTools.map((tool) => (
+              <ToolCard key={tool.id} tool={tool} />
+            ))}
           </div>
-          <div>
-            <span className="font-mono text-3xl font-semibold tabular-nums text-foreground">
-              11
-            </span>
-            <span className="ml-2 text-sm text-muted-foreground">
-              paises en la base
-            </span>
+        </section>
+
+        <section className="mx-auto w-full max-w-5xl px-6 pb-20">
+          <h2 className="mb-8 font-mono text-xs font-semibold tracking-[0.2em] text-muted-foreground uppercase">
+            Proximamente
+          </h2>
+          <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
+            {upcomingTools.map((tool) => (
+              <ToolCard key={tool.id} tool={tool} />
+            ))}
           </div>
-        </div>
-      </section>
+        </section>
 
-      <section className="mx-auto w-full max-w-5xl px-6 pb-16">
-        <h2 className="mb-8 font-mono text-xs font-semibold uppercase tracking-[0.2em] text-muted-foreground">
-          Disponible ahora
-        </h2>
-        <div className="grid gap-4 sm:grid-cols-2">
-          {availableTools.map((tool) => (
-            <ToolCard key={tool.id} tool={tool} />
-          ))}
-        </div>
-      </section>
-
-      <section className="mx-auto w-full max-w-5xl px-6 pb-20">
-        <h2 className="mb-8 font-mono text-xs font-semibold uppercase tracking-[0.2em] text-muted-foreground">
-          Proximamente
-        </h2>
-        <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
-          {upcomingTools.map((tool) => (
-            <ToolCard key={tool.id} tool={tool} />
-          ))}
-        </div>
-      </section>
-
-      <footer className="mx-auto w-full max-w-5xl px-6 pb-24">
-        <div className="rounded-2xl border border-border px-8 py-10 text-center">
-          <p className="font-mono text-xs font-semibold uppercase tracking-[0.2em] text-muted-foreground">
-            Regla de producto
-          </p>
-          <p className="mt-4 mx-auto max-w-lg text-sm leading-7 text-muted-foreground">
-            Las herramientas laborales generales son abiertas. La plataforma
-            empresarial con persistencia, equipos, auditoria y asistente de RRHH
-            sera de pago.
-          </p>
-        </div>
-      </footer>
-    </main>
+        <footer className="mx-auto w-full max-w-5xl px-6 pb-24">
+          <div className="rounded-2xl border border-border px-8 py-10 text-center">
+            <p className="font-mono text-xs font-semibold tracking-[0.2em] text-muted-foreground uppercase">
+              Regla de producto
+            </p>
+            <p className="mx-auto mt-4 max-w-lg text-sm leading-7 text-muted-foreground">
+              Las herramientas laborales generales son abiertas. La plataforma
+              empresarial con persistencia, equipos, auditoria y asistente de
+              RRHH sera de pago.
+            </p>
+          </div>
+        </footer>
+      </main>
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
+      />
+    </>
   )
 }

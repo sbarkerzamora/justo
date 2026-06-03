@@ -1,7 +1,7 @@
 ---
 country: ar
 topic: indemnizacion
-version: ar-v0.1.0
+version: ar-v0.2.0
 status: proposed
 source: "Ley 20.744 de Contrato de Trabajo"
 last_reviewed: "2026-05-11"
@@ -15,6 +15,22 @@ last_reviewed: "2026-05-11"
 - Base: mejor remuneracion mensual normal y habitual del ultimo ano.
 - Tope: 3 veces el promedio de la categoria del convenio colectivo.
 - Minimo: nunca menos de 1 mes.
+
+## texto_legal
+
+**Art. 245.** — En los casos de despido dispuesto por el empleador sin justa causa, habiendo o no mediado preaviso y luego de transcurrido el período de prueba, se deberá abonar al trabajador una indemnización equivalente a un (1) mes de sueldo por cada año de servicio o fracción mayor de tres (3) meses, tomando como base de cálculo la mejor remuneración mensual, normal y habitual devengada durante el último año o durante el tiempo de prestación de servicios si éste fuera menor.
+
+Se entiende como remuneración, a estos fines, la devengada y pagada en cada mes calendario, por cuanto no tendrán incidencia los conceptos de pago no mensuales como el Sueldo Anual Complementario, vacaciones, premios que no sean de pago mensual.
+
+Se define como habitual, a estos fines, aquellos conceptos devengados como mínimo seis (6) meses en el último año calendario.
+
+Se define como normal, en el caso de conceptos variables como ser premios mensuales, horas extra, comisiones, el promedio de los últimos seis (6) meses, o del último año si fuera más favorable al trabajador.
+
+Dicha base salarial no podrá exceder el equivalente a tres (3) veces el importe del salario mensual promedio de las remuneraciones previstas en el Convenio Colectivo de Trabajo aplicable al trabajador al momento del despido, por la jornada legal o convencional, excluida la antigüedad.
+
+En ningún supuesto la aplicación del tope previsto en este artículo podrá ser inferior al sesenta y siete por ciento (67%) de la remuneración mensual, normal y habitual calculada conforme a lo establecido en los párrafos precedentes de este artículo.
+
+La indemnización en ningún caso podrá ser inferior a un (1) mes de sueldo calculado sobre la base del sistema establecido en el presente artículo.
 
 ## formula
 

@@ -1,7 +1,7 @@
 ---
 country: mx
 topic: vacaciones
-version: mx-v0.1.0
+version: mx-v0.2.0
 status: proposed
 source: "Ley Federal del Trabajo de Mexico"
 last_reviewed: "2026-05-11"
@@ -15,6 +15,18 @@ last_reviewed: "2026-05-11"
 - Art. 77: +2 dias por cada ano hasta llegar a 12.
 - Art. 78: Despues del 4to ano, +2 cada 5 anos.
 - Art. 80: Prima vacacional minima del 25% sobre salario de vacaciones.
+
+## texto_legal
+
+**Artículo 76.-** Los trabajadores que tengan más de un año de servicios disfrutarán de un período anual de vacaciones pagadas, que en ningún caso podrá ser inferior a seis días laborables, y que aumentará en dos días laborables, hasta llegar a doce, por cada año subsecuente de servicios.
+
+Después del cuarto año, el período de vacaciones aumentará en dos días por cada cinco de servicios.
+
+**Artículo 77.-** Los trabajadores que presten servicios discontinuos y los de temporada tendrán derecho a un período anual de vacaciones, en proporción al número de días de trabajos en el año.
+
+**Artículo 78.-** Los trabajadores deberán disfrutar en forma continua seis días de vacaciones, por lo menos.
+
+**Artículo 80.-** Los trabajadores tendrán derecho a una prima no menor de veinticinco por ciento sobre los salarios que les correspondan durante el período de vacaciones.
 
 ## regla_operativa
 

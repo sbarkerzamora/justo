@@ -1,4 +1,5 @@
 import { streamText, tool, zodSchema, type ModelMessage } from "ai"
+import { calculateSalaryNet } from "@justo/tools"
 import { calculateSettlement } from "@justo/tools"
 import { calculateVacations } from "@justo/tools"
 import { join } from "node:path"
@@ -410,8 +411,9 @@ SOLO puedes hacer estas dos cosas:
    - Responde preguntas sobre derechos laborales, prestaciones, indemnizaciones, deducciones y liquidaciones.
    - Primero usa los DOCUMENTOS DEL CORPUS YA CONSULTADOS. Si no bastan, usa la herramienta \`legalCorpusLookup\` antes de responder.
    - Usa la herramienta \`quickEstimate\` para responder preguntas numericas como "cuanto me corresponde si gano X con Y anos de antiguedad?". NO hagas calculos matematicos por tu cuenta — usa siempre la herramienta.
-
-2. REDIRECCION A CALCULADORA GUIADA
+   - Usa la herramienta \`quickNetSalaryEstimate\` para preguntas como "cuanto recibo neto si gano X" o "cuanto me descuentan de INSS e IR".
+ 
+ 2. REDIRECCION A CALCULADORA GUIADA
    - Si el usuario necesita una liquidacion formal y completa (despido, renuncia, finiquito con todos los datos), suguierele usar la calculadora guiada: "Puedo calcular tu liquidacion completa paso a paso. Presiona 'Iniciar calculo' para empezar."
    - La calculadora guiada es mejor cuando se conocen las fechas exactas de inicio y fin.
 
@@ -503,7 +505,7 @@ export async function generateLaborResponse(input: {
     providerOptions: chatModelConfig.providerOptions,
     tools: {
       legalCorpusLookup: tool({
-        description: `Busca informacion en el corpus legal del pais activo. Usala cuando te pregunten sobre derechos, articulos, formulas o tasas de un tema especifico (indemnizacion, aguinaldo, vacaciones, ISSS, INSS, IGSS, CSS, etc.).`,
+        description: `Busca informacion en el corpus legal de ${countryMeta[countryCode]?.name ?? "este pais"}. Usala cuando te pregunten sobre derechos, articulos, formulas o tasas de un tema especifico (indemnizacion, aguinaldo, vacaciones, deducciones, etc.) segun la ${countryMeta[countryCode]?.law ?? "ley local"}.`,
         inputSchema: zodSchema(
           z.object({
             topic: z
@@ -572,7 +574,7 @@ export async function generateLaborResponse(input: {
         },
       }),
       quickEstimate: tool({
-        description: `Calcula un estimado rapido de liquidacion usando el motor deterministico. Usala cuando el usuario pregunte "cuanto me corresponde" con un salario y anos de antiguedad. No la uses para liquidaciones formales.`,
+        description: `Calcula un estimado rapido de liquidacion en ${countryMeta[countryCode]?.name ?? "este pais"} usando el motor deterministico (${countryMeta[countryCode]?.law ?? "ley local"}). Usala cuando el usuario pregunte "cuanto me corresponde" con un salario y anos de antiguedad. No la uses para liquidaciones formales.`,
         inputSchema: zodSchema(
           z.object({
             monthlySalary: z
@@ -640,8 +642,49 @@ export async function generateLaborResponse(input: {
           }
         },
       }),
+      quickNetSalaryEstimate: tool({
+        description: `Calcula el salario neto estimado en ${countryMeta[countryCode]?.name ?? "este pais"} despues de deducciones laborales (${countryCode === "ni" ? "INSS, IR" : countryCode === "sv" ? "ISSS, AFP, ISR" : countryCode === "gt" ? "IGSS, ISR" : countryCode === "hn" ? "IHSS, RAP" : countryCode === "cr" ? "CCSS" : countryCode === "pa" ? "CSS" : countryCode === "mx" ? "IMSS, ISR" : countryCode === "co" ? "EPS, pension" : countryCode === "pe" ? "ONP, AFP" : countryCode === "cl" ? "AFP, AFC, salud" : "INSS, IR"}) usando el motor deterministico. Usala cuando el usuario pregunte "cuanto recibo neto" con un salario bruto.`,
+        inputSchema: zodSchema(
+          z.object({
+            grossSalary: z
+              .number()
+              .positive()
+              .describe("Salario bruto mensual del trabajador"),
+            frequency: z
+              .enum(["mensual", "quincenal", "semanal"])
+              .optional()
+              .default("mensual")
+              .describe("Frecuencia de pago"),
+          })
+        ),
+        execute: async ({ grossSalary, frequency }) => {
+          try {
+            const result = calculateSalaryNet({
+              countryCode: countryCode as "ni" | "sv" | "hn" | "gt" | "cr" | "pa" | "mx" | "co" | "pe" | "cl" | "ar",
+              grossSalary,
+              frequency,
+            })
+            return JSON.stringify({
+              currency: result.currency,
+              grossSalary: result.grossSalary,
+              deductions: result.deductions.map((d) => ({
+                label: d.label,
+                amount: d.amount,
+                formula: d.formula,
+                legalReference: d.legalReference,
+              })),
+              totalDeductions: result.totalDeductions,
+              netSalary: result.netSalary,
+              netSalaryPerPeriod: result.netSalaryPerPeriod,
+              legalCorpusVersion: result.legalCorpusVersion,
+            })
+          } catch (e) {
+            return `Error al calcular salario neto: ${e instanceof Error ? e.message : "error desconocido"}. Usa la calculadora guiada para un calculo mas preciso.`
+          }
+        },
+      }),
       quickVacationEstimate: tool({
-        description: `Calcula un estimado de vacaciones acumuladas, gozadas y pendientes usando el motor deterministico. Solo disponible para Nicaragua (ni). Usala cuando el usuario pregunte sobre dias de vacaciones, vacaciones pendientes o pago de vacaciones.`,
+        description: `Calcula un estimado de vacaciones acumuladas, gozadas y pendientes en ${countryMeta[countryCode]?.name ?? "este pais"} usando el motor deterministico segun la ${countryMeta[countryCode]?.law ?? "ley local"}. Usala cuando el usuario pregunte sobre dias de vacaciones, vacaciones pendientes o pago de vacaciones.`,
         inputSchema: zodSchema(
           z.object({
             monthlySalary: z

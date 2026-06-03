@@ -1,6 +1,6 @@
 # Corpus Legal El Salvador (MVP)
 
-Version: `sv-v0.1.0`
+Version: `sv-v0.2.0`
 
 ## Set normativo
 

@@ -1,7 +1,7 @@
 ---
 country: hn
 topic: indemnizacion
-version: hn-v0.1.0
+version: hn-v0.2.0
 status: proposed
 source: "Codigo de Trabajo de Honduras, Decreto 189-59"
 last_reviewed: "2026-05-11"
@@ -14,6 +14,34 @@ last_reviewed: "2026-05-11"
 - Art. 120: Auxilio de cesantia por antiguedad.
 - Art. 116: Preaviso segun tiempo de servicio.
 - Art. 123(b): Base de calculo = promedio salarial ultimos 6 meses.
+
+## texto_legal
+
+**Artículo 116. Preaviso.** Si el contrato es por tiempo indeterminado cualquiera de las partes puede hacerlo terminar dando a la otra un preaviso. El preaviso será notificado con anticipación así:
+
+a) De veinticuatro (24) horas, cuando el trabajador ha servido a un mismo patrono de modo continúo menos de tres (3) meses;
+
+b) De una (1) semana, cuando le haya servido de tres (3) a seis (6) meses;
+
+c) De dos (2) semanas, cuando le haya servido de seis (6) meses a un (1) año;
+
+d) De un (1) mes, cuando le ha servido de uno (1) a dos (2) años; y
+
+e) De dos (2) meses, cuando le ha servido por más de dos (2) años.
+
+Dichos avisos pueden omitirse por cualquiera de las partes pagando a la otra la cantidad que le corresponda según lo dispuesto en el artículo 118.
+
+**Artículo 120. Auxilio de cesantía.** Si el contrato de trabajo por tiempo indeterminado concluye por razón de despido injustificado, o por alguna de las causas previstas en el artículo 114 u otra ajena a la voluntad del trabajador, el patrono deberá pagarle a éste un auxilio de cesantía de acuerdo con las siguientes reglas:
+
+a) Después de un trabajo continuo no menor de tres (3) meses ni mayor de seis (6), con un importe igual a diez (10) días de salario;
+
+b) Después de un trabajo continuo mayor de seis (6) meses pero menor de un año, con un importe igual a veinte (20) días de salario;
+
+c) Después de un trabajo continuo mayor de un (1) año, con un importe igual a un (1) mes de salario, por cada año de trabajo y si los servicios no alcanzan a un (1) año, en forma proporcional al plazo trabajado;
+
+d) En ningún caso podrá exceder dicho auxilio del salario de veinticinco (25) meses.
+
+**Artículo 123. Reglas para preaviso y auxilio de cesantía.** La indemnización que corresponda se calculará tomando como base el promedio de salarios devengados por el trabajador durante los últimos seis (6) meses que tenga de vigencia el contrato, o fracción de tiempo menor si no se hubiere ajustado dicho término.
 
 ## regla_operativa
 

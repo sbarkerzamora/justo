@@ -1,7 +1,7 @@
 ---
 country: ar
 topic: preaviso
-version: ar-v0.1.0
+version: ar-v0.2.0
 status: proposed
 source: "Ley 20.744 de Contrato de Trabajo"
 last_reviewed: "2026-05-11"
@@ -14,6 +14,20 @@ last_reviewed: "2026-05-11"
 - Art. 231: Plazos de preaviso segun antiguedad.
 - Art. 232: Indemnizacion sustitutiva si no se otorga preaviso.
 - Art. 233: Integracion del mes de despido.
+
+## texto_legal
+
+**Art. 231.** — Plazos. El contrato de trabajo no podrá ser disuelto por voluntad de una de las partes, sin previo aviso, o en su defecto, indemnización además de la que corresponda al trabajador por su antigüedad en el empleo, cuando el contrato se disuelva por voluntad del empleador. El preaviso, cuando las partes no lo fijen en un término mayor, deberá darse con la anticipación siguiente:
+
+a) por el trabajador, de QUINCE (15) días;
+
+b) por el empleador, de un (1) mes cuando el trabajador tuviese una antigüedad en el empleo que no exceda de cinco (5) años y de dos (2) meses cuando fuere superior.
+
+**Art. 232.** — Indemnización substitutiva. La parte que omita el preaviso o lo otorgue de modo insuficiente deberá abonar a la otra una indemnización substitutiva equivalente a la remuneración que correspondería al trabajador durante los plazos señalados en el artículo 231.
+
+**Art. 233.** — Comienzo del plazo. Integración de la indemnización con los salarios del mes del despido. Los plazos del artículo 231 correrán a partir del día siguiente al de la notificación del preaviso.
+
+Cuando la extinción del contrato de trabajo dispuesta por el empleador se produzca sin preaviso y en fecha que no coincida con el último día del mes, la indemnización sustitutiva debida al trabajador se integrará con una suma igual a los salarios por los días faltantes hasta el último día del mes en el que se produjera el despido.
 
 ## regla_operativa
 

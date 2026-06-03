@@ -3,7 +3,7 @@ import { SettlementInput, SettlementLine, SettlementResult } from "../types"
 import { getPeruLegalRates } from "./legal-params"
 
 const CURRENCY = "PEN" as const
-const LEGAL_CORPUS_VERSION = "pe-v0.1.0"
+const LEGAL_CORPUS_VERSION = "pe-v0.2.0"
 
 export const calculatePeruSettlement = (
   input: SettlementInput,

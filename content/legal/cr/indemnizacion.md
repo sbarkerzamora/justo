@@ -1,7 +1,7 @@
 ---
 country: cr
 topic: indemnizacion
-version: cr-v0.1.0
+version: cr-v0.2.0
 status: proposed
 source: "Codigo de Trabajo de Costa Rica"
 last_reviewed: "2026-05-11"
@@ -14,6 +14,51 @@ last_reviewed: "2026-05-11"
 - Art. 28: Preaviso segun tiempo de servicio.
 - Art. 29: Auxilio de cesantia por antiguedad (tabla progresiva).
 - Art. 30: Base de calculo = promedio salarial ultimos 6 meses.
+
+## texto_legal
+
+**ARTÍCULO 28.-** En el contrato por tiempo indefinido cada una de las partes puede ponerle término, sin justa causa, dando aviso previo a la otra, de acuerdo con las siguientes reglas:
+
+a) Después de un trabajo continuo no menor de tres meses ni mayor de seis, con un mínimo de una semana de anticipación;
+
+b) Después de un trabajo continuo que exceda de seis meses y no sea mayor de un año, con un mínimo de quince días de anticipación, y
+
+c) Después de un año de trabajo continuo con un mínimo de un mes de anticipación.
+
+Dichos avisos se darán siempre por escrito, pero si el contrato fuere verbal, el trabajador podrá darlo en igual forma en caso de que lo hiciere ante dos testigos; y pueden omitirse, sin perjuicio del auxilio de cesantía, por cualquiera de las partes, pagando a la otra una cantidad igual al salario correspondiente a los plazos anteriores. Durante el término del aviso el patrono estará obligado a conceder un día de asueto al trabajador, cada semana, para que busque colocación.
+
+**ARTÍCULO 29.-** Si el contrato de trabajo por tiempo indeterminado concluye por despido injustificado, o algunas de las causas previstas en el artículo 83 u otra ajena a la voluntad del trabajador, el patrono deberá pagarle un auxilio de cesantía de acuerdo con las siguientes reglas:
+
+1. Después de un trabajo continuo no menor de tres meses ni mayor de seis, un importe igual a siete días de salario.
+2. Después de un trabajo continuo mayor de seis meses pero menor de un año, un importe igual a catorce días de salario.
+3. Después de un trabajo continuo mayor de un año, con el importe de días de salario indicado en la siguiente tabla:
+
+a) Año 1: 19,5 días por año laborado.
+b) Año 2: 20 días por año laborado o fracción superior a seis meses.
+c) Año 3: 20,5 días por año laborado o fracción superior a seis meses.
+d) Año 4: 21 días por año laborado o fracción superior a seis meses.
+e) Año 5: 21,24 días por año laborado o fracción superior a seis meses.
+f) Año 6: 21,5 días por año laborado o fracción superior a seis meses.
+g) Año 7: 22 días por año laborado o fracción superior a seis meses.
+h) Año 8: 22 días por año laborado o fracción superior a seis meses.
+i) Año 9: 22 días por año laborado o fracción superior a seis meses.
+j) Año 10: 21,5 días por año laborado o fracción superior a seis meses.
+k) Año 11: 21 días por año laborado o fracción superior a seis meses.
+l) Año 12: 20,5 días por año laborado o fracción superior a seis meses.
+m) Año 13 y siguientes: 20 días por año laborado o fracción superior a seis meses.
+
+4. En ningún caso podrá indemnizar dicho auxilio de cesantía más que los últimos ocho años de relación laboral.
+5. El auxilio de cesantía deberá pagarse aunque el trabajador pase inmediatamente a servir a las órdenes de otro patrono.
+
+**ARTÍCULO 30.-** El preaviso y el auxilio de cesantía se regirán por las siguientes reglas comunes:
+
+a) El importe de los mismos no podrá ser objeto de compensación, venta o cesión, ni podrá ser embargado, salvo en la mitad por concepto de pensiones alimenticias;
+
+b) La indemnización que corresponda se calculará tomando como base el promedio de salarios devengados por el trabajador durante los últimos seis meses que tenga de vigencia el contrato, o fracción de tiempo menor si no se hubiere ajustado dicho término;
+
+c) La continuidad del trabajo no se interrumpe por enfermedad, vacaciones, huelga legal y otras causas análogas que, según este Código, no rompen el contrato de trabajo, y
+
+d) Será absolutamente nula la cláusula del contrato que tienda a interrumpir la continuidad de los servicios prestados o por prestarse.
 
 ## regla_operativa
 

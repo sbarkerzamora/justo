@@ -1,7 +1,7 @@
 ---
 country: pa
 topic: deducciones
-version: pa-v0.1.0
+version: pa-v0.2.0
 status: proposed
 source: "Codigo de Trabajo Art. 161 + Ley Organica CSS"
 last_reviewed: "2026-05-11"
@@ -13,6 +13,23 @@ last_reviewed: "2026-05-11"
 
 - Art. 161: Deducciones autorizadas, tope maximo 50% del salario.
 - Ley Organica de la CSS.
+
+## texto_legal
+
+**Artículo 161. Deducciones autorizadas.** Solamente podrán realizarse las siguientes retenciones y descuentos:
+- El importe del impuesto sobre la renta.
+- La cuota del seguro social, en la parte que debe abonar el trabajador.
+- El pago de las deudas que el trabajador contraiga con el empleador en concepto de anticipos de salarios o pagos hechos en exceso, pero en ningún caso los descuentos en este concepto podrán ser superiores al 15 por ciento del salario devengado en el respectivo período de pago.
+- El pago de las cuotas mensuales por la compra de casas habitaciones, hasta el 30 por ciento de salario.
+- El pago de cuotas para asociaciones cooperativas, de ahorros y bancos obreros.
+- El pago de pensiones alimenticias a favor de quienes tuvieran derecho a exigir alimentos, siempre que el descuento fuere decretado y ordenado por autoridad competente.
+- El excedente de las cuantías inembargables del salario, será embargable hasta en un 15 por ciento.
+- El pago de las cuotas sindicales ordinarias y extraordinarias.
+- Las sumas que el trabajador deba pagar en concepto de arrendamiento de su vivienda hasta un 30 por ciento de su salario.
+- Los pagos por ventas a crédito de artículos elaborados o que se vendan en la empresa, siempre que no exceda de 10 por ciento.
+- Las sumas que el trabajador autorice le sean descontadas para cubrir préstamos bancarios y créditos comerciales, hasta por un 20 por ciento de su salario.
+- Los que se establezcan por la ley.
+- El total de las deducciones o retenciones que autoriza este artículo en ningún caso excederá del 50 por ciento del salario en dinero, salvo que se trate de pensiones alimenticias.
 
 ## regla_operativa
 

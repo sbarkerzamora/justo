@@ -6,6 +6,7 @@ export interface VacationInput {
   startDate: string
   endDate: string
   usedVacationDays: number
+  seniorityYears?: number
 }
 
 export interface VacationResult {

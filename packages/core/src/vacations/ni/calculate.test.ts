@@ -17,7 +17,7 @@ describe("calculateNicaraguaVacations", () => {
     expect(result.accruedVacationDays).toBe(30.08)
     expect(result.pendingVacationDays).toBe(20.08)
     expect(result.amount).toBe(20080)
-    expect(result.legalCorpusVersion).toBe("ni-v0.2.0")
+    expect(result.legalCorpusVersion).toBe("ni-v0.3.0")
   })
 
   test("does not return negative pending days", () => {

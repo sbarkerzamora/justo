@@ -1,7 +1,7 @@
 ---
 country: pe
 topic: indemnizacion
-version: pe-v0.1.0
+version: pe-v0.2.0
 status: proposed
 source: "Ley General de Trabajo de Peru"
 last_reviewed: "2026-05-11"
@@ -12,6 +12,18 @@ last_reviewed: "2026-05-11"
 ## base_legal
 
 - Art. 167: Indemnizacion escalonada segun anos de servicio.
+
+## texto_legal
+
+**Artículo 167. Indemnización por despido injustificado.** La indemnización por despido injustificado, si el trabajador opta por esta, es equivalente:
+
+a) a cuarenta y cinco (45) días de remuneración ordinaria por cada año completo de servicios, con un mínimo de noventa (90) días, hasta un máximo de ocho (8) años;
+
+b) a treinta (30) días de remuneración ordinaria por cada año adicional hasta un máximo de ocho (8) años; y
+
+c) a quince (15) días por cada año adicional hasta un máximo de ocho (8) años.
+
+Las fracciones se abonan por dozavos y treintavos, siempre que la indemnización sea superior al monto mínimo. Su abono procede, superado el período de prueba.
 
 ## regla_operativa
 

@@ -1,7 +1,7 @@
 ---
 country: co
 topic: indemnizacion
-version: co-v0.1.0
+version: co-v0.2.0
 status: proposed
 source: "Codigo Sustantivo del Trabajo de Colombia"
 last_reviewed: "2026-05-11"
@@ -12,6 +12,26 @@ last_reviewed: "2026-05-11"
 ## base_legal
 
 - Art. 64: Indemnizacion escalonada segun salario y antiguedad.
+
+## texto_legal
+
+**Artículo 64. Terminación unilateral del contrato de trabajo sin justa causa.** En todo contrato de trabajo va envuelta la condición resolutoria por incumplimiento de lo pactado, con indemnización de perjuicios a cargo de la parte responsable. Esta indemnización comprende el lucro cesante y el daño emergente.
+
+En caso de terminación unilateral del contrato de trabajo sin justa causa comprobada, por parte del empleador o si éste da lugar a la terminación unilateral por parte del trabajador por alguna de las justas causas contempladas en la ley, el primero deberá al segundo una indemnización en los términos que a continuación se señalan:
+
+En los contratos a término fijo, el valor de los salarios correspondientes al tiempo que faltare para cumplir el plazo estipulado del contrato; o el del lapso determinado por la duración de la obra o la labor contratada, caso en el cual la indemnización no será inferior a quince (15) días.
+
+En los contratos a término indefinido la indemnización se pagará así:
+
+a) Para trabajadores que devenguen un salario inferior a diez (10) salarios mínimos mensuales legales:
+- Treinta (30) días de salario cuando el trabajador tuviere un tiempo de servicio no mayor de un (1) año.
+- Si el trabajador tuviere más de un (1) año de servicio continuo se le pagarán veinte (20) días adicionales de salario sobre los treinta (30) básicos del numeral 1, por cada uno de los años de servicio subsiguientes al primero y proporcionalmente por fracción;
+
+b) Para trabajadores que devenguen un salario igual o superior a diez (10) salarios mínimos legales mensuales:
+- Veinte (20) días de salario cuando el trabajador tuviere un tiempo de servicio no mayor de un (1) año.
+- Si el trabajador tuviere más de un (1) año de servicio continuo, se le pagarán quince (15) días adicionales de salario sobre los veinte (20) días básicos del numeral 1 anterior, por cada uno de los años de servicio subsiguientes al primero y proporcionalmente por fracción.
+
+**Parágrafo transitorio.** Los trabajadores que al momento de entrar en vigencia la presente ley, tuvieren diez (10) o más años al servicio continuo del empleador, se les aplicará la tabla de indemnización establecida en los literales b), c) y d) del artículo 6º de la Ley 50 de 1990, exceptuando el parágrafo transitorio, el cual se aplica únicamente para los trabajadores que tenían diez (10) o más años el primero de enero de 1991.
 
 ## regla_operativa
 

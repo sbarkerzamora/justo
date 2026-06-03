@@ -1,7 +1,7 @@
 ---
 country: ar
 topic: sac-aguinaldo
-version: ar-v0.1.0
+version: ar-v0.2.0
 status: proposed
 source: "Ley 23.041 + Ley 20.744"
 last_reviewed: "2026-05-11"
@@ -13,6 +13,16 @@ last_reviewed: "2026-05-11"
 
 - Ley 23.041: Sueldo Anual Complementario.
 - Art. 121-123 LCT: Proporcional al tiempo trabajado.
+
+## texto_legal
+
+**Art. 121.** — Concepto. Se entiende por sueldo anual complementario la doceava parte del total de las remuneraciones definidas en el Artículo 103 de esta ley, percibidas por el trabajador en el respectivo año calendario.
+
+**Art. 122.** — Epocas de pago. El sueldo anual complementario será abonado en dos (2) cuotas: la primera de ellas con vencimiento el 30 de junio y la segunda con vencimiento el 18 de diciembre de cada año.
+
+El importe a abonar en cada semestre será liquidado sobre el cálculo del cincuenta por ciento (50%) de la mayor remuneración mensual devengada por todo concepto dentro de los dos (2) semestres que culminan en los meses de junio y diciembre de cada año.
+
+**Art. 123.** — Extinción del contrato de trabajo - Pago proporcional. Cuando se opere la extinción del contrato de trabajo por cualquier causa, el trabajador o los derecho-habientes que determina esta ley, tendrá derecho a percibir la parte del sueldo anual complementario que se establecerá como la doceava parte de las remuneraciones devengadas en la fracción del semestre trabajado, hasta el momento de dejar el servicio.
 
 ## regla_operativa
 

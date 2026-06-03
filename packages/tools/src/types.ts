@@ -9,6 +9,12 @@ export type JustoToolCategory =
 
 export type JustoToolAvailability = "available" | "coming_soon"
 
+export type JustoToolCountryOverride = {
+  longDescription?: string
+  legalReferences?: readonly string[]
+  corpusVersion?: string
+}
+
 export type JustoTool = {
   id: string
   slug: string
@@ -23,6 +29,7 @@ export type JustoTool = {
   legalReferences: readonly string[]
   corpusVersion: string
   disclaimer: string
+  countryOverrides?: Partial<Record<CountryCode, JustoToolCountryOverride>>
 }
 
 export type CalculationTool<TInput, TResult> = JustoTool & {

@@ -1,7 +1,7 @@
 ---
 country: ni
 topic: indemnizacion
-version: ni-v0.2.0
+version: ni-v0.3.0
 status: active
 source: "Codigo del Trabajo, Ley No. 185"
 ---
@@ -13,6 +13,20 @@ source: "Codigo del Trabajo, Ley No. 185"
 - Art. 42: pago proporcional de prestaciones al terminar la relacion laboral.
 - Art. 43: renuncia/mutuo acuerdo no elimina derecho por antiguedad del Art. 45.
 - Art. 45: despido sin causa en contrato por tiempo indeterminado.
+
+## texto_legal
+
+**Artículo 42.-** Cualquiera sea la causa de terminación del contrato de trabajo, el empleador está obligado conforme la Ley, a pagar al trabajador, o a quien corresponda en el caso del literal b), la parte proporcional de las prestaciones tales como vacaciones y decimotercer mes.
+
+**Artículo 43.-** La terminación de la relación laboral por mutuo acuerdo o renuncia no afecta el derecho adquirido del trabajador por antigüedad conforme el Artículo 45 de este código.
+
+**Artículo 45.-** Cuando el empleador rescinda el contrato de trabajo por tiempo indeterminado y sin causa justificada pagara al trabajador una indemnización equivalente a:
+
+1) Un mes de salario por cada uno de los primeros tres años de trabajo;
+
+2) Veinte días de salario por cada año de trabajo a partir del cuarto año.
+
+En ningún caso la indemnización será menor de un mes ni mayor de cinco meses. Las fracciones entre los años trabajados se liquidarán proporcionalmente.
 
 ## regla_operativa
 

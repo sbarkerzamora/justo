@@ -1,11 +1,14 @@
 import type { MetadataRoute } from "next"
 import { countryList } from "@/lib/countries"
 import { locales } from "@/lib/i18n"
+import { getLegalSitemapEntries } from "@/lib/legal-pages"
 import { getSiteUrl } from "@/lib/site-url"
 import { source } from "@/lib/source"
 
 const SITE_URL = getSiteUrl()
 const LAST_MODIFIED = new Date().toISOString().replace(/\.\d+Z$/, "+00:00")
+
+const toolSlugs = ["liquidacion-laboral", "vacaciones", "salario-neto"] as const
 
 function toDocsPath(slug?: string[]): string {
   if (!slug || slug.length === 0) return "/docs"
@@ -63,6 +66,32 @@ export default function sitemap(): MetadataRoute.Sitemap {
       changeFrequency: "weekly",
       priority: 0.8,
     })
+  }
+
+  for (const page of getLegalSitemapEntries()) {
+    entries.push({
+      url: `${SITE_URL}${page.path}`,
+      lastModified: LAST_MODIFIED,
+      changeFrequency: "monthly",
+      priority: 0.4,
+    })
+  }
+
+  for (const slug of toolSlugs) {
+    entries.push({
+      url: `${SITE_URL}/tools/${slug}`,
+      lastModified: LAST_MODIFIED,
+      changeFrequency: "weekly",
+      priority: 0.8,
+    })
+    for (const country of countryList) {
+      entries.push({
+        url: `${SITE_URL}/tools/${slug}?country=${country.code}`,
+        lastModified: LAST_MODIFIED,
+        changeFrequency: "weekly",
+        priority: 0.7,
+      })
+    }
   }
 
   return [...entries, ...getDocsEntries()]

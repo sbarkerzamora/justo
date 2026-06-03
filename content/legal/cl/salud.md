@@ -1,7 +1,7 @@
 ---
 country: cl
 topic: salud
-version: cl-v0.1.0
+version: cl-v0.2.0
 status: proposed
 source: "Ley 18.933 (FONASA/ISAPRE)"
 last_reviewed: "2026-05-11"

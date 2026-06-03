@@ -1,7 +1,7 @@
 ---
 country: pe
 topic: gratificaciones
-version: pe-v0.1.0
+version: pe-v0.2.0
 status: proposed
 source: "Ley General de Trabajo de Peru"
 last_reviewed: "2026-05-11"
@@ -12,6 +12,16 @@ last_reviewed: "2026-05-11"
 ## base_legal
 
 - Arts. 206-208: Dos gratificaciones al ano, cada una equivalente a 1 remuneracion mensual.
+
+## texto_legal
+
+**Artículo 206. Gratificaciones. Contenido.** El trabajador tiene derecho a dos gratificaciones por año, que se abonan una en el mes de julio, con ocasión de fiestas patrias, y otra en el mes de diciembre, con ocasión de Navidad, de cada año, por un importe equivalente al de una remuneración mensual, en la forma prevista en el artículo 196° (cómputo de pagos anuales o semestrales).
+
+**Artículo 207. Período adquisitivo y remuneración variable.** El monto de las gratificaciones para los trabajadores de remuneración imprecisa, se calculará en base al promedio de las remuneración percibida en los últimos seis meses anteriores al quince (15) de julio y quince (15) de diciembre según corresponda.
+
+**Artículo 208. Oportunidad de pago y monto proporcional.** La gratificación se abona dentro de la primera quincena de los meses de julio y diciembre de cada año.
+
+En caso de haberse trabajado en forma parcial o incompleta dentro del período adquisitivo, la gratificación se abona en monto proporcional a los meses y días trabajados.
 
 ## regla_operativa
 

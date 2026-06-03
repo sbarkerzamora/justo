@@ -1,7 +1,7 @@
 ---
 country: mx
 topic: indemnizacion
-version: mx-v0.1.0
+version: mx-v0.2.0
 status: proposed
 source: "Ley Federal del Trabajo de Mexico"
 last_reviewed: "2026-05-11"
@@ -14,6 +14,34 @@ last_reviewed: "2026-05-11"
 - Art. 48: Indemnizacion constitucional de 3 meses de salario por despido injustificado.
 - Art. 50: Indemnizacion adicional de 12 dias de salario por cada ano de servicio (reforma 2019).
 - Art. 162: Prima de antiguedad de 12 dias por ano, tope de 2 salarios minimos.
+
+## texto_legal
+
+**Artículo 48.** El trabajador podrá solicitar ante la Junta de Conciliación y Arbitraje, a su elección, que se le reinstale en el trabajo que desempeñaba, o que se le indemnice con el importe de tres meses de salario, a razón del que corresponda a la fecha en que se realice el pago.
+
+Si en el juicio correspondiente no comprueba el patrón la causa de la rescisión, el trabajador tendrá derecho, además, cualquiera que hubiese sido la acción intentada, a que se le paguen los salarios vencidos computados desde la fecha del despido hasta por un período máximo de doce meses, en términos de lo preceptuado en la última parte del párrafo anterior.
+
+**Artículo 50.-** Las indemnizaciones a que se refiere el artículo anterior consistirán:
+
+I. Si la relación de trabajo fuere por tiempo determinado menor de un año, en una cantidad igual al importe de los salarios de la mitad del tiempo de servicios prestados; si excediera de un año, en una cantidad igual al importe de los salarios de seis meses por el primer año y de veinte días por cada uno de los años siguientes en que hubiese prestado sus servicios;
+
+II. Si la relación de trabajo fuere por tiempo indeterminado, la indemnización consistirá en veinte días de salario por cada uno de los años de servicios prestados; y
+
+III. Además de las indemnizaciones a que se refieren las fracciones anteriores, en el importe de tres meses de salario y el pago de los salarios vencidos e intereses, en su caso, en los términos previstos en el artículo 48 de esta Ley.
+
+**Artículo 162.-** Los trabajadores de planta tienen derecho a una prima de antigüedad, de conformidad con las normas siguientes:
+
+I. La prima de antigüedad consistirá en el importe de doce días de salario, por cada año de servicios;
+
+II. Para determinar el monto del salario, se estará a lo dispuesto en los artículos 485 y 486;
+
+III. La prima de antigüedad se pagará a los trabajadores que se separen voluntariamente de su empleo, siempre que hayan cumplido quince años de servicios, por lo menos. Asimismo se pagará a los que se separen por causa justificada y a los que sean separados de su empleo, independientemente de la justificación o injustificación del despido;
+
+IV. Para el pago de la prima en los casos de retiro voluntario de los trabajadores, se observarán las normas siguientes: ...
+
+V. En caso de muerte del trabajador, cualquiera que sea su antigüedad, la prima que corresponda se pagará a las personas mencionadas en el artículo 501; y
+
+VI. La prima de antigüedad a que se refiere este artículo se cubrirá a los trabajadores o a sus beneficiarios, independientemente de cualquier otra prestación que les corresponda.
 
 ## regla_operativa
 

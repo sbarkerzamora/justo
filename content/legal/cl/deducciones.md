@@ -1,7 +1,7 @@
 ---
 country: cl
 topic: deducciones
-version: cl-v0.1.0
+version: cl-v0.2.0
 status: proposed
 source: "DL 3.500 + Ley 18.933 + Ley 19.728"
 last_reviewed: "2026-05-11"
@@ -15,6 +15,12 @@ last_reviewed: "2026-05-11"
 - D.L. 3.500: AFP (11.5%).
 - Ley 18.933: Salud FONASA/ISAPRE (7%).
 - Ley 19.728: Seguro de Cesantia AFC (0.6%).
+
+## texto_legal
+
+**Artículo 58.** El empleador deberá deducir de las remuneraciones los impuestos que las graven, las cotizaciones de seguridad social, las cuotas sindicales en conformidad a la legislación respectiva y las obligaciones con instituciones de previsión o con organismos públicos.
+
+Asimismo, con acuerdo del empleador y del trabajador, que deberá constar por escrito, el empleador podrá descontar de las remuneraciones cuotas destinadas al pago de la adquisición de viviendas, cantidades para ser depositadas en una cuenta de ahorro para la vivienda y sumas destinadas a la educación del trabajador, su cónyuge, conviviente civil o alguno de sus hijos. Para estos efectos, se autoriza al empleador a otorgar mutuos o créditos sin interés.
 
 ## formula
 

@@ -1,6 +1,6 @@
 # Corpus Legal Panama (MVP)
 
-Version: `pa-v0.1.0`
+Version: `pa-v0.2.0`
 
 ## Set normativo
 

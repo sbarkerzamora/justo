@@ -19,6 +19,7 @@ describe("tools registry", () => {
     expect(getAvailableTools().map((tool) => tool.id)).toEqual([
       "settlement",
       "vacations",
+      "salary-net",
     ])
   })
 

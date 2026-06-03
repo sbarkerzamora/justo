@@ -1,7 +1,7 @@
 ---
 country: pe
 topic: cts
-version: pe-v0.1.0
+version: pe-v0.2.0
 status: proposed
 source: "Ley General de Trabajo de Peru"
 last_reviewed: "2026-05-11"
@@ -12,6 +12,14 @@ last_reviewed: "2026-05-11"
 ## base_legal
 
 - Art. 219: CTS equivalente al 8.33% de la remuneracion mensual (1/12 = 1 salario por ano).
+
+## texto_legal
+
+**Artículo 219. CTS. Contenido.** La compensación por tiempo de servicios o CTS tiene por objeto prioritario la previsión de las contingencias que origina el cese del trabajador, y es equivalente al ocho y treinta y tres centésimas por ciento (8.33%) de lo percibido por el trabajador en cada mes, incluyendo el total de las remuneraciones fijas, variables y ocasionales pagadas.
+
+El empleador debe depositar este importe, dentro de los cinco (5) primeros días del mes siguiente, en la entidad bancaria o financiera designada por el trabajador y puede ser efectuado, a elección de este, en moneda nacional o extranjera.
+
+El depósito tiene efecto cancelatorio del tiempo de servicios al que corresponde, sin perjuicio del derecho al reintegro en caso de pago diminuto.
 
 ## regla_operativa
 

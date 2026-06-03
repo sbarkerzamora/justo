@@ -1,7 +1,7 @@
 ---
 country: pa
 topic: vacaciones
-version: pa-v0.1.0
+version: pa-v0.2.0
 status: proposed
 source: "Codigo de Trabajo de Panama"
 last_reviewed: "2026-05-11"
@@ -13,6 +13,15 @@ last_reviewed: "2026-05-11"
 
 - Art. 54: 30 dias de vacaciones por cada 11 meses de trabajo continuo.
 - Tasa: 1 dia por cada 11 dias trabajados.
+
+## texto_legal
+
+**Artículo 54. Vacaciones.** La duración y la remuneración de las vacaciones se regirá por las siguientes normas:
+- Treinta días por cada once meses continuos de trabajo, a razón de un día por cada once días al servicio de su empleador.
+- Pago de un mes de salario cuando la remuneración se hubiere convenido por un mes, y de cuatro semanas y un tercio, cuando se hubiere pactado por semana.
+- Cuando se trate de trabajadores pagados por hora o por día se dividirá el total de la remuneración ordinaria y extraordinaria, que hubiera recibido el trabajador en los últimos once meses de servicio por el número de jornadas ordinarias servidas, o tiempo menor servido si se trata de vacaciones proporcionales, y este cociente se multiplicará por el número de días de descanso anual que le correspondan.
+- Para los efectos del cómputo del tiempo servido que da derecho a vacaciones, se contará la duración de los descansos semanales, días de fiesta o duelo nacional, licencias por enfermedad dentro de los límites señalados en el artículo 200, los casos descritos en el artículo 208 u otras interrupciones expresamente autorizadas por el empleador.
+- Al trabajador cuya relación termina antes de tener derecho al período completo de descanso, se le pagarán en efectivo los días de vacaciones proporcionales a que tenga derecho a razón de un día por cada once días de trabajo.
 
 ## regla_operativa
 

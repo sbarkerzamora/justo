@@ -11,18 +11,25 @@ import {
   drawFooter,
 } from "./pdf-helpers"
 
-const currencyFormatters: Record<string, Intl.NumberFormat> = {
-  NIO: new Intl.NumberFormat("es-NI", { style: "currency", currency: "NIO", minimumFractionDigits: 2 }),
-  USD: new Intl.NumberFormat("es-NI", { style: "currency", currency: "USD", minimumFractionDigits: 2 }),
-  GTQ: new Intl.NumberFormat("es-NI", { style: "currency", currency: "GTQ", minimumFractionDigits: 2 }),
-  HNL: new Intl.NumberFormat("es-NI", { style: "currency", currency: "HNL", minimumFractionDigits: 2 }),
-  CRC: new Intl.NumberFormat("es-NI", { style: "currency", currency: "CRC", minimumFractionDigits: 2 }),
-  MXN: new Intl.NumberFormat("es-NI", { style: "currency", currency: "MXN", minimumFractionDigits: 2 }),
-  COP: new Intl.NumberFormat("es-NI", { style: "currency", currency: "COP", minimumFractionDigits: 2 }),
-  PEN: new Intl.NumberFormat("es-NI", { style: "currency", currency: "PEN", minimumFractionDigits: 2 }),
-  ARS: new Intl.NumberFormat("es-NI", { style: "currency", currency: "ARS", minimumFractionDigits: 2 }),
-  CLP: new Intl.NumberFormat("es-NI", { style: "currency", currency: "CLP", minimumFractionDigits: 2 }),
+const currencyLocaleMap: Record<string, string> = {
+  NIO: "es-NI",
+  USD: "es-SV",
+  GTQ: "es-GT",
+  HNL: "es-HN",
+  CRC: "es-CR",
+  MXN: "es-MX",
+  COP: "es-CO",
+  PEN: "es-PE",
+  ARS: "es-AR",
+  CLP: "es-CL",
 }
+
+const currencyFormatters: Record<string, Intl.NumberFormat> = Object.fromEntries(
+  Object.entries(currencyLocaleMap).map(([curr, locale]) => [
+    curr,
+    new Intl.NumberFormat(locale, { style: "currency", currency: curr, minimumFractionDigits: 2 }),
+  ]),
+)
 
 const money = (amount: number, currencyCode: string) =>
   (currencyFormatters[currencyCode] ?? currencyFormatters.NIO).format(amount)

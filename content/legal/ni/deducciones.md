@@ -1,7 +1,7 @@
 ---
 country: ni
 topic: deducciones
-version: ni-v0.2.0
+version: ni-v0.3.0
 status: active
 source: "Ley 185 Art. 88 + normativa INSS e IR vigente"
 ---
@@ -14,6 +14,12 @@ source: "Ley 185 Art. 88 + normativa INSS e IR vigente"
 - Art. 97 (Ley 185): el decimo tercer mes esta exento de impuesto, descuentos, cotizaciones y deducciones.
 - Normativa INSS vigente: cotizacion laboral aplicable.
 - Normativa IR vigente para rentas del trabajo.
+
+## texto_legal
+
+**Artículo 88.-** Del salario serán hechas las deducciones legales correspondientes.
+
+**Artículo 97.-** El salario correspondiente al décimo tercer mes es inembargable, salvo para el cumplimiento de las obligaciones de prestar alimentos, tiene la misma protección que el salario mínimo, y estará exento del pago de todo impuesto, descuentos, cotizaciones y deducciones de cualquier especie.
 
 ## regla_operativa
 

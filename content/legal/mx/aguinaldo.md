@@ -1,7 +1,7 @@
 ---
 country: mx
 topic: aguinaldo
-version: mx-v0.1.0
+version: mx-v0.2.0
 status: proposed
 source: "Ley Federal del Trabajo de Mexico"
 last_reviewed: "2026-05-11"
@@ -13,6 +13,12 @@ last_reviewed: "2026-05-11"
 
 - Art. 87: Derecho a 15 dias de salario como aguinaldo minimo.
 - Se paga antes del 20 de diciembre de cada ano.
+
+## texto_legal
+
+**Artículo 87.-** Los trabajadores tendrán derecho a un aguinaldo anual que deberá pagarse antes del día veinte de diciembre, equivalente a quince días de salario, por lo menos.
+
+Los que no hayan cumplido el año de servicios, independientemente de que se encuentren laborando o no en la fecha de liquidación del aguinaldo, tendrán derecho a que se les pague la parte proporcional del mismo, conforme al tiempo que hubieren trabajado, cualquiera que fuere éste.
 
 ## regla_operativa
 

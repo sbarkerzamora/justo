@@ -76,17 +76,17 @@ The product separates two responsibilities:
 
 | Country | Code | Currency | Base legislation | Version |
 |---|---|---|---|---|
-| Nicaragua | `ni` | NIO | Law No. 185 | `ni-v0.2.0` |
-| Guatemala | `gt` | GTQ | Decree 1441 | `gt-v0.1.0` |
-| El Salvador | `sv` | USD | Labor Code | `sv-v0.1.0` |
-| Honduras | `hn` | HNL | Decree 189-59 | `hn-v0.1.0` |
-| Costa Rica | `cr` | CRC | Labor Code | `cr-v0.1.0` |
-| Panama | `pa` | USD | Labor Code | `pa-v0.1.0` |
-| Mexico | `mx` | MXN | Federal Labor Law | `mx-v0.1.0` |
-| Colombia | `co` | COP | Substantive Labor Code | `co-v0.1.0` |
-| Peru | `pe` | PEN | General Labor Law | `pe-v0.1.0` |
-| Argentina | `ar` | ARS | Employment Contract Law 20.744 | `ar-v0.1.0` |
-| Chile | `cl` | CLP | Labor Code | `cl-v0.1.0` |
+| Nicaragua | `ni` | NIO | Law No. 185 | `ni-v0.3.0` |
+| Guatemala | `gt` | GTQ | Decree 1441 | `gt-v0.2.0` |
+| El Salvador | `sv` | USD | Labor Code | `sv-v0.2.0` |
+| Honduras | `hn` | HNL | Decree 189-59 | `hn-v0.2.0` |
+| Costa Rica | `cr` | CRC | Labor Code | `cr-v0.2.0` |
+| Panama | `pa` | USD | Labor Code | `pa-v0.2.0` |
+| Mexico | `mx` | MXN | Federal Labor Law | `mx-v0.2.0` |
+| Colombia | `co` | COP | Substantive Labor Code | `co-v0.2.0` |
+| Peru | `pe` | PEN | General Labor Law | `pe-v0.2.0` |
+| Argentina | `ar` | ARS | Employment Contract Law 20.744 | `ar-v0.2.0` |
+| Chile | `cl` | CLP | Labor Code | `cl-v0.2.0` |
 
 ---
 

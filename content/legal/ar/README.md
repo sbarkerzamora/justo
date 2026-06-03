@@ -1,6 +1,6 @@
 # Corpus Legal Argentina (MVP)
 
-Version: `ar-v0.1.0`
+Version: `ar-v0.2.0`
 
 ## Set normativo
 

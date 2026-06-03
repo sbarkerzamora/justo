@@ -1,7 +1,7 @@
 ---
 country: sv
 topic: indemnizacion
-version: sv-v0.1.0
+version: sv-v0.2.0
 status: proposed
 source: "Codigo de Trabajo de El Salvador"
 last_reviewed: "2026-05-11"
@@ -13,6 +13,14 @@ last_reviewed: "2026-05-11"
 
 - Art. 58: Indemnizacion por despido injustificado en contrato por tiempo indeterminado.
 - Art. 59: Indemnizacion en contrato a plazo fijo.
+
+## texto_legal
+
+**Art. 58.-** Cuando un trabajador contratado por tiempo indefinido, fuere despedido de sus labores sin causa justificada, tendrá derecho a que el patrono le indemnice con una cantidad equivalente al salario básico de treinta días por cada año de servicios y proporcionalmente por fracciones de año. En ningún caso la indemnización será menor del equivalente al salario básico de quince días.
+
+Para los efectos del cálculo de la indemnización a que se refiere el inciso anterior, ningún salario podrá ser superior a cuatro veces el salario mínimo diario legal vigente.
+
+**Art. 59.-** Cuando el contrato sea a plazo y el trabajador fuere despedido sin causa justificada, antes de su vencimiento, tendrá derecho a que se le indemnice con una cantidad equivalente al salario básico que hubiere devengado en el tiempo que faltare para que venza el plazo, pero en ningún caso la indemnización podrá exceder de la que le correspondería si hubiere sido contratado por tiempo indefinido.
 
 ## regla_operativa
 

@@ -76,17 +76,17 @@ El producto separa dos responsabilidades:
 
 | País | Código | Moneda | Legislación base | Versión |
 |---|---|---|---|---|
-| Nicaragua | `ni` | NIO | Ley No. 185 | `ni-v0.2.0` |
-| Guatemala | `gt` | GTQ | Decreto 1441 | `gt-v0.1.0` |
-| El Salvador | `sv` | USD | Código de Trabajo | `sv-v0.1.0` |
-| Honduras | `hn` | HNL | Decreto 189-59 | `hn-v0.1.0` |
-| Costa Rica | `cr` | CRC | Código de Trabajo | `cr-v0.1.0` |
-| Panamá | `pa` | USD | Código de Trabajo | `pa-v0.1.0` |
-| México | `mx` | MXN | Ley Federal del Trabajo | `mx-v0.1.0` |
-| Colombia | `co` | COP | Código Sustantivo del Trabajo | `co-v0.1.0` |
-| Perú | `pe` | PEN | Ley General de Trabajo | `pe-v0.1.0` |
-| Argentina | `ar` | ARS | Ley de Contrato de Trabajo 20.744 | `ar-v0.1.0` |
-| Chile | `cl` | CLP | Código del Trabajo | `cl-v0.1.0` |
+| Nicaragua | `ni` | NIO | Ley No. 185 | `ni-v0.3.0` |
+| Guatemala | `gt` | GTQ | Decreto 1441 | `gt-v0.2.0` |
+| El Salvador | `sv` | USD | Código de Trabajo | `sv-v0.2.0` |
+| Honduras | `hn` | HNL | Decreto 189-59 | `hn-v0.2.0` |
+| Costa Rica | `cr` | CRC | Código de Trabajo | `cr-v0.2.0` |
+| Panamá | `pa` | USD | Código de Trabajo | `pa-v0.2.0` |
+| México | `mx` | MXN | Ley Federal del Trabajo | `mx-v0.2.0` |
+| Colombia | `co` | COP | Código Sustantivo del Trabajo | `co-v0.2.0` |
+| Perú | `pe` | PEN | Ley General de Trabajo | `pe-v0.2.0` |
+| Argentina | `ar` | ARS | Ley de Contrato de Trabajo 20.744 | `ar-v0.2.0` |
+| Chile | `cl` | CLP | Código del Trabajo | `cl-v0.2.0` |
 
 ---
 

@@ -1,7 +1,7 @@
 ---
 country: pe
 topic: deducciones
-version: pe-v0.1.0
+version: pe-v0.2.0
 status: proposed
 source: "Ley 26790 + D.L. 19990"
 last_reviewed: "2026-05-11"

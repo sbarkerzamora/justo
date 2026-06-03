@@ -1,7 +1,7 @@
 ---
 country: pe
 topic: vacaciones
-version: pe-v0.1.0
+version: pe-v0.2.0
 status: proposed
 source: "Ley General de Trabajo de Peru"
 last_reviewed: "2026-05-11"
@@ -13,6 +13,12 @@ last_reviewed: "2026-05-11"
 
 - Art. 285: 30 dias naturales de vacaciones por cada ano de servicio.
 - Art. 289: Proporcional por fracciones (dozavos y treintavos).
+
+## texto_legal
+
+**Artículo 285. Descanso vacacional.** El trabajador tiene derecho a treinta (30) días naturales de descanso vacacional remunerado por cada año completo de servicios en que cumpla con el récord vacacional.
+
+**Artículo 289. Cómputo del año de servicios.** El año de servicios se computará desde la fecha de ingreso del trabajador. El empleador puede, sin embargo, compensar por dozavos y treintavos la fracción de servicios correspondiente al primer año, aplicando la remuneración computable vigente a la fecha en que hace efectiva la compensación.
 
 ## regla_operativa
 

@@ -1,7 +1,7 @@
 ---
 country: co
 topic: prima-servicios
-version: co-v0.1.0
+version: co-v0.2.0
 status: proposed
 source: "Codigo Sustantivo del Trabajo de Colombia"
 last_reviewed: "2026-05-11"
@@ -13,6 +13,14 @@ last_reviewed: "2026-05-11"
 
 - Art. 306: 30 dias de salario por ano, pagaderos en dos cuotas.
 - Art. 307: La prima no constituye salario.
+
+## texto_legal
+
+**Artículo 306. De la prima de servicios a favor de todo empleado.** El empleador está obligado a pagar a su empleado o empleados, la prestación social denominada prima de servicios que corresponderá a 30 días de salario por año, el cual se reconocerá en dos pagos, así: la mitad máximo el 30 de junio y la otra mitad a más tardar los primeros veinte días de diciembre. Su reconocimiento se hará por todo el semestre trabajado o proporcionalmente al tiempo trabajado.
+
+**Parágrafo.** Se incluye en esta prestación económica a los trabajadores del servicio doméstico, choferes de servicio familiar, trabajadores por días o trabajadores de fincas y en general, a los trabajadores contemplados en el Título III del presente código o quienes cumplan con las condiciones de empleado dependiente.
+
+**Artículo 307. Carácter jurídico.** La prima anual no es salario, ni se computará como factor del salario en ningún caso.
 
 ## regla_operativa
 

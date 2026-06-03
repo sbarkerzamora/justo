@@ -1,6 +1,6 @@
 # Corpus Legal Colombia (MVP)
 
-Version: `co-v0.1.0`
+Version: `co-v0.2.0`
 
 ## Set normativo
 
