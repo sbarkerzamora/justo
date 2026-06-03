@@ -20,6 +20,7 @@ describe("tools registry", () => {
       "settlement",
       "vacations",
       "salary-net",
+      "bonus",
     ])
   })
 

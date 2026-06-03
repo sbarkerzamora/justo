@@ -83,6 +83,8 @@ type HomeCopy = {
   settlementWelcomeDescription: string
   vacationsWelcomeTitle: string
   vacationsWelcomeDescription: string
+  bonusWelcomeTitle: string
+  bonusWelcomeDescription: string
   salaryNetWelcomeTitle: string
   salaryNetWelcomeDescription: string
   grossSalary: string
@@ -201,6 +203,8 @@ export const homeCopy: Record<Locale, HomeCopy> = {
     settlementWelcomeDescription: "Calcula tu liquidación laboral con fórmulas transparentes y referencias legales. Te guiaremos paso a paso.",
     vacationsWelcomeTitle: "Calculadora de vacaciones",
     vacationsWelcomeDescription: "Calcula el monto de tus vacaciones acumuladas con fórmulas claras y trazabilidad legal.",
+    bonusWelcomeTitle: "Calculadora de aguinaldo / décimo / bono",
+    bonusWelcomeDescription: "Calcula montos proporcionales de aguinaldo, décimo, bono 14, prima, SAC o gratificaciones según tu país, con fórmulas transparentes y referencias legales.",
     salaryNetWelcomeTitle: "Calculadora de salario neto",
     salaryNetWelcomeDescription: "Calcula tu salario neto después de deducciones legales (INSS, IR, ISSS, AFP, etc.) con fórmulas transparentes.",
     grossSalary: "Salario bruto",
@@ -316,6 +320,8 @@ export const homeCopy: Record<Locale, HomeCopy> = {
     settlementWelcomeDescription: "Calculate your labor settlement with transparent formulas and legal references. We'll guide you step by step.",
     vacationsWelcomeTitle: "Vacation Calculator",
     vacationsWelcomeDescription: "Calculate your accrued vacation amount with clear formulas and legal traceability.",
+    bonusWelcomeTitle: "Bonus / 13th salary calculator",
+    bonusWelcomeDescription: "Calculate proportional amounts of aguinaldo, 13th salary, bonus 14, prima, SAC or gratifications by country, with transparent formulas and legal references.",
     salaryNetWelcomeTitle: "Net Salary Calculator",
     salaryNetWelcomeDescription: "Calculate your net salary after legal deductions (INSS, IR, ISSS, AFP, etc.) with transparent formulas.",
     grossSalary: "Gross salary",

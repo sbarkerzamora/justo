@@ -60,6 +60,13 @@ export type VacationApiResponse = {
   }
 }
 
+export type BonusFormData = {
+  countryCode: string
+  monthlySalary: number
+  startDate: string
+  endDate: string
+}
+
 export type SettlementApiResponse = {
   input: SettlementForm
   result: {

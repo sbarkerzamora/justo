@@ -97,6 +97,7 @@ const sidebarIcons: Record<string, React.ReactNode> = {
   "Calculadora de liquidacion": <IconCalculator className="h-5 w-5 shrink-0" />,
   "Calculadora de vacaciones": <IconBeach className="h-5 w-5 shrink-0" />,
   "Salario neto": <IconCoins className="h-5 w-5 shrink-0" />,
+  "Aguinaldo / decimo / bono": <IconGift className="h-5 w-5 shrink-0" />,
   Herramientas: <IconTools className="h-5 w-5 shrink-0" />,
   "Guia laboral": <IconChartBar className="h-5 w-5 shrink-0" />,
   "Marco legal": <IconBook className="h-5 w-5 shrink-0" />,
@@ -156,17 +157,13 @@ export function AppShell({
     },
     { label: "Calculadora de vacaciones", href: `${homePath}?tool=vacations` },
     { label: "Salario neto", href: `${homePath}?tool=salary-net` },
+    { label: "Aguinaldo / decimo / bono", href: `${homePath}?tool=bonus` },
     { label: "Herramientas", href: "/tools" },
     { label: "Guia laboral", href: "/guia-laboral" },
     { label: "Marco legal", href: "/docs/legal" },
   ]
 
   const comingSoonSidebarLinks = [
-    {
-      labelEs: "Aguinaldo / decimo / bono",
-      labelEn: "Bonus / 13th salary",
-      icon: <IconGift className="h-5 w-5 shrink-0" />,
-    },
     {
       labelEs: "Horas extra",
       labelEn: "Overtime",

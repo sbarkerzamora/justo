@@ -1,4 +1,5 @@
 import type { CountryCode } from "@justo/core"
+import { bonusTool } from "./bonus"
 import { salaryNetTool } from "./salary-net"
 import { settlementTool } from "./settlement"
 import type { JustoTool, JustoToolCountryOverride, JustoToolAvailability, JustoToolCategory } from "./types"
@@ -47,17 +48,7 @@ export const tools = [
   settlementTool,
   vacationsTool,
   salaryNetTool,
-  comingSoonTool({
-    id: "bonus",
-    slug: "aguinaldo-decimo-bono",
-    name: "Aguinaldo / décimo / bono",
-    shortDescription: "Estima pagos proporcionales de bonos laborales por país.",
-    longDescription:
-      "Calculadora abierta para aguinaldo, décimo, bono 14 u obligaciones equivalentes según jurisdicción.",
-    category: "calculation",
-    inputRequirements: ["País", "Salario", "Periodo trabajado", "Fecha de corte"],
-    outputSummary: ["Monto proporcional", "Fórmula", "Referencias legales"],
-  }),
+  bonusTool,
   comingSoonTool({
     id: "overtime",
     slug: "horas-extra",

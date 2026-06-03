@@ -1,3 +1,4 @@
+export * from "./bonus"
 export * from "./registry"
 export * from "./settlement"
 export * from "./salary-net"

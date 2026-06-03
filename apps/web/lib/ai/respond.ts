@@ -2,6 +2,7 @@ import { streamText, tool, zodSchema, type ModelMessage } from "ai"
 import { calculateSalaryNet } from "@justo/tools"
 import { calculateSettlement } from "@justo/tools"
 import { calculateVacations } from "@justo/tools"
+import { calculateBonus } from "@justo/tools"
 import { join } from "node:path"
 import { z } from "zod"
 
@@ -680,6 +681,49 @@ export async function generateLaborResponse(input: {
             })
           } catch (e) {
             return `Error al calcular salario neto: ${e instanceof Error ? e.message : "error desconocido"}. Usa la calculadora guiada para un calculo mas preciso.`
+          }
+        },
+      }),
+      quickBonusEstimate: tool({
+        description: `Calcula un estimado de aguinaldo, décimo, bono 14, prima, SAC o gratificaciones proporcional en ${countryMeta[countryCode]?.name ?? "este pais"} usando el motor deterministico segun la ${countryMeta[countryCode]?.law ?? "ley local"}. Usala cuando el usuario pregunte sobre aguinaldo, decimo, bono, prima de servicios, gratificaciones o SAC.`,
+        inputSchema: zodSchema(
+          z.object({
+            monthlySalary: z
+              .number()
+              .positive()
+              .describe("Salario mensual del trabajador"),
+            startDate: z
+              .string()
+              .describe("Fecha de inicio del periodo en formato YYYY-MM-DD"),
+            endDate: z
+              .string()
+              .describe("Fecha de corte del periodo en formato YYYY-MM-DD"),
+          })
+        ),
+        execute: async ({ monthlySalary, startDate, endDate }) => {
+          try {
+            const result = calculateBonus({
+              countryCode: countryCode as "ni" | "sv" | "hn" | "gt" | "cr" | "pa" | "mx" | "co" | "pe" | "cl" | "ar",
+              monthlySalary,
+              startDate,
+              endDate,
+            })
+            return JSON.stringify({
+              currency: result.currency,
+              supported: result.supported,
+              lines: result.lines.map((l) => ({
+                label: l.label,
+                amount: l.amount,
+                formula: l.formula,
+                legalReference: l.legalReference,
+              })),
+              total: result.total,
+              periodDays: result.periodDays,
+              fallbackReason: result.fallbackReason,
+              legalCorpusVersion: result.legalCorpusVersion,
+            })
+          } catch (e) {
+            return `Error al calcular bono: ${e instanceof Error ? e.message : "error desconocido"}. Usa la calculadora guiada para un calculo mas preciso.`
           }
         },
       }),
