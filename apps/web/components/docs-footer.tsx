@@ -1,6 +1,8 @@
 "use client"
 
 import { useEffect, useState } from "react"
+import Link from "next/link"
+import { getLegalLinks } from "@/lib/legal-pages"
 
 const countryLabels: Record<string, string> = {
   ni: "Nicaragua",
@@ -18,22 +20,28 @@ const countryLabels: Record<string, string> = {
 
 export function DocsFooter() {
   const [cc, setCc] = useState<string | null>(null)
+  const [locale, setLocale] = useState<"es" | "en">("es")
 
   useEffect(() => {
     try {
       const stored = localStorage.getItem("justo-country")
+      // eslint-disable-next-line react-hooks/set-state-in-effect
       if (stored) setCc(stored)
+      const storedLocale = localStorage.getItem("justo-locale")
+      if (storedLocale === "en") setLocale("en")
     } catch {
       /* noop */
     }
   }, [])
 
+  const legalLinks = getLegalLinks(locale)
+
   return (
     <footer className="border-t border-border py-6 text-center text-xs text-muted-foreground">
       <p>
         Justo &middot; Asistente laboral open source &middot;{" "}
-        {cc ? countryLabels[cc] ?? cc : "Nicaragua"} &middot; No constituye asesoría legal
-        profesional &middot;{" "}
+        {cc ? (countryLabels[cc] ?? cc) : "Nicaragua"} &middot; No constituye
+        asesoría legal profesional &middot;{" "}
         <a
           href="https://stephanbarker.com"
           target="_blank"
@@ -43,6 +51,17 @@ export function DocsFooter() {
           stephanbarker.com
         </a>
       </p>
+      <nav className="mt-2 flex justify-center gap-3" aria-label="Legal">
+        {legalLinks.map((link) => (
+          <Link
+            key={link.path}
+            href={link.path}
+            className="underline-offset-2 hover:text-foreground hover:underline"
+          >
+            {link.linkLabel}
+          </Link>
+        ))}
+      </nav>
     </footer>
   )
 }

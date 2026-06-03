@@ -4,6 +4,14 @@ import type { NextRequest } from "next/server"
 import { isValidCountry } from "@/lib/countries"
 import { defaultLocale, isValidLocale, localizedCountryPath } from "@/lib/i18n"
 
+const legalPageSlugs = new Set([
+  "terminos",
+  "privacidad",
+  "cookies",
+  "terms",
+  "privacy",
+])
+
 export function proxy(request: NextRequest) {
   const { pathname } = request.nextUrl
 
@@ -29,6 +37,10 @@ export function proxy(request: NextRequest) {
   const secondSegment = segments[1]
 
   if (firstSegment && isValidLocale(firstSegment)) {
+    if (secondSegment && legalPageSlugs.has(secondSegment)) {
+      return NextResponse.next()
+    }
+
     if (secondSegment && isValidCountry(secondSegment)) {
       return NextResponse.next()
     }

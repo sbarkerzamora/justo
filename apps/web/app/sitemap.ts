@@ -1,6 +1,7 @@
 import type { MetadataRoute } from "next"
 import { countryList } from "@/lib/countries"
 import { locales } from "@/lib/i18n"
+import { getLegalSitemapEntries } from "@/lib/legal-pages"
 import { getSiteUrl } from "@/lib/site-url"
 import { source } from "@/lib/source"
 
@@ -64,6 +65,15 @@ export default function sitemap(): MetadataRoute.Sitemap {
       lastModified: LAST_MODIFIED,
       changeFrequency: "weekly",
       priority: 0.8,
+    })
+  }
+
+  for (const page of getLegalSitemapEntries()) {
+    entries.push({
+      url: `${SITE_URL}${page.path}`,
+      lastModified: LAST_MODIFIED,
+      changeFrequency: "monthly",
+      priority: 0.4,
     })
   }
 

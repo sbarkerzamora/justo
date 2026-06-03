@@ -1,6 +1,12 @@
 "use client"
 
-import { useState, useEffect, createContext, useContext, useCallback } from "react"
+import {
+  useState,
+  useEffect,
+  createContext,
+  useContext,
+  useCallback,
+} from "react"
 import Link from "next/link"
 import { usePathname, useRouter } from "next/navigation"
 import { useTheme } from "next-themes"
@@ -10,6 +16,7 @@ import { countryList, isValidCountry } from "@/lib/countries"
 import { localizedCountryPath, isValidLocale, type Locale } from "@/lib/i18n"
 import { getCountryAccent } from "@/lib/country-accent"
 import { homeCopy } from "@/lib/home-copy"
+import { getLegalLinks } from "@/lib/legal-pages"
 import {
   Select,
   SelectContent,
@@ -42,7 +49,9 @@ import {
 
 type SidebarCtx = { open: boolean; setOpen: (v: boolean) => void }
 const SidebarCtx = createContext<SidebarCtx>({ open: true, setOpen: () => {} })
-export function useSidebarOpen() { return useContext(SidebarCtx) }
+export function useSidebarOpen() {
+  return useContext(SidebarCtx)
+}
 
 function useStoredCountry(
   pathname: string,
@@ -51,13 +60,13 @@ function useStoredCountry(
 ) {
   const segments = pathname.split("/").filter(Boolean)
   const countryFromPath =
-    segments.length >= 2 && isValidLocale(segments[0]) && isValidCountry(segments[1])
+    segments.length >= 2 &&
+    isValidLocale(segments[0]) &&
+    isValidCountry(segments[1])
       ? segments[1]
       : null
   const localeFromPath =
-    segments.length >= 1 && isValidLocale(segments[0])
-      ? segments[0]
-      : null
+    segments.length >= 1 && isValidLocale(segments[0]) ? segments[0] : null
 
   const [stored] = useState(() => {
     if (typeof window === "undefined") {
@@ -68,7 +77,8 @@ function useStoredCountry(
     }
     try {
       return {
-        country: localStorage.getItem("justo-country") ?? initialCountry ?? "ni",
+        country:
+          localStorage.getItem("justo-country") ?? initialCountry ?? "ni",
         locale: localStorage.getItem("justo-locale") ?? initialLocale ?? "es",
       }
     } catch {
@@ -105,7 +115,11 @@ export function AppShell({
   const isDocs = pathname.startsWith("/docs")
   const [open, setOpen] = useState(true)
   const [mobileOpen, setMobileOpen] = useState(false)
-  const { country, locale } = useStoredCountry(pathname, initialLocale, initialCountry)
+  const { country, locale } = useStoredCountry(
+    pathname,
+    initialLocale,
+    initialCountry
+  )
   const { push } = useRouter()
   const { resolvedTheme, setTheme } = useTheme()
   const [mounted, setMounted] = useState(false)
@@ -115,15 +129,31 @@ export function AppShell({
   if (isDocs) return <>{children}</>
 
   const homePath = `/${locale}/${country}`
+  const legalLinks = getLegalLinks(locale)
+  const showFooter =
+    pathname === "/" ||
+    pathname.startsWith(`/${locale}/${country}`) ||
+    legalLinks.some((link) => pathname === link.path)
 
   const headerLinks = [
-    { label: "Herramientas", href: "/tools", icon: <IconTools className="size-4" /> },
-    { label: "Documentacion", href: "/docs/legal", icon: <IconBook className="size-4" /> },
+    {
+      label: "Herramientas",
+      href: "/tools",
+      icon: <IconTools className="size-4" />,
+    },
+    {
+      label: "Documentacion",
+      href: "/docs/legal",
+      icon: <IconBook className="size-4" />,
+    },
   ]
 
   const sidebarLinks = [
     { label: "Chat", href: homePath },
-    { label: "Calculadora de liquidacion", href: `${homePath}?tool=settlement` },
+    {
+      label: "Calculadora de liquidacion",
+      href: `${homePath}?tool=settlement`,
+    },
     { label: "Calculadora de vacaciones", href: `${homePath}?tool=vacations` },
     { label: "Salario neto", href: `${homePath}?tool=salary-net` },
     { label: "Herramientas", href: "/tools" },
@@ -132,18 +162,48 @@ export function AppShell({
   ]
 
   const comingSoonSidebarLinks = [
-    { labelEs: "Aguinaldo / decimo / bono", labelEn: "Bonus / 13th salary", icon: <IconGift className="h-5 w-5 shrink-0" /> },
-    { labelEs: "Horas extra", labelEn: "Overtime", icon: <IconClock className="h-5 w-5 shrink-0" /> },
-    { labelEs: "Simulador de terminacion", labelEn: "Termination simulator", icon: <IconSwitch className="h-5 w-5 shrink-0" /> },
-    { labelEs: "Generador de finiquito", labelEn: "Settlement document", icon: <IconFile className="h-5 w-5 shrink-0" /> },
-    { labelEs: "Checklist laboral", labelEn: "Labor checklist", icon: <IconClipboardCheck className="h-5 w-5 shrink-0" /> },
-    { labelEs: "Asistente de contratacion", labelEn: "Hiring assistant", icon: <IconUserPlus className="h-5 w-5 shrink-0" /> },
+    {
+      labelEs: "Aguinaldo / decimo / bono",
+      labelEn: "Bonus / 13th salary",
+      icon: <IconGift className="h-5 w-5 shrink-0" />,
+    },
+    {
+      labelEs: "Horas extra",
+      labelEn: "Overtime",
+      icon: <IconClock className="h-5 w-5 shrink-0" />,
+    },
+    {
+      labelEs: "Simulador de terminacion",
+      labelEn: "Termination simulator",
+      icon: <IconSwitch className="h-5 w-5 shrink-0" />,
+    },
+    {
+      labelEs: "Generador de finiquito",
+      labelEn: "Settlement document",
+      icon: <IconFile className="h-5 w-5 shrink-0" />,
+    },
+    {
+      labelEs: "Checklist laboral",
+      labelEn: "Labor checklist",
+      icon: <IconClipboardCheck className="h-5 w-5 shrink-0" />,
+    },
+    {
+      labelEs: "Asistente de contratacion",
+      labelEn: "Hiring assistant",
+      icon: <IconUserPlus className="h-5 w-5 shrink-0" />,
+    },
   ]
 
   const sidebarContent = (
     <div className="flex h-full flex-col">
       <div className="py-4">
-        <Link href="/" className={cn("flex items-center text-sm", open ? "space-x-2" : "justify-center")}>
+        <Link
+          href="/"
+          className={cn(
+            "flex items-center text-sm",
+            open ? "space-x-2" : "justify-center"
+          )}
+        >
           <div
             className="flex h-6 w-6 shrink-0 items-center justify-center rounded-lg"
             style={{ background: getCountryAccent(country) }}
@@ -162,15 +222,22 @@ export function AppShell({
           <span className="truncate text-[11px] font-medium text-sidebar-foreground">
             {homeCopy[locale as Locale].hrCtaTitle}
           </span>
-          <span className="ml-auto inline-flex shrink-0 items-center rounded bg-primary/10 px-1 py-0.5 text-[8px] font-semibold uppercase tracking-wider text-primary">
+          <span className="ml-auto inline-flex shrink-0 items-center rounded bg-primary/10 px-1 py-0.5 text-[8px] font-semibold tracking-wider text-primary uppercase">
             {homeCopy[locale as Locale].hrCtaBadge}
           </span>
         </div>
       ) : null}
 
       <div className="mb-4 flex flex-col gap-1.5">
-        <div className={cn("flex items-center gap-1.5", open ? "" : "flex-col")}>
-          <LanguageToggle current={locale} country={country} push={push} open={open} />
+        <div
+          className={cn("flex items-center gap-1.5", open ? "" : "flex-col")}
+        >
+          <LanguageToggle
+            current={locale}
+            country={country}
+            push={push}
+            open={open}
+          />
           <ThemeToggle resolvedTheme={resolvedTheme} setTheme={setTheme} />
         </div>
         {open ? (
@@ -182,7 +249,7 @@ export function AppShell({
           >
             <div className="flex items-center gap-2">
               <IconBrandGithub className="size-3.5 text-sidebar-foreground/60" />
-              <span className="text-[10px] font-medium uppercase tracking-[0.12em] text-sidebar-foreground/50">
+              <span className="text-[10px] font-medium tracking-[0.12em] text-sidebar-foreground/50 uppercase">
                 Open source
               </span>
             </div>
@@ -218,7 +285,9 @@ export function AppShell({
               )}
             >
               {sidebarIcons[link.label]}
-              {open ? <span className="whitespace-nowrap">{link.label}</span> : null}
+              {open ? (
+                <span className="whitespace-nowrap">{link.label}</span>
+              ) : null}
             </Link>
           ))}
         </nav>
@@ -231,12 +300,16 @@ export function AppShell({
               key={link.labelEs}
               title={locale === "en" ? "Coming soon" : "Proximamente"}
               className={cn(
-                "flex items-center gap-2 rounded-lg px-2 py-2 text-sm text-sidebar-foreground/40 opacity-50 cursor-not-allowed",
+                "flex cursor-not-allowed items-center gap-2 rounded-lg px-2 py-2 text-sm text-sidebar-foreground/40 opacity-50",
                 open ? "" : "justify-center"
               )}
             >
               {link.icon}
-              {open ? <span className="whitespace-nowrap">{locale === "en" ? link.labelEn : link.labelEs}</span> : null}
+              {open ? (
+                <span className="whitespace-nowrap">
+                  {locale === "en" ? link.labelEn : link.labelEs}
+                </span>
+              ) : null}
             </span>
           ))}
         </nav>
@@ -252,7 +325,7 @@ export function AppShell({
         {/* Desktop sidebar */}
         <aside
           className={cn(
-            "max-md:hidden flex flex-col border-r border-sidebar-border bg-sidebar px-4 shrink-0 overflow-y-auto transition-[width] duration-200",
+            "flex shrink-0 flex-col overflow-y-auto border-r border-sidebar-border bg-sidebar px-4 transition-[width] duration-200 max-md:hidden",
             open ? "w-[240px]" : "w-[56px]"
           )}
           onMouseEnter={() => setOpen(true)}
@@ -264,12 +337,15 @@ export function AppShell({
         {/* Mobile overlay */}
         {mobileOpen ? (
           <div className="fixed inset-0 z-50 md:hidden">
-            <div className="absolute inset-0 bg-background/60 backdrop-blur-sm" onClick={toggleMobile} />
-            <nav className="absolute inset-y-0 left-0 w-[85vw] max-w-[320px] bg-sidebar border-r border-sidebar-border px-4 py-4 flex flex-col overflow-y-auto shadow-xl">
+            <div
+              className="absolute inset-0 bg-background/60 backdrop-blur-sm"
+              onClick={toggleMobile}
+            />
+            <nav className="absolute inset-y-0 left-0 flex w-[85vw] max-w-[320px] flex-col overflow-y-auto border-r border-sidebar-border bg-sidebar px-4 py-4 shadow-xl">
               <button
                 type="button"
                 onClick={toggleMobile}
-                className="absolute right-4 top-4 inline-flex size-8 items-center justify-center rounded-lg text-sidebar-foreground hover:bg-sidebar-accent"
+                className="absolute top-4 right-4 inline-flex size-8 items-center justify-center rounded-lg text-sidebar-foreground hover:bg-sidebar-accent"
               >
                 <IconX className="size-4" />
               </button>
@@ -305,7 +381,9 @@ export function AppShell({
                 </Link>
                 <Select
                   value={country}
-                  onValueChange={(nextCc) => push(localizedCountryPath(locale as "es" | "en", nextCc))}
+                  onValueChange={(nextCc) =>
+                    push(localizedCountryPath(locale as "es" | "en", nextCc))
+                  }
                 >
                   <SelectTrigger className="h-7 w-auto gap-1.5 rounded-lg border-border bg-transparent px-2 py-0 text-[11px] font-medium text-foreground hover:bg-accent">
                     <Image
@@ -315,7 +393,7 @@ export function AppShell({
                       height={10}
                       className="h-2.5 w-3.5 shrink-0 rounded-[1px] border border-border object-cover"
                     />
-                    <span className="max-sm:hidden truncate max-w-[100px]">
+                    <span className="max-w-[100px] truncate max-sm:hidden">
                       {info?.name ?? country}
                     </span>
                   </SelectTrigger>
@@ -325,7 +403,11 @@ export function AppShell({
                     className="rounded-xl border-border bg-background p-1 shadow-lg"
                   >
                     {countryList.map((c) => (
-                      <SelectItem key={c.code} value={c.code} className="rounded-lg text-foreground">
+                      <SelectItem
+                        key={c.code}
+                        value={c.code}
+                        className="rounded-lg text-foreground"
+                      >
                         <span className="flex items-center gap-2">
                           <Image
                             src={`https://flagcdn.com/w40/${c.flag}.png`}
@@ -355,7 +437,9 @@ export function AppShell({
                 ))}
                 <button
                   type="button"
-                  onClick={() => setTheme(resolvedTheme === "dark" ? "light" : "dark")}
+                  onClick={() =>
+                    setTheme(resolvedTheme === "dark" ? "light" : "dark")
+                  }
                   className="inline-flex size-8 items-center justify-center rounded-lg border border-border bg-card text-foreground transition-colors hover:bg-accent"
                 >
                   {!mounted ? (
@@ -378,11 +462,30 @@ export function AppShell({
             </div>
           </header>
 
-          <main className="flex-1 overflow-x-hidden overflow-y-auto">{children}</main>
+          <main className="flex-1 overflow-x-hidden overflow-y-auto">
+            {children}
+          </main>
 
-          {pathname === "/" || pathname.startsWith(`/${locale}/${country}`) ? (
+          {showFooter ? (
             <footer className="border-t border-border px-4 py-3 text-center text-[11px] text-muted-foreground">
-              <p>Justo · Asistente laboral open source · No constituye asesoría legal profesional</p>
+              <p>
+                Justo · Asistente laboral open source · No constituye asesoría
+                legal profesional
+              </p>
+              <nav
+                className="mt-1 flex justify-center gap-3"
+                aria-label="Legal"
+              >
+                {legalLinks.map((link) => (
+                  <Link
+                    key={link.path}
+                    href={link.path}
+                    className="underline-offset-2 transition-colors hover:text-foreground hover:underline"
+                  >
+                    {link.linkLabel}
+                  </Link>
+                ))}
+              </nav>
             </footer>
           ) : null}
         </div>
@@ -406,7 +509,9 @@ function LanguageToggle({
     return (
       <button
         type="button"
-        onClick={() => push(localizedCountryPath(current === "es" ? "en" : "es", country))}
+        onClick={() =>
+          push(localizedCountryPath(current === "es" ? "en" : "es", country))
+        }
         className="inline-flex h-7 w-7 items-center justify-center rounded-lg border border-sidebar-border text-[11px] font-medium text-sidebar-foreground/70 transition-colors hover:bg-sidebar-accent hover:text-sidebar-foreground"
       >
         {current.toUpperCase()}

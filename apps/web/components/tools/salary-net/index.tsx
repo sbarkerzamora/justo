@@ -27,7 +27,13 @@ import {
   parseCurrencyInput,
 } from "@/components/tools/input-formatters"
 
-export type SalaryNetStep = "welcome" | "monthlySalary" | "frequency" | "pensionSystem" | "confirm" | "done"
+export type SalaryNetStep =
+  | "welcome"
+  | "monthlySalary"
+  | "frequency"
+  | "pensionSystem"
+  | "confirm"
+  | "done"
 
 type SalaryNetEditMode = null | "salary" | "frequency"
 
@@ -50,7 +56,11 @@ type Action =
   | { type: "setPensionSystem"; value: "afp" | "onp" }
   | { type: "setResult"; result: ReturnType<typeof calculateSalaryNet> | null }
   | { type: "setEditMode"; editMode: SalaryNetEditMode }
-  | { type: "setEditField"; field: "editSalary" | "editFrequency"; value: string }
+  | {
+      type: "setEditField"
+      field: "editSalary" | "editFrequency"
+      value: string
+    }
   | { type: "setError"; error: string | null }
   | { type: "reset" }
 
@@ -66,7 +76,10 @@ const initialState: SalaryNetToolState = {
   error: null,
 }
 
-function reducer(state: SalaryNetToolState, action: Action): SalaryNetToolState {
+function reducer(
+  state: SalaryNetToolState,
+  action: Action
+): SalaryNetToolState {
   switch (action.type) {
     case "setStep":
       return { ...state, step: action.step, error: null }
@@ -91,7 +104,13 @@ function reducer(state: SalaryNetToolState, action: Action): SalaryNetToolState 
   }
 }
 
-const salaryNetSteps: SalaryNetStep[] = ["monthlySalary", "frequency", "pensionSystem", "confirm", "done"]
+const salaryNetSteps: SalaryNetStep[] = [
+  "monthlySalary",
+  "frequency",
+  "pensionSystem",
+  "confirm",
+  "done",
+]
 
 const stepIndex = (step: SalaryNetStep) => {
   if (step === "welcome") return 0
@@ -124,22 +143,36 @@ export function SalaryNetTool({
   const [inputValue, setInputValue] = useState("")
   const inputRef = useRef<HTMLInputElement>(null)
 
-  const { step, grossSalary, frequency, pensionSystem, result, editMode, error } = state
+  const {
+    step,
+    grossSalary,
+    frequency,
+    pensionSystem,
+    result,
+    editMode,
+    error,
+  } = state
 
-  const askText = useCallback((s: SalaryNetStep) => {
-    const map: Record<string, string> = {
-      monthlySalary: copy.monthlySalaryQuestion(currencyLabel),
-      frequency: copy.frequencyQuestion,
-    }
-    return map[s] ?? ""
-  }, [copy, currencyLabel])
+  const askText = useCallback(
+    (s: SalaryNetStep) => {
+      const map: Record<string, string> = {
+        monthlySalary: copy.monthlySalaryQuestion(currencyLabel),
+        frequency: copy.frequencyQuestion,
+      }
+      return map[s] ?? ""
+    },
+    [copy, currencyLabel]
+  )
 
   const nextStep = (s: SalaryNetStep): SalaryNetStep => {
     const idx = salaryNetSteps.indexOf(s)
     return salaryNetSteps[idx + 1] ?? "confirm"
   }
 
-  const applyField = (field: "salary" | "frequency", value: string): boolean => {
+  const applyField = (
+    field: "salary" | "frequency",
+    value: string
+  ): boolean => {
     if (field === "salary") {
       const n = parseCurrencyInput(value)
       if (!Number.isFinite(n) || n <= 0) return false
@@ -148,8 +181,16 @@ export function SalaryNetTool({
     }
     if (field === "frequency") {
       const v = value.toLowerCase().trim()
-      if (!(["mensual", "quincenal", "semanal"] as const).includes(v as "mensual" | "quincenal" | "semanal")) return false
-      dispatch({ type: "setFrequency", value: v as "mensual" | "quincenal" | "semanal" })
+      if (
+        !(["mensual", "quincenal", "semanal"] as const).includes(
+          v as "mensual" | "quincenal" | "semanal"
+        )
+      )
+        return false
+      dispatch({
+        type: "setFrequency",
+        value: v as "mensual" | "quincenal" | "semanal",
+      })
       return true
     }
     return true
@@ -167,13 +208,22 @@ export function SalaryNetTool({
   }
 
   const handleSubmit = () => {
-    if (step === "welcome" || step === "frequency" || step === "confirm" || step === "done") return
+    if (
+      step === "welcome" ||
+      step === "frequency" ||
+      step === "confirm" ||
+      step === "done"
+    )
+      return
     advance()
   }
 
   const onFrequencySelect = (f: "mensual" | "quincenal" | "semanal") => {
     dispatch({ type: "setFrequency", value: f })
-    dispatch({ type: "setStep", step: countryCode === "pe" ? "pensionSystem" : "confirm" })
+    dispatch({
+      type: "setStep",
+      step: countryCode === "pe" ? "pensionSystem" : "confirm",
+    })
   }
 
   const runCalculation = () => {
@@ -188,7 +238,10 @@ export function SalaryNetTool({
       dispatch({ type: "setStep", step: "done" })
       dispatch({ type: "setError", error: null })
     } catch (err) {
-      dispatch({ type: "setError", error: err instanceof Error ? err.message : copy.calculationFailed })
+      dispatch({
+        type: "setError",
+        error: err instanceof Error ? err.message : copy.calculationFailed,
+      })
     }
   }
 
@@ -198,8 +251,18 @@ export function SalaryNetTool({
       return
     }
     dispatch({ type: "setEditMode", editMode: action })
-    if (action === "salary") dispatch({ type: "setEditField", field: "editSalary", value: String(grossSalary || "") })
-    if (action === "frequency") dispatch({ type: "setEditField", field: "editFrequency", value: frequency })
+    if (action === "salary")
+      dispatch({
+        type: "setEditField",
+        field: "editSalary",
+        value: String(grossSalary || ""),
+      })
+    if (action === "frequency")
+      dispatch({
+        type: "setEditField",
+        field: "editFrequency",
+        value: frequency,
+      })
   }
 
   const saveEdit = () => {
@@ -207,7 +270,10 @@ export function SalaryNetTool({
       dispatch({ type: "setError", error: copy.invalidData })
       return
     }
-    if (editMode === "frequency" && !applyField("frequency", state.editFrequency)) {
+    if (
+      editMode === "frequency" &&
+      !applyField("frequency", state.editFrequency)
+    ) {
       dispatch({ type: "setError", error: copy.invalidData })
       return
     }
@@ -233,7 +299,10 @@ export function SalaryNetTool({
 
   const handleComplete = () => {
     const messages: { role: "user" | "assistant"; text: string }[] = [
-      { role: "assistant", text: `Vamos a calcular tu salario neto. ${copy.monthlySalaryQuestion(currencyLabel)}` },
+      {
+        role: "assistant",
+        text: `Vamos a calcular tu salario neto. ${copy.monthlySalaryQuestion(currencyLabel)}`,
+      },
       { role: "user", text: String(grossSalary) },
       { role: "assistant", text: copy.frequencyQuestion },
       { role: "user", text: frequency },
@@ -242,7 +311,10 @@ export function SalaryNetTool({
       messages.push(
         { role: "assistant", text: copy.reviewSummary },
         { role: "user", text: copy.confirmAndCalculate },
-        { role: "assistant", text: `Salario neto mensual: ${fmt(result.netSalary)}` }
+        {
+          role: "assistant",
+          text: `Salario neto mensual: ${fmt(result.netSalary)}`,
+        }
       )
     }
     onComplete(messages)
@@ -250,7 +322,7 @@ export function SalaryNetTool({
 
   return (
     <div className="flex min-h-0 flex-1 flex-col">
-      <div className="mb-4 flex items-center justify-between w-full">
+      <div className="mb-4 flex w-full items-center justify-between">
         <div className="inline-flex items-center gap-2 rounded-full border border-border bg-card px-3 py-1.5 text-xs font-medium text-foreground">
           <IconCoins className="size-3.5 text-primary" />
           {locale === "en" ? "Net salary" : "Salario neto"}
@@ -265,14 +337,25 @@ export function SalaryNetTool({
         </button>
       </div>
 
-      <div className="w-full mb-3 space-y-2 motion-safe:animate-in motion-safe:duration-200 motion-safe:fade-in motion-safe:slide-in-from-top-1 max-sm:mb-2">
+      <div className="mb-3 w-full space-y-2 motion-safe:animate-in motion-safe:duration-200 motion-safe:fade-in motion-safe:slide-in-from-top-1 max-sm:mb-2">
         <div className="mb-1 flex items-center justify-between text-xs text-muted-foreground">
           <span>{copy.progressStep(stepIndex(step))}</span>
-          <span className="max-sm:hidden">{step === "done" ? copy.result : step === "confirm" ? copy.summaryTitle : askText(step)}</span>
-          <span className="sm:hidden">{step === "done" ? "OK" : `P${stepIndex(step)}`}</span>
+          <span className="max-sm:hidden">
+            {step === "done"
+              ? copy.result
+              : step === "confirm"
+                ? copy.summaryTitle
+                : askText(step)}
+          </span>
+          <span className="sm:hidden">
+            {step === "done" ? "OK" : `P${stepIndex(step)}`}
+          </span>
         </div>
         <div className="h-1.5 rounded-full bg-muted">
-          <div className="h-1.5 rounded-full bg-primary transition-all duration-300" style={{ width: `${(stepIndex(step) / totalSteps) * 100}%` }} />
+          <div
+            className="h-1.5 rounded-full bg-primary transition-all duration-300"
+            style={{ width: `${(stepIndex(step) / totalSteps) * 100}%` }}
+          />
         </div>
         <div className="flex items-center gap-1.5 text-[11px] text-muted-foreground">
           <Image
@@ -318,8 +401,16 @@ export function SalaryNetTool({
               editMode={editMode}
               editSalary={state.editSalary}
               editFrequency={state.editFrequency}
-              onSetEditField={(field, value) => dispatch({ type: "setEditField", field: field as "editSalary" | "editFrequency", value })}
-              onSetEditMode={(mode) => dispatch({ type: "setEditMode", editMode: mode })}
+              onSetEditField={(field, value) =>
+                dispatch({
+                  type: "setEditField",
+                  field: field as "editSalary" | "editFrequency",
+                  value,
+                })
+              }
+              onSetEditMode={(mode) =>
+                dispatch({ type: "setEditMode", editMode: mode })
+              }
               saveEdit={saveEdit}
               copy={copy}
             />
@@ -332,7 +423,10 @@ export function SalaryNetTool({
           <div className="space-y-4 overflow-y-auto">
             <PensionSelector
               selected={pensionSystem}
-              onSelect={(v) => { dispatch({ type: "setPensionSystem", value: v }); dispatch({ type: "setStep", step: "confirm" }) }}
+              onSelect={(v) => {
+                dispatch({ type: "setPensionSystem", value: v })
+                dispatch({ type: "setStep", step: "confirm" })
+              }}
             />
           </div>
         ) : step === "confirm" ? (
@@ -356,7 +450,6 @@ export function SalaryNetTool({
         ) : result && step === "done" ? (
           <div className="space-y-4 overflow-y-auto">
             <ResultPanel
-              grossSalary={grossSalary}
               frequency={frequency}
               result={result}
               fmt={fmt}
@@ -370,13 +463,17 @@ export function SalaryNetTool({
         ) : (
           <div className="flex h-full flex-col items-center justify-center gap-6 px-2">
             <div className="w-full max-w-xl rounded-2xl border border-border bg-card p-6 shadow-sm motion-safe:animate-in motion-safe:duration-200 motion-safe:fade-in motion-safe:slide-in-from-bottom-1">
-              <p className="text-base font-medium text-foreground">{askText(step)}</p>
+              <p className="text-base font-medium text-foreground">
+                {askText(step)}
+              </p>
             </div>
             <div className="relative w-full max-w-xl pb-4">
               <input
                 ref={inputRef}
                 value={inputValue}
-                onChange={(e) => setInputValue(formatCurrencyInput(e.target.value))}
+                onChange={(e) =>
+                  setInputValue(formatCurrencyInput(e.target.value))
+                }
                 onKeyDown={(e) => {
                   if (e.key === "Enter") {
                     e.preventDefault()
@@ -385,13 +482,13 @@ export function SalaryNetTool({
                 }}
                 inputMode="decimal"
                 placeholder={copy.askPlaceholder}
-                className="h-12 w-full rounded-2xl border border-border bg-card px-4 text-sm text-foreground placeholder:text-muted-foreground outline-none transition-colors focus:border-foreground/30"
+                className="h-12 w-full rounded-2xl border border-border bg-card px-4 text-sm text-foreground transition-colors outline-none placeholder:text-muted-foreground focus:border-foreground/30"
               />
               <button
                 type="button"
                 onClick={handleSubmit}
                 disabled={!inputValue.trim()}
-                className="absolute right-2 top-1/2 -translate-y-1/2 inline-flex h-8 items-center justify-center rounded-full bg-primary px-3 text-xs font-medium text-primary-foreground disabled:opacity-30"
+                className="absolute top-1/2 right-2 inline-flex h-8 -translate-y-1/2 items-center justify-center rounded-full bg-primary px-3 text-xs font-medium text-primary-foreground disabled:opacity-30"
               >
                 {copy.send}
               </button>
@@ -420,15 +517,22 @@ function OnboardingPanel({
 }) {
   return (
     <div className="flex h-full flex-col items-center justify-center gap-8 px-2 motion-safe:animate-in motion-safe:duration-300 motion-safe:fade-in motion-safe:slide-in-from-bottom-2">
-      <div className="flex flex-col items-center gap-5 text-center max-w-md">
+      <div className="flex max-w-md flex-col items-center gap-5 text-center">
         <div className="flex h-16 w-16 items-center justify-center rounded-2xl bg-primary/10">
           {icon}
         </div>
-        <h2 className="text-xl font-semibold tracking-tight text-foreground">{title}</h2>
-        <p className="text-sm leading-relaxed text-muted-foreground">{description}</p>
+        <h2 className="text-xl font-semibold tracking-tight text-foreground">
+          {title}
+        </h2>
+        <p className="text-sm leading-relaxed text-muted-foreground">
+          {description}
+        </p>
         <div className="flex flex-wrap justify-center gap-2">
           {steps.map((step, i) => (
-            <span key={i} className="inline-flex items-center gap-1.5 rounded-full bg-muted px-2.5 py-1 text-[11px] text-muted-foreground">
+            <span
+              key={i}
+              className="inline-flex items-center gap-1.5 rounded-full bg-muted px-2.5 py-1 text-[11px] text-muted-foreground"
+            >
               <span className="flex h-4 w-4 items-center justify-center rounded-full bg-primary/10 text-[9px] font-medium text-primary">
                 {i + 1}
               </span>
@@ -449,7 +553,15 @@ function OnboardingPanel({
   )
 }
 
-function SummaryRow({ icon, label, value }: { icon: ReactNode; label: string; value: string }) {
+function SummaryRow({
+  icon,
+  label,
+  value,
+}: {
+  icon: ReactNode
+  label: string
+  value: string
+}) {
   return (
     <div className="flex items-center justify-between rounded-xl bg-muted/50 px-4 py-2.5">
       <div className="flex items-center gap-2.5">
@@ -481,7 +593,15 @@ function FrequencyPicker({
             onClick={() => onSelect(f)}
             className="rounded-xl border border-border px-3 py-2 text-sm font-medium text-foreground capitalize transition-colors duration-200 hover:bg-accent"
           >
-            {copy[f === "mensual" ? "monthly" : f === "quincenal" ? "biweekly" : "weekly"]}
+            {
+              copy[
+                f === "mensual"
+                  ? "monthly"
+                  : f === "quincenal"
+                    ? "biweekly"
+                    : "weekly"
+              ]
+            }
           </button>
         ))}
       </div>
@@ -553,10 +673,28 @@ function ConfirmPanel({
         {copy.summaryTitle}
       </div>
       <div className="grid gap-2 text-sm">
-        <SummaryRow icon={<IconCoins className="size-4 text-muted-foreground" />} label={copy.grossSalary} value={fmt(grossSalary)} />
-        <SummaryRow icon={<IconReceipt className="size-4 text-muted-foreground" />} label={copy.frequency} value={frequency === "mensual" ? copy.monthly : frequency === "quincenal" ? copy.biweekly : copy.weekly} />
+        <SummaryRow
+          icon={<IconCoins className="size-4 text-muted-foreground" />}
+          label={copy.grossSalary}
+          value={fmt(grossSalary)}
+        />
+        <SummaryRow
+          icon={<IconReceipt className="size-4 text-muted-foreground" />}
+          label={copy.frequency}
+          value={
+            frequency === "mensual"
+              ? copy.monthly
+              : frequency === "quincenal"
+                ? copy.biweekly
+                : copy.weekly
+          }
+        />
         {countryCode === "pe" ? (
-          <SummaryRow icon={<IconCoins className="size-4 text-muted-foreground" />} label={pensionSystem === "afp" ? "AFP" : "ONP"} value={pensionSystem === "afp" ? "AFP (11.2%)" : "ONP (13%)"} />
+          <SummaryRow
+            icon={<IconCoins className="size-4 text-muted-foreground" />}
+            label={pensionSystem === "afp" ? "AFP" : "ONP"}
+            value={pensionSystem === "afp" ? "AFP (11.2%)" : "ONP (13%)"}
+          />
         ) : null}
       </div>
       <div className="mt-5 flex flex-wrap gap-2">
@@ -611,7 +749,14 @@ function EditPanel({
       {editMode === "salary" ? (
         <label className="grid gap-2 text-sm">
           <span className="text-foreground">{copy.newMonthlySalary}</span>
-          <input inputMode="decimal" value={editSalary} onChange={(e) => onSetEditField("editSalary", formatCurrencyInput(e.target.value))} className="h-10 rounded-xl border border-border bg-background px-3 text-foreground outline-none focus:border-foreground/30" />
+          <input
+            inputMode="decimal"
+            value={editSalary}
+            onChange={(e) =>
+              onSetEditField("editSalary", formatCurrencyInput(e.target.value))
+            }
+            className="h-10 rounded-xl border border-border bg-background px-3 text-foreground outline-none focus:border-foreground/30"
+          />
         </label>
       ) : editMode === "frequency" ? (
         <label className="grid gap-2 text-sm">
@@ -630,22 +775,41 @@ function EditPanel({
                     : "border-border text-foreground hover:bg-accent"
                 }`}
               >
-                {copy[f === "mensual" ? "monthly" : f === "quincenal" ? "biweekly" : "weekly"]}
+                {
+                  copy[
+                    f === "mensual"
+                      ? "monthly"
+                      : f === "quincenal"
+                        ? "biweekly"
+                        : "weekly"
+                  ]
+                }
               </button>
             ))}
           </div>
         </label>
       ) : null}
       <div className="mt-4 flex gap-2">
-        <button type="button" onClick={saveEdit} className="inline-flex items-center gap-2 rounded-xl bg-primary px-4 py-2.5 text-sm font-medium text-primary-foreground shadow-sm transition-opacity hover:opacity-90">{copy.saveChanges}</button>
-        <button type="button" onClick={() => onSetEditMode(null)} className="inline-flex items-center gap-2 rounded-xl border border-border bg-card px-4 py-2.5 text-sm font-medium text-foreground transition-colors hover:bg-accent">{copy.cancel}</button>
+        <button
+          type="button"
+          onClick={saveEdit}
+          className="inline-flex items-center gap-2 rounded-xl bg-primary px-4 py-2.5 text-sm font-medium text-primary-foreground shadow-sm transition-opacity hover:opacity-90"
+        >
+          {copy.saveChanges}
+        </button>
+        <button
+          type="button"
+          onClick={() => onSetEditMode(null)}
+          className="inline-flex items-center gap-2 rounded-xl border border-border bg-card px-4 py-2.5 text-sm font-medium text-foreground transition-colors hover:bg-accent"
+        >
+          {copy.cancel}
+        </button>
       </div>
     </div>
   )
 }
 
 function ResultPanel({
-  grossSalary,
   frequency,
   result,
   fmt,
@@ -655,7 +819,6 @@ function ResultPanel({
   onComplete,
   onExportPdf,
 }: {
-  grossSalary: number
   frequency: string
   result: ReturnType<typeof calculateSalaryNet>
   fmt: (v: number) => string
@@ -675,7 +838,9 @@ function ResultPanel({
               {copy.legalVersion}: {result.legalCorpusVersion}
             </div>
             <h3 className="mt-2 text-sm font-semibold text-foreground">
-              {locale === "en" ? "Net salary result" : "Resultado de salario neto"}
+              {locale === "en"
+                ? "Net salary result"
+                : "Resultado de salario neto"}
             </h3>
           </div>
           <div className="rounded-xl bg-primary/10 p-2.5">
@@ -684,8 +849,14 @@ function ResultPanel({
         </div>
 
         <div className="mt-4">
-          <p className="text-xs font-medium uppercase tracking-wider text-muted-foreground">
-            {locale === "en" ? "Net salary" : "Salario neto"} ({frequency === "mensual" ? copy.monthly : frequency === "quincenal" ? copy.biweekly : copy.weekly})
+          <p className="text-xs font-medium tracking-wider text-muted-foreground uppercase">
+            {locale === "en" ? "Net salary" : "Salario neto"} (
+            {frequency === "mensual"
+              ? copy.monthly
+              : frequency === "quincenal"
+                ? copy.biweekly
+                : copy.weekly}
+            )
           </p>
           <p className="mt-1 text-3xl font-semibold tracking-tight text-foreground">
             {fmt(result.netSalary)}
@@ -698,8 +869,12 @@ function ResultPanel({
               <IconTrendingUp className="size-4 text-emerald-600" />
             </div>
             <div>
-              <p className="text-[11px] text-muted-foreground">{copy.grossSalary}</p>
-              <p className="text-sm font-semibold text-foreground">{fmt(result.grossSalary)}</p>
+              <p className="text-[11px] text-muted-foreground">
+                {copy.grossSalary}
+              </p>
+              <p className="text-sm font-semibold text-foreground">
+                {fmt(result.grossSalary)}
+              </p>
             </div>
           </div>
           <div className="flex items-center gap-3 rounded-xl bg-muted/50 p-3">
@@ -707,8 +882,12 @@ function ResultPanel({
               <IconTrendingDown className="size-4 text-rose-600" />
             </div>
             <div>
-              <p className="text-[11px] text-muted-foreground">{copy.deductions}</p>
-              <p className="text-sm font-semibold text-foreground">{fmt(result.totalDeductions)}</p>
+              <p className="text-[11px] text-muted-foreground">
+                {copy.deductions}
+              </p>
+              <p className="text-sm font-semibold text-foreground">
+                {fmt(result.totalDeductions)}
+              </p>
             </div>
           </div>
           <div className="flex items-center gap-3 rounded-xl bg-muted/50 p-3">
@@ -716,70 +895,119 @@ function ResultPanel({
               <IconTrendingDown className="size-4 text-amber-600" />
             </div>
             <div>
-              <p className="text-[11px] text-muted-foreground">{locale === "en" ? "Deduction rate" : "Tasa de deducción"}</p>
-              <p className="text-sm font-semibold text-foreground">{((result.totalDeductions / result.grossSalary) * 100).toFixed(1)}%</p>
+              <p className="text-[11px] text-muted-foreground">
+                {locale === "en" ? "Deduction rate" : "Tasa de deducción"}
+              </p>
+              <p className="text-sm font-semibold text-foreground">
+                {((result.totalDeductions / result.grossSalary) * 100).toFixed(
+                  1
+                )}
+                %
+              </p>
             </div>
           </div>
         </div>
 
         <div className="mt-4 rounded-xl bg-muted/30 p-4">
-          <p className="text-xs font-medium uppercase tracking-wider text-muted-foreground mb-3">
+          <p className="mb-3 text-xs font-medium tracking-wider text-muted-foreground uppercase">
             {copy.netPerPeriod}
           </p>
           <div className="grid gap-2 sm:grid-cols-3">
-            <div className="rounded-lg bg-card border border-border p-3 text-center">
-              <p className="text-[11px] text-muted-foreground">{copy.monthly}</p>
-              <p className="mt-1 text-sm font-semibold text-foreground">{fmt(result.netSalaryPerPeriod.mensual)}</p>
+            <div className="rounded-lg border border-border bg-card p-3 text-center">
+              <p className="text-[11px] text-muted-foreground">
+                {copy.monthly}
+              </p>
+              <p className="mt-1 text-sm font-semibold text-foreground">
+                {fmt(result.netSalaryPerPeriod.mensual)}
+              </p>
             </div>
-            <div className="rounded-lg bg-card border border-border p-3 text-center">
-              <p className="text-[11px] text-muted-foreground">{copy.biweekly}</p>
-              <p className="mt-1 text-sm font-semibold text-foreground">{fmt(result.netSalaryPerPeriod.quincenal)}</p>
+            <div className="rounded-lg border border-border bg-card p-3 text-center">
+              <p className="text-[11px] text-muted-foreground">
+                {copy.biweekly}
+              </p>
+              <p className="mt-1 text-sm font-semibold text-foreground">
+                {fmt(result.netSalaryPerPeriod.quincenal)}
+              </p>
             </div>
-            <div className="rounded-lg bg-card border border-border p-3 text-center">
+            <div className="rounded-lg border border-border bg-card p-3 text-center">
               <p className="text-[11px] text-muted-foreground">{copy.weekly}</p>
-              <p className="mt-1 text-sm font-semibold text-foreground">{fmt(result.netSalaryPerPeriod.semanal)}</p>
+              <p className="mt-1 text-sm font-semibold text-foreground">
+                {fmt(result.netSalaryPerPeriod.semanal)}
+              </p>
             </div>
           </div>
         </div>
       </div>
 
-      <div className="rounded-2xl border border-border bg-card shadow-sm overflow-hidden">
+      <div className="overflow-hidden rounded-2xl border border-border bg-card shadow-sm">
         <details className="group">
-          <summary className="flex cursor-pointer items-center justify-between p-4 text-sm font-medium text-foreground transition-colors hover:bg-muted/30 list-none">
+          <summary className="flex cursor-pointer list-none items-center justify-between p-4 text-sm font-medium text-foreground transition-colors hover:bg-muted/30">
             <span className="flex items-center gap-2">
               <IconReceipt className="size-4 text-muted-foreground" />
               {copy.fullBreakdown}
             </span>
-            <span className="text-xs text-muted-foreground">{locale === "en" ? "Expand" : "Ver"}</span>
+            <span className="text-xs text-muted-foreground">
+              {locale === "en" ? "Expand" : "Ver"}
+            </span>
           </summary>
-          <div className="border-t border-border p-4 space-y-4">
+          <div className="space-y-4 border-t border-border p-4">
             <div className="space-y-2">
-              <p className="text-xs font-medium uppercase tracking-wider text-rose-600">{locale === "en" ? "Deductions" : "Deducciones"}</p>
-              {result.deductions.map((d: { label: string; amount: number; formula: string; legalReference: string }) => (
-                <div key={d.label} className="flex items-start justify-between gap-4 text-sm">
-                  <div className="min-w-0">
-                    <p className="font-medium text-foreground">{d.label}</p>
-                    <p className="text-[11px] text-muted-foreground">{d.formula}</p>
+              <p className="text-xs font-medium tracking-wider text-rose-600 uppercase">
+                {locale === "en" ? "Deductions" : "Deducciones"}
+              </p>
+              {result.deductions.map(
+                (d: {
+                  label: string
+                  amount: number
+                  formula: string
+                  legalReference: string
+                }) => (
+                  <div
+                    key={d.label}
+                    className="flex items-start justify-between gap-4 text-sm"
+                  >
+                    <div className="min-w-0">
+                      <p className="font-medium text-foreground">{d.label}</p>
+                      <p className="text-[11px] text-muted-foreground">
+                        {d.formula}
+                      </p>
+                    </div>
+                    <div className="shrink-0 text-right">
+                      <p className="font-medium text-rose-600">
+                        {fmt(d.amount)}
+                      </p>
+                      <p className="text-[10px] text-muted-foreground">
+                        {d.legalReference}
+                      </p>
+                    </div>
                   </div>
-                  <div className="text-right shrink-0">
-                    <p className="font-medium text-rose-600">{fmt(d.amount)}</p>
-                    <p className="text-[10px] text-muted-foreground">{d.legalReference}</p>
-                  </div>
-                </div>
-              ))}
+                )
+              )}
             </div>
           </div>
         </details>
       </div>
 
       <div className="flex flex-wrap gap-2">
-        <button type="button" onClick={() => void onExportPdf()} className="inline-flex items-center gap-2 rounded-xl border border-border bg-card px-4 py-2.5 text-sm font-medium text-foreground transition-colors hover:bg-accent">
+        <button
+          type="button"
+          onClick={() => void onExportPdf()}
+          className="inline-flex items-center gap-2 rounded-xl border border-border bg-card px-4 py-2.5 text-sm font-medium text-foreground transition-colors hover:bg-accent"
+        >
           <IconDownload className="size-4" /> {copy.downloadPdf}
         </button>
-        <button type="button" onClick={onRestart} className="inline-flex items-center gap-2 rounded-xl bg-primary px-4 py-2.5 text-sm font-medium text-primary-foreground shadow-sm transition-opacity hover:opacity-90">
+        <button
+          type="button"
+          onClick={onRestart}
+          className="inline-flex items-center gap-2 rounded-xl bg-primary px-4 py-2.5 text-sm font-medium text-primary-foreground shadow-sm transition-opacity hover:opacity-90"
+        >
           <IconRefresh className="size-4" /> {copy.calculateAgain}
         </button>
-        <button type="button" onClick={onComplete} className="inline-flex items-center gap-2 rounded-xl border border-border bg-card px-4 py-2.5 text-sm font-medium text-foreground transition-colors hover:bg-accent">
+        <button
+          type="button"
+          onClick={onComplete}
+          className="inline-flex items-center gap-2 rounded-xl border border-border bg-card px-4 py-2.5 text-sm font-medium text-foreground transition-colors hover:bg-accent"
+        >
           <IconMessageCircle className="size-4" /> {copy.backToChat}
         </button>
       </div>

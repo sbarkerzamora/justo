@@ -15,6 +15,7 @@ function NavTitleInner() {
   useEffect(() => {
     try {
       const stored = localStorage.getItem("justo-country")
+      // eslint-disable-next-line react-hooks/set-state-in-effect
       if (stored) setStoredCountry(stored)
     } catch {
       /* noop */
@@ -25,6 +26,7 @@ function NavTitleInner() {
     if (!fromUrl) return
     try {
       localStorage.setItem("justo-country", fromUrl)
+      // eslint-disable-next-line react-hooks/set-state-in-effect
       setStoredCountry(fromUrl)
     } catch {
       /* noop */
@@ -60,7 +62,13 @@ function NavTitleInner() {
 
 export function DocsNavTitle() {
   return (
-    <Suspense fallback={<div className="flex items-center gap-2"><span>Justo</span></div>}>
+    <Suspense
+      fallback={
+        <div className="flex items-center gap-2">
+          <span>Justo</span>
+        </div>
+      }
+    >
       <NavTitleInner />
     </Suspense>
   )
