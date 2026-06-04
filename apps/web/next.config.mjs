@@ -23,9 +23,18 @@ const connectSources = [
   "https://*.openrouter.ai",
   "https://*.buymeacoffee.com",
 ]
+const frameSources = [
+  "'self'",
+  "https://www.buymeacoffee.com",
+  "https://buymeacoffee.com",
+]
 
 if (plausibleEndpointOrigin) {
   connectSources.push(plausibleEndpointOrigin)
+}
+
+if (process.env.VERCEL_ENV !== "production") {
+  frameSources.push("https://vercel.live")
 }
 
 const contentSecurityPolicy = [
@@ -39,7 +48,7 @@ const contentSecurityPolicy = [
   "script-src 'self' 'unsafe-inline' 'unsafe-eval' https://static.cloudflareinsights.com https://vercel.live https://cdnjs.buymeacoffee.com",
   "script-src-elem 'self' 'unsafe-inline' https://static.cloudflareinsights.com https://vercel.live https://cdnjs.buymeacoffee.com",
   `connect-src ${connectSources.join(" ")}`,
-  "frame-src 'self' https://www.buymeacoffee.com https://buymeacoffee.com",
+  `frame-src ${frameSources.join(" ")}`,
 ].join("; ")
 
 /** @type {import('next').NextConfig} */

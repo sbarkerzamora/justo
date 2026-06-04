@@ -183,6 +183,34 @@ const paymentMethodOptions = [
   { value: "otro" as const, label: "Otra forma" },
 ]
 
+const normalizeContractPayload = (form: ContractFormData) => {
+  const payload: ContractFormData = {
+    ...form,
+    celebrationPlace: form.celebrationPlace.trim(),
+    workerName: form.workerName.trim(),
+    workerId: form.workerId.trim(),
+    workerAddress: form.workerAddress.trim(),
+    employerName: form.employerName.trim(),
+    employerId: form.employerId.trim(),
+    employerRepresentative: form.employerRepresentative.trim(),
+    employerAddress: form.employerAddress.trim(),
+    jobTitle: form.jobTitle.trim(),
+    jobDescription: form.jobDescription.trim(),
+    workLocation: form.workLocation.trim(),
+    monthlySalary: Number(form.monthlySalary),
+  }
+
+  if (payload.contractType !== "plazo_fijo" || !payload.endDate?.trim()) {
+    delete payload.endDate
+  }
+
+  if (!Number.isInteger(payload.trialPeriodDays)) {
+    delete payload.trialPeriodDays
+  }
+
+  return payload
+}
+
 export function ContractTool({
   countryCode,
   countryName,
@@ -231,12 +259,25 @@ export function ContractTool({
   }
 
   const onExportPdf = async () => {
+    dispatch({ type: "setError", error: null })
     const response = await fetch("/api/contract/pdf", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
-      body: JSON.stringify(form),
+      body: JSON.stringify(normalizeContractPayload(form)),
     })
-    if (!response.ok) return
+    if (!response.ok) {
+      const data = await response.json().catch(() => null)
+      const details = Array.isArray(data?.issues)
+        ? data.issues.map((issue: { path?: string }) => issue.path).filter(Boolean).join(", ")
+        : ""
+      dispatch({
+        type: "setError",
+        error: details
+          ? `No se pudo generar el PDF. Revisa: ${details}.`
+          : data?.error ?? "No se pudo generar el PDF.",
+      })
+      return
+    }
     const blob = await response.blob()
     const url = URL.createObjectURL(blob)
     const a = document.createElement("a")
@@ -513,6 +554,12 @@ export function ContractTool({
           </div>
         ) : step === "done" ? (
           <div className="w-full max-w-xl mx-auto space-y-4 motion-safe:animate-in motion-safe:duration-200 motion-safe:fade-in motion-safe:slide-in-from-bottom-1">
+            {error && (
+              <div className="flex items-center gap-2 rounded-xl border border-rose-200 bg-rose-50 px-4 py-3 text-sm text-rose-700">
+                <IconAlertCircle className="size-4 shrink-0" />
+                {error}
+              </div>
+            )}
             <div className="rounded-2xl border border-border bg-card p-6 shadow-sm">
               <div className="flex items-start justify-between">
                 <div>
