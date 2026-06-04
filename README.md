@@ -134,7 +134,7 @@ pnpm install
 Copia el ejemplo y configura tus claves:
 
 ```bash
-cp .env.example .env.local
+cp apps/web/.env.example .env.local
 ```
 
 Variables principales:
@@ -228,6 +228,51 @@ Estas rutas son parte de la app pública/self-hosted. No son la API comercial Pr
 
 ---
 
+## Self-hosting
+
+Justo puede ejecutarse en tu propia infraestructura. No requiere servicios externos pagos a menos que quieras rate limiting (Upstash) o analytics (Plausible).
+
+### Requisitos mínimos
+
+- Node.js >= 22.6, pnpm >= 10.18, Bun >= 1.3
+- 2 GB RAM, 1 CPU (suficiente para uso personal/pequeña empresa)
+- Sin Redis: la app funciona sin rate limiting (modo básico)
+- Sin GPU: el LLM se consume vía API (OpenRouter o NVIDIA)
+
+### Pasos rápidos
+
+```bash
+git clone https://github.com/sbarkerzamora/justo
+cd justo
+cp apps/web/.env.example .env.local
+# Editar .env.local con al menos OPENROUTER_API_KEY
+pnpm install
+pnpm build
+pnpm start
+```
+
+La app estará disponible en `http://localhost:3000`.
+
+### Con Redis (opcional, recomendado)
+
+Para habilitar rate limiting y estadísticas anónimas, configura las variables `UPSTASH_REDIS_REST_URL` y `UPSTASH_REDIS_REST_TOKEN` en `.env.local`. Puedes usar [Upstash](https://upstash.com) (serverless, tier gratuito) o cualquier instancia Redis con REST API.
+
+### Sin Redis
+
+Sin Redis, la app funciona sin rate limiting y sin persistencia de estadísticas anónimas. Los cálculos determinísticos y el chat siguen funcionando normalmente.
+
+### Con Docker
+
+```bash
+cp apps/web/.env.example .env.local
+# Editar .env.local con al menos OPENROUTER_API_KEY
+docker compose up --build
+```
+
+La app estará disponible en `http://localhost:3000`.
+
+---
+
 ## Seguridad legal y privacidad
 
 - El chat usa IA para orientar y explicar; no debe inventar leyes, tasas ni artículos.
@@ -305,12 +350,14 @@ Después del deploy, verifica:
 
 - [x] Soporte inicial para 11 países
 - [x] Chat laboral con IA y corpus legal
-- [x] Calculadora guiada con PDF descargable
+- [x] 6 herramientas OSS determinísticas + PDFs
 - [x] Respuestas enriquecidas y responsive en el chat
+- [x] Docker/Compose para self-hosting
+- [x] Tests exhaustivos (160 tests: core, tools, PDF)
+- [ ] Mantener contrato OSS/Pro: fórmulas, tools y PDFs base viven en este repo
+- [ ] Herramientas roadmap (horas extra, checklist, asistente de contratación)
 - [ ] Auditoría legal/contable por jurisdicción
-- [ ] Tests exhaustivos por fórmula y rama de cálculo
-- [ ] Persistencia opcional de casos e historial
-- [ ] Mejoras de accesibilidad y revisión WCAG
+- [ ] Mejoras de accesibilidad WCAG
 - [ ] Más documentación pública del corpus legal
 
 ---

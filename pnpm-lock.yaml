@@ -257,6 +257,9 @@ importers:
       next-themes:
         specifier: ^0.4.6
         version: 0.4.6(patch_hash=1c10752a0332b359a2cbb8c6380dd36603d83966688d607d77e11c03dd20c04b)(react-dom@19.2.6(react@19.2.6))(react@19.2.6)
+      pdf-lib:
+        specifier: ^1.17.1
+        version: 1.17.1
       radix-ui:
         specifier: ^1.4.3
         version: 1.4.3(@types/react-dom@19.2.3(@types/react@19.2.15))(@types/react@19.2.15)(react-dom@19.2.6(react@19.2.6))(react@19.2.6)
