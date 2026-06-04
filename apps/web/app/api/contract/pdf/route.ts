@@ -68,7 +68,13 @@ export async function POST(request: Request) {
   const parsed = contractTool.inputSchema.safeParse(payload)
   if (!parsed.success) {
     return NextResponse.json(
-      { error: "Datos invalidos para generar contrato" },
+      {
+        error: "Datos invalidos para generar contrato",
+        issues: parsed.error.issues.map((issue) => ({
+          path: issue.path.join("."),
+          message: issue.message,
+        })),
+      },
       { status: 400 },
     )
   }
