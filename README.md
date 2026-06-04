@@ -134,7 +134,7 @@ pnpm install
 Copia el ejemplo y configura tus claves:
 
 ```bash
-cp apps/web/.env.example .env.local
+cp apps/web/.env.example apps/web/.env.local
 ```
 
 Variables principales:
@@ -244,8 +244,8 @@ Justo puede ejecutarse en tu propia infraestructura. No requiere servicios exter
 ```bash
 git clone https://github.com/sbarkerzamora/justo
 cd justo
-cp apps/web/.env.example .env.local
-# Editar .env.local con al menos OPENROUTER_API_KEY
+cp apps/web/.env.example apps/web/.env.local
+# Editar apps/web/.env.local con al menos OPENROUTER_API_KEY
 pnpm install
 pnpm build
 pnpm start
@@ -255,7 +255,7 @@ La app estará disponible en `http://localhost:3000`.
 
 ### Con Redis (opcional, recomendado)
 
-Para habilitar rate limiting y estadísticas anónimas, configura las variables `UPSTASH_REDIS_REST_URL` y `UPSTASH_REDIS_REST_TOKEN` en `.env.local`. Puedes usar [Upstash](https://upstash.com) (serverless, tier gratuito) o cualquier instancia Redis con REST API.
+Para habilitar rate limiting y estadísticas anónimas en ejecución local con `pnpm`, configura las variables `UPSTASH_REDIS_REST_URL` y `UPSTASH_REDIS_REST_TOKEN` en `apps/web/.env.local`. Puedes usar [Upstash](https://upstash.com) (serverless, tier gratuito) o cualquier instancia Redis con REST API.
 
 ### Sin Redis
 
@@ -268,6 +268,8 @@ cp apps/web/.env.example .env.local
 # Editar .env.local con al menos OPENROUTER_API_KEY
 docker compose up --build
 ```
+
+Docker Compose lee variables desde `.env.local` en la raíz del repo por el `env_file` de `docker-compose.yml`.
 
 La app estará disponible en `http://localhost:3000`.
 
