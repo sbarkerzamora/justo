@@ -17,7 +17,9 @@
     "lint": "pnpm --filter @justo/web lint",
     "test": "bun test apps packages",
     "format": "prettier --write \"apps/**/*.{ts,tsx}\" \"packages/**/*.{ts,tsx}\"",
-    "typecheck": "pnpm --filter @justo/web typecheck"
+    "typecheck": "pnpm --filter @justo/web typecheck",
+    "ingest": "pnpm --filter @justo/tools exec tsx scripts/ingest.ts",
+    "ingest:reset": "pnpm --filter @justo/tools exec tsx scripts/ingest.ts --reset"
   },
   "dependencies": {
     "@ai-sdk/openai": "^3.0.63",
