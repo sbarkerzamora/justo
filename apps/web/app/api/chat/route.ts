@@ -7,6 +7,8 @@ import {
 import { checkRateLimit } from "@/lib/rate-limit"
 import { getClientIp } from "@/lib/request-utils"
 
+export const runtime = "edge"
+
 const extractMessageText = (message: UIMessage): string => {
   const maybeMessage = message as UIMessage & {
     content?: unknown

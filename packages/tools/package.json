@@ -9,6 +9,12 @@
   },
   "dependencies": {
     "@justo/core": "workspace:*",
+    "@upstash/vector": "^1.2.1",
+    "dotenv": "^16.4.7",
     "zod": "^4.1.12"
+  },
+  "devDependencies": {
+    "tsx": "^4.19.2",
+    "@types/node": "^25.7.0"
   }
 }
