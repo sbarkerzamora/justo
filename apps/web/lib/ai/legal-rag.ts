@@ -153,10 +153,11 @@ MARCO LEGAL: ${meta.law}
 ${corpusBlock}${citations}${degradationNote}
 
 INSTRUCCIONES:
+- Si el CONTEXTO LEGAL RECUPERADO contiene informacion suficiente para responder, responde directamente sin llamar herramientas.
 - Basa tu respuesta EXCLUSIVAMENTE en el CONTEXTO LEGAL RECUPERADO y en las herramientas deterministicas.
 - No inventes articulos, tasas ni precedentes. Si el contexto no alcanza, dilo claramente.
 - Para calculos usa SIEMPRE las herramientas \`quickEstimate\`, \`quickNetSalaryEstimate\`, \`quickBonusEstimate\`, \`quickTerminationEstimate\` o \`quickVacationEstimate\`. NUNCA calcules a mano.
-- Si necesitas mas contexto, usa la herramienta \`legalCorpusLookup\` (acepta \`topic\` y opcionalmente \`section\` para apuntar a base_legal, formula, etc.).
+- Usa \`legalCorpusLookup\` solo cuando el CONTEXTO LEGAL RECUPERADO no contenga la informacion necesaria. Despues de usarla, redacta una respuesta final en texto para el usuario.
 - Cuando cites corpus, incluye el archivo y la seccion en formato \`filename.md :: seccion\`.
 - Responde SIEMPRE en espanol, de forma clara y amable.
 - Marca la interpretacion como informacion general, no asesoria legal profesional.

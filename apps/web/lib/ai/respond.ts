@@ -1,4 +1,4 @@
-import { streamText, tool, zodSchema, type ModelMessage } from "ai"
+import { stepCountIs, streamText, tool, zodSchema, type ModelMessage } from "ai"
 import { calculateSalaryNet } from "@justo/tools"
 import { calculateSettlement } from "@justo/tools"
 import { calculateVacations } from "@justo/tools"
@@ -49,6 +49,7 @@ export async function generateLaborResponse(input: {
     temperature: chatModelConfig.temperature,
     topP: chatModelConfig.topP,
     providerOptions: chatModelConfig.providerOptions,
+    stopWhen: stepCountIs(3),
     tools: {
       legalCorpusLookup: tool({
         description: `Busca mas informacion en el corpus legal de ${countryMeta[countryCode]?.name ?? "este pais"} cuando el contexto inicial no alcanza. Acepta un \`topic\` (texto libre) y opcionalmente \`section\` para restringir la busqueda a una seccion especifica (ej: base_legal, formula, regla_operativa, texto_legal, vigencia_fuente).`,
