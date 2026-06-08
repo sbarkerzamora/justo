@@ -32,7 +32,7 @@ const isEnabled = (value: string | undefined): boolean =>
   value === "1" || value?.toLowerCase() === "true"
 
 const resolveNvidiaChatModel = (): string => {
-  const model = process.env.NVIDIA_MODEL ?? DEFAULT_NVIDIA_MODEL
+  const model = process.env.NVIDIA_MODEL?.trim() || DEFAULT_NVIDIA_MODEL
 
   if (model.toLowerCase().includes("embed")) {
     console.warn(
