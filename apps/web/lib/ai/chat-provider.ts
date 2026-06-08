@@ -9,11 +9,15 @@ const DEFAULT_NVIDIA_REASONING_BUDGET = 16384
 const chatProviders = ["openrouter", "nvidia"] as const
 
 type ChatProvider = (typeof chatProviders)[number]
-type ChatProviderFetch = NonNullable<NonNullable<Parameters<typeof createOpenAI>[0]>["fetch"]>
+type ChatProviderFetch = NonNullable<
+  NonNullable<Parameters<typeof createOpenAI>[0]>["fetch"]
+>
 
 const resolveChatProvider = (): ChatProvider => {
   const provider = process.env.AI_PROVIDER?.toLowerCase()
-  return chatProviders.includes(provider as ChatProvider) ? (provider as ChatProvider) : "openrouter"
+  return chatProviders.includes(provider as ChatProvider)
+    ? (provider as ChatProvider)
+    : "openrouter"
 }
 
 const requireEnv = (name: string, value: string | undefined): string => {
@@ -24,12 +28,26 @@ const requireEnv = (name: string, value: string | undefined): string => {
   return value
 }
 
-const isEnabled = (value: string | undefined): boolean => value === "1" || value?.toLowerCase() === "true"
+const isEnabled = (value: string | undefined): boolean =>
+  value === "1" || value?.toLowerCase() === "true"
+
+const resolveNvidiaChatModel = (): string => {
+  const model = process.env.NVIDIA_MODEL ?? DEFAULT_NVIDIA_MODEL
+
+  if (model.toLowerCase().includes("embed")) {
+    console.warn(
+      `Ignoring NVIDIA_MODEL=${model} because embeddings models cannot be used for chat completions. Using ${DEFAULT_NVIDIA_MODEL}.`
+    )
+    return DEFAULT_NVIDIA_MODEL
+  }
+
+  return model
+}
 
 const numberFromEnv = (
   value: string | undefined,
   fallback: number,
-  options: { min: number; max?: number; integer?: boolean },
+  options: { min: number; max?: number; integer?: boolean }
 ): number => {
   const parsed = Number(value ?? fallback)
   const isValid =
@@ -41,8 +59,7 @@ const numberFromEnv = (
   return isValid ? parsed : fallback
 }
 
-const withNvidiaThinking =
-  (reasoningBudget: number): ChatProviderFetch =>
+const withNvidiaThinking = (reasoningBudget: number): ChatProviderFetch =>
   (async (input, init) => {
     if (typeof init?.body !== "string") {
       return fetch(input, init)
@@ -70,10 +87,14 @@ export const getChatModelConfig = () => {
   const provider = resolveChatProvider()
 
   if (provider === "nvidia") {
-    const reasoningBudget = numberFromEnv(process.env.NVIDIA_REASONING_BUDGET, DEFAULT_NVIDIA_REASONING_BUDGET, {
-      min: 1,
-      integer: true,
-    })
+    const reasoningBudget = numberFromEnv(
+      process.env.NVIDIA_REASONING_BUDGET,
+      DEFAULT_NVIDIA_REASONING_BUDGET,
+      {
+        min: 1,
+        integer: true,
+      }
+    )
     const nvidia = createOpenAI({
       name: "nvidia",
       apiKey: requireEnv("NVIDIA_API_KEY", process.env.NVIDIA_API_KEY),
@@ -85,9 +106,16 @@ export const getChatModelConfig = () => {
 
     return {
       provider,
-      model: nvidia.chat(process.env.NVIDIA_MODEL ?? DEFAULT_NVIDIA_MODEL),
-      maxOutputTokens: numberFromEnv(process.env.NVIDIA_MAX_OUTPUT_TOKENS, 16384, { min: 1, integer: true }),
-      temperature: numberFromEnv(process.env.NVIDIA_TEMPERATURE, 1, { min: 0, max: 2 }),
+      model: nvidia.chat(resolveNvidiaChatModel()),
+      maxOutputTokens: numberFromEnv(
+        process.env.NVIDIA_MAX_OUTPUT_TOKENS,
+        16384,
+        { min: 1, integer: true }
+      ),
+      temperature: numberFromEnv(process.env.NVIDIA_TEMPERATURE, 1, {
+        min: 0,
+        max: 2,
+      }),
       topP: numberFromEnv(process.env.NVIDIA_TOP_P, 0.95, { min: 0, max: 1 }),
       providerOptions: undefined,
     }
@@ -101,7 +129,9 @@ export const getChatModelConfig = () => {
 
   return {
     provider,
-    model: openrouter.chat(process.env.OPENROUTER_MODEL ?? DEFAULT_OPENROUTER_MODEL),
+    model: openrouter.chat(
+      process.env.OPENROUTER_MODEL ?? DEFAULT_OPENROUTER_MODEL
+    ),
     providerOptions: undefined,
   }
 }
