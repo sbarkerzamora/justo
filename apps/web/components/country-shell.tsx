@@ -84,7 +84,7 @@ export function CountryShell({
       <style>{`html{overflow-y:scroll;scrollbar-width:none !important}html::-webkit-scrollbar{display:none !important}`}</style>
       <div
         className={cn(
-          "relative flex h-full min-h-0 overflow-hidden",
+          "relative flex h-[calc(100vh-3rem)] min-h-[calc(100vh-3rem)] overflow-hidden",
           isSpringing && "justo-hero-spring"
         )}
         style={
