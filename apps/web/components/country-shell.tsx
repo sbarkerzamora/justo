@@ -84,7 +84,7 @@ export function CountryShell({
       <style>{`html{overflow-y:scroll;scrollbar-width:none !important}html::-webkit-scrollbar{display:none !important}`}</style>
       <div
         className={cn(
-          "relative flex h-[calc(100vh-3rem)] min-h-[calc(100vh-3rem)] overflow-hidden",
+          "relative flex h-[calc(100vh-3rem)] min-h-[calc(100vh-3rem)] w-full min-w-0 overflow-hidden",
           isSpringing && "justo-hero-spring"
         )}
         style={
@@ -103,7 +103,7 @@ export function CountryShell({
             "absolute inset-0 z-0"
           )}
         />
-        <div className="relative z-10 flex min-h-0 flex-1 flex-col">
+        <div className="relative z-10 flex min-h-0 w-full min-w-0 flex-1 flex-col">
           <LlmHome
             countryCode={countryCode}
             locale={locale}

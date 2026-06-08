@@ -483,11 +483,11 @@ function LlmHomeView(props: {
   return (
     <main
       className={cn(
-        "relative mx-auto flex min-h-0 w-full flex-1 flex-col overflow-clip px-4 md:px-8",
+        "relative mx-auto flex min-h-0 w-full min-w-0 flex-1 flex-col overflow-clip px-4 md:px-8",
         isChatMode ? "max-w-none" : "max-w-5xl"
       )}
     >
-      <section className="flex min-h-0 flex-1 flex-col pt-4 md:pt-6">
+      <section className="flex min-h-0 min-w-0 flex-1 flex-col pt-4 md:pt-6">
         {isChatMode ? (
           messages.length === 0 ? (
             <AnimatePresence mode="wait">
@@ -497,9 +497,9 @@ function LlmHomeView(props: {
                 animate={{ opacity: 1, y: 0, scale: 1 }}
                 exit={{ opacity: 0, y: -8, scale: 0.98 }}
                 transition={{ duration: 0.2, ease: [0.22, 1, 0.36, 1] }}
-                className="flex min-h-0 flex-1 items-center justify-center px-2 py-8 max-sm:px-1"
+                className="flex min-h-0 min-w-0 flex-1 items-center justify-center px-1 py-8 sm:px-2"
               >
-                <div className="flex w-full max-w-5xl flex-col items-center gap-6 sm:gap-8">
+                <div className="flex w-full max-w-5xl min-w-0 flex-col items-center gap-6 sm:gap-8">
                   <WelcomeEmptyState
                     cc={cc}
                     countryName={countryName}
@@ -521,13 +521,13 @@ function LlmHomeView(props: {
           ) : (
             <ChatContainerRoot
               className={cn(
-                "relative min-h-0 flex-1 [scrollbar-gutter:stable] px-2 max-sm:px-1",
+                "relative min-h-0 min-w-0 flex-1 [scrollbar-gutter:stable] px-1 sm:px-2",
                 messages.length <= 3
                   ? "pt-16 pb-48 md:pt-24 md:pb-44"
                   : "pt-8 pb-48 md:pb-44"
               )}
             >
-              <ChatContainerContent className="mx-auto w-full max-w-5xl gap-2.5 sm:gap-3">
+              <ChatContainerContent className="mx-auto w-full max-w-5xl min-w-0 gap-2.5 sm:gap-3">
                 {(() => {
                   const lastAssistantMessageId = [...messages]
                     .reverse()
@@ -648,7 +648,7 @@ function LlmHomeView(props: {
             animate={{ opacity: 1, y: 0 }}
             exit={{ opacity: 0, y: 10 }}
             transition={{ duration: 0.22, ease: [0.22, 1, 0.36, 1] }}
-            className="pointer-events-none absolute inset-x-0 bottom-0 z-40 bg-gradient-to-t from-background via-background/95 to-transparent px-3 pt-10 pb-[max(1rem,env(safe-area-inset-bottom))] md:px-8"
+            className="pointer-events-none absolute inset-x-0 bottom-0 z-40 min-w-0 bg-gradient-to-t from-background via-background/95 to-transparent px-3 pt-10 pb-[max(1rem,env(safe-area-inset-bottom))] md:px-8"
           >
             <ChatInputPanel
               chatActions={chatActions}
@@ -803,7 +803,7 @@ function ChatSuggestions({
   setMode: (mode: AppMode) => void
 }) {
   return (
-    <div className="flex snap-x snap-mandatory [scrollbar-width:none] gap-1.5 overflow-x-auto px-0.5 pb-1 sm:flex-wrap sm:justify-center sm:overflow-visible sm:px-0 [&::-webkit-scrollbar]:hidden">
+    <div className="flex max-w-full min-w-0 snap-x snap-mandatory [scrollbar-width:none] gap-1.5 overflow-x-auto px-0.5 pb-1 sm:flex-wrap sm:justify-center sm:overflow-visible sm:px-0 [&::-webkit-scrollbar]:hidden">
       {actions.map((action) => {
         const Icon = action.icon
         const label = locale === "en" ? action.labelEn : action.labelEs
@@ -851,7 +851,7 @@ function ChatInputPanel({
   onStop: () => void
 }) {
   return (
-    <div className="pointer-events-auto mx-auto flex w-full max-w-5xl flex-col gap-2">
+    <div className="pointer-events-auto mx-auto flex w-full max-w-5xl min-w-0 flex-col gap-2">
       <ChatSuggestions
         actions={chatActions}
         locale={locale}
@@ -862,7 +862,7 @@ function ChatInputPanel({
         onValueChange={setInput}
         onSubmit={() => void onSend()}
         isLoading={isLoading}
-        className="border-border bg-card/95 shadow-xl backdrop-blur supports-[backdrop-filter]:bg-card/85"
+        className="min-w-0 border-border bg-card/95 shadow-xl backdrop-blur supports-[backdrop-filter]:bg-card/85"
       >
         <PromptInputTextarea
           placeholder={

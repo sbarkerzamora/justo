@@ -375,7 +375,7 @@ export function AppShell({
         {/* Desktop sidebar */}
         <aside
           className={cn(
-            "flex shrink-0 flex-col overflow-y-auto border-r border-sidebar-border bg-sidebar px-4 transition-[width] duration-200 max-md:hidden",
+            "hidden shrink-0 flex-col overflow-y-auto border-r border-sidebar-border bg-sidebar px-4 transition-[width] duration-200 md:flex",
             open ? "w-[240px]" : "w-[56px]"
           )}
           onMouseEnter={() => setOpen(true)}
@@ -465,7 +465,7 @@ export function AppShell({
                       height={10}
                       className="h-2.5 w-3.5 shrink-0 rounded-[1px] border border-border object-cover"
                     />
-                    <span className="max-w-[100px] truncate max-sm:hidden">
+                    <span className="hidden max-w-[100px] truncate sm:inline">
                       {info?.name ?? country}
                     </span>
                   </SelectTrigger>
@@ -501,10 +501,10 @@ export function AppShell({
                   <Link
                     key={link.label}
                     href={link.href}
-                    className="inline-flex h-8 items-center justify-center gap-1.5 rounded-lg border border-border bg-card px-2.5 text-xs font-medium text-foreground transition-colors hover:bg-accent max-sm:px-2"
+                    className="inline-flex h-8 items-center justify-center gap-1.5 rounded-lg border border-border bg-card px-2 text-xs font-medium text-foreground transition-colors hover:bg-accent sm:px-2.5"
                   >
                     {link.icon}
-                    <span className="max-sm:hidden">{link.label}</span>
+                    <span className="hidden sm:inline">{link.label}</span>
                   </Link>
                 ))}
                 <button
@@ -534,7 +534,7 @@ export function AppShell({
             </div>
           </header>
 
-          <main className="min-h-0 flex-1 overflow-x-hidden overflow-y-auto">
+          <main className="min-h-0 w-full min-w-0 flex-1 overflow-x-hidden overflow-y-auto">
             {children}
           </main>
         </div>
