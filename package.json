@@ -42,5 +42,11 @@
     ".",
     "apps/*",
     "packages/*"
-  ]
+  ],
+  "dependencies": {
+    "marked": "^18.0.5",
+    "remark-breaks": "^4.0.0",
+    "shiki": "^4.2.0",
+    "use-stick-to-bottom": "^1.1.6"
+  }
 }
