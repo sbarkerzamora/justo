@@ -33,9 +33,7 @@ if (plausibleEndpointOrigin) {
   connectSources.push(plausibleEndpointOrigin)
 }
 
-if (process.env.VERCEL_ENV !== "production") {
-  frameSources.push("https://vercel.live")
-}
+frameSources.push("https://vercel.live")
 
 const contentSecurityPolicy = [
   "default-src 'self'",
@@ -70,12 +68,18 @@ const nextConfig = {
       { key: "X-Content-Type-Options", value: "nosniff" },
       { key: "X-Frame-Options", value: "DENY" },
       { key: "Referrer-Policy", value: "strict-origin-when-cross-origin" },
-      { key: "Permissions-Policy", value: "camera=(), microphone=(), geolocation=()" },
+      {
+        key: "Permissions-Policy",
+        value: "camera=(), microphone=(), geolocation=()",
+      },
       { key: "Content-Security-Policy", value: contentSecurityPolicy },
     ]
 
     if (isProd) {
-      headers.push({ key: "Strict-Transport-Security", value: "max-age=31536000; includeSubDomains; preload" })
+      headers.push({
+        key: "Strict-Transport-Security",
+        value: "max-age=31536000; includeSubDomains; preload",
+      })
     }
 
     return [
