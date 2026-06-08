@@ -375,7 +375,7 @@ export function AppShell({
         {/* Desktop sidebar */}
         <aside
           className={cn(
-            "hidden shrink-0 flex-col overflow-y-auto border-r border-sidebar-border bg-sidebar px-4 transition-[width] duration-200 md:flex",
+            "flex shrink-0 flex-col overflow-y-auto border-r border-sidebar-border bg-sidebar px-4 transition-[width] duration-200 max-md:hidden",
             open ? "w-[240px]" : "w-[56px]"
           )}
           onMouseEnter={() => setOpen(true)}
