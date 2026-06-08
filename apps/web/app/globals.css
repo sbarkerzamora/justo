@@ -252,26 +252,6 @@
     }
   }
 
-  @keyframes justo-hero-spring {
-    0% {
-      transform: translateY(0) scaleY(1);
-    }
-    34% {
-      transform: translateY(-8px) scaleY(0.992);
-    }
-    62% {
-      transform: translateY(3px) scaleY(1.003);
-    }
-    100% {
-      transform: translateY(0) scaleY(1);
-    }
-  }
-
-  .justo-hero-spring {
-    animation: justo-hero-spring 620ms cubic-bezier(0.16, 1, 0.3, 1);
-    transform-origin: center top;
-  }
-
   .justo-docs-layout {
     --fd-sidebar-width: 180px;
   }

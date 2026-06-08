@@ -487,7 +487,7 @@ function LlmHomeView(props: {
         isChatMode ? "max-w-none" : "max-w-5xl"
       )}
     >
-      <section className="flex min-h-0 min-w-0 flex-1 flex-col pt-4 md:pt-6">
+      <section className={cn("flex min-h-0 min-w-0 flex-1 flex-col pt-4 md:pt-6", !isChatMode && "overflow-y-auto")}>
         {isChatMode ? (
           messages.length === 0 ? (
             <AnimatePresence mode="wait">
