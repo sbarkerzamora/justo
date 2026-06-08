@@ -1,28 +1,23 @@
 "use client"
 
 import {
+  IconArrowUp,
   IconCalculator,
   IconBeach,
   IconCoins,
   IconGift,
   IconDoorExit,
   IconFileDescription,
+  IconLibrary,
   IconMessageCircle,
   IconSparkles,
-  IconTools,
+  IconSquare,
 } from "@tabler/icons-react"
+import { AnimatePresence, motion } from "framer-motion"
 import Image from "next/image"
 import { useSearchParams } from "next/navigation"
-import {
-  type KeyboardEvent,
-  type RefObject,
-  useCallback,
-  useEffect,
-  useRef,
-  useState,
-} from "react"
-import { ChatMarkdown } from "@/components/chat/chat-markdown"
-import ShinyText from "@/components/ShinyText"
+import { type ComponentType, useCallback, useRef, useState } from "react"
+import type { Components } from "react-markdown"
 import AgentAvatar from "@/components/smoothui/agent-avatar"
 import { getCountryInfo } from "@/lib/countries"
 import { homeCopy } from "@/lib/home-copy"
@@ -30,7 +25,24 @@ import type { Locale } from "@/lib/i18n"
 import { getLegalDocsLink } from "@/lib/legal-docs-link"
 import { useChatMessages } from "@/components/chat/use-chat-messages"
 import { useChatUI } from "@/components/chat/use-chat-ui"
-import { PureMultimodalInput } from "@/components/ui/multimodal-ai-chat-input"
+import { Button } from "@/components/ui/button"
+import {
+  ChatContainerContent,
+  ChatContainerRoot,
+  ChatContainerScrollAnchor,
+} from "@/components/ui/chat-container"
+import { Loader } from "@/components/ui/loader"
+import { Markdown } from "@/components/ui/markdown"
+import { Message, MessageContent } from "@/components/ui/message"
+import {
+  PromptInput,
+  PromptInputAction,
+  PromptInputActions,
+  PromptInputTextarea,
+} from "@/components/ui/prompt-input"
+import { PromptSuggestion } from "@/components/ui/prompt-suggestion"
+import { ScrollButton } from "@/components/ui/scroll-button"
+import { Source, SourceContent, SourceTrigger } from "@/components/ui/source"
 import { cn } from "@/lib/utils"
 import { SettlementTool } from "@/components/tools/settlement"
 import { SalaryNetTool } from "@/components/tools/salary-net"
@@ -42,9 +54,37 @@ import { ContractTool } from "@/components/tools/contract"
 type Role = "user" | "assistant"
 type ChatMessage = { id: string; role: Role; text: string }
 
-type AppMode = "chat" | "settlement" | "vacations" | "salary-net" | "bonus" | "termination" | "contract"
+type AppMode =
+  | "chat"
+  | "settlement"
+  | "vacations"
+  | "salary-net"
+  | "bonus"
+  | "termination"
+  | "contract"
 
-const validToolParams = new Set(["settlement", "vacations", "salary-net", "bonus", "termination", "contract"])
+type ChatAction = {
+  mode?: AppMode
+  icon: ComponentType<{ className?: string }>
+  labelEs: string
+  labelEn: string
+  onClick?: () => void
+}
+
+const safeHref = (href: string | undefined) => {
+  if (!href) return "#"
+  if (/^(https?:|mailto:|\/)/i.test(href)) return href
+  return "#"
+}
+
+const validToolParams = new Set([
+  "settlement",
+  "vacations",
+  "salary-net",
+  "bonus",
+  "termination",
+  "contract",
+])
 function isValidToolParam(v: string): v is AppMode {
   return validToolParams.has(v)
 }
@@ -154,17 +194,6 @@ export function LlmHome({
       setMode(toolFromUrl)
     }
   }
-
-  const messagesEndRef = useRef<HTMLDivElement | null>(null)
-  const messagesContainerRef = useRef<HTMLDivElement | null>(null)
-
-  useEffect(() => {
-    if (messages.length === 0) return
-    messagesContainerRef.current?.scrollTo({
-      top: messagesContainerRef.current.scrollHeight,
-      behavior: "smooth",
-    })
-  }, [messages])
 
   const resetConversation = () => {
     resetMessages()
@@ -311,13 +340,6 @@ export function LlmHome({
     await sendText(text)
   }
 
-  const handleKeyDown = (e: KeyboardEvent) => {
-    if (e.key === "Enter" && !e.shiftKey) {
-      e.preventDefault()
-      void onSend()
-    }
-  }
-
   const cleanUrlParams = () => {
     if (typeof window !== "undefined") {
       const url = new URL(window.location.href)
@@ -357,13 +379,9 @@ export function LlmHome({
       onToolCancel={handleToolCancel}
       isTyping={isTyping}
       typingLabel={typingLabel}
-      messagesEndRef={messagesEndRef}
-      messagesContainerRef={messagesContainerRef}
       input={input}
       setInput={setInput}
-      handleKeyDown={handleKeyDown}
       onSend={onSend}
-      sendText={sendText}
       isLoading={isLoading}
       onStop={onStop}
     />
@@ -381,17 +399,15 @@ function LlmHomeView(props: {
   messages: ChatMessage[]
   currencyLabel: string
   fmt: (v: number) => string
-  onToolComplete: (messages: { role: "user" | "assistant"; text: string }[]) => void
+  onToolComplete: (
+    messages: { role: "user" | "assistant"; text: string }[]
+  ) => void
   onToolCancel: () => void
   isTyping: boolean
   typingLabel: string
-  messagesEndRef: RefObject<HTMLDivElement | null>
-  messagesContainerRef: RefObject<HTMLDivElement | null>
   input: string
   setInput: (value: string) => void
-  handleKeyDown: (e: KeyboardEvent) => void
   onSend: () => Promise<void>
-  sendText: (text: string) => Promise<void>
   isLoading: boolean
   onStop: () => void
 }) {
@@ -410,150 +426,157 @@ function LlmHomeView(props: {
     onToolCancel,
     isTyping,
     typingLabel,
-    messagesEndRef,
-    messagesContainerRef,
     input,
     setInput,
-    handleKeyDown,
-    sendText,
+    onSend,
     isLoading,
     onStop,
   } = props
 
   const isChatMode = mode === "chat"
+  const docsLink = getLegalDocsLink(cc)
+  const chatActions: ChatAction[] = [
+    {
+      mode: "settlement",
+      icon: IconCalculator,
+      labelEs: "Liquidacion",
+      labelEn: "Settlement",
+    },
+    {
+      mode: "vacations",
+      icon: IconBeach,
+      labelEs: "Vacaciones",
+      labelEn: "Vacations",
+    },
+    {
+      mode: "salary-net",
+      icon: IconCoins,
+      labelEs: "Salario neto",
+      labelEn: "Net salary",
+    },
+    {
+      mode: "bonus",
+      icon: IconGift,
+      labelEs: "Aguinaldo",
+      labelEn: "Bonus",
+    },
+    {
+      mode: "termination",
+      icon: IconDoorExit,
+      labelEs: "Salida",
+      labelEn: "Exit",
+    },
+    {
+      mode: "contract",
+      icon: IconFileDescription,
+      labelEs: "Contrato",
+      labelEn: "Contract",
+    },
+    {
+      icon: IconMessageCircle,
+      labelEs: "Nuevo chat",
+      labelEn: "New chat",
+      onClick: resetConversation,
+    },
+  ]
 
   return (
-    <main className={cn(
-      "mx-auto flex min-h-0 flex-1 flex-col overflow-clip px-4 md:px-8",
-      isChatMode ? "max-w-4xl" : "max-w-5xl"
-    )}>
-      <section className="flex min-h-0 flex-1 flex-col pt-4 md:pt-6">
+    <main
+      className={cn(
+        "relative mx-auto flex min-h-0 w-full min-w-0 flex-1 flex-col overflow-clip px-4 md:px-8",
+        isChatMode ? "max-w-none" : "max-w-5xl"
+      )}
+    >
+      <section className="flex min-h-0 min-w-0 flex-1 flex-col pt-4 md:pt-6">
         {isChatMode ? (
           messages.length === 0 ? (
-            <div className="flex min-h-0 flex-1 items-center justify-center px-2 py-8 max-sm:px-1">
-              <WelcomeEmptyState
-                cc={cc}
-                countryName={countryName}
-                copy={copy}
-                locale={locale}
-                setMode={setMode}
-                resetConversation={resetConversation}
-              />
-            </div>
+            <AnimatePresence mode="wait">
+              <motion.div
+                key="empty-chat"
+                initial={{ opacity: 0, y: 8, scale: 0.98 }}
+                animate={{ opacity: 1, y: 0, scale: 1 }}
+                exit={{ opacity: 0, y: -8, scale: 0.98 }}
+                transition={{ duration: 0.2, ease: [0.22, 1, 0.36, 1] }}
+                className="flex min-h-0 min-w-0 flex-1 items-center justify-center px-1 py-8 sm:px-2"
+              >
+                <div className="flex w-full max-w-5xl min-w-0 flex-col items-center gap-6 sm:gap-8">
+                  <WelcomeEmptyState
+                    cc={cc}
+                    countryName={countryName}
+                    copy={copy}
+                  />
+                  <ChatInputPanel
+                    chatActions={chatActions}
+                    locale={locale}
+                    setMode={setMode}
+                    input={input}
+                    setInput={setInput}
+                    onSend={onSend}
+                    isLoading={isLoading}
+                    onStop={onStop}
+                  />
+                </div>
+              </motion.div>
+            </AnimatePresence>
           ) : (
-            <div
-              ref={messagesContainerRef}
+            <ChatContainerRoot
               className={cn(
-                "min-h-0 flex-1 space-y-2.5 overflow-y-auto px-2 max-sm:px-1 sm:space-y-3 [scrollbar-gutter:stable]",
-                messages.length <= 3 ? "py-16 md:py-24" : "py-8"
+                "relative min-h-0 min-w-0 flex-1 [scrollbar-gutter:stable] px-1 sm:px-2",
+                messages.length <= 3
+                  ? "pt-16 pb-48 md:pt-24 md:pb-44"
+                  : "pt-8 pb-48 md:pb-44"
               )}
             >
-              {(() => {
-                const lastAssistantMessageId = [...messages]
-                  .reverse()
-                  .find((m) => m.role === "assistant")?.id
-                return messages.map((m) => (
-                  <div
-                    key={m.id}
-                    className={
-                      (m.role === "user"
-                        ? "flex justify-end"
-                        : "flex justify-start") +
-                      " min-w-0 duration-200 motion-safe:animate-in motion-safe:fade-in motion-safe:slide-in-from-bottom-1"
-                    }
-                  >
-                    {m.role === "assistant" &&
-                    m.id === lastAssistantMessageId ? (
-                      <JustoOrbAvatar cc={cc} />
-                    ) : null}
-                    <div
-                      className={
-                        m.role === "user"
-                          ? "min-w-0 max-w-[88%] rounded-2xl bg-primary px-3 py-2.5 text-sm whitespace-pre-line text-primary-foreground sm:max-w-[85%] sm:px-4"
-                          : "min-w-0 max-w-[92%] rounded-2xl border border-border bg-card px-3 py-2.5 text-sm leading-relaxed text-foreground sm:max-w-[88%] sm:px-4"
-                      }
+              <ChatContainerContent className="mx-auto w-full max-w-5xl min-w-0 gap-2.5 sm:gap-3">
+                {(() => {
+                  const lastAssistantMessageId = [...messages]
+                    .reverse()
+                    .find((m) => m.role === "assistant")?.id
+                  return messages.map((m) => (
+                    <Message
+                      key={m.id}
+                      className={cn(
+                        "min-w-0 duration-200 motion-safe:animate-in motion-safe:fade-in motion-safe:slide-in-from-bottom-1",
+                        m.role === "user" ? "justify-end" : "justify-start"
+                      )}
                     >
-                      <ChatMarkdown text={m.text} />
-                    </div>
-                  </div>
-                ))
-              })()}
-              {messages.length > 0 ? (
-                <div className="flex flex-wrap justify-center gap-2 pt-1 motion-safe:animate-in motion-safe:duration-200 motion-safe:fade-in motion-safe:slide-in-from-bottom-1">
-                  <button
-                    type="button"
-                    onClick={() => setMode("settlement")}
-                    className="inline-flex items-center gap-1.5 rounded-full border border-border bg-card px-3 py-1.5 text-xs font-medium text-muted-foreground transition-colors hover:border-foreground/20 hover:text-foreground"
-                  >
-                    <IconCalculator className="size-3.5" />
-                    {locale === "en" ? "Calculate settlement" : "Calcular liquidacion"}
-                  </button>
-         <button
-          type="button"
-          onClick={() => setMode("vacations")}
-          className="inline-flex items-center gap-1.5 rounded-full border border-border bg-card px-3 py-1.5 text-xs font-medium text-muted-foreground transition-colors hover:border-foreground/20 hover:text-foreground"
-        >
-          <IconBeach className="size-3.5" />
-          {locale === "en" ? "Calculate vacations" : "Calcular vacaciones"}
-        </button>
-                  <button
-                      type="button"
-                      onClick={() => setMode("salary-net")}
-                      className="inline-flex items-center gap-1.5 rounded-full border border-border bg-card px-3 py-1.5 text-xs font-medium text-muted-foreground transition-colors hover:border-foreground/20 hover:text-foreground"
-                    >
-                      <IconCoins className="size-3.5" />
-                      {locale === "en" ? "Net salary" : "Salario neto"}
-                    </button>
-                    <button
-                      type="button"
-                      onClick={() => setMode("bonus")}
-                      className="inline-flex items-center gap-1.5 rounded-full border border-border bg-card px-3 py-1.5 text-xs font-medium text-muted-foreground transition-colors hover:border-foreground/20 hover:text-foreground"
-                    >
-                      <IconGift className="size-3.5" />
-                      {locale === "en" ? "Bonus / 13th" : "Aguinaldo / décimo"}
-                    </button>
-                    <button
-                      type="button"
-                      onClick={() => setMode("termination")}
-                      className="inline-flex items-center gap-1.5 rounded-full border border-border bg-card px-3 py-1.5 text-xs font-medium text-muted-foreground transition-colors hover:border-foreground/20 hover:text-foreground"
-                    >
-                      <IconDoorExit className="size-3.5" />
-                      {locale === "en" ? "Termination scenarios" : "Escenarios de salida"}
-                    </button>
-                    <button
-                      type="button"
-                      onClick={() => setMode("contract")}
-                      className="inline-flex items-center gap-1.5 rounded-full border border-border bg-card px-3 py-1.5 text-xs font-medium text-muted-foreground transition-colors hover:border-foreground/20 hover:text-foreground"
-                    >
-                      <IconFileDescription className="size-3.5" />
-                      {locale === "en" ? "Contract" : "Contrato"}
-                    </button>
-          <button
-            type="button"
-            onClick={() => { window.location.href = "/tools" }}
-                    className="inline-flex items-center gap-1.5 rounded-full border border-border bg-card px-3 py-1.5 text-xs font-medium text-muted-foreground transition-colors hover:border-foreground/20 hover:text-foreground"
-                  >
-                    <IconTools className="size-3.5" />
-                    {locale === "en" ? "Tools" : "Herramientas"}
-                  </button>
-                  <button
-                    type="button"
-                    onClick={resetConversation}
-                    className="inline-flex items-center gap-1.5 rounded-full border border-border bg-card px-3 py-1.5 text-xs font-medium text-muted-foreground transition-colors hover:border-foreground/20 hover:text-foreground"
-                  >
-                    <IconMessageCircle className="size-3.5" />
-                    {locale === "en" ? "New chat" : "Nuevo chat"}
-                  </button>
-                </div>
-              ) : null}
-              {isTyping ? (
-                <TypingPanel
-                  typingLabel={typingLabel}
-                  cc={cc}
-                />
-              ) : null}
-              <div ref={messagesEndRef} />
-            </div>
+                      {m.role === "assistant" &&
+                      m.id === lastAssistantMessageId ? (
+                        <JustoOrbAvatar cc={cc} />
+                      ) : null}
+                      <MessageContent
+                        className={cn(
+                          "min-w-0 rounded-2xl px-3 py-2.5 text-sm leading-relaxed sm:px-4",
+                          m.role === "user"
+                            ? "max-w-[88%] bg-primary text-primary-foreground sm:max-w-[85%] prose-p:text-primary-foreground prose-strong:text-primary-foreground prose-li:text-primary-foreground"
+                            : "max-w-[92%] border border-border bg-card text-foreground sm:max-w-[88%]"
+                        )}
+                      >
+                        <RichChatMarkdown
+                          id={m.id}
+                          text={m.text}
+                          role={m.role}
+                        />
+                        {m.role === "assistant" ? (
+                          <AssistantSource
+                            href={docsLink}
+                            countryName={countryName}
+                            locale={locale}
+                          />
+                        ) : null}
+                      </MessageContent>
+                    </Message>
+                  ))
+                })()}
+                {isTyping ? (
+                  <TypingPanel typingLabel={typingLabel} cc={cc} />
+                ) : null}
+                <ChatContainerScrollAnchor />
+              </ChatContainerContent>
+              <div className="pointer-events-none absolute inset-x-0 bottom-3 flex justify-center">
+                <ScrollButton className="pointer-events-auto shadow-lg" />
+              </div>
+            </ChatContainerRoot>
           )
         ) : mode === "settlement" ? (
           <SettlementTool
@@ -617,30 +640,34 @@ function LlmHomeView(props: {
           />
         )}
       </section>
-      {isChatMode && (
-        <PureMultimodalInput
-          messages={messages.map((m) => ({ id: m.id, content: m.text, role: m.role }))}
-          onSendMessage={(text: string) => {
-            setInput("")
-            void sendText(text)
-          }}
-          isGenerating={isLoading}
-          input={input}
-          setInput={setInput}
-          onKeyDown={handleKeyDown}
-          onStop={onStop}
-          className="pb-4"
-        />
-      )}
+      <AnimatePresence>
+        {isChatMode && messages.length > 0 ? (
+          <motion.div
+            key="bottom-chat-input"
+            initial={{ opacity: 0, y: 16 }}
+            animate={{ opacity: 1, y: 0 }}
+            exit={{ opacity: 0, y: 10 }}
+            transition={{ duration: 0.22, ease: [0.22, 1, 0.36, 1] }}
+            className="pointer-events-none absolute inset-x-0 bottom-0 z-40 min-w-0 bg-gradient-to-t from-background via-background/95 to-transparent px-3 pt-10 pb-[max(1rem,env(safe-area-inset-bottom))] md:px-8"
+          >
+            <ChatInputPanel
+              chatActions={chatActions}
+              locale={locale}
+              setMode={setMode}
+              input={input}
+              setInput={setInput}
+              onSend={onSend}
+              isLoading={isLoading}
+              onStop={onStop}
+            />
+          </motion.div>
+        ) : null}
+      </AnimatePresence>
     </main>
   )
 }
 
-function JustoOrbAvatar({
-  cc,
-}: {
-  cc: string
-}) {
+function JustoOrbAvatar({ cc }: { cc: string }) {
   return (
     <div className="mr-1.5 shrink-0 overflow-hidden rounded-full sm:mr-2">
       <AgentAvatar seed={cc} size={32} className="rounded-full" />
@@ -648,32 +675,236 @@ function JustoOrbAvatar({
   )
 }
 
-function TypingPanel({
-  typingLabel,
-  cc,
-}: {
-  typingLabel: string
-  cc: string
-}) {
+function TypingPanel({ typingLabel, cc }: { typingLabel: string; cc: string }) {
   return (
-    <div className="flex justify-start max-w-[92%] motion-safe:animate-in motion-safe:duration-200 motion-safe:fade-in motion-safe:slide-in-from-bottom-1">
+    <div className="flex max-w-[92%] justify-start motion-safe:animate-in motion-safe:duration-200 motion-safe:fade-in motion-safe:slide-in-from-bottom-1">
       <JustoOrbAvatar cc={cc} />
       <div className="inline-flex items-center gap-2 rounded-2xl border border-border bg-card px-4 py-2.5 text-sm text-foreground">
         <IconSparkles className="size-4 shrink-0 text-primary" />
-        <ShinyText
+        <Loader
+          variant="text-shimmer"
           text={typingLabel}
-          speed={2}
-          delay={0}
-          color="var(--muted-foreground)"
-          shineColor="var(--foreground)"
-          spread={120}
-          direction="left"
-          yoyo={false}
-          pauseOnHover={false}
-          disabled={false}
-          className="text-xs font-medium"
+          size="sm"
+          className="text-xs"
         />
       </div>
+    </div>
+  )
+}
+
+const chatMarkdownComponents: Partial<Components> = {
+  a: ({ children, href }) => {
+    const resolvedHref = safeHref(href)
+    const isExternal = /^https?:\/\//i.test(resolvedHref)
+
+    return (
+      <a
+        href={resolvedHref}
+        className="font-medium underline decoration-current/40 underline-offset-2 transition-opacity hover:opacity-80"
+        {...(isExternal
+          ? { target: "_blank", rel: "noreferrer noopener" }
+          : {})}
+      >
+        {children}
+      </a>
+    )
+  },
+  blockquote: ({ children }) => (
+    <blockquote className="my-2 rounded-xl border border-current/15 bg-current/5 px-3 py-2 text-xs leading-relaxed text-current">
+      {children}
+    </blockquote>
+  ),
+  table: ({ children }) => (
+    <div className="my-2 max-w-full overflow-x-auto rounded-xl border border-current/15 bg-current/5">
+      <table className="min-w-max border-collapse text-xs">{children}</table>
+    </div>
+  ),
+  thead: ({ children }) => <thead className="bg-current/10">{children}</thead>,
+  th: ({ children }) => (
+    <th className="border-b border-current/15 px-3 py-2 text-left font-semibold text-current last:text-right">
+      {children}
+    </th>
+  ),
+  td: ({ children }) => (
+    <td className="border-b border-current/15 px-3 py-2 align-top text-current last:text-right">
+      {children}
+    </td>
+  ),
+}
+
+function RichChatMarkdown({
+  id,
+  text,
+  role,
+}: {
+  id: string
+  text: string
+  role: Role
+}) {
+  return (
+    <Markdown
+      id={id}
+      components={chatMarkdownComponents}
+      className={cn(
+        "prose prose-sm max-w-none min-w-0 break-words dark:prose-invert",
+        "prose-headings:my-2 prose-headings:font-semibold prose-p:my-1.5 prose-strong:text-current prose-ol:my-1.5 prose-ul:my-1.5 prose-li:my-0.5",
+        "prose-code:rounded-md prose-code:px-1 prose-code:py-0.5 prose-code:font-mono prose-code:text-[0.82em] prose-code:before:content-none prose-code:after:content-none",
+        role === "user" &&
+          "prose-p:text-primary-foreground prose-strong:text-primary-foreground prose-code:bg-primary-foreground/15 prose-code:text-primary-foreground prose-li:text-primary-foreground"
+      )}
+    >
+      {text}
+    </Markdown>
+  )
+}
+
+function AssistantSource({
+  href,
+  countryName,
+  locale,
+}: {
+  href: string
+  countryName: string
+  locale: Locale
+}) {
+  return (
+    <div className="mt-2 flex flex-wrap items-center gap-1.5 border-t border-border/60 pt-2 text-xs text-muted-foreground">
+      <IconLibrary className="size-3.5 shrink-0" />
+      <span>{locale === "en" ? "Source" : "Fuente"}</span>
+      <Source href={href}>
+        <SourceTrigger
+          showFavicon
+          label={locale === "en" ? "Legal corpus" : "Corpus legal"}
+        />
+        <SourceContent
+          title={
+            locale === "en"
+              ? `${countryName} legal framework`
+              : `Marco legal de ${countryName}`
+          }
+          description={
+            locale === "en"
+              ? "Versioned legal corpus used by Justo to ground this labor response. Informational, not legal advice."
+              : "Corpus legal versionado usado por Justo para fundamentar esta respuesta laboral. Informativo, no asesoria legal."
+          }
+        />
+      </Source>
+    </div>
+  )
+}
+
+function ChatSuggestions({
+  actions,
+  locale,
+  setMode,
+}: {
+  actions: ChatAction[]
+  locale: Locale
+  setMode: (mode: AppMode) => void
+}) {
+  return (
+    <div className="flex max-w-full min-w-0 snap-x snap-mandatory [scrollbar-width:none] gap-1.5 overflow-x-auto px-0.5 pb-1 sm:flex-wrap sm:justify-center sm:overflow-visible sm:px-0 [&::-webkit-scrollbar]:hidden">
+      {actions.map((action) => {
+        const Icon = action.icon
+        const label = locale === "en" ? action.labelEn : action.labelEs
+        return (
+          <PromptSuggestion
+            key={label}
+            type="button"
+            size="sm"
+            variant="ghost"
+            onClick={() => {
+              if (action.onClick) {
+                action.onClick()
+                return
+              }
+              if (action.mode) setMode(action.mode)
+            }}
+            className="h-8 shrink-0 snap-start gap-1.5 rounded-full border border-border/70 bg-background/80 px-2.5 text-xs font-medium text-muted-foreground shadow-none backdrop-blur transition-colors hover:border-foreground/20 hover:bg-muted hover:text-foreground sm:px-3"
+          >
+            <Icon className="size-3.5" />
+            <span>{label}</span>
+          </PromptSuggestion>
+        )
+      })}
+    </div>
+  )
+}
+
+function ChatInputPanel({
+  chatActions,
+  locale,
+  setMode,
+  input,
+  setInput,
+  onSend,
+  isLoading,
+  onStop,
+}: {
+  chatActions: ChatAction[]
+  locale: Locale
+  setMode: (mode: AppMode) => void
+  input: string
+  setInput: (value: string) => void
+  onSend: () => Promise<void>
+  isLoading: boolean
+  onStop: () => void
+}) {
+  return (
+    <div className="pointer-events-auto mx-auto flex w-full max-w-5xl min-w-0 flex-col gap-2">
+      <ChatSuggestions
+        actions={chatActions}
+        locale={locale}
+        setMode={setMode}
+      />
+      <PromptInput
+        value={input}
+        onValueChange={setInput}
+        onSubmit={() => void onSend()}
+        isLoading={isLoading}
+        className="min-w-0 border-border bg-card/95 shadow-xl backdrop-blur supports-[backdrop-filter]:bg-card/85"
+      >
+        <PromptInputTextarea
+          placeholder={
+            locale === "en"
+              ? "Ask a labor question..."
+              : "Escribe tu consulta laboral..."
+          }
+          disabled={isLoading}
+          className="min-h-[48px] text-sm text-foreground placeholder:text-muted-foreground sm:min-h-[56px]"
+        />
+        <PromptInputActions className="justify-end pt-1">
+          {isLoading ? (
+            <PromptInputAction tooltip={locale === "en" ? "Stop" : "Detener"}>
+              <Button
+                type="button"
+                size="icon"
+                variant="destructive"
+                className="rounded-full"
+                onClick={onStop}
+                aria-label={
+                  locale === "en" ? "Stop response" : "Detener respuesta"
+                }
+              >
+                <IconSquare data-icon="inline-start" />
+              </Button>
+            </PromptInputAction>
+          ) : (
+            <PromptInputAction tooltip={locale === "en" ? "Send" : "Enviar"}>
+              <Button
+                type="button"
+                size="icon"
+                className="rounded-full"
+                onClick={() => void onSend()}
+                disabled={!input.trim()}
+                aria-label={locale === "en" ? "Send message" : "Enviar mensaje"}
+              >
+                <IconArrowUp data-icon="inline-start" />
+              </Button>
+            </PromptInputAction>
+          )}
+        </PromptInputActions>
+      </PromptInput>
     </div>
   )
 }
@@ -682,25 +913,19 @@ function WelcomeEmptyState({
   cc,
   countryName,
   copy,
-  locale,
-  setMode,
-  resetConversation,
 }: {
   cc: string
   countryName: string
   copy: (typeof homeCopy)[Locale]
-  locale: Locale
-  setMode: (mode: AppMode) => void
-  resetConversation: () => void
 }) {
   return (
-    <div className="flex flex-col items-center gap-y-6 sm:gap-y-8 text-center py-4 sm:py-6 duration-300 motion-safe:animate-in motion-safe:fade-in motion-safe:slide-in-from-bottom-1">
+    <div className="flex flex-col items-center gap-y-6 py-4 text-center duration-300 motion-safe:animate-in motion-safe:fade-in motion-safe:slide-in-from-bottom-1 sm:gap-y-8 sm:py-6">
       <div className="flex flex-col items-center gap-y-3 sm:gap-y-4">
         <div className="overflow-hidden rounded-full shadow-lg motion-safe:animate-in motion-safe:duration-300 motion-safe:fade-in motion-safe:slide-in-from-bottom-1">
           <AgentAvatar seed={cc} size={96} className="rounded-full" />
         </div>
 
-        <div className="inline-flex items-center gap-2 rounded-full border border-border bg-card px-3 py-1 sm:px-3.5 sm:py-1.5 text-xs font-medium text-muted-foreground motion-safe:animate-in motion-safe:duration-200 motion-safe:fade-in motion-safe:slide-in-from-bottom-1">
+        <div className="inline-flex items-center gap-2 rounded-full border border-border bg-card px-3 py-1 text-xs font-medium text-muted-foreground motion-safe:animate-in motion-safe:duration-200 motion-safe:fade-in motion-safe:slide-in-from-bottom-1 sm:px-3.5 sm:py-1.5">
           <Image
             src={`https://flagcdn.com/w40/${cc}.png`}
             alt={countryName}
@@ -715,81 +940,14 @@ function WelcomeEmptyState({
       </div>
 
       <div className="space-y-3 motion-safe:animate-in motion-safe:duration-300 motion-safe:fade-in motion-safe:slide-in-from-bottom-1">
-        <h2 className="text-xl sm:text-2xl font-semibold tracking-tight text-foreground">
+        <h2 className="text-xl font-semibold tracking-tight text-foreground sm:text-2xl">
           Hola, soy <strong className="text-foreground">Justo</strong>
         </h2>
         <p className="max-w-sm text-sm leading-relaxed text-muted-foreground">
           Tu asistente experto en derecho laboral de{" "}
-          <strong className="text-foreground">{countryName}</strong>. Te ayudo con
-          liquidaciones, vacaciones, aguinaldo y mas.
+          <strong className="text-foreground">{countryName}</strong>. Te ayudo
+          con liquidaciones, vacaciones, aguinaldo y mas.
         </p>
-      </div>
-
-      <div className="flex flex-wrap justify-center gap-2 motion-safe:animate-in motion-safe:duration-300 motion-safe:fade-in motion-safe:slide-in-from-bottom-1">
-        <button
-          type="button"
-          onClick={() => setMode("settlement")}
-          className="inline-flex items-center gap-1.5 rounded-full border border-border bg-card px-3 py-1.5 text-xs font-medium text-muted-foreground transition-colors hover:border-foreground/20 hover:text-foreground"
-        >
-          <IconCalculator className="size-3.5" />
-          {locale === "en" ? "Calculate settlement" : "Calcular liquidacion"}
-        </button>
-        <button
-          type="button"
-          onClick={() => setMode("vacations")}
-          className="inline-flex items-center gap-1.5 rounded-full border border-border bg-card px-3 py-1.5 text-xs font-medium text-muted-foreground transition-colors hover:border-foreground/20 hover:text-foreground"
-        >
-          <IconBeach className="size-3.5" />
-          {locale === "en" ? "Calculate vacations" : "Calcular vacaciones"}
-        </button>
-        <button
-          type="button"
-          onClick={() => setMode("salary-net")}
-          className="inline-flex items-center gap-1.5 rounded-full border border-border bg-card px-3 py-1.5 text-xs font-medium text-muted-foreground transition-colors hover:border-foreground/20 hover:text-foreground"
-        >
-          <IconCoins className="size-3.5" />
-          {locale === "en" ? "Net salary" : "Salario neto"}
-        </button>
-        <button
-          type="button"
-          onClick={() => setMode("bonus")}
-          className="inline-flex items-center gap-1.5 rounded-full border border-border bg-card px-3 py-1.5 text-xs font-medium text-muted-foreground transition-colors hover:border-foreground/20 hover:text-foreground"
-        >
-          <IconGift className="size-3.5" />
-          {locale === "en" ? "Bonus / 13th" : "Aguinaldo / décimo"}
-        </button>
-        <button
-          type="button"
-          onClick={() => setMode("termination")}
-          className="inline-flex items-center gap-1.5 rounded-full border border-border bg-card px-3 py-1.5 text-xs font-medium text-muted-foreground transition-colors hover:border-foreground/20 hover:text-foreground"
-        >
-          <IconDoorExit className="size-3.5" />
-          {locale === "en" ? "Termination scenarios" : "Escenarios de salida"}
-        </button>
-        <button
-          type="button"
-          onClick={() => setMode("contract")}
-          className="inline-flex items-center gap-1.5 rounded-full border border-border bg-card px-3 py-1.5 text-xs font-medium text-muted-foreground transition-colors hover:border-foreground/20 hover:text-foreground"
-        >
-          <IconFileDescription className="size-3.5" />
-          {locale === "en" ? "Contract" : "Contrato"}
-        </button>
-        <button
-          type="button"
-          onClick={() => { window.location.href = "/tools" }}
-          className="inline-flex items-center gap-1.5 rounded-full border border-border bg-card px-3 py-1.5 text-xs font-medium text-muted-foreground transition-colors hover:border-foreground/20 hover:text-foreground"
-        >
-          <IconTools className="size-3.5" />
-          {locale === "en" ? "Tools" : "Herramientas"}
-        </button>
-        <button
-          type="button"
-          onClick={resetConversation}
-          className="inline-flex items-center gap-1.5 rounded-full border border-border bg-card px-3 py-1.5 text-xs font-medium text-muted-foreground transition-colors hover:border-foreground/20 hover:text-foreground"
-        >
-          <IconMessageCircle className="size-3.5" />
-          {locale === "en" ? "New chat" : "Nuevo chat"}
-        </button>
       </div>
     </div>
   )
