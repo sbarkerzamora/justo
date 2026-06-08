@@ -82,19 +82,6 @@ export default async function RootLayout({
           </AppShell>
         </ThemeProvider>
         <script
-          src="https://cdnjs.buymeacoffee.com/1.0.0/widget.prod.min.js"
-          data-name="BMC-Widget"
-          data-cfasync="false"
-          data-id="stephanbarker"
-          data-description="Support me on Buy me a coffee!"
-          data-message=""
-          data-color="#FF5F5F"
-          data-position="Left"
-          data-x_margin="18"
-          data-y_margin="18"
-          defer
-        />
-        <script
           type="application/ld+json"
           dangerouslySetInnerHTML={{
             __html: JSON.stringify(organizationJsonLd),

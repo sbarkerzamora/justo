@@ -93,7 +93,7 @@ The product separates two responsibilities:
 ## Tech Stack
 
 - **Framework**: Next.js 16 + React 19
-- **UI**: assistant-ui, Tailwind CSS v4, Radix UI
+- **UI**: prompt-kit, shadcn/ui, Tailwind CSS v4, Radix UI
 - **AI chat**: Vercel AI SDK v6 with OpenRouter or NVIDIA
 - **Calculations**: Deterministic TypeScript by jurisdiction
 - **Docs**: Fumadocs + MDX
@@ -125,16 +125,33 @@ Justo uses a hybrid open-core model, but this public repository must remain usef
 
 ### Installation
 
+Run installation from the monorepo root, not from `apps/web`:
+
 ```bash
 pnpm install
 ```
+
+### Package Management
+
+This repo uses a single lockfile at the root. Add dependencies from the root and use `--filter` to choose which package receives the dependency:
+
+```bash
+pnpm --filter @justo/web add package-name
+pnpm --filter @justo/core add package-name
+pnpm --filter @justo/pdf add package-name
+pnpm --filter @justo/tools add package-name
+pnpm --filter @justo/web add -D dev-package
+pnpm add -w -D workspace-tool
+```
+
+Use `apps/web/package.json` for Next.js app dependencies, `packages/*/package.json` for internal package dependencies, and the root `package.json` only for workspace scripts/tools.
 
 ### Environment Variables
 
 Copy the example and configure your keys:
 
 ```bash
-cp .env.example .env.local
+cp apps/web/.env.example apps/web/.env.local
 ```
 
 Main variables:
@@ -164,8 +181,10 @@ Main variables:
 
 ### Run Locally
 
+From the repository root:
+
 ```bash
-pnpm dev
+bun run dev
 ```
 
 Open `http://localhost:3000`.

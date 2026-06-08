@@ -93,7 +93,7 @@ El producto separa dos responsabilidades:
 ## Stack técnico
 
 - **Framework**: Next.js 16 + React 19
-- **UI**: assistant-ui, Tailwind CSS v4, Radix UI
+- **UI**: prompt-kit, shadcn/ui, Tailwind CSS v4, Radix UI
 - **Chat IA**: Vercel AI SDK v6 con OpenRouter o NVIDIA
 - **Cálculos**: TypeScript determinístico por jurisdicción
 - **Docs**: Fumadocs + MDX
@@ -125,9 +125,26 @@ Justo usa un modelo open-core híbrido, pero este repositorio público debe ser 
 
 ### Instalación
 
+Ejecuta la instalación desde la raíz del monorepo, no desde `apps/web`:
+
 ```bash
 pnpm install
 ```
+
+### Gestión de paquetes
+
+Este repo usa un lockfile único en la raíz. Agrega dependencias desde la raíz y usa `--filter` para decidir qué paquete recibe la dependencia:
+
+```bash
+pnpm --filter @justo/web add paquete
+pnpm --filter @justo/core add paquete
+pnpm --filter @justo/pdf add paquete
+pnpm --filter @justo/tools add paquete
+pnpm --filter @justo/web add -D paquete-dev
+pnpm add -w -D herramienta-del-workspace
+```
+
+Usa `apps/web/package.json` para dependencias de la app Next.js, `packages/*/package.json` para dependencias de paquetes internos y el `package.json` raíz solo para scripts/herramientas del workspace.
 
 ### Variables de entorno
 
@@ -164,8 +181,10 @@ Variables principales:
 
 ### Ejecutar en desarrollo
 
+Desde la raíz del repo:
+
 ```bash
-pnpm dev
+bun run dev
 ```
 
 Abrir `http://localhost:3000`.

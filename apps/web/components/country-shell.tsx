@@ -84,29 +84,33 @@ export function CountryShell({
       <style>{`html{overflow-y:scroll;scrollbar-width:none !important}html::-webkit-scrollbar{display:none !important}`}</style>
       <div
         className={cn(
-          "relative min-h-full overflow-y-auto",
+          "relative flex h-full min-h-0 overflow-hidden",
           isSpringing && "justo-hero-spring"
         )}
-        style={{ "--country-accent": getCountryAccent(countryCode) } as React.CSSProperties}
+        style={
+          {
+            "--country-accent": getCountryAccent(countryCode),
+          } as React.CSSProperties
+        }
       >
-      <AnimatedGridPattern
-        numSquares={30}
-        maxOpacity={0.08}
-        duration={3}
-        repeatDelay={1}
-        className={cn(
-          "mask-[radial-gradient(800px_circle_at_center,white,transparent)]",
-          "absolute inset-0 z-0"
-        )}
-      />
-      <div className="relative z-10 flex flex-1 flex-col min-h-0">
-        <LlmHome
-          countryCode={countryCode}
-          locale={locale}
-          initialTool={initialTool}
+        <AnimatedGridPattern
+          numSquares={30}
+          maxOpacity={0.08}
+          duration={3}
+          repeatDelay={1}
+          className={cn(
+            "mask-[radial-gradient(800px_circle_at_center,white,transparent)]",
+            "absolute inset-0 z-0"
+          )}
         />
+        <div className="relative z-10 flex min-h-0 flex-1 flex-col">
+          <LlmHome
+            countryCode={countryCode}
+            locale={locale}
+            initialTool={initialTool}
+          />
+        </div>
       </div>
-    </div>
     </>
   )
 }

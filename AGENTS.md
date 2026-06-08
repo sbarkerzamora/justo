@@ -6,7 +6,7 @@ Build and maintain an open source labor assistant focused on trustworthy settlem
 
 ## Runtime Contract
 
-- UI runtime: assistant-ui with AI SDK transport
+- UI runtime: prompt-kit components with AI SDK transport
 - LLM gateway: OpenRouter (OpenAI-compatible endpoint)
 - Language: Spanish by default
 - Calculation authority: deterministic server logic, never free-form LLM arithmetic

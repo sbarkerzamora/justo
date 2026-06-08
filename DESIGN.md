@@ -42,7 +42,7 @@ Use tinted neutrals and one committed blue for actions and totals.
 
 ## Component Patterns
 
-- Chat shell: assistant-ui `ThreadPrimitive` + `ComposerPrimitive`
+- Chat shell: prompt-kit `ChatContainer` + `PromptInput`
 - Messages:
   - user bubble: filled primary
   - assistant bubble: neutral surface with subtle border
