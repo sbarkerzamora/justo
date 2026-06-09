@@ -11,6 +11,7 @@ type HomeCopy = {
   languageLabel: string
   askPlaceholder: string
   send: string
+  searching: string
   thinking: string
   assistantThinking: string
   typing: string
@@ -114,6 +115,7 @@ export const homeCopy: Record<Locale, HomeCopy> = {
     languageLabel: "Cambiar idioma",
     askPlaceholder: "Escribe tu consulta o responde al paso actual",
     send: "Enviar",
+    searching: "Buscando...",
     thinking: "Pensando...",
     assistantThinking: "Justo esta pensando",
     typing: "Escribiendo",
@@ -236,6 +238,7 @@ export const homeCopy: Record<Locale, HomeCopy> = {
     languageLabel: "Change language",
     askPlaceholder: "Ask a question or answer the current step",
     send: "Send",
+    searching: "Searching...",
     thinking: "Thinking...",
     assistantThinking: "Justo is thinking",
     typing: "Writing",

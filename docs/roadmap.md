@@ -4,9 +4,9 @@
 
 - [x] 6 herramientas OSS disponibles: liquidación, vacaciones, salario neto, bono/aguinaldo, terminación y contratos — **11 países** cada una.
 - [x] Chat con 6 modos de herramienta (settlement, vacations, salary-net, bonus, termination, contract) vía `?tool=` desde sidebar y URL.
-- [x] Sidebar global Aceternity con tool links + controles (país, idioma, tema, GitHub).
+- [x] Sidebar global con tool links + controles (país, idioma, tema, GitHub).
 - [x] Tool marketplace publico (`/tools`) con SEO por país para cada herramienta.
-- [x] `@justo/core` — Cálculos determinísticos (settlement, vacations, salary-net, bonus, termination, contract) para 11 países.
+- [x] `@justo/core` — Cálculos determinísticos para 11 países.
 - [x] `@justo/tools` — Tool registry con tipos, schemas Zod y country overrides.
 - [x] `@justo/pdf` — PDF de liquidación, vacaciones, salario neto, bono, terminación y contrato.
 - [x] App header global con selector de país sincronizado con URL.
@@ -17,10 +17,13 @@
 - [x] MIT License, README bilingüe, CONTRIBUTING.md, docs/architecture.md, docs/adding-a-tool.md.
 - [x] CI: Typecheck, lint, test, build.
 - [x] Docker + docker-compose para self-hosting.
-- [x] Tests: 160 tests en core (66 calc × país), tools (8), PDF (6).
+- [x] Tests: 160+ tests en core, tools y PDF.
+- [x] Reasoning integrado — componente colapsable con separación de pensamiento del LLM vía tags `...` y eventos `reasoning-delta`.
+- [x] Doble scrollbar eliminado — `html{overflow:hidden}` restringido a ruta de chat; layout `(content)` para scrolleo en herramientas y páginas legales.
 
 ## Next — OSS
 
+- [ ] GridLoader animado en 3 estados (Thinking, Generating, Searching) sincronizado con el LLM en la UI del chat.
 - [ ] Herramientas: horas extra, checklist laboral, asistente de contratación.
 - [ ] Tool flow framework unificado (reducir duplicación entre tool components).
 - [ ] Actualizar tool detail pages de liquidación y vacaciones al nuevo template SEO.

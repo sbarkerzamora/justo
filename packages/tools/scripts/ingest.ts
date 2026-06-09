@@ -95,7 +95,11 @@ const splitByParagraphs = (text: string): string[] => {
     if (p.length > MAX_CHUNK) {
       let i = 0
       while (i < p.length) {
-        const end = Math.min(i + MAX_CHUNK, p.length)
+        let end = Math.min(i + MAX_CHUNK, p.length)
+        if (end < p.length) {
+          const sentenceEnd = p.lastIndexOf(". ", end)
+          if (sentenceEnd > i) end = sentenceEnd + 1
+        }
         chunks.push(p.slice(i, end))
         if (end === p.length) break
         i = end - OVERLAP

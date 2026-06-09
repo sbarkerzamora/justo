@@ -131,7 +131,6 @@ function ReasoningContent({
   const contentRef = useRef<HTMLDivElement>(null)
   const innerRef = useRef<HTMLDivElement>(null)
   const { isOpen } = useReasoningContext()
-  const [maxHeight, setMaxHeight] = useState("0px")
 
   useEffect(() => {
     if (!contentRef.current || !innerRef.current) return
@@ -140,7 +139,6 @@ function ReasoningContent({
       if (contentRef.current && innerRef.current && isOpen) {
         const h = `${innerRef.current.scrollHeight}px`
         contentRef.current.style.maxHeight = h
-        setMaxHeight(h)
       }
     }
 
@@ -167,7 +165,7 @@ function ReasoningContent({
         "overflow-hidden transition-[max-height] duration-150 ease-out",
         className
       )}
-      style={{ maxHeight: isOpen ? maxHeight : "0px" }}
+      style={{ maxHeight: isOpen ? undefined : "0px" }}
       {...props}
     >
       <div

@@ -132,6 +132,16 @@ export const getChatModelConfig = () => {
     model: openrouter.chat(
       process.env.OPENROUTER_MODEL ?? DEFAULT_OPENROUTER_MODEL
     ),
+    maxOutputTokens: numberFromEnv(
+      process.env.OPENROUTER_MAX_OUTPUT_TOKENS,
+      16384,
+      { min: 1, integer: true }
+    ),
+    temperature: numberFromEnv(process.env.OPENROUTER_TEMPERATURE, 1, {
+      min: 0,
+      max: 2,
+    }),
+    topP: numberFromEnv(process.env.OPENROUTER_TOP_P, 0.95, { min: 0, max: 1 }),
     providerOptions: undefined,
   }
 }
