@@ -13,6 +13,7 @@ import {
 import {
   countryMeta,
   SUPPORTED_COUNTRIES,
+  type CountryCode,
 } from "@/lib/ai/countries-meta"
 import type { SettlementInput } from "@justo/core"
 
@@ -127,7 +128,7 @@ export async function generateLaborResponse(input: {
           start.setFullYear(start.getFullYear() - tenureYears)
 
           const input: SettlementInput = {
-            countryCode: countryCode as SettlementInput["countryCode"],
+            countryCode: countryCode as CountryCode,
             employeeName: "Trabajador",
             employerName: "Empleador",
             monthlySalary,
