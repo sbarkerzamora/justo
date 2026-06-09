@@ -27,9 +27,8 @@ export function CountryShell({
 
   return (
     <>
-      <style>{`html{overflow-y:scroll;scrollbar-width:none !important}html::-webkit-scrollbar{display:none !important}`}</style>
       <div
-        className="relative flex min-h-0 w-full min-w-0 flex-1 overflow-hidden"
+        className="relative flex min-h-0 w-full min-w-0 flex-1 flex-col overflow-hidden"
         style={
           {
             "--country-accent": getCountryAccent(countryCode),
@@ -46,13 +45,11 @@ export function CountryShell({
             "absolute inset-0 z-0"
           )}
         />
-        <div className="relative z-10 flex min-h-0 w-full min-w-0 flex-1 flex-col">
-          <LlmHome
-            countryCode={countryCode}
-            locale={locale}
-            initialTool={initialTool}
-          />
-        </div>
+        <LlmHome
+        countryCode={countryCode}
+        locale={locale}
+        initialTool={initialTool}
+      />
       </div>
     </>
   )

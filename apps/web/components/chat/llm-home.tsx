@@ -41,6 +41,11 @@ import {
   PromptInputTextarea,
 } from "@/components/ui/prompt-input"
 import { PromptSuggestion } from "@/components/ui/prompt-suggestion"
+import {
+  Reasoning,
+  ReasoningContent,
+  ReasoningTrigger,
+} from "@/components/ui/reasoning"
 import { ScrollButton } from "@/components/ui/scroll-button"
 import { Source, SourceContent, SourceTrigger } from "@/components/ui/source"
 import { cn } from "@/lib/utils"
@@ -52,7 +57,7 @@ import { TerminationTool } from "@/components/tools/termination"
 import { ContractTool } from "@/components/tools/contract"
 
 type Role = "user" | "assistant"
-type ChatMessage = { id: string; role: Role; text: string }
+type ChatMessage = { id: string; role: Role; text: string; reasoning?: string }
 
 type AppMode =
   | "chat"
@@ -157,6 +162,7 @@ export function LlmHome({
     setInput,
     append,
     setMessageText,
+    setMessageReasoning,
     resetMessages,
   } = useChatMessages()
 
@@ -166,7 +172,6 @@ export function LlmHome({
     typingLabel,
     setLoading,
     setTyping,
-    setTypingLabel,
     setStreamingReply,
     setHasStreamChunk,
   } = useChatUI()
@@ -203,8 +208,6 @@ export function LlmHome({
 
   const sendLegalQuery = async (text: string) => {
     setLoading(true)
-    setTypingLabel(copy.assistantThinking)
-    setTyping(true)
     const docsLink = getLegalDocsLink(cc)
     const fallbackMessage = copy.fallback(docsLink)
     const assistantMessageId = crypto.randomUUID()
@@ -218,7 +221,7 @@ export function LlmHome({
       assistantMessageCreated = true
       setMessages((current) => [
         ...current,
-        { id: assistantMessageId, role: "assistant", text: "" },
+        { id: assistantMessageId, role: "assistant", text: "", reasoning: "" },
       ])
     }
 
@@ -237,6 +240,7 @@ export function LlmHome({
         }),
       })
       if (!res.ok) {
+        setStreamingReply(false)
         const errorMessage = await res
           .json()
           .then((data: { error?: unknown }) =>
@@ -248,15 +252,20 @@ export function LlmHome({
       }
 
       if (!res.body) {
+        setStreamingReply(false)
         showAssistantMessage(fallbackMessage)
         return
       }
+
+      ensureAssistantMessage()
 
       const reader = res.body.getReader()
       const decoder = new TextDecoder()
       let streamedText = ""
       let visibleText = ""
+      let reasoningText = ""
       let receivedChunk = false
+      let buffer = ""
 
       const revealText = async (targetText: string) => {
         ensureAssistantMessage()
@@ -273,27 +282,72 @@ export function LlmHome({
         const { value, done } = await reader.read()
         if (done) break
 
-        const chunk = decoder.decode(value, { stream: true })
-        if (!chunk) continue
+        buffer += decoder.decode(value, { stream: true })
 
-        streamedText += chunk
-        if (!receivedChunk && streamedText.trim().length > 0) {
-          receivedChunk = true
-          setHasStreamChunk(true)
-          setTyping(false)
+        const parts = buffer.split("\n\n")
+        buffer = parts.pop() || ""
+
+        for (const part of parts) {
+          const match = part.match(/^data: (.+)$/m)
+          if (!match) continue
+
+          try {
+            const parsed = JSON.parse(match[1])
+            if (parsed.type === "text") {
+              streamedText += parsed.content
+              if (!receivedChunk && streamedText.trim().length > 0) {
+                receivedChunk = true
+                setHasStreamChunk(true)
+                setTyping(false)
+              }
+              await revealText(streamedText)
+            } else if (parsed.type === "reasoning") {
+              reasoningText += parsed.content
+              ensureAssistantMessage()
+              if (!receivedChunk) {
+                receivedChunk = true
+                setHasStreamChunk(true)
+                setTyping(false)
+              }
+              setMessageReasoning(assistantMessageId, reasoningText)
+            }
+          } catch {
+            // skip invalid SSE events
+          }
         }
-        await revealText(streamedText)
       }
 
       const finalChunk = decoder.decode()
       if (finalChunk) {
-        streamedText += finalChunk
-        if (!receivedChunk && streamedText.trim().length > 0) {
-          receivedChunk = true
-          setHasStreamChunk(true)
-          setTyping(false)
+        buffer += finalChunk
+        const parts = buffer.split("\n\n")
+        for (const part of parts) {
+          const match = part.match(/^data: (.+)$/m)
+          if (!match) continue
+          try {
+            const parsed = JSON.parse(match[1])
+            if (parsed.type === "text") {
+              streamedText += parsed.content
+              if (!receivedChunk && streamedText.trim().length > 0) {
+                receivedChunk = true
+                setHasStreamChunk(true)
+                setTyping(false)
+              }
+              await revealText(streamedText)
+            } else if (parsed.type === "reasoning") {
+              reasoningText += parsed.content
+              ensureAssistantMessage()
+              if (!receivedChunk) {
+                receivedChunk = true
+                setHasStreamChunk(true)
+                setTyping(false)
+              }
+              setMessageReasoning(assistantMessageId, reasoningText)
+            }
+          } catch {
+            // skip
+          }
         }
-        await revealText(streamedText)
       }
 
       if (!streamedText.trim()) {
@@ -483,7 +537,7 @@ function LlmHomeView(props: {
   return (
     <main
       className={cn(
-        "relative mx-auto flex min-h-0 w-full min-w-0 flex-1 flex-col overflow-clip px-4 md:px-8",
+        "relative z-10 mx-auto flex min-h-0 w-full min-w-0 flex-1 flex-col overflow-clip px-4 md:px-8",
         isChatMode ? "max-w-none" : "max-w-5xl"
       )}
     >
@@ -522,9 +576,9 @@ function LlmHomeView(props: {
             <ChatContainerRoot
               className={cn(
                 "relative min-h-0 min-w-0 flex-1 [scrollbar-gutter:stable] px-1 sm:px-2",
-                messages.length <= 3
-                  ? "pt-16 pb-48 md:pt-24 md:pb-44"
-                  : "pt-8 pb-48 md:pb-44"
+                    messages.length <= 3
+                      ? "pt-0 pb-46 md:pt-24 md:pb-44"
+                      : "pt-8 pb-36 md:pb-44"
               )}
             >
               <ChatContainerContent className="mx-auto w-full max-w-5xl min-w-0 gap-2.5 sm:gap-3">
@@ -552,6 +606,21 @@ function LlmHomeView(props: {
                             : "max-w-[92%] border border-border bg-card text-foreground sm:max-w-[88%]"
                         )}
                       >
+                        {m.role === "assistant" && m.reasoning ? (
+                          <Reasoning>
+                            <ReasoningTrigger className="mb-2 text-xs font-medium">
+                              {locale === "en"
+                                ? "Show reasoning"
+                                : "Ver razonamiento"}
+                            </ReasoningTrigger>
+                            <ReasoningContent
+                              markdown
+                              contentClassName="text-xs leading-relaxed"
+                            >
+                              {m.reasoning}
+                            </ReasoningContent>
+                          </Reasoning>
+                        ) : null}
                         <RichChatMarkdown
                           id={m.id}
                           text={m.text}
@@ -561,6 +630,7 @@ function LlmHomeView(props: {
                           <AssistantSource
                             href={docsLink}
                             countryName={countryName}
+                            cc={cc}
                             locale={locale}
                           />
                         ) : null}
@@ -761,10 +831,12 @@ function RichChatMarkdown({
 function AssistantSource({
   href,
   countryName,
+  cc,
   locale,
 }: {
   href: string
   countryName: string
+  cc: string
   locale: Locale
 }) {
   return (
@@ -773,7 +845,6 @@ function AssistantSource({
       <span>{locale === "en" ? "Source" : "Fuente"}</span>
       <Source href={href}>
         <SourceTrigger
-          showFavicon
           label={locale === "en" ? "Legal corpus" : "Corpus legal"}
         />
         <SourceContent
@@ -789,6 +860,13 @@ function AssistantSource({
           }
         />
       </Source>
+      <Image
+        src={`https://flagcdn.com/w40/${cc}.png`}
+        alt={countryName}
+        width={14}
+        height={10}
+        className="h-2.5 w-3.5 shrink-0 rounded-[1px] border border-border object-cover"
+      />
     </div>
   )
 }
