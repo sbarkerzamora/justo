@@ -54,6 +54,7 @@ import { BonusTool } from "@/components/tools/bonus"
 import { TerminationTool } from "@/components/tools/termination"
 import { ContractTool } from "@/components/tools/contract"
 import GridLoader from "@/components/smoothui/grid-loader"
+import type { PresetPattern } from "@/components/smoothui/grid-loader"
 
 type Role = "user" | "assistant"
 type ChatMessage = { id: string; role: Role; text: string; reasoning?: string }
@@ -762,9 +763,18 @@ function LlmHomeView(props: {
 function JustoOrbAvatar({ cc }: { cc: string }) {
   return (
     <div className="mr-1.5 shrink-0 overflow-hidden rounded-full sm:mr-2">
-      <AgentAvatar seed={cc} size={32} className="rounded-full" />
+      <AgentAvatar seed={cc} size={40} className="rounded-full" />
     </div>
   )
+}
+
+const typingConfig: Record<
+  "searching" | "thinking" | "generating",
+  { pattern: PresetPattern; color: string; mode: "pulse" | "stagger" }
+> = {
+  searching: { pattern: "ripple-out", color: "blue", mode: "pulse" },
+  thinking: { pattern: "waterfall", color: "amber", mode: "stagger" },
+  generating: { pattern: "heartbeat", color: "green", mode: "pulse" },
 }
 
 function ChatTypingIndicator({
@@ -776,18 +786,22 @@ function ChatTypingIndicator({
   typingLabel: string
   cc: string
 }) {
-  const pattern =
-    typingMode === "searching"
-      ? "ripple-out"
-      : typingMode === "thinking"
-        ? "waterfall"
-        : "heartbeat"
+  const config =
+    typingMode === "idle" ? typingConfig.searching : typingConfig[typingMode]
   return (
     <div className="flex max-w-[92%] justify-start motion-safe:animate-in motion-safe:duration-200 motion-safe:fade-in motion-safe:slide-in-from-bottom-1">
       <JustoOrbAvatar cc={cc} />
-      <div className="inline-flex items-center gap-2 rounded-2xl border border-border bg-card px-4 py-2.5 text-sm text-foreground">
-        <GridLoader pattern={pattern} size="sm" color="amber" />
-        <span className="text-xs">{typingLabel}</span>
+      <div className="flex items-center gap-2.5 rounded-full bg-black px-4 py-2 ring-2 ring-primary/50">
+        <GridLoader
+          blur={0}
+          color={config.color}
+          gap={1}
+          mode={config.mode}
+          pattern={config.pattern}
+          rounded={false}
+          size="sm"
+        />
+        <span className="font-medium text-sm text-white">{typingLabel}</span>
       </div>
     </div>
   )
