@@ -119,24 +119,60 @@ export async function POST(request: Request) {
     const encoder = new TextEncoder()
     const stream = new ReadableStream({
       async start(controller) {
+        const emit = (type: string, content: string) => {
+          if (!content) return
+          controller.enqueue(
+            encoder.encode(
+              `data: ${JSON.stringify({ type, content })}\n\n`
+            )
+          )
+        }
+
+        let textBuffer = ""
+        let inThinkBlock = false
+
+        const processBuffer = () => {
+          while (textBuffer.length > 0) {
+            if (inThinkBlock) {
+              const thinkEnd = textBuffer.indexOf("</think>")
+              if (thinkEnd === -1) return
+              emit("reasoning", textBuffer.slice(0, thinkEnd))
+              textBuffer = textBuffer.slice(thinkEnd + 8)
+              inThinkBlock = false
+            } else {
+              const thinkStart = textBuffer.indexOf("<think>")
+              if (thinkStart === -1) {
+                emit("text", textBuffer)
+                textBuffer = ""
+                return
+              }
+              if (thinkStart > 0) {
+                emit("text", textBuffer.slice(0, thinkStart))
+              }
+              textBuffer = textBuffer.slice(thinkStart + 7)
+              inThinkBlock = true
+            }
+          }
+        }
+
+        const flushPendingText = () => {
+          if (textBuffer.length > 0) {
+            emit("text", textBuffer)
+            textBuffer = ""
+          }
+        }
+
         try {
           for await (const event of result.fullStream) {
             if (event.type === "text-delta") {
-              const { text: textContent } = event
-              controller.enqueue(
-                encoder.encode(
-                  `data: ${JSON.stringify({ type: "text", content: textContent })}\n\n`
-                )
-              )
+              textBuffer += event.text
+              processBuffer()
             } else if (event.type === "reasoning-delta") {
               const { text: reasoningContent } = event
-              controller.enqueue(
-                encoder.encode(
-                  `data: ${JSON.stringify({ type: "reasoning", content: reasoningContent })}\n\n`
-                )
-              )
+              emit("reasoning", reasoningContent)
             }
           }
+          flushPendingText()
         } catch (error) {
           console.error("Stream error:", error)
         } finally {

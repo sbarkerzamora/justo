@@ -10,7 +10,6 @@ import {
   IconFileDescription,
   IconLibrary,
   IconMessageCircle,
-  IconSparkles,
   IconSquare,
 } from "@tabler/icons-react"
 import { AnimatePresence, motion } from "framer-motion"
@@ -31,7 +30,6 @@ import {
   ChatContainerRoot,
   ChatContainerScrollAnchor,
 } from "@/components/ui/chat-container"
-import { Loader } from "@/components/ui/loader"
 import { Markdown } from "@/components/ui/markdown"
 import { Message, MessageContent } from "@/components/ui/message"
 import {
@@ -55,6 +53,7 @@ import { VacationsTool } from "@/components/tools/vacations"
 import { BonusTool } from "@/components/tools/bonus"
 import { TerminationTool } from "@/components/tools/termination"
 import { ContractTool } from "@/components/tools/contract"
+import GridLoader from "@/components/smoothui/grid-loader"
 
 type Role = "user" | "assistant"
 type ChatMessage = { id: string; role: Role; text: string; reasoning?: string }
@@ -170,8 +169,11 @@ export function LlmHome({
     isLoading,
     isTyping,
     typingLabel,
+    typingMode,
     setLoading,
     setTyping,
+    setTypingLabel,
+    setTypingMode,
     setStreamingReply,
     setHasStreamChunk,
   } = useChatUI()
@@ -208,6 +210,9 @@ export function LlmHome({
 
   const sendLegalQuery = async (text: string) => {
     setLoading(true)
+    setTyping(true)
+    setTypingLabel(copy.searching)
+    setTypingMode("searching")
     const docsLink = getLegalDocsLink(cc)
     const fallbackMessage = copy.fallback(docsLink)
     const assistantMessageId = crypto.randomUUID()
@@ -241,6 +246,7 @@ export function LlmHome({
       })
       if (!res.ok) {
         setStreamingReply(false)
+        setTypingMode("idle")
         const errorMessage = await res
           .json()
           .then((data: { error?: unknown }) =>
@@ -253,11 +259,14 @@ export function LlmHome({
 
       if (!res.body) {
         setStreamingReply(false)
+        setTypingMode("idle")
         showAssistantMessage(fallbackMessage)
         return
       }
 
       ensureAssistantMessage()
+      setTypingMode("thinking")
+      setTypingLabel(copy.thinking)
 
       const reader = res.body.getReader()
       const decoder = new TextDecoder()
@@ -299,6 +308,8 @@ export function LlmHome({
                 receivedChunk = true
                 setHasStreamChunk(true)
                 setTyping(false)
+                setTypingMode("generating")
+                setTypingLabel(copy.typing)
               }
               await revealText(streamedText)
             } else if (parsed.type === "reasoning") {
@@ -308,6 +319,8 @@ export function LlmHome({
                 receivedChunk = true
                 setHasStreamChunk(true)
                 setTyping(false)
+                setTypingMode("generating")
+                setTypingLabel(copy.typing)
               }
               setMessageReasoning(assistantMessageId, reasoningText)
             }
@@ -332,6 +345,8 @@ export function LlmHome({
                 receivedChunk = true
                 setHasStreamChunk(true)
                 setTyping(false)
+                setTypingMode("generating")
+                setTypingLabel(copy.typing)
               }
               await revealText(streamedText)
             } else if (parsed.type === "reasoning") {
@@ -341,6 +356,8 @@ export function LlmHome({
                 receivedChunk = true
                 setHasStreamChunk(true)
                 setTyping(false)
+                setTypingMode("generating")
+                setTypingLabel(copy.typing)
               }
               setMessageReasoning(assistantMessageId, reasoningText)
             }
@@ -362,6 +379,7 @@ export function LlmHome({
       )
     } finally {
       setTyping(false)
+      setTypingMode("idle")
       setStreamingReply(false)
       setHasStreamChunk(false)
       setLoading(false)
@@ -371,9 +389,10 @@ export function LlmHome({
   const onStop = useCallback(() => {
     setLoading(false)
     setTyping(false)
+    setTypingMode("idle")
     setStreamingReply(false)
     setHasStreamChunk(false)
-  }, [setLoading, setTyping, setStreamingReply, setHasStreamChunk])
+  }, [setLoading, setTyping, setStreamingReply, setHasStreamChunk, setTypingMode])
 
   const sendText = async (text: string) => {
     if (!text || isLoading) return
@@ -433,6 +452,7 @@ export function LlmHome({
       onToolCancel={handleToolCancel}
       isTyping={isTyping}
       typingLabel={typingLabel}
+      typingMode={typingMode}
       input={input}
       setInput={setInput}
       onSend={onSend}
@@ -459,6 +479,7 @@ function LlmHomeView(props: {
   onToolCancel: () => void
   isTyping: boolean
   typingLabel: string
+  typingMode: "idle" | "searching" | "thinking" | "generating"
   input: string
   setInput: (value: string) => void
   onSend: () => Promise<void>
@@ -480,6 +501,7 @@ function LlmHomeView(props: {
     onToolCancel,
     isTyping,
     typingLabel,
+    typingMode,
     input,
     setInput,
     onSend,
@@ -639,7 +661,7 @@ function LlmHomeView(props: {
                   ))
                 })()}
                 {isTyping ? (
-                  <TypingPanel typingLabel={typingLabel} cc={cc} />
+                  <ChatTypingIndicator typingMode={typingMode} typingLabel={typingLabel} cc={cc} />
                 ) : null}
                 <ChatContainerScrollAnchor />
               </ChatContainerContent>
@@ -745,18 +767,27 @@ function JustoOrbAvatar({ cc }: { cc: string }) {
   )
 }
 
-function TypingPanel({ typingLabel, cc }: { typingLabel: string; cc: string }) {
+function ChatTypingIndicator({
+  typingMode,
+  typingLabel,
+  cc,
+}: {
+  typingMode: "idle" | "searching" | "thinking" | "generating"
+  typingLabel: string
+  cc: string
+}) {
+  const pattern =
+    typingMode === "searching"
+      ? "ripple-out"
+      : typingMode === "thinking"
+        ? "waterfall"
+        : "heartbeat"
   return (
     <div className="flex max-w-[92%] justify-start motion-safe:animate-in motion-safe:duration-200 motion-safe:fade-in motion-safe:slide-in-from-bottom-1">
       <JustoOrbAvatar cc={cc} />
       <div className="inline-flex items-center gap-2 rounded-2xl border border-border bg-card px-4 py-2.5 text-sm text-foreground">
-        <IconSparkles className="size-4 shrink-0 text-primary" />
-        <Loader
-          variant="text-shimmer"
-          text={typingLabel}
-          size="sm"
-          className="text-xs"
-        />
+        <GridLoader pattern={pattern} size="sm" color="amber" />
+        <span className="text-xs">{typingLabel}</span>
       </div>
     </div>
   )

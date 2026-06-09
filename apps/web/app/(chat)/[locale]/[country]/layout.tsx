@@ -125,5 +125,10 @@ export default function CountryLayout({
 }: {
   children: React.ReactNode
 }) {
-  return <>{children}</>
+  return (
+    <>
+      <style>{`html{overflow:hidden;scrollbar-width:none!important}html::-webkit-scrollbar{display:none!important}`}</style>
+      {children}
+    </>
+  )
 }
