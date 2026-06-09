@@ -116,7 +116,38 @@ export async function POST(request: Request) {
       modelMessages,
     })
 
-    return result.toTextStreamResponse()
+    const encoder = new TextEncoder()
+    const stream = new ReadableStream({
+      async start(controller) {
+        try {
+          for await (const event of result.fullStream) {
+            if (event.type === "text-delta") {
+              const { text: textContent } = event
+              controller.enqueue(
+                encoder.encode(
+                  `data: ${JSON.stringify({ type: "text", content: textContent })}\n\n`
+                )
+              )
+            } else if (event.type === "reasoning-delta") {
+              const { text: reasoningContent } = event
+              controller.enqueue(
+                encoder.encode(
+                  `data: ${JSON.stringify({ type: "reasoning", content: reasoningContent })}\n\n`
+                )
+              )
+            }
+          }
+        } catch (error) {
+          console.error("Stream error:", error)
+        } finally {
+          controller.close()
+        }
+      },
+    })
+
+    return new Response(stream, {
+      headers: { "Content-Type": "text/event-stream" },
+    })
   } catch (error) {
     console.error("Chat provider error:", error)
     return Response.json(

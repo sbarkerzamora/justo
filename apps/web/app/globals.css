@@ -227,6 +227,11 @@
   }
   html {
     @apply font-sans;
+    overflow: hidden;
+    scrollbar-width: none !important;
+  }
+  html::-webkit-scrollbar {
+    display: none !important;
   }
 }
 

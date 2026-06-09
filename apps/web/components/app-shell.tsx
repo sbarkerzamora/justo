@@ -427,7 +427,7 @@ export function AppShell({
         </AnimatePresence>
 
         {/* Main area: header + content */}
-        <div className="flex min-h-0 min-w-0 flex-1 flex-col overflow-y-auto">
+        <div className="flex min-h-0 min-w-0 flex-1 flex-col overflow-hidden">
           {/* Global header */}
           <header className="sticky top-0 z-30 border-b border-border bg-background/90 backdrop-blur-sm">
             <div className="mx-auto flex h-12 max-w-7xl items-center justify-between px-4 md:px-6">
@@ -534,7 +534,7 @@ export function AppShell({
             </div>
           </header>
 
-          <main className="min-h-0 w-full min-w-0 flex-1 flex flex-col overflow-x-hidden">
+          <main className="min-h-0 w-full min-w-0 flex-1 flex flex-col overflow-hidden">
             {children}
           </main>
         </div>

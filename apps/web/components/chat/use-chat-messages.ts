@@ -4,7 +4,7 @@ import { useRef, useState } from "react"
 
 type Role = "user" | "assistant"
 
-type ChatMessage = { id: string; role: Role; text: string }
+type ChatMessage = { id: string; role: Role; text: string; reasoning?: string }
 
 const uid = () => crypto.randomUUID()
 
@@ -13,13 +13,21 @@ export function useChatMessages() {
   const [input, setInput] = useState("")
   const queue = useRef<Promise<void>>(Promise.resolve())
 
-  const append = (role: Role, text: string) =>
-    setMessages((p) => [...p, { id: uid(), role, text }])
+  const append = (role: Role, text: string, reasoning?: string) =>
+    setMessages((p) => [...p, { id: uid(), role, text, reasoning }])
 
   const setMessageText = (id: string, text: string) => {
     setMessages((current) =>
       current.map((message) =>
         message.id === id ? { ...message, text } : message
+      )
+    )
+  }
+
+  const setMessageReasoning = (id: string, reasoning: string) => {
+    setMessages((current) =>
+      current.map((message) =>
+        message.id === id ? { ...message, reasoning } : message
       )
     )
   }
@@ -53,6 +61,7 @@ export function useChatMessages() {
     setInput,
     append,
     setMessageText,
+    setMessageReasoning,
     appendAssistant,
     resetMessages,
   }
