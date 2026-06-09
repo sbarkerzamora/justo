@@ -57,6 +57,7 @@ function Reasoning({
     onOpenChange?.(newOpen)
   }
 
+  /* eslint-disable react-hooks/set-state-in-effect */
   useEffect(() => {
     if (isStreaming && !wasAutoOpened) {
       if (!isControlled) setInternalOpen(true)
@@ -68,6 +69,7 @@ function Reasoning({
       setWasAutoOpened(false)
     }
   }, [isStreaming, wasAutoOpened, isControlled])
+  /* eslint-enable react-hooks/set-state-in-effect */
 
   return (
     <ReasoningContext.Provider
@@ -129,20 +131,24 @@ function ReasoningContent({
   const contentRef = useRef<HTMLDivElement>(null)
   const innerRef = useRef<HTMLDivElement>(null)
   const { isOpen } = useReasoningContext()
+  const [maxHeight, setMaxHeight] = useState("0px")
 
   useEffect(() => {
     if (!contentRef.current || !innerRef.current) return
 
-    const observer = new ResizeObserver(() => {
+    const updateHeight = () => {
       if (contentRef.current && innerRef.current && isOpen) {
-        contentRef.current.style.maxHeight = `${innerRef.current.scrollHeight}px`
+        const h = `${innerRef.current.scrollHeight}px`
+        contentRef.current.style.maxHeight = h
+        setMaxHeight(h)
       }
-    })
+    }
 
+    const observer = new ResizeObserver(updateHeight)
     observer.observe(innerRef.current)
 
     if (isOpen) {
-      contentRef.current.style.maxHeight = `${innerRef.current.scrollHeight}px`
+      updateHeight()
     }
 
     return () => observer.disconnect()
@@ -161,9 +167,7 @@ function ReasoningContent({
         "overflow-hidden transition-[max-height] duration-150 ease-out",
         className
       )}
-      style={{
-        maxHeight: isOpen ? contentRef.current?.scrollHeight : "0px",
-      }}
+      style={{ maxHeight: isOpen ? maxHeight : "0px" }}
       {...props}
     >
       <div

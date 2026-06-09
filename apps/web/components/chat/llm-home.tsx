@@ -170,10 +170,8 @@ export function LlmHome({
     isLoading,
     isTyping,
     typingLabel,
-    isStreamingReply,
     setLoading,
     setTyping,
-    setTypingLabel,
     setStreamingReply,
     setHasStreamChunk,
   } = useChatUI()
@@ -435,7 +433,6 @@ export function LlmHome({
       onToolCancel={handleToolCancel}
       isTyping={isTyping}
       typingLabel={typingLabel}
-      isStreaming={isStreamingReply}
       input={input}
       setInput={setInput}
       onSend={onSend}
@@ -462,7 +459,6 @@ function LlmHomeView(props: {
   onToolCancel: () => void
   isTyping: boolean
   typingLabel: string
-  isStreaming: boolean
   input: string
   setInput: (value: string) => void
   onSend: () => Promise<void>
@@ -484,7 +480,6 @@ function LlmHomeView(props: {
     onToolCancel,
     isTyping,
     typingLabel,
-    isStreaming,
     input,
     setInput,
     onSend,
