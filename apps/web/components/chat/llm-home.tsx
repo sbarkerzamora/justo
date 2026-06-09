@@ -763,7 +763,7 @@ function LlmHomeView(props: {
 function JustoOrbAvatar({ cc }: { cc: string }) {
   return (
     <div className="mr-1.5 shrink-0 overflow-hidden rounded-full sm:mr-2">
-      <AgentAvatar seed={cc} size={40} className="rounded-full" />
+      <AgentAvatar seed={cc} size={28} className="rounded-full" />
     </div>
   )
 }
@@ -791,7 +791,7 @@ function ChatTypingIndicator({
   return (
     <div className="flex max-w-[92%] justify-start motion-safe:animate-in motion-safe:duration-200 motion-safe:fade-in motion-safe:slide-in-from-bottom-1">
       <JustoOrbAvatar cc={cc} />
-      <div className="flex items-center gap-2.5 rounded-full bg-black px-4 py-2 ring-2 ring-primary/50">
+      <div className="flex items-center gap-2 rounded-full bg-black px-3 py-1 ring-2 ring-primary/50">
         <GridLoader
           blur={0}
           color={config.color}
@@ -801,7 +801,7 @@ function ChatTypingIndicator({
           rounded={false}
           size="sm"
         />
-        <span className="font-medium text-sm text-white">{typingLabel}</span>
+        <span className="font-medium text-xs text-white">{typingLabel}</span>
       </div>
     </div>
   )
