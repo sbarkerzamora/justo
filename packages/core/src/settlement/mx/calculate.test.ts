@@ -60,4 +60,22 @@ describe("calculateMexicoSettlement", () => {
     expect(vacaciones).toBeDefined()
     expect(vacaciones?.legalReference).toContain("Arts. 76")
   })
+
+  test("calcula salario proporcional segun el dia de fin del mes", () => {
+    const result = calculateMexicoSettlement({
+      countryCode: "mx",
+      employeeName: "Ana",
+      employerName: "Test MX",
+      monthlySalary: 3000,
+      frequency: "mensual",
+      unusedVacationDays: 0,
+      startDate: "2025-01-01",
+      endDate: "2026-05-25",
+    })
+
+    const sp = result.incomes.find((line) => line.label === "Salario proporcional")
+    expect(sp).toBeDefined()
+    expect(sp?.amount).toBe(2500)
+    expect(sp?.formula).toContain("25 dias")
+  })
 })

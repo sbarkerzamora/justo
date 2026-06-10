@@ -58,4 +58,22 @@ describe("calculateCostaRicaSettlement", () => {
     expect(result.incomes[1]?.label).toBe("Preaviso")
     expect(result.incomes[1]?.legalReference).toContain("Art. 28")
   })
+
+  test("calcula salario proporcional segun el dia de fin del mes", () => {
+    const result = calculateCostaRicaSettlement({
+      countryCode: "cr",
+      employeeName: "Carlos",
+      employerName: "Test CR",
+      monthlySalary: 3000,
+      frequency: "mensual",
+      unusedVacationDays: 0,
+      startDate: "2025-01-01",
+      endDate: "2026-05-15",
+    })
+
+    const sp = result.incomes.find((line) => line.label === "Salario proporcional")
+    expect(sp).toBeDefined()
+    expect(sp?.amount).toBe(1500)
+    expect(sp?.formula).toContain("15 dias")
+  })
 })

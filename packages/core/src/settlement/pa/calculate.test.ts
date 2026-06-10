@@ -57,4 +57,22 @@ describe("calculatePanamaSettlement", () => {
 
     expect(result.incomes[1]?.legalReference).toContain("Art. 225")
   })
+
+  test("calcula salario proporcional segun el dia de fin del mes", () => {
+    const result = calculatePanamaSettlement({
+      countryCode: "pa",
+      employeeName: "Luis",
+      employerName: "Test PA",
+      monthlySalary: 3000,
+      frequency: "mensual",
+      unusedVacationDays: 0,
+      startDate: "2025-01-01",
+      endDate: "2026-05-10",
+    })
+
+    const sp = result.incomes.find((line) => line.label === "Salario proporcional")
+    expect(sp).toBeDefined()
+    expect(sp?.amount).toBe(1000)
+    expect(sp?.formula).toContain("10 dias")
+  })
 })
