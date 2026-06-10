@@ -623,7 +623,7 @@ function OnboardingPanel({
               key={i}
               className="inline-flex items-center gap-1.5 rounded-full bg-muted px-2.5 py-1 text-xs text-muted-foreground"
             >
-              <span className="flex h-4 w-4 items-center justify-center rounded-full bg-primary/10 text-[9px] font-medium text-primary">
+              <span className="flex h-5 w-5 items-center justify-center rounded-full bg-primary/10 text-[11px] font-medium text-primary">
                 {i + 1}
               </span>
               {step.label}
@@ -823,12 +823,12 @@ function ScenarioCard({
         </div>
         {scenario.applicable ? (
           <span
-            className={`rounded-full px-2 py-0.5 text-[10px] font-medium ${colors.badge}`}
+            className={`rounded-full px-2 py-0.5 text-[11px] font-medium ${colors.badge}`}
           >
             {fmt(scenario.total)}
           </span>
         ) : (
-          <span className="rounded-full bg-muted px-2 py-0.5 text-[10px] font-medium text-muted-foreground">
+          <span className="rounded-full bg-muted px-2 py-0.5 text-[11px] font-medium text-muted-foreground">
             N/A
           </span>
         )}
@@ -856,8 +856,8 @@ function ScenarioCard({
                       {fmt(line.amount)}
                     </span>
                   </div>
-                  <p className="text-[10px]">{line.formula}</p>
-                  <p className="text-[9px] text-muted-foreground/60">
+                  <p className="text-[11px]">{line.formula}</p>
+                  <p className="text-[11px] text-muted-foreground/60">
                     {line.legalReference}
                   </p>
                 </div>
