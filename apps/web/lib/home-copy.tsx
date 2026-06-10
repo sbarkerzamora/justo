@@ -15,6 +15,7 @@ type HomeCopy = {
   thinking: string
   assistantThinking: string
   typing: string
+  typingMessages: string[]
   legalDisclaimer: string
   laborAssistant: string
   welcome: (countryName: string) => ReactNode
@@ -119,6 +120,28 @@ export const homeCopy: Record<Locale, HomeCopy> = {
     thinking: "Pensando...",
     assistantThinking: "Justo esta pensando",
     typing: "Escribiendo",
+    typingMessages: [
+      "Interrogando al Codigo de Trabajo...",
+      "Consultando con los jueces laborales...",
+      "Revisando el expediente...",
+      "Invocando el espiritu de la ley laboral...",
+      "Puliendo los articulos legales...",
+      "Descifrando jerigonza juridica...",
+      "Sacando punta al lapiz legal...",
+      "Ajustando corbata y toga...",
+      "Buscando en el archivo muerto...",
+      "Contando vacaciones una por una...",
+      "Calculando el aguinaldo con carino...",
+      "Midieron el cafe de la oficina...",
+      "Consultando el oraculo laboral...",
+      "Aceitando los engranajes legales...",
+      "Cotejando con el libro gordo...",
+      "Preguntandole a un abogado imaginario...",
+      "Haciendo malabares con las formulas...",
+      "Traduciendo de legal a humano...",
+      "Buscando el articulo perdido...",
+      "Sacando la calculadora de bolsillo...",
+    ],
     legalDisclaimer: "No constituye asesoria legal profesional",
     laborAssistant: "Asistente laboral",
     welcome: (countryName) => (
@@ -242,6 +265,28 @@ export const homeCopy: Record<Locale, HomeCopy> = {
     thinking: "Thinking...",
     assistantThinking: "Justo is thinking",
     typing: "Writing",
+    typingMessages: [
+      "Grilling the Labor Code...",
+      "Consulting the labor judges...",
+      "Reviewing the case file...",
+      "Summoning the spirit of labor law...",
+      "Polishing the legal articles...",
+      "Deciphering legal jargon...",
+      "Sharpening the legal pencil...",
+      "Adjusting tie and robe...",
+      "Digging through the archives...",
+      "Counting vacations one by one...",
+      "Calculating bonuses with care...",
+      "Measuring the office coffee...",
+      "Consulting the labor oracle...",
+      "Oiling the legal gears...",
+      "Cross-checking the big book...",
+      "Asking an imaginary lawyer...",
+      "Juggling the formulas...",
+      "Translating from legal to human...",
+      "Finding the missing article...",
+      "Getting the pocket calculator...",
+    ],
     legalDisclaimer: "Not professional legal advice",
     laborAssistant: "Labor assistant",
     welcome: (countryName) => (

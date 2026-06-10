@@ -28,6 +28,10 @@
 - [x] proxy.ts: permite paso de `/en/tools` y `/en/guia-laboral`.
 - [x] Sidebar/header links locale-aware.
 - [x] Salario-proporcional: AR, CL, GT, NI, CO, PE.
+- [x] GridLoader: 20 mensajes rotativos humorísticos (ES/EN) con animación TextSwap.
+- [x] Chat container: prompt-kit (overflow-y-auto, reemplaza wrapper propio).
+- [x] Chat: mensajes assistant minimalistas (sin borde/card) + enlaces a docs por tópico.
+- [x] README: roadmap compacto (✅ Done + 🔜 4 prioridades detalladas).
 
 ---
 
@@ -243,6 +247,9 @@ Extraer preaviso de las fórmulas existentes en un cálculo independiente.
 | Sidebar & Header | ✅ ES/EN locale-aware |
 | RAG | ✅ V2 |
 | i18n EN (web) | ✅ tools, tools/[slug], guia-laboral, sidebar, LanguageToggle |
+| Chat assistant messages | ✅ redesigned minimal + per-topic doc links |
+| GridLoader typing labels | ✅ 20 rotating humorous messages (ES/EN) |
+| Chat container | ✅ prompt-kit (use-stick-to-bottom wrapper) |
 | Proxy content routes | ✅ fix EN routes |
 | Corpus: salario-proporcional | ✅ 6 países |
 | **Corpus: ISR/IR** | ⬜ 9 países (🔜 #1) |

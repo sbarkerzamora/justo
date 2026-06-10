@@ -1,5 +1,20 @@
 "use client"
 
+function _injectTypingStyles() {
+  if (typeof document === "undefined") return
+  if (document.getElementById("justo-typing-styles")) return
+  const style = document.createElement("style")
+  style.id = "justo-typing-styles"
+  style.textContent = `
+.t-typing-label{display:inline-block;transform:translateY(0);filter:blur(0);opacity:1;transition:transform .16s ease-in-out,filter .16s ease-in-out,opacity .16s ease-in-out;will-change:transform,filter,opacity}
+.t-typing-label.t-typing-exit{transform:translateY(-4px);filter:blur(2px);opacity:0}
+.t-typing-label.t-typing-enter{transform:translateY(3px);filter:blur(1px);opacity:0;transition:none}
+@media (prefers-reduced-motion:reduce){.t-typing-label{transition:none!important}}
+`
+  document.head.appendChild(style)
+}
+_injectTypingStyles()
+
 import {
   IconArrowUp,
   IconCalculator,
@@ -14,7 +29,7 @@ import {
 import { AnimatePresence, motion } from "framer-motion"
 import Image from "next/image"
 import { useSearchParams } from "next/navigation"
-import { type ComponentType, useCallback, useRef, useState } from "react"
+import { type ComponentType, useCallback, useEffect, useRef, useState } from "react"
 import type { Components } from "react-markdown"
 import AgentAvatar from "@/components/smoothui/agent-avatar"
 import { getCountryInfo } from "@/lib/countries"
@@ -168,11 +183,9 @@ export function LlmHome({
   const {
     isLoading,
     isTyping,
-    typingLabel,
     typingMode,
     setLoading,
     setTyping,
-    setTypingLabel,
     setTypingMode,
     setStreamingReply,
     setHasStreamChunk,
@@ -211,7 +224,6 @@ export function LlmHome({
   const sendLegalQuery = async (text: string) => {
     setLoading(true)
     setTyping(true)
-    setTypingLabel(copy.searching)
     setTypingMode("searching")
     const docsLink = getLegalDocsLink(cc)
     const fallbackMessage = copy.fallback(docsLink)
@@ -266,7 +278,6 @@ export function LlmHome({
 
       ensureAssistantMessage()
       setTypingMode("thinking")
-      setTypingLabel(copy.thinking)
 
       const reader = res.body.getReader()
       const decoder = new TextDecoder()
@@ -309,7 +320,6 @@ export function LlmHome({
                 setHasStreamChunk(true)
                 setTyping(false)
                 setTypingMode("generating")
-                setTypingLabel(copy.typing)
               }
               await revealText(streamedText)
             } else if (parsed.type === "reasoning") {
@@ -320,7 +330,6 @@ export function LlmHome({
                 setHasStreamChunk(true)
                 setTyping(false)
                 setTypingMode("generating")
-                setTypingLabel(copy.typing)
               }
               setMessageReasoning(assistantMessageId, reasoningText)
             } else if (parsed.type === "topics") {
@@ -356,7 +365,6 @@ export function LlmHome({
                 setHasStreamChunk(true)
                 setTyping(false)
                 setTypingMode("generating")
-                setTypingLabel(copy.typing)
               }
               await revealText(streamedText)
             } else if (parsed.type === "reasoning") {
@@ -367,7 +375,6 @@ export function LlmHome({
                 setHasStreamChunk(true)
                 setTyping(false)
                 setTypingMode("generating")
-                setTypingLabel(copy.typing)
               }
               setMessageReasoning(assistantMessageId, reasoningText)
             }
@@ -461,7 +468,6 @@ export function LlmHome({
       onToolComplete={handleToolComplete}
       onToolCancel={handleToolCancel}
       isTyping={isTyping}
-      typingLabel={typingLabel}
       typingMode={typingMode}
       input={input}
       setInput={setInput}
@@ -488,7 +494,6 @@ function LlmHomeView(props: {
   ) => void
   onToolCancel: () => void
   isTyping: boolean
-  typingLabel: string
   typingMode: "idle" | "searching" | "thinking" | "generating"
   input: string
   setInput: (value: string) => void
@@ -510,7 +515,6 @@ function LlmHomeView(props: {
     onToolComplete,
     onToolCancel,
     isTyping,
-    typingLabel,
     typingMode,
     input,
     setInput,
@@ -674,7 +678,7 @@ function LlmHomeView(props: {
                 {isTyping ? (
           <ChatTypingIndicator
             typingMode={typingMode}
-            typingLabel={typingLabel}
+            typingMessages={copy.typingMessages}
           />
                 ) : null}
                 <ChatContainerScrollAnchor />
@@ -792,15 +796,38 @@ const typingConfig: Record<
 
 function ChatTypingIndicator({
   typingMode,
-  typingLabel,
+  typingMessages,
 }: {
   typingMode: "idle" | "searching" | "thinking" | "generating"
-  typingLabel: string
+  typingMessages: string[]
 }) {
+  const [labelIndex, setLabelIndex] = useState(0)
+  const labelRef = useRef<HTMLSpanElement>(null)
+
+  useEffect(() => {
+    if (typingMessages.length === 0) return
+    const interval = setInterval(() => {
+      const el = labelRef.current
+      if (!el) {
+        setLabelIndex((i) => (i + 1) % typingMessages.length)
+        return
+      }
+      el.classList.add("t-typing-exit")
+      setTimeout(() => {
+        setLabelIndex((i) => (i + 1) % typingMessages.length)
+        el.classList.remove("t-typing-exit")
+        el.classList.add("t-typing-enter")
+        void el.offsetWidth
+        el.classList.remove("t-typing-enter")
+      }, 160)
+    }, 2000)
+    return () => clearInterval(interval)
+  }, [typingMessages.length])
+
   const config =
     typingMode === "idle" ? typingConfig.searching : typingConfig[typingMode]
   return (
-    <div className="flex max-w-[92%] justify-start motion-safe:animate-in motion-safe:duration-200 motion-safe:fade-in motion-safe:slide-in-from-bottom-1">
+    <div className="flex max-w-[92%] justify-start px-2 sm:px-4">
       <div className="flex items-center gap-1.5 rounded-full bg-black px-2.5 py-1 ring-2 ring-primary/50">
         <GridLoader
           blur={0}
@@ -811,7 +838,9 @@ function ChatTypingIndicator({
           rounded={false}
           size={10}
         />
-        <span className="font-medium text-[11px] text-white">{typingLabel}</span>
+        <span className="t-typing-label font-medium text-[11px] text-white" ref={labelRef}>
+          {typingMessages[labelIndex] ?? typingMessages[0] ?? ""}
+        </span>
       </div>
     </div>
   )
