@@ -447,13 +447,13 @@ export function SettlementTool({
                         : "text"
                 }
                 placeholder={copy.askPlaceholder}
-                className="h-12 w-full rounded-2xl border border-border bg-card px-4 text-sm text-foreground placeholder:text-muted-foreground outline-none transition-colors focus:border-foreground/30"
+                className="h-12 w-full rounded-2xl border border-border bg-card pl-4 pr-14 text-sm text-foreground placeholder:text-muted-foreground outline-none transition-colors focus:border-foreground/30"
               />
               <button
                 type="button"
                 onClick={handleSubmit}
                 disabled={!inputValue.trim()}
-                className="absolute right-2 top-1/2 -translate-y-1/2 inline-flex h-8 items-center justify-center rounded-full bg-primary px-3 text-xs font-medium text-primary-foreground disabled:opacity-30"
+                className="absolute right-2 top-1/2 -translate-y-1/2 inline-flex h-10 min-h-[44px] min-w-[44px] items-center justify-center rounded-full bg-primary px-3 text-xs font-medium text-primary-foreground disabled:opacity-30"
               >
                 {copy.send}
               </button>
@@ -490,8 +490,8 @@ function OnboardingPanel({
         <p className="text-sm leading-relaxed text-muted-foreground">{description}</p>
         <div className="flex flex-wrap justify-center gap-2">
           {steps.map((step, i) => (
-            <span key={i} className="inline-flex items-center gap-1.5 rounded-full bg-muted px-2.5 py-1 text-[11px] text-muted-foreground">
-              <span className="flex h-4 w-4 items-center justify-center rounded-full bg-primary/10 text-[9px] font-medium text-primary">
+            <span key={i} className="inline-flex items-center gap-1.5 rounded-full bg-muted px-2.5 py-1 text-xs text-muted-foreground">
+              <span className="flex h-5 w-5 items-center justify-center rounded-full bg-primary/10 text-[11px] font-medium text-primary">
                 {i + 1}
               </span>
               {step.label}
@@ -592,22 +592,22 @@ function EditPanelTool({
       {editMode === "salary" ? (
         <label className="grid gap-2 text-sm">
           <span className="text-foreground">{copy.newMonthlySalary}</span>
-          <input inputMode="decimal" value={editSalary} onChange={(e) => onSetEditField("editSalary", formatCurrencyInput(e.target.value))} className="h-10 rounded-xl border border-border bg-background px-3 text-foreground outline-none focus:border-foreground/30" />
+          <input inputMode="decimal" value={editSalary} onChange={(e) => onSetEditField("editSalary", formatCurrencyInput(e.target.value))} className="h-11 rounded-xl border border-border bg-background px-3 text-foreground outline-none focus:border-foreground/30" />
         </label>
       ) : editMode === "vacations" ? (
         <label className="grid gap-2 text-sm">
           <span className="text-foreground">{copy.newVacationDays}</span>
-          <input inputMode="numeric" value={editVacations} onChange={(e) => onSetEditField("editVacations", formatNumberInput(e.target.value))} className="h-10 rounded-xl border border-border bg-background px-3 text-foreground outline-none focus:border-foreground/30" />
+          <input inputMode="numeric" value={editVacations} onChange={(e) => onSetEditField("editVacations", formatNumberInput(e.target.value))} className="h-11 rounded-xl border border-border bg-background px-3 text-foreground outline-none focus:border-foreground/30" />
         </label>
       ) : editMode === "dates" ? (
         <div className="grid gap-3 text-sm">
           <label className="grid gap-1.5">
             <span className="text-foreground">{copy.startDate}</span>
-            <input inputMode="numeric" pattern="[0-9/]*" value={editStartDate} onChange={(e) => onSetEditField("editStartDate", formatDateInput(e.target.value))} className="h-10 rounded-xl border border-border bg-background px-3 text-foreground outline-none focus:border-foreground/30" />
+            <input inputMode="numeric" pattern="[0-9/]*" value={editStartDate} onChange={(e) => onSetEditField("editStartDate", formatDateInput(e.target.value))} className="h-11 rounded-xl border border-border bg-background px-3 text-foreground outline-none focus:border-foreground/30" />
           </label>
           <label className="grid gap-1.5">
             <span className="text-foreground">{copy.endDate}</span>
-            <input inputMode="numeric" pattern="[0-9/]*" value={editEndDate} onChange={(e) => onSetEditField("editEndDate", formatDateInput(e.target.value))} className="h-10 rounded-xl border border-border bg-background px-3 text-foreground outline-none focus:border-foreground/30" />
+            <input inputMode="numeric" pattern="[0-9/]*" value={editEndDate} onChange={(e) => onSetEditField("editEndDate", formatDateInput(e.target.value))} className="h-11 rounded-xl border border-border bg-background px-3 text-foreground outline-none focus:border-foreground/30" />
           </label>
         </div>
       ) : null}
@@ -641,7 +641,7 @@ function ResultPanelTool({
       <div className="rounded-2xl border border-border bg-card p-6 shadow-sm">
         <div className="flex items-start justify-between">
           <div>
-            <div className="mb-1 inline-flex items-center gap-1.5 rounded-full border border-border bg-card px-2.5 py-1 text-[11px] font-medium text-muted-foreground">
+            <div className="mb-1 inline-flex items-center gap-1.5 rounded-full border border-border bg-card px-2.5 py-1 text-xs font-medium text-muted-foreground">
               <IconFileText className="size-3" />
               {copy.legalVersion}: {result.legalCorpusVersion}
             </div>
@@ -663,7 +663,7 @@ function ResultPanelTool({
               <IconTrendingUp className="size-4 text-emerald-600" />
             </div>
             <div>
-              <p className="text-[11px] text-muted-foreground">{copy.grossIncome}</p>
+              <p className="text-xs text-muted-foreground">{copy.grossIncome}</p>
               <p className="text-sm font-semibold text-foreground">{fmt(result.grossIncome)}</p>
             </div>
           </div>
@@ -672,7 +672,7 @@ function ResultPanelTool({
               <IconTrendingDown className="size-4 text-rose-600" />
             </div>
             <div>
-              <p className="text-[11px] text-muted-foreground">{copy.deductions}</p>
+              <p className="text-xs text-muted-foreground">{copy.deductions}</p>
               <p className="text-sm font-semibold text-foreground">{fmt(result.totalDeductions)}</p>
             </div>
           </div>
@@ -695,11 +695,11 @@ function ResultPanelTool({
                 <div key={l.label} className="flex items-start justify-between gap-4 text-sm">
                   <div className="min-w-0">
                     <p className="font-medium text-foreground">{l.label}</p>
-                    <p className="text-[11px] text-muted-foreground">{l.formula}</p>
+                    <p className="text-xs text-muted-foreground">{l.formula}</p>
                   </div>
                   <div className="text-right shrink-0">
                     <p className="font-medium text-emerald-600">{fmt(l.amount)}</p>
-                    <p className="text-[10px] text-muted-foreground">{l.legalReference}</p>
+                    <p className="text-[11px] text-muted-foreground">{l.legalReference}</p>
                   </div>
                 </div>
               ))}
@@ -710,11 +710,11 @@ function ResultPanelTool({
                 <div key={l.label} className="flex items-start justify-between gap-4 text-sm">
                   <div className="min-w-0">
                     <p className="font-medium text-foreground">{l.label}</p>
-                    <p className="text-[11px] text-muted-foreground">{l.formula}</p>
+                    <p className="text-xs text-muted-foreground">{l.formula}</p>
                   </div>
                   <div className="text-right shrink-0">
                     <p className="font-medium text-rose-600">{fmt(l.amount)}</p>
-                    <p className="text-[10px] text-muted-foreground">{l.legalReference}</p>
+                    <p className="text-[11px] text-muted-foreground">{l.legalReference}</p>
                   </div>
                 </div>
               ))}

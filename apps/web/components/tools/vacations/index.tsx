@@ -408,13 +408,13 @@ export function VacationsTool({
             {step === "done" ? "OK" : `P${stepIndex(step)}`}
           </span>
         </div>
-        <div className="h-1.5 rounded-full bg-muted">
+        <div className="h-2 rounded-full bg-muted">
           <div
             className="h-1.5 rounded-full bg-primary transition-all duration-300"
             style={{ width: `${(stepIndex(step) / 6) * 100}%` }}
           />
         </div>
-        <div className="flex items-center gap-1.5 text-[11px] text-muted-foreground">
+        <div className="flex items-center gap-1.5 text-xs text-muted-foreground">
           <Image
             src={`https://flagcdn.com/w40/${countryCode}.png`}
             alt={countryName}
@@ -536,13 +536,13 @@ export function VacationsTool({
                         : "text"
                 }
                 placeholder={copy.askPlaceholder}
-                className="h-12 w-full rounded-2xl border border-border bg-card px-4 text-sm text-foreground transition-colors outline-none placeholder:text-muted-foreground focus:border-foreground/30"
+                className="h-12 w-full rounded-2xl border border-border bg-card pl-4 pr-14 text-sm text-foreground transition-colors outline-none placeholder:text-muted-foreground focus:border-foreground/30"
               />
               <button
                 type="button"
                 onClick={handleSubmit}
                 disabled={!inputValue.trim()}
-                className="absolute top-1/2 right-2 inline-flex h-8 -translate-y-1/2 items-center justify-center rounded-full bg-primary px-3 text-xs font-medium text-primary-foreground disabled:opacity-30"
+                className="absolute top-1/2 right-2 inline-flex h-10 min-h-[44px] min-w-[44px] -translate-y-1/2 items-center justify-center rounded-full bg-primary px-3 text-xs font-medium text-primary-foreground disabled:opacity-30"
               >
                 {copy.send}
               </button>
@@ -585,7 +585,7 @@ function OnboardingPanel({
           {steps.map((step, i) => (
             <span
               key={i}
-              className="inline-flex items-center gap-1.5 rounded-full bg-muted px-2.5 py-1 text-[11px] text-muted-foreground"
+              className="inline-flex items-center gap-1.5 rounded-full bg-muted px-2.5 py-1 text-xs text-muted-foreground"
             >
               <span className="flex h-4 w-4 items-center justify-center rounded-full bg-primary/10 text-[9px] font-medium text-primary">
                 {i + 1}
@@ -735,7 +735,7 @@ function EditPanel({
             onChange={(e) =>
               onSetEditField("editSalary", formatCurrencyInput(e.target.value))
             }
-            className="h-10 rounded-xl border border-border bg-background px-3 text-foreground outline-none focus:border-foreground/30"
+            className="h-11 rounded-xl border border-border bg-background px-3 text-foreground outline-none focus:border-foreground/30"
           />
         </label>
       ) : editMode === "vacations" ? (
@@ -747,7 +747,7 @@ function EditPanel({
             onChange={(e) =>
               onSetEditField("editVacations", formatNumberInput(e.target.value))
             }
-            className="h-10 rounded-xl border border-border bg-background px-3 text-foreground outline-none focus:border-foreground/30"
+            className="h-11 rounded-xl border border-border bg-background px-3 text-foreground outline-none focus:border-foreground/30"
           />
         </label>
       ) : editMode === "dates" ? (
@@ -761,7 +761,7 @@ function EditPanel({
               onChange={(e) =>
                 onSetEditField("editStartDate", formatDateInput(e.target.value))
               }
-              className="h-10 rounded-xl border border-border bg-background px-3 text-foreground outline-none focus:border-foreground/30"
+              className="h-11 rounded-xl border border-border bg-background px-3 text-foreground outline-none focus:border-foreground/30"
             />
           </label>
           <label className="grid gap-1.5">
@@ -773,7 +773,7 @@ function EditPanel({
               onChange={(e) =>
                 onSetEditField("editEndDate", formatDateInput(e.target.value))
               }
-              className="h-10 rounded-xl border border-border bg-background px-3 text-foreground outline-none focus:border-foreground/30"
+              className="h-11 rounded-xl border border-border bg-background px-3 text-foreground outline-none focus:border-foreground/30"
             />
           </label>
         </div>
@@ -848,7 +848,7 @@ function ResultPanel({
               <IconSun className="size-4 text-blue-600" />
             </div>
             <div>
-              <p className="text-[11px] text-muted-foreground">
+              <p className="text-xs text-muted-foreground">
                 {locale === "en" ? "Accrued days" : "Días acumulados"}
               </p>
               <p className="text-sm font-semibold text-foreground">
@@ -861,7 +861,7 @@ function ResultPanel({
               <IconBeach className="size-4 text-emerald-600" />
             </div>
             <div>
-              <p className="text-[11px] text-muted-foreground">
+              <p className="text-xs text-muted-foreground">
                 {locale === "en" ? "Used days" : "Días gozados"}
               </p>
               <p className="text-sm font-semibold text-foreground">
@@ -874,7 +874,7 @@ function ResultPanel({
               <IconCalendar className="size-4 text-amber-600" />
             </div>
             <div>
-              <p className="text-[11px] text-muted-foreground">
+              <p className="text-xs text-muted-foreground">
                 {locale === "en" ? "Pending days" : "Días pendientes"}
               </p>
               <p className="text-sm font-semibold text-foreground">
@@ -887,7 +887,7 @@ function ResultPanel({
               <IconCoin className="size-4 text-violet-600" />
             </div>
             <div>
-              <p className="text-[11px] text-muted-foreground">
+              <p className="text-xs text-muted-foreground">
                 {locale === "en" ? "Daily salary" : "Salario diario"}
               </p>
               <p className="text-sm font-semibold text-foreground">
@@ -899,7 +899,7 @@ function ResultPanel({
 
         <div className="mt-4 space-y-2 rounded-xl bg-muted/30 p-3">
           <div>
-            <p className="text-[11px] text-muted-foreground">
+            <p className="text-xs text-muted-foreground">
               {locale === "en" ? "Formula" : "Fórmula"}
             </p>
             <p className="mt-0.5 font-mono text-sm text-foreground">
@@ -907,7 +907,7 @@ function ResultPanel({
             </p>
           </div>
           <div>
-            <p className="text-[11px] text-muted-foreground">
+            <p className="text-xs text-muted-foreground">
               {locale === "en" ? "Legal reference" : "Referencia legal"}
             </p>
             <p className="mt-0.5 text-sm text-foreground">

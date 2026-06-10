@@ -337,7 +337,7 @@ export function ContractTool({
           <span className="max-sm:hidden">{stepTitle()}</span>
         </div>
         {step !== "welcome" && step !== "done" && (
-          <div className="h-1.5 rounded-full bg-muted">
+          <div className="h-2 rounded-full bg-muted">
             <div
               className="h-1.5 rounded-full bg-primary transition-all duration-300"
               style={{
@@ -729,7 +729,7 @@ function MultiFieldInput({
           ))}
         </div>
       </div>
-      <div className="flex gap-2">
+      <div className="flex flex-wrap gap-2">
         <button
           type="button"
           onClick={onBack}
@@ -876,7 +876,7 @@ function JobInfoStep({
           />
         </div>
       </div>
-      <div className="flex gap-2">
+      <div className="flex flex-wrap gap-2">
         <button
           type="button"
           onClick={onBack}
@@ -1006,7 +1006,7 @@ function ContractTypeStep({
           </div>
         </div>
       </div>
-      <div className="flex gap-2">
+      <div className="flex flex-wrap gap-2">
         <button
           type="button"
           onClick={onBack}
@@ -1155,7 +1155,7 @@ function SalaryStep({
           />
         </div>
       </div>
-      <div className="flex gap-2">
+      <div className="flex flex-wrap gap-2">
         <button
           type="button"
           onClick={onBack}

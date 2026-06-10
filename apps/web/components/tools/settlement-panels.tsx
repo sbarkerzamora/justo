@@ -62,8 +62,8 @@ function ActionButton({
       onClick={onClick}
       className={
         primary
-          ? "inline-flex items-center gap-2 rounded-xl bg-primary px-3 py-2 text-sm font-medium text-primary-foreground"
-          : "inline-flex items-center gap-2 rounded-xl border border-border bg-card px-3 py-2 text-sm font-medium text-foreground"
+          ? "inline-flex items-center gap-2 rounded-xl bg-primary px-3 py-2.5 text-sm font-medium text-primary-foreground min-h-[44px]"
+          : "inline-flex items-center gap-2 rounded-xl border border-border bg-card px-3 py-2.5 text-sm font-medium text-foreground min-h-[44px]"
       }
     >
       {icon}
@@ -106,7 +106,7 @@ export function ProgressHeader({
           style={{ width: `${(stepIdx / 8) * 100}%` }}
         />
       </div>
-      <div className="flex items-center gap-1.5 text-[11px] text-muted-foreground">
+      <div className="flex items-center gap-1.5 text-xs text-muted-foreground">
         <Image
           src={`https://flagcdn.com/w40/${cc}.png`}
           alt={countryName}
@@ -138,13 +138,13 @@ export function FrequencyPicker({
       <p className="mb-2 text-xs font-medium text-muted-foreground">
         {copy.frequencyOption}
       </p>
-      <div className="flex gap-2">
+      <div className="flex flex-wrap gap-2">
         {(["mensual", "quincenal", "semanal"] as const).map((f) => (
           <button
             key={f}
             type="button"
             onClick={() => onSelect(f)}
-            className="rounded-xl border border-border px-3 py-2 text-sm font-medium text-foreground capitalize transition-colors duration-200 hover:bg-accent"
+            className="rounded-xl border border-border px-3 py-2.5 text-sm font-medium text-foreground capitalize transition-colors duration-200 hover:bg-accent min-h-[44px] min-w-[44px]"
           >
             {f}
           </button>
@@ -240,7 +240,7 @@ export function EditPanel({
             inputMode="decimal"
             value={editSalary}
             onChange={(e) => onSetEditField("editSalary", e.target.value)}
-            className="h-10 rounded-xl border border-border bg-background px-3 text-foreground"
+            className="h-11 rounded-xl border border-border bg-background px-3 text-foreground"
           />
         </label>
       ) : null}
@@ -251,7 +251,7 @@ export function EditPanel({
             inputMode="numeric"
             value={editVacations}
             onChange={(e) => onSetEditField("editVacations", e.target.value)}
-            className="h-10 rounded-xl border border-border bg-background px-3 text-foreground"
+            className="h-11 rounded-xl border border-border bg-background px-3 text-foreground"
           />
         </label>
       ) : null}
@@ -266,7 +266,7 @@ export function EditPanel({
               autoComplete="off"
               value={editStartDate}
               onChange={(e) => onSetEditField("editStartDate", e.target.value)}
-              className="h-10 rounded-xl border border-border bg-background px-3 text-foreground"
+              className="h-11 rounded-xl border border-border bg-background px-3 text-foreground"
             />
           </label>
           <label className="grid gap-1">
@@ -278,7 +278,7 @@ export function EditPanel({
               autoComplete="off"
               value={editEndDate}
               onChange={(e) => onSetEditField("editEndDate", e.target.value)}
-              className="h-10 rounded-xl border border-border bg-background px-3 text-foreground"
+              className="h-11 rounded-xl border border-border bg-background px-3 text-foreground"
             />
           </label>
         </div>
@@ -321,7 +321,7 @@ export function ResultPanel({
       <p className="mt-1 text-xs text-muted-foreground">
         {copy.legalVersion}: {result.result.legalCorpusVersion}
       </p>
-      <p className="mt-3 text-2xl font-semibold text-primary">
+      <p className="mt-3 text-3xl font-bold text-primary">
         {copy.net}: {fmt(result.result.netTotal)}
       </p>
       <div className="mt-3 grid gap-2 text-sm">
@@ -351,7 +351,7 @@ export function ResultPanel({
       <button
         type="button"
         onClick={() => void onExportPdf()}
-        className="mt-4 inline-flex items-center gap-2 rounded-xl border border-border bg-card px-4 py-2 text-sm font-semibold text-foreground transition-colors duration-200 hover:bg-accent"
+        className="mt-4 inline-flex items-center gap-2 rounded-xl border border-border bg-card px-4 py-2.5 text-sm font-semibold text-foreground transition-colors duration-200 hover:bg-accent min-h-[44px]"
       >
         <IconDownload className="size-4" />
         {copy.downloadPdf}
@@ -360,14 +360,14 @@ export function ResultPanel({
         <button
           type="button"
           onClick={startFlow}
-          className="inline-flex items-center justify-center rounded-xl bg-primary px-4 py-2 text-sm font-semibold text-primary-foreground transition-opacity duration-200 hover:opacity-90"
+          className="inline-flex items-center justify-center rounded-xl bg-primary px-4 py-2.5 text-sm font-semibold text-primary-foreground transition-opacity duration-200 hover:opacity-90 min-h-[44px]"
         >
           {copy.calculateAgain}
         </button>
         <button
           type="button"
           onClick={() => void backToLegalChat()}
-          className="inline-flex items-center justify-center rounded-xl border border-border bg-card px-4 py-2 text-sm font-semibold text-foreground transition-colors duration-200 hover:bg-accent"
+          className="inline-flex items-center justify-center rounded-xl border border-border bg-card px-4 py-2.5 text-sm font-semibold text-foreground transition-colors duration-200 hover:bg-accent min-h-[44px]"
         >
           {copy.writeQuestion}
         </button>
@@ -401,7 +401,7 @@ export function LastCalculationPanel({
       <button
         type="button"
         onClick={() => void onExportPdf(lastCalculation.input)}
-        className="mt-3 inline-flex items-center gap-2 rounded-xl border border-border bg-card px-4 py-2 text-sm font-semibold text-foreground transition-colors duration-200 hover:bg-accent"
+        className="mt-3 inline-flex items-center gap-2 rounded-xl border border-border bg-card px-4 py-2.5 text-sm font-semibold text-foreground transition-colors duration-200 hover:bg-accent min-h-[44px]"
       >
         <IconDownload className="size-4" />
         {copy.downloadPdf}
