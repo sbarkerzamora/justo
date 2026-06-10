@@ -30,6 +30,7 @@ import {
   formatDateInput,
   parseCurrencyInput,
 } from "@/components/tools/input-formatters"
+import { StepNavigation } from "@/components/tools/step-navigation"
 
 export type TerminationStep =
   | "welcome"
@@ -545,7 +546,7 @@ export function TerminationTool({
                 {askText(step)}
               </p>
             </div>
-            <div className="relative w-full max-w-xl pb-4">
+            <div className="w-full max-w-xl">
               <input
                 ref={inputRef}
                 value={inputValue}
@@ -556,34 +557,30 @@ export function TerminationTool({
                       : formatDateInput(e.target.value),
                   )
                 }
-                onKeyDown={(e) => {
-                  if (e.key === "Enter") {
-                    e.preventDefault()
-                    handleSubmit()
-                  }
-                }}
                 inputMode={step === "monthlySalary" ? "decimal" : "text"}
                 placeholder={
                   step === "monthlySalary"
                     ? copy.askPlaceholder
                     : copy.endDate
                 }
-                className="h-12 w-full rounded-2xl border border-border bg-card pl-4 pr-14 text-sm text-foreground transition-colors outline-none placeholder:text-muted-foreground focus:border-foreground/30"
+                className="h-12 w-full rounded-2xl border border-border bg-card pl-4 pr-4 text-sm text-foreground transition-colors outline-none placeholder:text-muted-foreground focus:border-foreground/30"
               />
-              <button
-                type="button"
-                onClick={handleSubmit}
-                disabled={!inputValue.trim()}
-                className="absolute top-1/2 right-2 inline-flex h-10 min-h-[44px] min-w-[44px] -translate-y-1/2 items-center justify-center rounded-full bg-primary px-3 text-xs font-medium text-primary-foreground disabled:opacity-30"
-              >
-                {copy.send}
-              </button>
             </div>
-            {step !== "monthlySalary" ? (
-              <button type="button" onClick={handleBack} className="mt-2 inline-flex items-center gap-1 text-xs font-medium text-muted-foreground transition-colors hover:text-foreground">{copy.backToPrevious}</button>
-            ) : null}
           </div>
         )}
+
+        {step !== "welcome" &&
+          step !== "confirm" &&
+          step !== "done" && (
+            <StepNavigation
+              onBack={handleBack}
+              onContinue={handleSubmit}
+              canContinue={!!inputValue.trim()}
+              showBack={step !== "monthlySalary"}
+              backLabel={copy.backToPrevious}
+              continueLabel={copy.send}
+            />
+          )}
       </div>
     </div>
   )
@@ -813,10 +810,12 @@ function ScenarioCard({
   scenario,
   fmt,
   locale,
+  copy,
 }: {
   scenario: TerminationScenario
   fmt: (v: number) => string
   locale: Locale
+  copy: typeof homeCopy["es"] | typeof homeCopy["en"]
 }) {
   const colors = scenarioColors[scenario.type] ?? {
     border: "border-border",
@@ -851,7 +850,7 @@ function ScenarioCard({
 
       {!scenario.applicable ? (
         <p className="text-xs text-muted-foreground mt-2">
-          {scenario.note ?? (locale === "en" ? "Not applicable for this case." : "No aplica para este caso.")}
+          {scenario.note ?? copy.scenarioFallback}
         </p>
       ) : (
         <>
@@ -951,6 +950,7 @@ function ResultPanel({
               scenario={scenario}
               fmt={fmt}
               locale={locale}
+              copy={copy}
             />
           )
         })}

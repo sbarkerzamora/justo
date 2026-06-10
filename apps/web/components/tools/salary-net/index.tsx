@@ -26,6 +26,7 @@ import {
   formatCurrencyInput,
   parseCurrencyInput,
 } from "@/components/tools/input-formatters"
+import { StepNavigation } from "@/components/tools/step-navigation"
 
 export type SalaryNetStep =
   | "welcome"
@@ -489,43 +490,35 @@ export function SalaryNetTool({
                 {askText(step)}
               </p>
             </div>
-            <div className="relative w-full max-w-xl pb-4">
+            <div className="w-full max-w-xl">
               <input
                 ref={inputRef}
                 value={inputValue}
                 onChange={(e) =>
                   setInputValue(formatCurrencyInput(e.target.value))
                 }
-                onKeyDown={(e) => {
-                  if (e.key === "Enter") {
-                    e.preventDefault()
-                    handleSubmit()
-                  }
-                }}
                 inputMode="decimal"
                 placeholder={copy.askPlaceholder}
-                className="h-12 w-full rounded-2xl border border-border bg-card pl-4 pr-14 text-sm text-foreground transition-colors outline-none placeholder:text-muted-foreground focus:border-foreground/30"
+                className="h-12 w-full rounded-2xl border border-border bg-card pl-4 pr-4 text-sm text-foreground transition-colors outline-none placeholder:text-muted-foreground focus:border-foreground/30"
               />
-              <button
-                type="button"
-                onClick={handleSubmit}
-                disabled={!inputValue.trim()}
-                className="absolute top-1/2 right-2 inline-flex h-10 min-h-[44px] min-w-[44px] -translate-y-1/2 items-center justify-center rounded-full bg-primary px-3 text-xs font-medium text-primary-foreground disabled:opacity-30"
-              >
-                {copy.send}
-              </button>
             </div>
-            {step !== "monthlySalary" ? (
-              <button
-                type="button"
-                onClick={handleBack}
-                className="mt-2 inline-flex items-center gap-1 text-xs font-medium text-muted-foreground transition-colors hover:text-foreground"
-              >
-                {copy.backToPrevious}
-              </button>
-            ) : null}
           </div>
         )}
+
+        {step !== "welcome" &&
+          step !== "frequency" &&
+          step !== "pensionSystem" &&
+          step !== "confirm" &&
+          step !== "done" && (
+            <StepNavigation
+              onBack={handleBack}
+              onContinue={handleSubmit}
+              canContinue={!!inputValue.trim()}
+              showBack={false}
+              backLabel={copy.backToPrevious}
+              continueLabel={copy.send}
+            />
+          )}
       </div>
     </div>
   )
@@ -883,7 +876,7 @@ function ResultPanel({
 
         <div className="mt-4">
           <p className="text-xs font-medium tracking-wider text-muted-foreground uppercase">
-            {locale === "en" ? "Net salary" : "Salario neto"} (
+              {copy.netSalaryHeading} (
             {frequency === "mensual"
               ? copy.monthly
               : frequency === "quincenal"
@@ -929,7 +922,7 @@ function ResultPanel({
             </div>
             <div>
               <p className="text-xs text-muted-foreground">
-                {locale === "en" ? "Deduction rate" : "Tasa de deducción"}
+                {copy.deductionRate}
               </p>
               <p className="text-sm font-semibold text-foreground">
                 {((result.totalDeductions / result.grossSalary) * 100).toFixed(
@@ -980,13 +973,13 @@ function ResultPanel({
               {copy.fullBreakdown}
             </span>
             <span className="text-xs text-muted-foreground">
-              {locale === "en" ? "Expand" : "Ver"}
+              {copy.expandLabel}
             </span>
           </summary>
           <div className="space-y-4 border-t border-border p-4">
             <div className="space-y-2">
               <p className="text-xs font-medium tracking-wider text-rose-600 uppercase">
-                {locale === "en" ? "Deductions" : "Deducciones"}
+                {copy.deductions}
               </p>
               {result.deductions.map(
                 (d: {

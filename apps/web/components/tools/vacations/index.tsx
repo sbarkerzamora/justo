@@ -31,6 +31,7 @@ import {
   formatNumberInput,
   parseCurrencyInput,
 } from "@/components/tools/input-formatters"
+import { StepNavigation } from "@/components/tools/step-navigation"
 
 export type VacationStep =
   | "welcome"
@@ -528,19 +529,13 @@ export function VacationsTool({
                 {askText(step)}
               </p>
             </div>
-            <div className="relative w-full max-w-xl pb-4">
+            <div className="w-full max-w-xl">
               <input
                 ref={inputRef}
                 value={inputValue}
                 onChange={(e) =>
                   setInputValue(getFormattedInputValue(step, e.target.value))
                 }
-                onKeyDown={(e) => {
-                  if (e.key === "Enter") {
-                    e.preventDefault()
-                    handleSubmit()
-                  }
-                }}
                 inputMode={
                   step === "monthlySalary"
                     ? "decimal"
@@ -551,28 +546,24 @@ export function VacationsTool({
                         : "text"
                 }
                 placeholder={copy.askPlaceholder}
-                className="h-12 w-full rounded-2xl border border-border bg-card pl-4 pr-14 text-sm text-foreground transition-colors outline-none placeholder:text-muted-foreground focus:border-foreground/30"
+                className="h-12 w-full rounded-2xl border border-border bg-card pl-4 pr-4 text-sm text-foreground transition-colors outline-none placeholder:text-muted-foreground focus:border-foreground/30"
               />
-              <button
-                type="button"
-                onClick={handleSubmit}
-                disabled={!inputValue.trim()}
-                className="absolute top-1/2 right-2 inline-flex h-10 min-h-[44px] min-w-[44px] -translate-y-1/2 items-center justify-center rounded-full bg-primary px-3 text-xs font-medium text-primary-foreground disabled:opacity-30"
-              >
-                {copy.send}
-              </button>
             </div>
-            {step !== "monthlySalary" ? (
-              <button
-                type="button"
-                onClick={handleBack}
-                className="mt-2 inline-flex items-center gap-1 text-xs font-medium text-muted-foreground transition-colors hover:text-foreground"
-              >
-                {copy.backToPrevious}
-              </button>
-            ) : null}
           </div>
         )}
+
+        {step !== "welcome" &&
+          step !== "confirm" &&
+          step !== "done" && (
+            <StepNavigation
+              onBack={handleBack}
+              onContinue={handleSubmit}
+              canContinue={!!inputValue.trim()}
+              showBack={step !== "monthlySalary"}
+              backLabel={copy.backToPrevious}
+              continueLabel={copy.send}
+            />
+          )}
       </div>
     </div>
   )
@@ -684,7 +675,7 @@ function ConfirmPanel({
         <SummaryRow
           icon={<IconBeach className="size-4 text-muted-foreground" />}
           label={copy.vacations}
-          value={`${form.usedVacationDays} {copy.daysLabel}`}
+          value={`${form.usedVacationDays} ${copy.daysLabel}`}
         />
       </div>
       <div className="mt-5 flex flex-wrap gap-2">
@@ -912,7 +903,7 @@ function ResultPanel({
             </div>
             <div>
               <p className="text-xs text-muted-foreground">
-                {locale === "en" ? "Daily salary" : "Salario diario"}
+                {copy.dailySalary}
               </p>
               <p className="text-sm font-semibold text-foreground">
                 {fmt(result.dailySalary)}
@@ -924,7 +915,7 @@ function ResultPanel({
         <div className="mt-4 space-y-2 rounded-xl bg-muted/30 p-3">
           <div>
             <p className="text-xs text-muted-foreground">
-              {locale === "en" ? "Formula" : "Fórmula"}
+              {copy.formulaLabel}
             </p>
             <p className="mt-0.5 font-mono text-sm text-foreground">
               {result.formula}
@@ -932,7 +923,7 @@ function ResultPanel({
           </div>
           <div>
             <p className="text-xs text-muted-foreground">
-              {locale === "en" ? "Legal reference" : "Referencia legal"}
+              {copy.legalRefLabel}
             </p>
             <p className="mt-0.5 text-sm text-foreground">
               {result.legalReference}

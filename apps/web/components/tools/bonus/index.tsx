@@ -28,6 +28,7 @@ import {
   formatDateInput,
   parseCurrencyInput,
 } from "@/components/tools/input-formatters"
+import { StepNavigation } from "@/components/tools/step-navigation"
 
 export type BonusStep =
   | "welcome"
@@ -475,7 +476,7 @@ export function BonusTool({
                 {askText(step)}
               </p>
             </div>
-            <div className="relative w-full max-w-xl pb-4">
+            <div className="w-full max-w-xl">
               <input
                 ref={inputRef}
                 value={inputValue}
@@ -486,34 +487,30 @@ export function BonusTool({
                       : formatDateInput(e.target.value)
                   )
                 }
-                onKeyDown={(e) => {
-                  if (e.key === "Enter") {
-                    e.preventDefault()
-                    handleSubmit()
-                  }
-                }}
                 inputMode={step === "monthlySalary" ? "decimal" : "text"}
                 placeholder={
                   step === "monthlySalary"
                     ? copy.askPlaceholder
                     : copy.endDate
                 }
-                className="h-12 w-full rounded-2xl border border-border bg-card pl-4 pr-14 text-sm text-foreground transition-colors outline-none placeholder:text-muted-foreground focus:border-foreground/30"
+                className="h-12 w-full rounded-2xl border border-border bg-card pl-4 pr-4 text-sm text-foreground transition-colors outline-none placeholder:text-muted-foreground focus:border-foreground/30"
               />
-              <button
-                type="button"
-                onClick={handleSubmit}
-                disabled={!inputValue.trim()}
-                className="absolute top-1/2 right-2 inline-flex h-10 min-h-[44px] min-w-[44px] -translate-y-1/2 items-center justify-center rounded-full bg-primary px-3 text-xs font-medium text-primary-foreground disabled:opacity-30"
-              >
-                {copy.send}
-              </button>
             </div>
-            {step !== "monthlySalary" ? (
-              <button type="button" onClick={handleBack} className="mt-2 inline-flex items-center gap-1 text-xs font-medium text-muted-foreground transition-colors hover:text-foreground">{copy.backToPrevious}</button>
-            ) : null}
           </div>
         )}
+
+        {step !== "welcome" &&
+          step !== "confirm" &&
+          step !== "done" && (
+            <StepNavigation
+              onBack={handleBack}
+              onContinue={handleSubmit}
+              canContinue={!!inputValue.trim()}
+              showBack={step !== "monthlySalary"}
+              backLabel={copy.backToPrevious}
+              continueLabel={copy.send}
+            />
+          )}
       </div>
     </div>
   )
@@ -750,7 +747,7 @@ function ResultPanel({
               {copy.legalVersion}: {result.legalCorpusVersion}
             </div>
             <h3 className="mt-2 text-sm font-semibold text-foreground">
-              {locale === "en" ? "Bonus result" : "Resultado de aguinaldo"}
+              {copy.bonusHeading}
             </h3>
           </div>
           <div className="rounded-xl bg-primary/10 p-2.5">
@@ -760,7 +757,7 @@ function ResultPanel({
 
         <div className="mt-4">
           <p className="text-xs font-medium tracking-wider text-muted-foreground uppercase">
-            {locale === "en" ? "Estimated bonus" : "Aguinaldo estimado"}
+            {copy.estimatedBonus}
           </p>
           <p className="mt-1 text-3xl font-semibold tracking-tight text-foreground">
             {fmt(result.total)}
@@ -774,13 +771,11 @@ function ResultPanel({
 
         <div className="mt-4 rounded-xl bg-muted/30 p-4">
           <p className="mb-3 text-xs font-medium tracking-wider text-muted-foreground uppercase">
-            {locale === "en" ? "Breakdown" : "Desglose"}
+            {copy.breakdownLabel}
           </p>
           {result.lines.length === 0 ? (
             <p className="text-sm text-muted-foreground">
-              {locale === "en"
-                ? "No calculation lines available in MVP corpus."
-                : "No hay líneas de cálculo disponibles en el corpus MVP."}
+              {copy.scenarioFallback}
             </p>
           ) : (
             <div className="space-y-2">

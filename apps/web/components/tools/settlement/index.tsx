@@ -39,6 +39,7 @@ import {
   formatNumberInput,
   parseCurrencyInput,
 } from "@/components/tools/input-formatters"
+import { StepNavigation } from "@/components/tools/step-navigation"
 
 export type SettlementStep =
   | "welcome"
@@ -441,17 +442,11 @@ export function SettlementTool({
             <div className="w-full max-w-xl rounded-2xl border border-border bg-card p-6 shadow-sm motion-safe:animate-in motion-safe:duration-200 motion-safe:fade-in motion-safe:slide-in-from-bottom-1">
               <p className="text-base font-medium text-foreground">{askText(step)}</p>
             </div>
-            <div className="relative w-full max-w-xl pb-4">
+            <div className="w-full max-w-xl">
               <input
                 ref={inputRef}
                 value={inputValue}
                 onChange={(e) => setInputValue(getFormattedInputValue(step, e.target.value))}
-                onKeyDown={(e) => {
-                  if (e.key === "Enter") {
-                    e.preventDefault()
-                    handleSubmit()
-                  }
-                }}
                 inputMode={
                   step === "monthlySalary"
                     ? "decimal"
@@ -462,28 +457,26 @@ export function SettlementTool({
                         : "text"
                 }
                 placeholder={copy.askPlaceholder}
-                className="h-12 w-full rounded-2xl border border-border bg-card pl-4 pr-14 text-sm text-foreground placeholder:text-muted-foreground outline-none transition-colors focus:border-foreground/30"
+                className="h-12 w-full rounded-2xl border border-border bg-card pl-4 pr-4 text-sm text-foreground placeholder:text-muted-foreground outline-none transition-colors focus:border-foreground/30"
               />
-              <button
-                type="button"
-                onClick={handleSubmit}
-                disabled={!inputValue.trim()}
-                className="absolute right-2 top-1/2 -translate-y-1/2 inline-flex h-10 min-h-[44px] min-w-[44px] items-center justify-center rounded-full bg-primary px-3 text-xs font-medium text-primary-foreground disabled:opacity-30"
-              >
-                {copy.send}
-              </button>
             </div>
-            {step !== "employeeName" ? (
-              <button
-                type="button"
-                onClick={handleBack}
-                className="mt-2 inline-flex items-center gap-1 text-xs font-medium text-muted-foreground transition-colors hover:text-foreground"
-              >
-                {copy.backToPrevious}
-              </button>
-            ) : null}
           </div>
         )}
+
+        {step !== "welcome" &&
+          step !== "confirm" &&
+          step !== "frequency" &&
+          step !== "done" &&
+          !editMode && (
+            <StepNavigation
+              onBack={handleBack}
+              onContinue={handleSubmit}
+              canContinue={!!inputValue.trim()}
+              showBack={step !== "employeeName"}
+              backLabel={copy.backToPrevious}
+              continueLabel={copy.send}
+            />
+          )}
       </div>
     </div>
   )

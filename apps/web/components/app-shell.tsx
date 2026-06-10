@@ -8,7 +8,7 @@ import {
   useCallback,
 } from "react"
 import Link from "next/link"
-import { usePathname, useRouter } from "next/navigation"
+import { usePathname, useSearchParams, useRouter } from "next/navigation"
 import { useTheme } from "next-themes"
 import Image from "next/image"
 import { AnimatePresence, motion } from "framer-motion"
@@ -49,6 +49,7 @@ import {
   IconMenu2,
   IconBuilding,
   IconBeer,
+  IconChevronDown,
 } from "@tabler/icons-react"
 
 type SidebarCtx = { open: boolean; setOpen: (v: boolean) => void }
@@ -133,6 +134,8 @@ export function AppShell({
   const isDocs = pathname.startsWith("/docs")
   const [open, setOpen] = useState(true)
   const [mobileOpen, setMobileOpen] = useState(false)
+  const searchParams = useSearchParams()
+  const [toolsOpen, setToolsOpen] = useState(searchParams?.has("tool") ?? false)
   const { country, locale } = useStoredCountry(
     pathname,
     initialLocale,
@@ -171,18 +174,18 @@ export function AppShell({
 
   const sidebarLinks = [
     { label: t("Chat", "Chat"), href: homePath },
-    {
-      label: t("Calculadora de liquidacion", "Settlement calculator"),
-      href: `${homePath}?tool=settlement`,
-    },
-    { label: t("Calculadora de vacaciones", "Vacation calculator"), href: `${homePath}?tool=vacations` },
-    { label: t("Salario neto", "Net salary"), href: `${homePath}?tool=salary-net` },
-    { label: t("Aguinaldo / decimo / bono", "Bonus / 13th salary"), href: `${homePath}?tool=bonus` },
-    { label: t("Simulador de terminacion", "Termination simulator"), href: `${homePath}?tool=termination` },
-    { label: t("Generador de contratos", "Contract generator"), href: `${homePath}?tool=contract` },
-    { label: t("Herramientas", "Tools"), href: `${localePrefix}/tools?country=${country}` },
     { label: t("Guia laboral", "Labor guide"), href: `${localePrefix}/guia-laboral?country=${country}` },
     { label: t("Marco legal", "Legal framework"), href: "/docs/legal" },
+  ]
+
+  const toolItems = [
+    { label: t("Calculadora de liquidacion", "Settlement calculator"), href: `${homePath}?tool=settlement`, icon: <IconCalculator className="h-5 w-5 shrink-0" /> },
+    { label: t("Calculadora de vacaciones", "Vacation calculator"), href: `${homePath}?tool=vacations`, icon: <IconBeach className="h-5 w-5 shrink-0" /> },
+    { label: t("Salario neto", "Net salary"), href: `${homePath}?tool=salary-net`, icon: <IconCoins className="h-5 w-5 shrink-0" /> },
+    { label: t("Aguinaldo / decimo / bono", "Bonus / 13th salary"), href: `${homePath}?tool=bonus`, icon: <IconGift className="h-5 w-5 shrink-0" /> },
+    { label: t("Simulador de terminacion", "Termination simulator"), href: `${homePath}?tool=termination`, icon: <IconSwitch className="h-5 w-5 shrink-0" /> },
+    { label: t("Generador de contratos", "Contract generator"), href: `${homePath}?tool=contract`, icon: <IconFileDescription className="h-5 w-5 shrink-0" /> },
+    { label: t("Herramientas", "Tools"), href: `${localePrefix}/tools?country=${country}`, icon: <IconTools className="h-5 w-5 shrink-0" /> },
   ]
 
   const comingSoonSidebarLinks = [
@@ -299,7 +302,71 @@ export function AppShell({
 
       <div className="border-t border-sidebar-border pt-3">
         <nav className="flex flex-col gap-1">
-          {sidebarLinks.map((link) => (
+          {sidebarLinks.slice(0, 1).map((link) => (
+            <Link
+              key={link.label}
+              href={link.href}
+              className={cn(
+                "flex items-center gap-2 rounded-lg px-2 py-2 text-sm text-sidebar-foreground transition-colors hover:bg-sidebar-accent",
+                expanded ? "" : "justify-center"
+              )}
+              onClick={onNavigate}
+            >
+              {sidebarIcons[link.label]}
+              {expanded ? (
+                <span className="whitespace-nowrap">{link.label}</span>
+              ) : null}
+            </Link>
+          ))}
+          {expanded ? (
+            <div>
+              <button
+                type="button"
+                onClick={() => setToolsOpen((p) => !p)}
+                className="flex w-full items-center gap-2 rounded-lg px-2 py-2 text-sm text-sidebar-foreground transition-colors hover:bg-sidebar-accent"
+              >
+                <IconTools className="h-5 w-5 shrink-0" />
+                <span className="flex-1 whitespace-nowrap text-left">
+                  {t("Herramientas", "Tools")}
+                </span>
+                <IconChevronDown
+                  className={cn(
+                    "size-4 shrink-0 text-sidebar-foreground/50 transition-transform",
+                    toolsOpen ? "rotate-0" : "-rotate-90"
+                  )}
+                />
+              </button>
+              <AnimatePresence initial={false}>
+                {toolsOpen && (
+                  <motion.div
+                    initial={{ height: 0, opacity: 0 }}
+                    animate={{ height: "auto", opacity: 1 }}
+                    exit={{ height: 0, opacity: 0 }}
+                    className="overflow-hidden"
+                  >
+                    <div className="ml-3 flex flex-col gap-0.5 border-l border-sidebar-border pl-3 pt-1">
+                      {toolItems.map((item) => (
+                        <Link
+                          key={item.label}
+                          href={item.href}
+                          onClick={onNavigate}
+                          className="flex items-center gap-2 rounded-lg px-2 py-1.5 text-sm text-sidebar-foreground/80 transition-colors hover:bg-sidebar-accent hover:text-sidebar-foreground"
+                        >
+                          {item.icon}
+                          <span className="whitespace-nowrap">{item.label}</span>
+                        </Link>
+                      ))}
+                    </div>
+                  </motion.div>
+                )}
+              </AnimatePresence>
+            </div>
+          ) : (
+            <div className="flex justify-center">
+              <IconTools className="h-5 w-5 shrink-0 text-sidebar-foreground" />
+            </div>
+          )}
+          {sidebarLinks.slice(1).map((link) => (
             <Link
               key={link.label}
               href={link.href}

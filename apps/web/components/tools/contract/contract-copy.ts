@@ -42,6 +42,7 @@ export type ContractCopy = {
     trialPeriod: string
     monthlySalary: string
     celebrationPlace: string
+    employerAddress: string
   }
   scheduleOptions: Record<string, string>
   contractTypeOptions: Record<string, string>
@@ -74,6 +75,7 @@ export type ContractCopy = {
     method: string
     celebration: string
     trialPeriod: string
+    days: string
   }
   done: {
     heading: string
@@ -146,6 +148,7 @@ export const contractCopy: Record<"es" | "en", ContractCopy> = {
       trialPeriod: "Ej. 30",
       monthlySalary: "Ej. 15,000",
       celebrationPlace: "Ej. Managua",
+      employerAddress: "Ej. Managua, Carretera Masaya",
     },
     scheduleOptions: {
       diurna: "Diurna",
@@ -195,6 +198,7 @@ export const contractCopy: Record<"es" | "en", ContractCopy> = {
       method: "Forma de pago",
       celebration: "Celebración",
       trialPeriod: "Período de prueba",
+      days: "Días",
     },
     done: {
       heading: "Contrato generado",
@@ -272,6 +276,7 @@ export const contractCopy: Record<"es" | "en", ContractCopy> = {
       trialPeriod: "E.g. 30",
       monthlySalary: "E.g. 15,000",
       celebrationPlace: "E.g. Managua",
+      employerAddress: "E.g. Managua, Masaya Highway",
     },
     scheduleOptions: {
       diurna: "Day shift",
@@ -294,8 +299,8 @@ export const contractCopy: Record<"es" | "en", ContractCopy> = {
       comision: "By commission",
       otra: "Other",
     },
-    dateFormatHint: "MM/DD/YYYY",
-    dateFormatLabel: "(MM/DD/YYYY)",
+    dateFormatHint: "DD/MM/YYYY",
+    dateFormatLabel: "(DD/MM/YYYY)",
     confirm: {
       heading: "Review data",
       workerSection: "Worker",
@@ -321,6 +326,7 @@ export const contractCopy: Record<"es" | "en", ContractCopy> = {
       method: "Payment method",
       celebration: "Celebration",
       trialPeriod: "Trial period",
+      days: "Days",
     },
     done: {
       heading: "Contract generated",
@@ -330,9 +336,9 @@ export const contractCopy: Record<"es" | "en", ContractCopy> = {
       forWorker: "Contract for",
     },
     error: {
-      invalidStartDate: "Invalid start date. Use MM/DD/YYYY.",
+      invalidStartDate: "Invalid start date. Use DD/MM/YYYY.",
       missingEndDate: "Enter the end date for fixed-term contracts.",
-      invalidEndDate: "Invalid end date. Use MM/DD/YYYY.",
+      invalidEndDate: "Invalid end date. Use DD/MM/YYYY.",
       endBeforeStart: "End date must be after start date.",
       invalidSalary: "Invalid salary.",
       missingCelebrationPlace: "Enter the contract execution location.",
