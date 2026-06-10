@@ -801,28 +801,20 @@ function ChatTypingIndicator({
   typingMode: "idle" | "searching" | "thinking" | "generating"
   typingMessages: string[]
 }) {
-  const [labelIndex, setLabelIndex] = useState(0)
+  const [labelIndex] = useState(() =>
+    typingMessages.length > 0
+      ? Math.floor(Math.random() * typingMessages.length)
+      : 0
+  )
   const labelRef = useRef<HTMLSpanElement>(null)
 
   useEffect(() => {
-    if (typingMessages.length === 0) return
-    const interval = setInterval(() => {
-      const el = labelRef.current
-      if (!el) {
-        setLabelIndex((i) => (i + 1) % typingMessages.length)
-        return
-      }
-      el.classList.add("t-typing-exit")
-      setTimeout(() => {
-        setLabelIndex((i) => (i + 1) % typingMessages.length)
-        el.classList.remove("t-typing-exit")
-        el.classList.add("t-typing-enter")
-        void el.offsetWidth
-        el.classList.remove("t-typing-enter")
-      }, 160)
-    }, 2000)
-    return () => clearInterval(interval)
-  }, [typingMessages.length])
+    const el = labelRef.current
+    if (!el) return
+    el.classList.add("t-typing-enter")
+    void el.offsetWidth
+    el.classList.remove("t-typing-enter")
+  }, [])
 
   const config =
     typingMode === "idle" ? typingConfig.searching : typingConfig[typingMode]
