@@ -52,6 +52,7 @@ export type ToolsPageCopy = {
   categoryLabels: Record<JustoTool["category"], string>
   statusLabels: Record<JustoTool["availability"], string>
   forCountry: (name: string) => string
+  emptyCountry: (name: string) => string
 }
 
 const toolIcons: Record<string, ReactNode> = {
@@ -267,7 +268,7 @@ export function ToolsPage({ copy, country, locale = "es" }: { copy: ToolsPageCop
           </h2>
           {displayAvailable.length === 0 ? (
             <p className="text-sm text-muted-foreground">
-              {cc ? `No hay herramientas disponibles para ${countryInfo?.name} aun.` : copy.availableLabel}
+              {cc ? copy.emptyCountry(countryInfo?.name ?? cc) : copy.availableLabel}
             </p>
           ) : (
             <div className="grid gap-4 sm:grid-cols-2">

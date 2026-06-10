@@ -105,6 +105,7 @@ export default async function ToolDetailPageEn({
     tool,
     country: cc,
     title,
+    pageLocale: "en",
   })
 
   const supportedCountries = tool.countrySupport

@@ -69,6 +69,7 @@ const esCopy: ToolsPageCopy = {
   footerTitle: "Regla de producto",
   footerDescription: "Las herramientas laborales generales son abiertas. La plataforma empresarial con persistencia, equipos, auditoria y asistente de RRHH sera de pago.",
   forCountry: (name: string) => `Herramientas\nlaborales\npara ${name}`,
+  emptyCountry: (name: string) => `No hay herramientas disponibles para ${name} aun.`,
   categoryLabels: {
     assistant: "Asistente",
     calculation: "Calculo",

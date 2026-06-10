@@ -69,6 +69,7 @@ const enCopy: ToolsPageCopy = {
   footerTitle: "Product rule",
   footerDescription: "General labor tools are open source. The enterprise platform with persistence, teams, audit and HR assistant will be paid.",
   forCountry: (name: string) => `Labor tools\nfor ${name}`,
+  emptyCountry: (name: string) => `No tools available for ${name} yet.`,
   categoryLabels: {
     assistant: "Assistant",
     calculation: "Calculation",

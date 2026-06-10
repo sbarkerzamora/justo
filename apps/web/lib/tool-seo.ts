@@ -79,16 +79,20 @@ export function buildToolJsonLd({
   tool,
   country,
   title,
+  pageLocale = "es",
 }: {
   slug: string
   tool: JustoTool
   country: CountryCode | null
   title: string
+  pageLocale?: string
 }) {
   const canonical = getToolCanonical(slug, country)
   const countryName = getToolCountryName(country)
-  const countryInfo = countryList.find((item) => item.code === country)
   const currentName = countryName ? `${tool.name} en ${countryName}` : tool.name
+  const toolsLabel = pageLocale === "en" ? "Tools" : "Herramientas"
+  const toolsUrl = pageLocale === "en" ? `${SITE_URL}/en/tools` : `${SITE_URL}/tools`
+  const lang = pageLocale === "en" ? "en" : "es"
 
   return [
     {
@@ -98,7 +102,7 @@ export function buildToolJsonLd({
       url: canonical,
       applicationCategory: "FinanceApplication",
       operatingSystem: "Web",
-      inLanguage: countryInfo?.locale ?? "es",
+      inLanguage: lang,
       offers: { "@type": "Offer", price: "0", priceCurrency: "USD" },
       description: tool.longDescription,
     },
@@ -110,8 +114,8 @@ export function buildToolJsonLd({
         {
           "@type": "ListItem",
           position: 2,
-          name: "Herramientas",
-          item: `${SITE_URL}/tools`,
+          name: toolsLabel,
+          item: toolsUrl,
         },
         {
           "@type": "ListItem",
