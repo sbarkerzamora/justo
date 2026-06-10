@@ -169,6 +169,14 @@ export function SalaryNetTool({
     return salaryNetSteps[idx + 1] ?? "confirm"
   }
 
+  const prevStep = (s: SalaryNetStep): SalaryNetStep | null => {
+    if (s === "welcome" || s === "done") return null
+    if (s === "confirm") return "frequency"
+    const idx = salaryNetSteps.indexOf(s)
+    if (idx <= 0) return "welcome"
+    return salaryNetSteps[idx - 1]
+  }
+
   const applyField = (
     field: "salary" | "frequency",
     value: string
@@ -216,6 +224,14 @@ export function SalaryNetTool({
     )
       return
     advance()
+  }
+
+  const handleBack = () => {
+    const prev = prevStep(step)
+    if (prev) {
+      dispatch({ type: "setStep", step: prev })
+      setInputValue("")
+    }
   }
 
   const onFrequencySelect = (f: "mensual" | "quincenal" | "semanal") => {
@@ -432,6 +448,7 @@ export function SalaryNetTool({
                 dispatch({ type: "setPensionSystem", value: v })
                 dispatch({ type: "setStep", step: "confirm" })
               }}
+              copy={copy}
             />
           </div>
         ) : step === "confirm" ? (
@@ -498,6 +515,15 @@ export function SalaryNetTool({
                 {copy.send}
               </button>
             </div>
+            {step !== "monthlySalary" ? (
+              <button
+                type="button"
+                onClick={handleBack}
+                className="mt-2 inline-flex items-center gap-1 text-xs font-medium text-muted-foreground transition-colors hover:text-foreground"
+              >
+                {copy.backToPrevious}
+              </button>
+            ) : null}
           </div>
         )}
       </div>
@@ -617,14 +643,16 @@ function FrequencyPicker({
 function PensionSelector({
   selected,
   onSelect,
+  copy,
 }: {
   selected: "afp" | "onp"
   onSelect: (v: "afp" | "onp") => void
+  copy: (typeof homeCopy)["es" | "en"]
 }) {
   return (
     <div className="rounded-2xl border border-border bg-card p-3 motion-safe:animate-in motion-safe:duration-200 motion-safe:fade-in motion-safe:slide-in-from-bottom-1">
       <p className="mb-2 text-xs font-medium text-muted-foreground">
-        Sistema de pensiones
+        {copy.pensionSystem}
       </p>
       <div className="flex flex-wrap gap-2">
         <button

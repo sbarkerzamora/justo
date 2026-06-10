@@ -181,6 +181,13 @@ export function VacationsTool({
     return vacationSteps[idx + 1] ?? "confirm"
   }
 
+  const prevStep = (s: VacationStep): VacationStep | null => {
+    if (s === "welcome" || s === "done") return null
+    const idx = vacationSteps.indexOf(s)
+    if (idx <= 0) return "welcome"
+    return vacationSteps[idx - 1]
+  }
+
   const applyField = (
     field: keyof VacationFormData,
     value: string
@@ -240,6 +247,14 @@ export function VacationsTool({
   const handleSubmit = () => {
     if (step === "welcome" || step === "confirm" || step === "done") return
     advance()
+  }
+
+  const handleBack = () => {
+    const prev = prevStep(step)
+    if (prev) {
+      dispatch({ type: "setStep", step: prev })
+      setInputValue("")
+    }
   }
 
   const runCalculation = () => {
@@ -547,6 +562,15 @@ export function VacationsTool({
                 {copy.send}
               </button>
             </div>
+            {step !== "monthlySalary" ? (
+              <button
+                type="button"
+                onClick={handleBack}
+                className="mt-2 inline-flex items-center gap-1 text-xs font-medium text-muted-foreground transition-colors hover:text-foreground"
+              >
+                {copy.backToPrevious}
+              </button>
+            ) : null}
           </div>
         )}
       </div>
@@ -660,7 +684,7 @@ function ConfirmPanel({
         <SummaryRow
           icon={<IconBeach className="size-4 text-muted-foreground" />}
           label={copy.vacations}
-          value={`${form.usedVacationDays} días`}
+          value={`${form.usedVacationDays} {copy.daysLabel}`}
         />
       </div>
       <div className="mt-5 flex flex-wrap gap-2">
@@ -825,7 +849,7 @@ function ResultPanel({
               {copy.legalVersion}: {result.legalCorpusVersion}
             </div>
             <h3 className="mt-2 text-sm font-semibold text-foreground">
-              {locale === "en" ? "Vacation result" : "Resultado de vacaciones"}
+              {copy.vacationResultHeading}
             </h3>
           </div>
           <div className="rounded-xl bg-primary/10 p-2.5">
@@ -835,7 +859,7 @@ function ResultPanel({
 
         <div className="mt-4">
           <p className="text-xs font-medium tracking-wider text-muted-foreground uppercase">
-            {locale === "en" ? "Amount" : "Monto"}
+            {copy.amount}
           </p>
           <p className="mt-1 text-3xl font-semibold tracking-tight text-foreground">
             {fmt(result.amount)}
@@ -849,10 +873,10 @@ function ResultPanel({
             </div>
             <div>
               <p className="text-xs text-muted-foreground">
-                {locale === "en" ? "Accrued days" : "Días acumulados"}
+                {copy.accruedDays}
               </p>
               <p className="text-sm font-semibold text-foreground">
-                {result.accruedVacationDays} días
+                {result.accruedVacationDays} {copy.daysLabel}
               </p>
             </div>
           </div>
@@ -862,10 +886,10 @@ function ResultPanel({
             </div>
             <div>
               <p className="text-xs text-muted-foreground">
-                {locale === "en" ? "Used days" : "Días gozados"}
+                {copy.usedDays}
               </p>
               <p className="text-sm font-semibold text-foreground">
-                {result.usedVacationDays} días
+                {result.usedVacationDays} {copy.daysLabel}
               </p>
             </div>
           </div>
@@ -875,10 +899,10 @@ function ResultPanel({
             </div>
             <div>
               <p className="text-xs text-muted-foreground">
-                {locale === "en" ? "Pending days" : "Días pendientes"}
+                {copy.pendingDays}
               </p>
               <p className="text-sm font-semibold text-foreground">
-                {result.pendingVacationDays} días
+                {result.pendingVacationDays} {copy.daysLabel}
               </p>
             </div>
           </div>
