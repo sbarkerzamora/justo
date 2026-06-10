@@ -181,6 +181,13 @@ export function BonusTool({
     return bonusSteps[idx + 1] ?? "confirm"
   }
 
+  const prevStep = (s: BonusStep): BonusStep | null => {
+    if (s === "welcome" || s === "done") return null
+    const idx = bonusSteps.indexOf(s)
+    if (idx <= 0) return "welcome"
+    return bonusSteps[idx - 1]
+  }
+
   const advance = () => {
     if (step === "monthlySalary") {
       const n = parseCurrencyInput(inputValue)
@@ -222,6 +229,11 @@ export function BonusTool({
   const handleSubmit = () => {
     if (step === "welcome" || step === "confirm" || step === "done") return
     advance()
+  }
+
+  const handleBack = () => {
+    const prev = prevStep(step)
+    if (prev) { dispatch({ type: "setStep", step: prev }); setInputValue("") }
   }
 
   const runCalculation = () => {
@@ -497,6 +509,9 @@ export function BonusTool({
                 {copy.send}
               </button>
             </div>
+            {step !== "monthlySalary" ? (
+              <button type="button" onClick={handleBack} className="mt-2 inline-flex items-center gap-1 text-xs font-medium text-muted-foreground transition-colors hover:text-foreground">{copy.backToPrevious}</button>
+            ) : null}
           </div>
         )}
       </div>
