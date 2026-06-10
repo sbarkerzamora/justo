@@ -35,13 +35,15 @@ describe("calculateArgentinaSettlement", () => {
       endDate: "2026-05-11",
     })
 
-    expect(result.deductions.length).toBe(3)
+    expect(result.deductions.length).toBe(4)
     expect(result.deductions[0]?.label).toBe("Jubilacion (SIPA)")
     expect(result.deductions[0]?.amount).toBeGreaterThan(0)
     expect(result.deductions[1]?.label).toBe("PAMI")
     expect(result.deductions[1]?.amount).toBeGreaterThan(0)
     expect(result.deductions[2]?.label).toBe("Obra Social")
     expect(result.deductions[2]?.amount).toBeGreaterThan(0)
+    expect(result.deductions[3]?.label).toBe("IR")
+    expect(result.deductions[3]?.amount).toBeGreaterThan(0)
     expect(result.netTotal).toBeGreaterThan(0)
   })
 

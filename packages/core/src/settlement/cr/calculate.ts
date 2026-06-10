@@ -87,9 +87,10 @@ export const calculateCostaRicaSettlement = (
   const grossIncome = round2(incomes.reduce((sum, line) => sum + line.amount, 0))
 
   // Deducciones CCSS
-  const { ccssRate } = getCostaRicaLegalRates()
+  const { ccssRate, irFlatRate } = getCostaRicaLegalRates()
   const ccssBase = round2(proportionalSalary + vacationPay)
   const ccss = round2(ccssBase * ccssRate)
+  const ir = round2(Math.max(0, grossIncome - ccss) * irFlatRate)
 
   const deductions: SettlementLine[] = [
     {
@@ -97,6 +98,12 @@ export const calculateCostaRicaSettlement = (
       amount: ccss,
       formula: `(${ccssBase} x ${(ccssRate * 100).toFixed(1)}%)`,
       legalReference: "Ley No. 17 (Ley Constitutiva de la CCSS)",
+    },
+    {
+      label: "IR",
+      amount: ir,
+      formula: `max(0, ${grossIncome} - ${ccss}) x ${(irFlatRate * 100).toFixed(0)}%`,
+      legalReference: "Ley del ISR (tasa minima)",
     },
   ]
 

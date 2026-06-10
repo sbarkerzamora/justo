@@ -95,9 +95,10 @@ export const calculateMexicoSettlement = (
   const grossIncome = round2(incomes.reduce((sum, line) => sum + line.amount, 0))
 
   // Deducciones IMSS
-  const { imssRate } = getMexicoLegalRates()
+  const { imssRate, irFlatRate } = getMexicoLegalRates()
   const deductionBase = round2(proportionalSalary + vacationPay)
   const imss = round2(deductionBase * imssRate)
+  const ir = round2(Math.max(0, grossIncome - imss) * irFlatRate)
 
   const deductions: SettlementLine[] = [
     {
@@ -105,6 +106,12 @@ export const calculateMexicoSettlement = (
       amount: imss,
       formula: `(${deductionBase} x ${(imssRate * 100).toFixed(1)}%)`,
       legalReference: "Ley del Seguro Social (tasa propuesta)",
+    },
+    {
+      label: "IR",
+      amount: ir,
+      formula: `max(0, ${grossIncome} - ${imss}) x ${(irFlatRate * 100).toFixed(2)}%`,
+      legalReference: "LISR (tasa minima)",
     },
   ]
 

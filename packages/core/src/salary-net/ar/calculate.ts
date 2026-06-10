@@ -8,7 +8,7 @@ const LEGAL_CORPUS_VERSION = "ar-v0.2.0"
 export const calculateArgentinaSalaryNet = (
   input: SalaryNetInput,
 ): SalaryNetResult => {
-  const { jubilacionRate, pamiRate, obraSocialRate, irRate } = getArgentinaSalaryNetLegalRates()
+  const { jubilacionRate, pamiRate, obraSocialRate, irBrackets } = getArgentinaSalaryNetLegalRates()
 
   return buildNetSalary(
     input,
@@ -19,6 +19,11 @@ export const calculateArgentinaSalaryNet = (
       { label: "PAMI", rate: pamiRate, legalReference: "Ley 19.032" },
       { label: "Obra Social", rate: obraSocialRate, legalReference: "Ley 23.660" },
     ],
-    undefined,
+    {
+      label: "IR",
+      legalReference: "Ley 20.628 (Impuesto a las Ganancias)",
+      source: "estimated",
+      brackets: irBrackets,
+    },
   )
 }

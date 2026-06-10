@@ -8,7 +8,7 @@ const LEGAL_CORPUS_VERSION = "cl-v0.2.0"
 export const calculateChileSalaryNet = (
   input: SalaryNetInput,
 ): SalaryNetResult => {
-  const { afpRate, saludRate, afcRate, irRate } = getChileSalaryNetLegalRates()
+  const { afpRate, saludRate, afcRate, irBrackets } = getChileSalaryNetLegalRates()
 
   return buildNetSalary(
     input,
@@ -19,6 +19,11 @@ export const calculateChileSalaryNet = (
       { label: "Salud", rate: saludRate, legalReference: "Ley 18.933" },
       { label: "AFC", rate: afcRate, legalReference: "Ley 19.728" },
     ],
-    undefined,
+    {
+      label: "IR",
+      legalReference: "D.L. 824 (Impuesto Unico de Trabajo)",
+      source: "estimated",
+      brackets: irBrackets,
+    },
   )
 }

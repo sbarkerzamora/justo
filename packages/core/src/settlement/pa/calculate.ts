@@ -79,10 +79,13 @@ export const calculatePanamaSettlement = (
 
   const grossIncome = round2(incomes.reduce((sum, line) => sum + line.amount, 0))
 
-  // Deducciones CSS
-  const { cssRate } = getPanamaLegalRates()
+  // Deducciones CSS e IR
+  const { cssRate, irFlatRate } = getPanamaLegalRates()
   const cssBase = round2(proportionalSalary + vacationPay)
   const css = round2(cssBase * cssRate)
+
+  const irBase = round2(Math.max(0, grossIncome - css))
+  const ir = round2(irBase * irFlatRate)
 
   const deductions: SettlementLine[] = [
     {
@@ -90,6 +93,12 @@ export const calculatePanamaSettlement = (
       amount: css,
       formula: `(${cssBase} x ${(cssRate * 100).toFixed(1)}%)`,
       legalReference: "Ley Organica de la CSS (tasa propuesta)",
+    },
+    {
+      label: "IR",
+      amount: ir,
+      formula: `max(0, ${grossIncome} - ${css}) x ${(irFlatRate * 100).toFixed(0)}%`,
+      legalReference: "Ley del Impuesto sobre la Renta (tasa minima)",
     },
   ]
 

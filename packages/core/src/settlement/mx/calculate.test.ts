@@ -36,9 +36,11 @@ describe("calculateMexicoSettlement", () => {
       endDate: "2026-05-11",
     })
 
-    expect(result.deductions.length).toBe(1)
+    expect(result.deductions.length).toBe(2)
     expect(result.deductions[0]?.label).toBe("IMSS laboral")
     expect(result.deductions[0]?.amount).toBeGreaterThan(0)
+    expect(result.deductions[1]?.label).toBe("IR")
+    expect(result.deductions[1]?.amount).toBeGreaterThan(0)
     expect(result.netTotal).toBeGreaterThan(0)
   })
 

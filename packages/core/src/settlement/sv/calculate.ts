@@ -83,10 +83,12 @@ export const calculateElSalvadorSettlement = (
   const grossIncome = round2(incomes.reduce((sum, line) => sum + line.amount, 0))
 
   // Deducciones ISSS + AFP
-  const { isssRate, afpRate } = getElSalvadorLegalRates()
+  const { isssRate, afpRate, irFlatRate } = getElSalvadorLegalRates()
   const deductionBase = round2(proportionalSalary + vacationPay)
   const isss = round2(deductionBase * isssRate)
   const afp = round2(deductionBase * afpRate)
+  const ssTotal = round2(isss + afp)
+  const ir = round2(Math.max(0, grossIncome - ssTotal) * irFlatRate)
 
   const deductions: SettlementLine[] = [
     {
@@ -100,6 +102,12 @@ export const calculateElSalvadorSettlement = (
       amount: afp,
       formula: `(${deductionBase} x ${(afpRate * 100).toFixed(1)}%)`,
       legalReference: "Ley del SAP - Decreto 927 (tasa propuesta)",
+    },
+    {
+      label: "IR",
+      amount: ir,
+      formula: `max(0, ${grossIncome} - ${ssTotal}) x ${(irFlatRate * 100).toFixed(0)}%`,
+      legalReference: "Ley del ISR (tasa minima)",
     },
   ]
 

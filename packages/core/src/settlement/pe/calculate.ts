@@ -81,9 +81,10 @@ export const calculatePeruSettlement = (
   const grossIncome = round2(incomes.reduce((sum, line) => sum + line.amount, 0))
 
   // Deducciones ONP
-  const { onpRate } = getPeruLegalRates()
+  const { onpRate, irFlatRate } = getPeruLegalRates()
   const deductionBase = round2(proportionalSalary + vacationPay)
   const onp = round2(deductionBase * onpRate)
+  const ir = round2(Math.max(0, grossIncome - onp) * irFlatRate)
 
   const deductions: SettlementLine[] = [
     {
@@ -91,6 +92,12 @@ export const calculatePeruSettlement = (
       amount: onp,
       formula: `(${deductionBase} x ${(onpRate * 100).toFixed(0)}%)`,
       legalReference: "D.L. 19990 (Sistema Nacional de Pensiones)",
+    },
+    {
+      label: "IR",
+      amount: ir,
+      formula: `max(0, ${grossIncome} - ${onp}) x ${(irFlatRate * 100).toFixed(0)}%`,
+      legalReference: "Ley del IR (tasa minima)",
     },
   ]
 
