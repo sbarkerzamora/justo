@@ -142,6 +142,13 @@ const nextStep = (s: SettlementStep): SettlementStep => {
   return (stepOrder[idx + 1] ?? "confirm") as SettlementStep
 }
 
+const prevStep = (s: SettlementStep): SettlementStep | null => {
+  if (s === "welcome" || s === "done") return null
+  const idx = stepOrder.indexOf(s as FlowStep)
+  if (idx <= 0) return "welcome"
+  return stepOrder[idx - 1] as SettlementStep
+}
+
 export function SettlementTool({
   countryCode,
   countryName,
@@ -241,6 +248,14 @@ export function SettlementTool({
     advance()
   }
 
+  const handleBack = () => {
+    const prev = prevStep(step)
+    if (prev) {
+      dispatch({ type: "setStep", step: prev })
+      setInputValue("")
+    }
+  }
+
   const onFrequencySelect = (f: SettlementForm["frequency"]) => {
     dispatch({ type: "patchForm", patch: { frequency: f } })
     dispatch({ type: "setStep", step: "confirm" })
@@ -257,7 +272,7 @@ export function SettlementTool({
       dispatch({ type: "setStep", step: "done" })
       dispatch({ type: "setError", error: null })
     } catch (err) {
-      dispatch({ type: "setError", error: err instanceof Error ? err.message : "Error al calcular" })
+      dispatch({ type: "setError", error: err instanceof Error ? err.message : copy.errorCalculating })
     }
   }
 
@@ -458,6 +473,15 @@ export function SettlementTool({
                 {copy.send}
               </button>
             </div>
+            {step !== "employeeName" ? (
+              <button
+                type="button"
+                onClick={handleBack}
+                className="mt-2 inline-flex items-center gap-1 text-xs font-medium text-muted-foreground transition-colors hover:text-foreground"
+              >
+                {copy.backToPrevious}
+              </button>
+            ) : null}
           </div>
         )}
       </div>
@@ -686,11 +710,11 @@ function ResultPanelTool({
               <IconReceipt className="size-4 text-muted-foreground" />
               {copy.fullBreakdown}
             </span>
-            <span className="text-xs text-muted-foreground">{locale === "en" ? "Expand" : "Ver"}</span>
+            <span className="text-xs text-muted-foreground">{copy.expandLabel}</span>
           </summary>
           <div className="border-t border-border p-4 space-y-4">
             <div className="space-y-2">
-              <p className="text-xs font-medium uppercase tracking-wider text-emerald-600">{locale === "en" ? "Incomes" : "Ingresos"}</p>
+              <p className="text-xs font-medium uppercase tracking-wider text-emerald-600">{copy.incomesLabel}</p>
               {result.incomes.map((l: { label: string; amount: number; formula: string; legalReference: string }) => (
                 <div key={l.label} className="flex items-start justify-between gap-4 text-sm">
                   <div className="min-w-0">
@@ -705,7 +729,7 @@ function ResultPanelTool({
               ))}
             </div>
             <div className="border-t border-dashed border-border pt-3 space-y-2">
-              <p className="text-xs font-medium uppercase tracking-wider text-rose-600">{locale === "en" ? "Deductions" : "Deducciones"}</p>
+              <p className="text-xs font-medium uppercase tracking-wider text-rose-600">{copy.deductions}</p>
               {result.deductions.map((l: { label: string; amount: number; formula: string; legalReference: string }) => (
                 <div key={l.label} className="flex items-start justify-between gap-4 text-sm">
                   <div className="min-w-0">

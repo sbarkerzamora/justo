@@ -133,6 +133,11 @@ export function FrequencyPicker({
   onSelect: (f: SettlementForm["frequency"]) => void
   copy: (typeof homeCopy)[Locale]
 }) {
+  const freqLabels: Record<string, string> = {
+    mensual: copy.monthly,
+    quincenal: copy.biweekly,
+    semanal: copy.weekly,
+  }
   return (
     <div className="rounded-2xl border border-border bg-card p-3 motion-safe:animate-in motion-safe:duration-200 motion-safe:fade-in motion-safe:slide-in-from-bottom-1">
       <p className="mb-2 text-xs font-medium text-muted-foreground">
@@ -144,9 +149,9 @@ export function FrequencyPicker({
             key={f}
             type="button"
             onClick={() => onSelect(f)}
-            className="rounded-xl border border-border px-3 py-2.5 text-sm font-medium text-foreground capitalize transition-colors duration-200 hover:bg-accent min-h-[44px] min-w-[44px]"
+            className="rounded-xl border border-border px-3 py-2.5 text-sm font-medium text-foreground transition-colors duration-200 hover:bg-accent min-h-[44px] min-w-[44px]"
           >
-            {f}
+            {freqLabels[f]}
           </button>
         ))}
       </div>
@@ -167,6 +172,10 @@ export function ConfirmPanel({
     action: "confirm" | "salary" | "dates" | "vacations"
   ) => Promise<void>
 }) {
+  const freqLabel = (v: string) => {
+    const map: Record<string, string> = { mensual: copy.monthly, quincenal: copy.biweekly, semanal: copy.weekly }
+    return map[v] ?? v
+  }
   return (
     <div className="rounded-2xl border border-border bg-card p-4 motion-safe:animate-in motion-safe:duration-200 motion-safe:fade-in motion-safe:slide-in-from-bottom-1">
       <p className="mb-3 text-sm font-semibold text-foreground">
@@ -180,8 +189,8 @@ export function ConfirmPanel({
           label={copy.dates}
           value={`${form.startDate} -> ${form.endDate}`}
         />
-        <Row label={copy.vacations} value={`${form.unusedVacationDays} dias`} />
-        <Row label={copy.frequency} value={form.frequency} />
+        <Row label={copy.vacations} value={`${form.unusedVacationDays} ${copy.daysLabel}`} />
+        <Row label={copy.frequency} value={freqLabel(form.frequency)} />
       </div>
       <div className="mt-4 flex flex-wrap gap-2">
         <ActionButton
