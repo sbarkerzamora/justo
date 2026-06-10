@@ -410,7 +410,7 @@ export function VacationsTool({
         </div>
         <div className="h-2 rounded-full bg-muted">
           <div
-            className="h-1.5 rounded-full bg-primary transition-all duration-300"
+            className="h-2 rounded-full bg-primary transition-all duration-300"
             style={{ width: `${(stepIndex(step) / 6) * 100}%` }}
           />
         </div>

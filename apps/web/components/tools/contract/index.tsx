@@ -339,7 +339,7 @@ export function ContractTool({
         {step !== "welcome" && step !== "done" && (
           <div className="h-2 rounded-full bg-muted">
             <div
-              className="h-1.5 rounded-full bg-primary transition-all duration-300"
+              className="h-2 rounded-full bg-primary transition-all duration-300"
               style={{
                 width: `${
                   (stepIndex(step) / totalSteps) * 100
@@ -1001,7 +1001,7 @@ function ContractTypeStep({
                 }
               }}
               placeholder="Ej. 30"
-              className="h-11 w-28 rounded-xl border border-border bg-background px-3.5 text-sm text-foreground outline-none transition-colors placeholder:text-muted-foreground focus:border-foreground/30"
+              className="h-11 w-full max-w-28 rounded-xl border border-border bg-background px-3.5 text-sm text-foreground outline-none transition-colors placeholder:text-muted-foreground focus:border-foreground/30"
             />
           </div>
         </div>

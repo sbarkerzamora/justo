@@ -435,7 +435,7 @@ export function TerminationTool({
         </div>
         <div className="h-2 rounded-full bg-muted">
           <div
-            className="h-1.5 rounded-full bg-primary transition-all duration-300"
+            className="h-2 rounded-full bg-primary transition-all duration-300"
             style={{ width: `${(stepIndex(step) / totalSteps) * 100}%` }}
           />
         </div>
