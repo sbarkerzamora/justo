@@ -72,43 +72,52 @@ function useStoredCountry(
   const localeFromPath =
     segments.length >= 1 && isValidLocale(segments[0]) ? segments[0] : null
 
-  const [stored] = useState(() => {
-    if (typeof window === "undefined") {
-      return {
-        country: initialCountry ?? "ni",
-        locale: initialLocale ?? "es",
-      }
-    }
-    try {
-      return {
-        country:
-          localStorage.getItem("justo-country") ?? initialCountry ?? "ni",
-        locale: localStorage.getItem("justo-locale") ?? initialLocale ?? "es",
-      }
-    } catch {
-      return { country: initialCountry ?? "ni", locale: initialLocale ?? "es" }
-    }
-  })
+  if (countryFromPath && localeFromPath) {
+    return { country: countryFromPath, locale: localeFromPath }
+  }
 
-  return {
-    country: countryFromPath ?? stored.country,
-    locale: localeFromPath ?? stored.locale,
+  if (typeof window === "undefined") {
+    return {
+      country: initialCountry ?? "ni",
+      locale: initialLocale ?? "es",
+    }
+  }
+
+  try {
+    return {
+      country:
+        localStorage.getItem("justo-country") ?? initialCountry ?? "ni",
+      locale: localStorage.getItem("justo-locale") ?? initialLocale ?? "es",
+    }
+  } catch {
+    return { country: initialCountry ?? "ni", locale: initialLocale ?? "es" }
   }
 }
 
 const sidebarIcons: Record<string, React.ReactNode> = {
   Chat: <IconMessageCircle className="h-5 w-5 shrink-0" />,
   "Calculadora de liquidacion": <IconCalculator className="h-5 w-5 shrink-0" />,
+  "Settlement calculator": <IconCalculator className="h-5 w-5 shrink-0" />,
   "Calculadora de vacaciones": <IconBeach className="h-5 w-5 shrink-0" />,
+  "Vacation calculator": <IconBeach className="h-5 w-5 shrink-0" />,
   "Salario neto": <IconCoins className="h-5 w-5 shrink-0" />,
+  "Net salary": <IconCoins className="h-5 w-5 shrink-0" />,
   "Aguinaldo / decimo / bono": <IconGift className="h-5 w-5 shrink-0" />,
+  "Bonus / 13th salary": <IconGift className="h-5 w-5 shrink-0" />,
   "Simulador de terminacion": <IconSwitch className="h-5 w-5 shrink-0" />,
+  "Termination simulator": <IconSwitch className="h-5 w-5 shrink-0" />,
   "Generador de contratos": (
     <IconFileDescription className="h-5 w-5 shrink-0" />
   ),
+  "Contract generator": (
+    <IconFileDescription className="h-5 w-5 shrink-0" />
+  ),
   Herramientas: <IconTools className="h-5 w-5 shrink-0" />,
+  Tools: <IconTools className="h-5 w-5 shrink-0" />,
   "Guia laboral": <IconChartBar className="h-5 w-5 shrink-0" />,
+  "Labor guide": <IconChartBar className="h-5 w-5 shrink-0" />,
   "Marco legal": <IconBook className="h-5 w-5 shrink-0" />,
+  "Legal framework": <IconBook className="h-5 w-5 shrink-0" />,
 }
 
 export function AppShell({
@@ -131,42 +140,49 @@ export function AppShell({
   )
   const { push } = useRouter()
   const { resolvedTheme, setTheme } = useTheme()
-  const [mounted, setMounted] = useState(false)
-  useEffect(() => setMounted(true), []) // eslint-disable-line react-hooks/set-state-in-effect
   const toggleMobile = useCallback(() => setMobileOpen((p) => !p), [])
+
+  useEffect(() => {
+    try {
+      document.cookie = `justo-country=${country};path=/;max-age=31536000;SameSite=Lax`
+    } catch {}
+  }, [country])
 
   if (isDocs) return <>{children}</>
 
   const homePath = `/${locale}/${country}`
   const legalLinks = getLegalLinks(locale)
 
+  const t = (es: string, en: string) => (locale === "en" ? en : es)
+
+  const localePrefix = locale === "en" ? "/en" : ""
   const headerLinks = [
     {
-      label: "Herramientas",
-      href: "/tools",
+      label: t("Herramientas", "Tools"),
+      href: `${localePrefix}/tools?country=${country}`,
       icon: <IconTools className="size-4" />,
     },
     {
-      label: "Documentacion",
+      label: t("Documentacion", "Docs"),
       href: "/docs/legal",
       icon: <IconBook className="size-4" />,
     },
   ]
 
   const sidebarLinks = [
-    { label: "Chat", href: homePath },
+    { label: t("Chat", "Chat"), href: homePath },
     {
-      label: "Calculadora de liquidacion",
+      label: t("Calculadora de liquidacion", "Settlement calculator"),
       href: `${homePath}?tool=settlement`,
     },
-    { label: "Calculadora de vacaciones", href: `${homePath}?tool=vacations` },
-    { label: "Salario neto", href: `${homePath}?tool=salary-net` },
-    { label: "Aguinaldo / decimo / bono", href: `${homePath}?tool=bonus` },
-    { label: "Simulador de terminacion", href: `${homePath}?tool=termination` },
-    { label: "Generador de contratos", href: `${homePath}?tool=contract` },
-    { label: "Herramientas", href: "/tools" },
-    { label: "Guia laboral", href: "/guia-laboral" },
-    { label: "Marco legal", href: "/docs/legal" },
+    { label: t("Calculadora de vacaciones", "Vacation calculator"), href: `${homePath}?tool=vacations` },
+    { label: t("Salario neto", "Net salary"), href: `${homePath}?tool=salary-net` },
+    { label: t("Aguinaldo / decimo / bono", "Bonus / 13th salary"), href: `${homePath}?tool=bonus` },
+    { label: t("Simulador de terminacion", "Termination simulator"), href: `${homePath}?tool=termination` },
+    { label: t("Generador de contratos", "Contract generator"), href: `${homePath}?tool=contract` },
+    { label: t("Herramientas", "Tools"), href: `${localePrefix}/tools?country=${country}` },
+    { label: t("Guia laboral", "Labor guide"), href: `${localePrefix}/guia-laboral?country=${country}` },
+    { label: t("Marco legal", "Legal framework"), href: "/docs/legal" },
   ]
 
   const comingSoonSidebarLinks = [
@@ -507,21 +523,6 @@ export function AppShell({
                     <span className="hidden sm:inline">{link.label}</span>
                   </Link>
                 ))}
-                <button
-                  type="button"
-                  onClick={() =>
-                    setTheme(resolvedTheme === "dark" ? "light" : "dark")
-                  }
-                  className="inline-flex size-8 items-center justify-center rounded-lg border border-border bg-card text-foreground transition-colors hover:bg-accent"
-                >
-                  {!mounted ? (
-                    <div className="size-4 rounded-full border border-border" />
-                  ) : resolvedTheme === "dark" ? (
-                    <IconSun className="size-4" />
-                  ) : (
-                    <IconMoon className="size-4" />
-                  )}
-                </button>
                 <a
                   href="https://github.com/sbarkerzamora/justo"
                   target="_blank"
@@ -554,13 +555,42 @@ function LanguageToggle({
   push: (url: string) => void
   open: boolean
 }) {
+  const pathname = usePathname()
+
+  const navigateTo = useCallback(
+    (targetLocale: string) => {
+      const segments = pathname.split("/").filter(Boolean)
+      const isEn = segments[0] === "en"
+      const routeSegments = isEn ? segments.slice(1) : segments
+      const mainSegment = routeSegments[0]
+      const qs = typeof window !== "undefined"
+        ? new URLSearchParams(window.location.search).toString()
+        : ""
+      const query = qs ? `?${qs}` : ""
+
+      if (mainSegment === "tools") {
+        const rest = routeSegments.slice(1).join("/")
+        const prefix = targetLocale === "en" ? "/en" : ""
+        push(`${prefix}/tools${rest ? `/${rest}` : ""}${query}`)
+        return
+      }
+
+      if (mainSegment === "guia-laboral") {
+        const prefix = targetLocale === "en" ? "/en" : ""
+        push(`${prefix}/guia-laboral${query}`)
+        return
+      }
+
+      push(localizedCountryPath(targetLocale as "es" | "en", country))
+    },
+    [pathname, country, push]
+  )
+
   if (!open) {
     return (
       <button
         type="button"
-        onClick={() =>
-          push(localizedCountryPath(current === "es" ? "en" : "es", country))
-        }
+        onClick={() => navigateTo(current === "es" ? "en" : "es")}
         className="inline-flex h-7 w-7 items-center justify-center rounded-lg border border-sidebar-border text-[11px] font-medium text-sidebar-foreground/70 transition-colors hover:bg-sidebar-accent hover:text-sidebar-foreground"
       >
         {current.toUpperCase()}
@@ -572,7 +602,7 @@ function LanguageToggle({
     <div className="flex rounded-lg border border-sidebar-border text-[11px] font-medium">
       <button
         type="button"
-        onClick={() => push(localizedCountryPath("es", country))}
+        onClick={() => navigateTo("es")}
         className={cn(
           "rounded-l-md px-2 py-1 transition-colors",
           current === "es"
@@ -584,7 +614,7 @@ function LanguageToggle({
       </button>
       <button
         type="button"
-        onClick={() => push(localizedCountryPath("en", country))}
+        onClick={() => navigateTo("en")}
         className={cn(
           "rounded-r-md px-2 py-1 transition-colors",
           current === "en"

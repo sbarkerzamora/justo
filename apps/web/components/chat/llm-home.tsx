@@ -8,7 +8,6 @@ import {
   IconGift,
   IconDoorExit,
   IconFileDescription,
-  IconLibrary,
   IconMessageCircle,
   IconSquare,
 } from "@tabler/icons-react"
@@ -21,7 +20,7 @@ import AgentAvatar from "@/components/smoothui/agent-avatar"
 import { getCountryInfo } from "@/lib/countries"
 import { homeCopy } from "@/lib/home-copy"
 import type { Locale } from "@/lib/i18n"
-import { getLegalDocsLink } from "@/lib/legal-docs-link"
+import { getLegalDocsLink, getTopicDocsLink } from "@/lib/legal-docs-link"
 import { useChatMessages } from "@/components/chat/use-chat-messages"
 import { useChatUI } from "@/components/chat/use-chat-ui"
 import { Button } from "@/components/ui/button"
@@ -45,7 +44,6 @@ import {
   ReasoningTrigger,
 } from "@/components/ui/reasoning"
 import { ScrollButton } from "@/components/ui/scroll-button"
-import { Source, SourceContent, SourceTrigger } from "@/components/ui/source"
 import { cn } from "@/lib/utils"
 import { SettlementTool } from "@/components/tools/settlement"
 import { SalaryNetTool } from "@/components/tools/salary-net"
@@ -57,7 +55,7 @@ import GridLoader from "@/components/smoothui/grid-loader"
 import type { PresetPattern } from "@/components/smoothui/grid-loader"
 
 type Role = "user" | "assistant"
-type ChatMessage = { id: string; role: Role; text: string; reasoning?: string }
+type ChatMessage = { id: string; role: Role; text: string; reasoning?: string; topics?: string[] }
 
 type AppMode =
   | "chat"
@@ -163,6 +161,7 @@ export function LlmHome({
     append,
     setMessageText,
     setMessageReasoning,
+    setMessageTopics,
     resetMessages,
   } = useChatMessages()
 
@@ -324,6 +323,16 @@ export function LlmHome({
                 setTypingLabel(copy.typing)
               }
               setMessageReasoning(assistantMessageId, reasoningText)
+            } else if (parsed.type === "topics") {
+              ensureAssistantMessage()
+              try {
+                const topics = JSON.parse(parsed.content)
+                if (Array.isArray(topics) && topics.length > 0) {
+                  setMessageTopics(assistantMessageId, topics)
+                }
+              } catch {
+                // skip invalid topics
+              }
             }
           } catch {
             // skip invalid SSE events
@@ -626,7 +635,7 @@ function LlmHomeView(props: {
                           "min-w-0 rounded-2xl px-3 py-2.5 text-sm leading-relaxed sm:px-4",
                           m.role === "user"
                             ? "max-w-[88%] bg-primary text-primary-foreground sm:max-w-[85%] prose-p:text-primary-foreground prose-strong:text-primary-foreground prose-li:text-primary-foreground"
-                            : "max-w-[92%] border border-border bg-card text-foreground sm:max-w-[88%]"
+                            : "max-w-[85%] text-foreground"
                         )}
                       >
                         {m.role === "assistant" && m.reasoning ? (
@@ -655,6 +664,7 @@ function LlmHomeView(props: {
                             countryName={countryName}
                             cc={cc}
                             locale={locale}
+                            topics={m.topics}
                           />
                         ) : null}
                       </MessageContent>
@@ -662,7 +672,10 @@ function LlmHomeView(props: {
                   ))
                 })()}
                 {isTyping ? (
-                  <ChatTypingIndicator typingMode={typingMode} typingLabel={typingLabel} cc={cc} />
+          <ChatTypingIndicator
+            typingMode={typingMode}
+            typingLabel={typingLabel}
+          />
                 ) : null}
                 <ChatContainerScrollAnchor />
               </ChatContainerContent>
@@ -780,28 +793,25 @@ const typingConfig: Record<
 function ChatTypingIndicator({
   typingMode,
   typingLabel,
-  cc,
 }: {
   typingMode: "idle" | "searching" | "thinking" | "generating"
   typingLabel: string
-  cc: string
 }) {
   const config =
     typingMode === "idle" ? typingConfig.searching : typingConfig[typingMode]
   return (
     <div className="flex max-w-[92%] justify-start motion-safe:animate-in motion-safe:duration-200 motion-safe:fade-in motion-safe:slide-in-from-bottom-1">
-      <JustoOrbAvatar cc={cc} />
-      <div className="flex items-center gap-2 rounded-full bg-black px-3 py-1 ring-2 ring-primary/50">
+      <div className="flex items-center gap-1.5 rounded-full bg-black px-2.5 py-1 ring-2 ring-primary/50">
         <GridLoader
           blur={0}
           color={config.color}
-          gap={1}
+          gap={0.5}
           mode={config.mode}
           pattern={config.pattern}
           rounded={false}
-          size="sm"
+          size={10}
         />
-        <span className="font-medium text-xs text-white">{typingLabel}</span>
+        <span className="font-medium text-[11px] text-white">{typingLabel}</span>
       </div>
     </div>
   )
@@ -878,40 +888,60 @@ function AssistantSource({
   countryName,
   cc,
   locale,
+  topics,
 }: {
   href: string
   countryName: string
   cc: string
   locale: Locale
+  topics?: string[]
 }) {
   return (
-    <div className="mt-2 flex flex-wrap items-center gap-1.5 border-t border-border/60 pt-2 text-xs text-muted-foreground">
-      <IconLibrary className="size-3.5 shrink-0" />
-      <span>{locale === "en" ? "Source" : "Fuente"}</span>
-      <Source href={href}>
-        <SourceTrigger
-          label={locale === "en" ? "Legal corpus" : "Corpus legal"}
+    <div className="mt-2 flex flex-wrap items-center gap-x-2 gap-y-1 border-t border-border/40 pt-2 text-[11px] text-muted-foreground/70">
+      {topics && topics.length > 0 ? (
+        <>
+          {topics.map((topic, i) => {
+            const link = getTopicDocsLink(cc, topic)
+            return (
+              <span key={topic}>
+                {i > 0 && <span className="mr-2 text-muted-foreground/40">·</span>}
+                {link ? (
+                  <a
+                    href={link}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="font-medium text-muted-foreground underline underline-offset-2 transition-colors hover:text-foreground"
+                  >
+                    {topic.charAt(0).toUpperCase() + topic.slice(1)}
+                  </a>
+                ) : (
+                  <span className="font-medium text-muted-foreground/60">{topic}</span>
+                )}
+              </span>
+            )
+          })}
+        </>
+      ) : (
+        <a
+          href={href}
+          target="_blank"
+          rel="noopener noreferrer"
+          className="font-medium text-muted-foreground underline underline-offset-2 transition-colors hover:text-foreground"
+        >
+          {locale === "en" ? "Legal corpus" : "Corpus legal"}
+        </a>
+      )}
+      <span className="inline-flex items-center gap-1 text-muted-foreground/50">
+        <span className="mx-0.5 text-muted-foreground/30">·</span>
+        <span>{countryName}</span>
+        <Image
+          src={`https://flagcdn.com/w40/${cc}.png`}
+          alt={countryName}
+          width={14}
+          height={10}
+          className="h-2.5 w-3.5 shrink-0 rounded-[1px] border border-border/60 object-cover ml-0.5"
         />
-        <SourceContent
-          title={
-            locale === "en"
-              ? `${countryName} legal framework`
-              : `Marco legal de ${countryName}`
-          }
-          description={
-            locale === "en"
-              ? "Versioned legal corpus used by Justo to ground this labor response. Informational, not legal advice."
-              : "Corpus legal versionado usado por Justo para fundamentar esta respuesta laboral. Informativo, no asesoria legal."
-          }
-        />
-      </Source>
-      <Image
-        src={`https://flagcdn.com/w40/${cc}.png`}
-        alt={countryName}
-        width={14}
-        height={10}
-        className="h-2.5 w-3.5 shrink-0 rounded-[1px] border border-border object-cover"
-      />
+      </span>
     </div>
   )
 }
@@ -1062,14 +1092,9 @@ function WelcomeEmptyState({
         </div>
       </div>
 
-      <div className="space-y-3 motion-safe:animate-in motion-safe:duration-300 motion-safe:fade-in motion-safe:slide-in-from-bottom-1">
-        <h2 className="text-xl font-semibold tracking-tight text-foreground sm:text-2xl">
-          Hola, soy <strong className="text-foreground">Justo</strong>
-        </h2>
+      <div className="motion-safe:animate-in motion-safe:duration-300 motion-safe:fade-in motion-safe:slide-in-from-bottom-1">
         <p className="max-w-sm text-sm leading-relaxed text-muted-foreground">
-          Tu asistente experto en derecho laboral de{" "}
-          <strong className="text-foreground">{countryName}</strong>. Te ayudo
-          con liquidaciones, vacaciones, aguinaldo y mas.
+          {copy.welcome(countryName)}
         </p>
       </div>
     </div>

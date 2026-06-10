@@ -4,7 +4,7 @@ import { useRef, useState } from "react"
 
 type Role = "user" | "assistant"
 
-type ChatMessage = { id: string; role: Role; text: string; reasoning?: string }
+type ChatMessage = { id: string; role: Role; text: string; reasoning?: string; topics?: string[] }
 
 const uid = () => crypto.randomUUID()
 
@@ -28,6 +28,14 @@ export function useChatMessages() {
     setMessages((current) =>
       current.map((message) =>
         message.id === id ? { ...message, reasoning } : message
+      )
+    )
+  }
+
+  const setMessageTopics = (id: string, topics: string[]) => {
+    setMessages((current) =>
+      current.map((message) =>
+        message.id === id ? { ...message, topics } : message
       )
     )
   }
@@ -62,6 +70,7 @@ export function useChatMessages() {
     append,
     setMessageText,
     setMessageReasoning,
+    setMessageTopics,
     appendAssistant,
     resetMessages,
   }

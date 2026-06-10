@@ -26,22 +26,36 @@ export function getToolPageMetadata({
   tool,
   country,
   title,
+  pageLocale = "es",
 }: {
   slug: string
   tool: JustoTool
   country: CountryCode | null
   title: string
+  pageLocale?: string
 }): Metadata {
   const canonical = getToolCanonical(slug, country)
   const countryInfo = countryList.find((item) => item.code === country)
   const locale = countryInfo ? countryInfo.locale.replace("-", "_") : "es_419"
 
+  const alternates: Metadata["alternates"] = {
+    canonical,
+  }
+
+  if (country) {
+    const prefix = pageLocale === "en" ? "/en" : ""
+    const otherPrefix = pageLocale === "en" ? "" : "/en"
+    alternates.languages = {
+      es: `${SITE_URL}${pageLocale === "es" ? prefix : otherPrefix}/tools/${slug}?country=${country}`,
+      en: `${SITE_URL}${pageLocale === "en" ? prefix : otherPrefix}/tools/${slug}?country=${country}`,
+      "x-default": `${SITE_URL}/tools/${slug}`,
+    }
+  }
+
   return {
     title,
     description: tool.longDescription,
-    alternates: {
-      canonical,
-    },
+    alternates,
     openGraph: {
       title,
       description: tool.longDescription,

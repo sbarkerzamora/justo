@@ -73,7 +73,7 @@ async function handleLaborQuery(
     >[0]["modelMessages"],
   })
 
-  await thread.post(streamResult.fullStream)
+  await thread.post(streamResult.stream.fullStream)
 }
 
 function getBot(): Chat {
@@ -184,7 +184,7 @@ function getBot(): Chat {
         countryCode: DEFAULT_COUNTRY,
         userMessageText: `Calcula la liquidacion laboral para un trabajador con salario mensual de ${salary} y ${years} años de antiguedad.`,
       })
-      await event.channel.post(streamResult.fullStream)
+      await event.channel.post(streamResult.stream.fullStream)
     } catch {
       await event.channel.post(ERROR_MESSAGE)
     }

@@ -5,13 +5,23 @@ import { getSiteUrl } from "@/lib/site-url"
 const SITE_URL = getSiteUrl()
 
 export const metadata: Metadata = {
-  title: "Justo · Calculadora de Liquidación Laboral para Centroamérica",
+  title: "Justo · Asistente laboral con IA y calculadoras para América Latina",
   description:
-    "Calcula tu liquidación laboral según la legislación de Nicaragua, Guatemala, El Salvador, Honduras, Costa Rica, Panamá, México, Colombia, Perú, Argentina y Chile. Gratis, sin registro y con trazabilidad legal.",
+    "Consulta tus derechos laborales con un asistente de IA entrenado en la legislación de 11 países. Calcula liquidación, vacaciones, salario neto, aguinaldo y más. Gratis, sin registro y open source.",
+  keywords: [
+    "asistente laboral",
+    "calculadora laboral",
+    "liquidación laboral",
+    "calculadora de vacaciones",
+    "salario neto",
+    "aguinaldo",
+    "derechos laborales",
+    "inteligencia artificial derecho laboral",
+  ],
   openGraph: {
-    title: "Justo · Asistente laboral para Centroamérica y América Latina",
+    title: "Justo · Asistente laboral IA para América Latina",
     description:
-      "Calcula liquidaciones laborales y consulta la legislación de 11 países con transparencia y trazabilidad.",
+      "Chat IA sobre derechos laborales + calculadoras de liquidación, vacaciones, salario neto y aguinaldo para 11 países. Open source y trazable.",
     url: SITE_URL,
     siteName: "Justo",
     images: [

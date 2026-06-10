@@ -369,17 +369,32 @@ Después del deploy, verifica:
 
 ## Roadmap
 
-- [x] Soporte inicial para 11 países
-- [x] Chat laboral con IA y corpus legal
-- [x] 6 herramientas OSS determinísticas + PDFs
-- [x] Respuestas enriquecidas y responsive en el chat
-- [x] Docker/Compose para self-hosting
-- [x] Tests exhaustivos (160 tests: core, tools, PDF)
-- [ ] Mantener contrato OSS/Pro: fórmulas, tools y PDFs base viven en este repo
-- [ ] Herramientas roadmap (horas extra, checklist, asistente de contratación)
-- [ ] Auditoría legal/contable por jurisdicción
-- [ ] Mejoras de accesibilidad WCAG
-- [ ] Más documentación pública del corpus legal
+### ✅ En producción
+
+- **11 países** — NI, GT, SV, HN, CR, PA, MX, CO, PE, AR, CL
+- **6 herramientas OSS** — liquidación, vacaciones, salario neto, bono/aguinaldo, terminación, contratos. Cada una con cálculo determinístico, UI guiada y PDF
+- **Chat con IA** + corpus legal por país + RAG v2
+- **SEO completo ES/EN** — tool marketplace, tool detail pages (`/[slug]`), guía laboral, hreflang, sitemap
+- **Self-hosting** — Docker Compose, sin dependencias externas requeridas
+- **160+ tests** — CI (typecheck, lint, test, build)
+
+### 🔜 Próximos pasos
+
+**1. ISR/IR — Impuesto sobre la renta (9 países)**  
+Agregar reglas de ISR/IR al corpus legal y al motor de cálculo para AR, CL, CO, CR, HN, MX, PA, PE, SV. Cada país requiere: documento de corpus (`docs/legal/{país}/impuesto-sobre-la-renta.md`), fórmulas en `packages/core/src/{país}/`, y tests unitarios.
+
+**2. Salario proporcional — países faltantes (5 países)**  
+Completar reglas de salario proporcional para CR, HN, MX, PA, SV. Mismo formato: corpus + fórmulas + tests.
+
+**3. Preaviso — nueva herramienta standalone**  
+Extraer y generalizar el preaviso como herramienta independiente: corpus legal por país, cálculo determinístico en `@justo/core`, UI component, PDF, tool detail page con SEO, y registro en `@justo/tools`.
+
+**4. Re-ingesta del corpus**  
+Ejecutar `pnpm ingest:reset` después de cada cambio en el corpus legal para mantener el RAG sincronizado.
+
+---
+
+Para detalles granulares con archivos específicos, países y criterios de verificación, ver [`docs/roadmap.md`](./docs/roadmap.md).
 
 ---
 

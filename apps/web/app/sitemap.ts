@@ -4,11 +4,12 @@ import { locales } from "@/lib/i18n"
 import { getLegalSitemapEntries } from "@/lib/legal-pages"
 import { getSiteUrl } from "@/lib/site-url"
 import { source } from "@/lib/source"
+import { getAvailableTools } from "@justo/tools"
 
 const SITE_URL = getSiteUrl()
 const LAST_MODIFIED = new Date().toISOString().replace(/\.\d+Z$/, "+00:00")
 
-const toolSlugs = ["liquidacion-laboral", "vacaciones", "salario-neto", "aguinaldo-decimo-bono", "simulador-terminacion", "generador-contratos"] as const
+const toolSlugs = getAvailableTools().map((t) => t.slug)
 
 function toDocsPath(slug?: string[]): string {
   if (!slug || slug.length === 0) return "/docs"
@@ -66,6 +67,12 @@ export default function sitemap(): MetadataRoute.Sitemap {
       changeFrequency: "weekly",
       priority: 0.8,
     })
+    entries.push({
+      url: `${SITE_URL}/en/guia-laboral?country=${country.code}`,
+      lastModified: LAST_MODIFIED,
+      changeFrequency: "weekly",
+      priority: 0.8,
+    })
   }
 
   for (const page of getLegalSitemapEntries()) {
@@ -77,6 +84,28 @@ export default function sitemap(): MetadataRoute.Sitemap {
     })
   }
 
+  entries.push({
+    url: `${SITE_URL}/en/tools`,
+    lastModified: LAST_MODIFIED,
+    changeFrequency: "weekly",
+    priority: 0.8,
+  })
+
+  for (const country of countryList) {
+    entries.push({
+      url: `${SITE_URL}/tools?country=${country.code}`,
+      lastModified: LAST_MODIFIED,
+      changeFrequency: "weekly",
+      priority: 0.8,
+    })
+    entries.push({
+      url: `${SITE_URL}/en/tools?country=${country.code}`,
+      lastModified: LAST_MODIFIED,
+      changeFrequency: "weekly",
+      priority: 0.7,
+    })
+  }
+
   for (const slug of toolSlugs) {
     entries.push({
       url: `${SITE_URL}/tools/${slug}`,
@@ -84,9 +113,21 @@ export default function sitemap(): MetadataRoute.Sitemap {
       changeFrequency: "weekly",
       priority: 0.8,
     })
+    entries.push({
+      url: `${SITE_URL}/en/tools/${slug}`,
+      lastModified: LAST_MODIFIED,
+      changeFrequency: "weekly",
+      priority: 0.8,
+    })
     for (const country of countryList) {
       entries.push({
         url: `${SITE_URL}/tools/${slug}?country=${country.code}`,
+        lastModified: LAST_MODIFIED,
+        changeFrequency: "weekly",
+        priority: 0.7,
+      })
+      entries.push({
+        url: `${SITE_URL}/en/tools/${slug}?country=${country.code}`,
         lastModified: LAST_MODIFIED,
         changeFrequency: "weekly",
         priority: 0.7,

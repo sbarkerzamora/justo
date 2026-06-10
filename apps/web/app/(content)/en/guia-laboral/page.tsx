@@ -20,7 +20,7 @@ function resolveCountry(searchParamsCountry: string | undefined, storedCountry?:
 }
 
 function resolveLocale(): "es" | "en" {
-  return "es"
+  return "en"
 }
 
 export async function generateMetadata({
@@ -35,26 +35,31 @@ export async function generateMetadata({
   } catch {}
   const cc = resolveCountry(sp.country, storedCountry)
   const info = countryList.find((c) => c.code === cc)!
-  const seo = getSeoData(cc, "es", info.name)
+  const seo = getSeoData(cc, "en", info.name)
 
   return {
-    title: `Guía laboral de ${info.name} · Justo`,
-    description: `${seo.intro} Datos anónimos y cómo funciona la calculadora de liquidación laboral para ${info.name}.`,
+    title: `Labor guide for ${info.name} · Justo`,
+    description: `${seo.intro} Anonymous data and how the labor settlement calculator for ${info.name} works.`,
     alternates: {
-      canonical: `${SITE_URL}/guia-laboral?country=${cc}`,
+      canonical: `${SITE_URL}/en/guia-laboral?country=${cc}`,
+      languages: {
+        es: `${SITE_URL}/guia-laboral?country=${cc}`,
+        en: `${SITE_URL}/en/guia-laboral?country=${cc}`,
+        "x-default": `${SITE_URL}/guia-laboral`,
+      },
     },
     openGraph: {
-      title: `Guía laboral de ${info.name} · Justo`,
+      title: `Labor guide for ${info.name} · Justo`,
       description: seo.intro,
-      url: `${SITE_URL}/guia-laboral?country=${cc}`,
+      url: `${SITE_URL}/en/guia-laboral?country=${cc}`,
       siteName: "Justo",
-      locale: "es_419",
+      locale: "en_US",
       type: "website",
     },
   }
 }
 
-export default async function GuidePage({
+export default async function GuidePageEn({
   searchParams,
 }: {
   searchParams: Promise<{ country?: string }>
@@ -68,8 +73,8 @@ export default async function GuidePage({
   const locale = resolveLocale()
   const info = countryList.find((c) => c.code === cc)!
   const seo = getSeoData(cc, locale, info.name)
-  const pageUrl = `${SITE_URL}/guia-laboral?country=${cc}`
-  const calculatorUrl = `/${cc}`
+  const pageUrl = `${SITE_URL}/en/guia-laboral?country=${cc}`
+  const calculatorUrl = `/en/${cc}`
 
   return (
     <>
@@ -79,28 +84,28 @@ export default async function GuidePage({
             <div>
               <Link
                 className="mb-4 inline-flex text-sm font-semibold text-muted-foreground underline-offset-4 hover:text-foreground hover:underline"
-                href="/"
+                href="/en"
               >
-                {locale === "en" ? "Back to Justo" : "Volver a Justo"}
+                Back to Justo
               </Link>
               <div className="mb-4 inline-flex rounded-full border border-border bg-card px-4 py-2 text-xs font-semibold uppercase tracking-[0.24em] text-muted-foreground">
-                {locale === "en" ? "Labor guide" : "Guía laboral"}
+                Labor guide
               </div>
               <h1 className="text-4xl font-semibold tracking-tight sm:text-5xl">
-                {locale === "en" ? `How it works & stats — ${info.name}` : `Cómo funciona y estadísticas — ${info.name}`}
+                How it works & stats — {info.name}
               </h1>
               <p className="mt-4 max-w-2xl text-base leading-7 text-muted-foreground">
                 {seo.intro}
               </p>
             </div>
-            <GuideCountrySelector current={cc} />
+            <GuideCountrySelector current={cc} locale="en" />
           </div>
           <div className="mt-6">
             <Link
               href={calculatorUrl}
               className="inline-flex items-center gap-2 rounded-xl bg-primary px-5 py-2.5 text-sm font-medium text-primary-foreground shadow-sm transition-opacity hover:opacity-90"
             >
-              {locale === "en" ? `Go to ${info.name} calculator` : `Ir a la calculadora de ${info.name}`}
+              Go to {info.name} calculator
             </Link>
           </div>
         </section>
@@ -162,7 +167,7 @@ function buildJsonLd({
         {
           "@type": "ListItem",
           position: 2,
-          name: locale === "en" ? "Labor guide" : "Guía laboral",
+          name: "Labor guide",
           item: `${SITE_URL}/guia-laboral`,
         },
         {

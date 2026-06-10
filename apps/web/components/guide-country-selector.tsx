@@ -11,13 +11,13 @@ import {
 import { countryList } from "@/lib/countries"
 import Image from "next/image"
 
-export function GuideCountrySelector({ current }: { current: string }) {
+export function GuideCountrySelector({ current, locale = "es" }: { current: string; locale?: string }) {
   const { push } = useRouter()
 
   return (
     <Select
       value={current}
-      onValueChange={(cc) => push(`/guia-laboral?country=${cc}`)}
+      onValueChange={(cc) => push(`/${locale === "en" ? "en/" : ""}guia-laboral?country=${cc}`)}
     >
       <SelectTrigger
         aria-label="Seleccionar pais"

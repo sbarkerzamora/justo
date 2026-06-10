@@ -110,7 +110,7 @@ export async function POST(request: Request) {
   )
 
   try {
-    const result = await generateLaborResponse({
+    const { stream: result, topics } = await generateLaborResponse({
       countryCode: cc,
       userMessageText: latestUserText,
       modelMessages,
@@ -173,6 +173,9 @@ export async function POST(request: Request) {
             }
           }
           flushPendingText()
+          if (topics.length > 0) {
+            emit("topics", JSON.stringify(topics))
+          }
         } catch (error) {
           console.error("Stream error:", error)
         } finally {
