@@ -7,7 +7,6 @@ export type TypingMode = "idle" | "searching" | "thinking" | "generating"
 type ChatUIState = {
   isLoading: boolean
   isTyping: boolean
-  typingLabel: string
   typingMode: TypingMode
   isStreamingReply: boolean
   hasStreamChunk: boolean
@@ -16,7 +15,6 @@ type ChatUIState = {
 type ChatUIAction =
   | { type: "setLoading"; value: boolean }
   | { type: "setTyping"; value: boolean }
-  | { type: "setTypingLabel"; value: string }
   | { type: "setTypingMode"; value: TypingMode }
   | { type: "setStreamingReply"; value: boolean }
   | { type: "setHasStreamChunk"; value: boolean }
@@ -27,8 +25,6 @@ const chatUIReducer = (state: ChatUIState, action: ChatUIAction): ChatUIState =>
       return { ...state, isLoading: action.value }
     case "setTyping":
       return { ...state, isTyping: action.value }
-    case "setTypingLabel":
-      return { ...state, typingLabel: action.value }
     case "setTypingMode":
       return { ...state, typingMode: action.value }
     case "setStreamingReply":
@@ -43,7 +39,6 @@ const chatUIReducer = (state: ChatUIState, action: ChatUIAction): ChatUIState =>
 const initialChatUIState: ChatUIState = {
   isLoading: false,
   isTyping: false,
-  typingLabel: "Escribiendo",
   typingMode: "idle",
   isStreamingReply: false,
   hasStreamChunk: false,
@@ -55,13 +50,11 @@ export function useChatUI() {
   return {
     isLoading: state.isLoading,
     isTyping: state.isTyping,
-    typingLabel: state.typingLabel,
     typingMode: state.typingMode,
     isStreamingReply: state.isStreamingReply,
     hasStreamChunk: state.hasStreamChunk,
     setLoading: (value: boolean) => dispatch({ type: "setLoading", value }),
     setTyping: (value: boolean) => dispatch({ type: "setTyping", value }),
-    setTypingLabel: (value: string) => dispatch({ type: "setTypingLabel", value }),
     setTypingMode: (value: TypingMode) => dispatch({ type: "setTypingMode", value }),
     setStreamingReply: (value: boolean) => dispatch({ type: "setStreamingReply", value }),
     setHasStreamChunk: (value: boolean) => dispatch({ type: "setHasStreamChunk", value }),

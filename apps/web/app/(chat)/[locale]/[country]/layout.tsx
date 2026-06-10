@@ -25,25 +25,17 @@ export async function generateMetadata({
 
   if (!isValidLocale(locale) || !isValidCountry(country)) {
     return {
-      title: "Justo · Asistente laboral para Centroamérica",
+      title: "Justo · Asistente laboral con IA para América Latina",
     }
   }
 
   const info = countryList.find((c) => c.code === country)!
   const typedLocale = locale as Locale
   const isEnglish = typedLocale === "en"
-  const title = isEnglish
-    ? `${info.name} Labor Settlement Calculator | Justo`
-    : info.title
-  const description = isEnglish
-    ? `Calculate an estimated labor settlement for ${info.name} with transparent formulas, legal references and a printable PDF. Free and no registration required.`
-    : info.description
-  const ogTitle = isEnglish
-    ? `Justo · Labor assistant for ${info.name}`
-    : info.ogTitle
-  const ogDescription = isEnglish
-    ? `Estimate labor settlements for ${info.name} with transparent calculations and legal traceability.`
-    : info.ogDescription
+  const title = isEnglish ? info.titleEn : info.title
+  const description = isEnglish ? info.descriptionEn : info.description
+  const ogTitle = isEnglish ? info.ogTitleEn : info.ogTitle
+  const ogDescription = isEnglish ? info.ogDescriptionEn : info.ogDescription
 
   const languages: Record<string, string> = {
     [info.hreflang]: `${SITE_URL}/es/${country}`,
@@ -57,13 +49,13 @@ export async function generateMetadata({
     description,
     keywords: [
       isEnglish
-        ? `${info.name} labor calculator`
+        ? `settlement calculator ${info.name}`
         : `calculadora laboral ${info.name}`,
       isEnglish
-        ? `${info.name} settlement calculator`
+        ? `labor calculator ${info.name}`
         : `calculadora de liquidación ${info.name}`,
       isEnglish
-        ? `labor settlement ${info.name}`
+        ? `${info.name} severance pay`
         : `calcular liquidación ${info.name}`,
       isEnglish
         ? `severance ${info.name}`

@@ -1,242 +1,92 @@
-import { getTools } from "@justo/tools"
-import type { JustoTool } from "@justo/tools"
 import type { Metadata } from "next"
-import Link from "next/link"
-import {
-  IconCalculator,
-  IconCoins,
-  IconGift,
-  IconClock,
-  IconFileDescription,
-  IconClipboardCheck,
-  IconUserPlus,
-  IconBeach,
-  IconTools,
-  IconArrowRight,
-} from "@tabler/icons-react"
-import { buildToolsItemListJsonLd } from "@/lib/tool-seo"
-import { countryLabels } from "@/lib/tools-common"
+import { ToolsPage, type ToolsPageCopy } from "./tools-page"
+import { isValidCountry, countryList } from "@/lib/countries"
+import { getSiteUrl } from "@/lib/site-url"
 
-export const metadata: Metadata = {
-  title: "Herramientas laborales abiertas | Justo",
-  description:
-    "Calculadoras y asistentes laborales open source para liquidaciones, vacaciones, salario neto y cumplimiento laboral en Latinoamerica.",
-  alternates: {
-    canonical: "/tools",
+const SITE_URL = getSiteUrl()
+
+export async function generateMetadata({
+  searchParams,
+}: {
+  searchParams: Promise<{ country?: string }>
+}): Promise<Metadata> {
+  const { country } = await searchParams
+  const cc = country && isValidCountry(country) ? country : null
+  const info = cc ? countryList.find((c) => c.code === cc) : null
+  const title = info
+    ? `Herramientas laborales para ${info.name} | Justo`
+    : "Herramientas laborales abiertas | Justo"
+  const description = info
+    ? `Calculadoras laborales open source para ${info.name}: liquidación, vacaciones, salario neto, aguinaldo y más. Gratis, sin registro.`
+    : "Calculadoras y asistentes laborales open source para liquidaciones, vacaciones, salario neto y cumplimiento laboral en Latinoamerica."
+
+  return {
+    title,
+    description,
+    alternates: {
+      canonical: info
+        ? `${SITE_URL}/tools?country=${cc}`
+        : `${SITE_URL}/tools`,
+    },
+    openGraph: {
+      title,
+      description,
+      url: info
+        ? `${SITE_URL}/tools?country=${cc}`
+        : `${SITE_URL}/tools`,
+      siteName: "Justo",
+      images: [{ url: `${SITE_URL}/images/og-image.png`, width: 1200, height: 630 }],
+      locale: "es_419",
+      type: "website",
+    },
+    twitter: {
+      card: "summary_large_image",
+      title,
+      description,
+      images: [`${SITE_URL}/images/og-image.png`],
+    },
+  }
+}
+
+const esCopy: ToolsPageCopy = {
+  metaTitle: "Herramientas laborales abiertas | Justo",
+  metaDescription: "Calculadoras y asistentes laborales open source para liquidaciones, vacaciones, salario neto y cumplimiento laboral en Latinoamerica.",
+  badge: "Open source laboral",
+  headingLine1: "Herramientas",
+  headingLine2: "laborales abiertas",
+  description: "Calculos verificables, corpus legal versionado y self-hosting.",
+  availableLabel: "herramientas disponibles",
+  roadmapLabel: "en roadmap OSS",
+  countriesLabel: "paises en la base",
+  availableLabelSingle: "herramienta disponible",
+  roadmapLabelSingle: "en roadmap OSS",
+  countriesLabelSingle: "pais",
+  allCountries: "Todos los paises",
+  availableNow: "Disponible ahora",
+  comingSoon: "Proximamente",
+  comingSoonBadge: "Proximamente",
+  startButton: "Comenzar calculo",
+  footerTitle: "Regla de producto",
+  footerDescription: "Las herramientas laborales generales son abiertas. La plataforma empresarial con persistencia, equipos, auditoria y asistente de RRHH sera de pago.",
+  forCountry: (name: string) => `Herramientas\nlaborales\npara ${name}`,
+  emptyCountry: (name: string) => `No hay herramientas disponibles para ${name} aun.`,
+  categoryLabels: {
+    assistant: "Asistente",
+    calculation: "Calculo",
+    checklist: "Checklist",
+    document: "Documento",
   },
-  openGraph: {
-    title: "Herramientas laborales abiertas | Justo",
-    description:
-      "Calculadoras y asistentes laborales open source para liquidaciones, vacaciones, salario neto y cumplimiento laboral en Latinoamerica.",
-    url: "/tools",
-    siteName: "Justo",
-    images: [{ url: "/images/og-image.png", width: 1200, height: 630 }],
-    locale: "es_419",
-    type: "website",
-  },
-  twitter: {
-    card: "summary_large_image",
-    title: "Herramientas laborales abiertas | Justo",
-    description:
-      "Calculadoras y asistentes laborales open source para liquidaciones, vacaciones, salario neto y cumplimiento laboral en Latinoamerica.",
-    images: ["/images/og-image.png"],
+  statusLabels: {
+    available: "Disponible",
+    coming_soon: "Proximamente",
   },
 }
 
-const categoryLabels: Record<JustoTool["category"], string> = {
-  assistant: "Asistente",
-  calculation: "Calculo",
-  checklist: "Checklist",
-  document: "Documento",
-}
-
-const statusLabels: Record<JustoTool["availability"], string> = {
-  available: "Disponible",
-  coming_soon: "Proximamente",
-}
-
-const toolIcons: Record<string, React.ReactNode> = {
-  "liquidacion-laboral": <IconCalculator className="size-5" />,
-  vacaciones: <IconBeach className="size-5" />,
-  "salario-neto": <IconCoins className="size-5" />,
-  "aguinaldo-decimo-bono": <IconGift className="size-5" />,
-  "horas-extra": <IconClock className="size-5" />,
-  "simulador-terminacion": <IconFileDescription className="size-5" />,
-  "finiquito-basico": <IconFileDescription className="size-5" />,
-  "checklist-laboral": <IconClipboardCheck className="size-5" />,
-  "asistente-contratacion": <IconUserPlus className="size-5" />,
-}
-
-function ToolCard({ tool }: { tool: JustoTool }) {
-  const isAvailable = tool.availability === "available"
-  const icon = toolIcons[tool.slug] ?? <IconTools className="size-5" />
-
-  return (
-    <Link
-      href={isAvailable ? `/tools/${tool.slug}` : "#"}
-      className={
-        isAvailable
-          ? "group flex flex-col gap-4 rounded-2xl border border-border/40 px-5 py-5 transition-all duration-300 hover:-translate-y-0.5 hover:border-border hover:shadow-sm"
-          : "flex flex-col gap-4 rounded-2xl border border-border/20 px-5 py-5 opacity-60"
-      }
-    >
-      <div className="flex items-start justify-between gap-3">
-        <div className="flex size-9 shrink-0 items-center justify-center rounded-xl border border-border bg-background text-foreground">
-          {icon}
-        </div>
-        <div className="flex items-center gap-2">
-          <span className="text-[10px] font-semibold tracking-[0.16em] text-muted-foreground uppercase">
-            {categoryLabels[tool.category]}
-          </span>
-          <span className="block h-1 w-1 rounded-full bg-border" />
-          <span className="text-[10px] font-medium text-muted-foreground">
-            {statusLabels[tool.availability]}
-          </span>
-        </div>
-      </div>
-
-      <div className="space-y-1.5">
-        <h3 className="text-base font-semibold tracking-tight text-foreground">
-          {tool.name}
-        </h3>
-        <p className="text-[13px] leading-relaxed text-muted-foreground">
-          {tool.shortDescription}
-        </p>
-      </div>
-
-      <div className="flex flex-wrap items-center gap-1.5">
-        {tool.countrySupport.length > 4 ? (
-          <span className="rounded-full border border-border/40 px-2 py-0.5 text-[10px] font-medium text-muted-foreground">
-            {tool.countrySupport.length} paises
-          </span>
-        ) : (
-          tool.countrySupport.map((country) => (
-            <span
-              className="rounded-full border border-border/40 px-2 py-0.5 text-[10px] font-medium text-muted-foreground"
-              key={country}
-            >
-              {countryLabels[country] ?? country.toUpperCase()}
-            </span>
-          ))
-        )}
-      </div>
-
-      {isAvailable ? (
-        <span className="inline-flex items-center gap-1.5 text-[13px] font-medium text-foreground transition-colors group-hover:text-primary">
-          Abrir herramienta
-          <IconArrowRight className="size-3.5 transition-transform duration-200 group-hover:translate-x-0.5" />
-        </span>
-      ) : (
-        <span className="inline-flex items-center gap-1.5 text-[13px] font-medium text-muted-foreground/60">
-          Proximamente
-        </span>
-      )}
-    </Link>
-  )
-}
-
-export default function ToolsPage() {
-  const tools = getTools()
-  const availableTools = tools.filter(
-    (tool) => tool.availability === "available"
-  )
-  const upcomingTools = tools.filter(
-    (tool) => tool.availability === "coming_soon"
-  )
-  const jsonLd = buildToolsItemListJsonLd(availableTools)
-
-  return (
-    <>
-      <main className="min-h-screen bg-background">
-        <section className="mx-auto w-full max-w-5xl px-6 py-20 sm:py-28">
-          <div className="max-w-2xl space-y-4">
-            <div className="flex items-center gap-3 text-sm text-muted-foreground">
-              <IconTools className="size-4" />
-              <span className="font-mono text-xs tracking-[0.16em] uppercase">
-                Open source laboral
-              </span>
-            </div>
-
-            <h1 className="text-4xl leading-none font-semibold tracking-[-0.04em] text-foreground sm:text-5xl">
-              Herramientas
-              <br />
-              laborales abiertas
-            </h1>
-
-            <p className="max-w-[52ch] text-base leading-7 text-muted-foreground">
-              Calculos verificables, corpus legal versionado y self-hosting. La
-              monetizacion futura vive en operacion empresarial, no en ocultar
-              la ley.
-            </p>
-          </div>
-
-          <div className="mt-12 flex flex-wrap gap-6 border-b border-border pb-12">
-            <div>
-              <span className="font-mono text-3xl font-semibold text-foreground tabular-nums">
-                {availableTools.length}
-              </span>
-              <span className="ml-2 text-sm text-muted-foreground">
-                herramientas disponibles
-              </span>
-            </div>
-            <div>
-              <span className="font-mono text-3xl font-semibold text-foreground tabular-nums">
-                {upcomingTools.length}
-              </span>
-              <span className="ml-2 text-sm text-muted-foreground">
-                en roadmap OSS
-              </span>
-            </div>
-            <div>
-              <span className="font-mono text-3xl font-semibold text-foreground tabular-nums">
-                11
-              </span>
-              <span className="ml-2 text-sm text-muted-foreground">
-                paises en la base
-              </span>
-            </div>
-          </div>
-        </section>
-
-        <section className="mx-auto w-full max-w-5xl px-6 pb-16">
-          <h2 className="mb-8 font-mono text-xs font-semibold tracking-[0.2em] text-muted-foreground uppercase">
-            Disponible ahora
-          </h2>
-          <div className="grid gap-4 sm:grid-cols-2">
-            {availableTools.map((tool) => (
-              <ToolCard key={tool.id} tool={tool} />
-            ))}
-          </div>
-        </section>
-
-        <section className="mx-auto w-full max-w-5xl px-6 pb-20">
-          <h2 className="mb-8 font-mono text-xs font-semibold tracking-[0.2em] text-muted-foreground uppercase">
-            Proximamente
-          </h2>
-          <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
-            {upcomingTools.map((tool) => (
-              <ToolCard key={tool.id} tool={tool} />
-            ))}
-          </div>
-        </section>
-
-        <footer className="mx-auto w-full max-w-5xl px-6 pb-24">
-          <div className="rounded-2xl border border-border px-8 py-10 text-center">
-            <p className="font-mono text-xs font-semibold tracking-[0.2em] text-muted-foreground uppercase">
-              Regla de producto
-            </p>
-            <p className="mx-auto mt-4 max-w-lg text-sm leading-7 text-muted-foreground">
-              Las herramientas laborales generales son abiertas. La plataforma
-              empresarial con persistencia, equipos, auditoria y asistente de
-              RRHH sera de pago.
-            </p>
-          </div>
-        </footer>
-      </main>
-      <script
-        type="application/ld+json"
-        dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
-      />
-    </>
-  )
+export default async function ToolsPageES({
+  searchParams,
+}: {
+  searchParams: Promise<{ country?: string }>
+}) {
+  const { country } = await searchParams
+  return <ToolsPage copy={esCopy} country={country} locale="es" />
 }

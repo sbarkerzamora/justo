@@ -23,7 +23,7 @@ export function VacationResultPanel({
         <p className="text-xs font-semibold uppercase tracking-[0.24em] text-muted-foreground">
           Resultado de vacaciones
         </p>
-        <p className="mt-1 text-2xl font-semibold tracking-[-0.02em] text-foreground">
+        <p className="mt-1 text-3xl font-bold tracking-[-0.02em] text-foreground">
           {fmt(result.result.amount)}
         </p>
       </div>
@@ -43,7 +43,7 @@ export function VacationResultPanel({
         <button
           type="button"
           onClick={() => void backToLegalChat()}
-          className="inline-flex items-center gap-2 rounded-xl border border-border px-3 py-2 text-xs font-medium text-muted-foreground transition-colors hover:bg-accent"
+          className="inline-flex items-center gap-2 rounded-xl border border-border px-3 py-2.5 text-xs font-medium text-muted-foreground transition-colors hover:bg-accent min-h-[44px]"
         >
           <IconBook className="size-4" />
           {copy.backToChat}

@@ -8,7 +8,7 @@ import {
   useCallback,
 } from "react"
 import Link from "next/link"
-import { usePathname, useRouter } from "next/navigation"
+import { usePathname, useSearchParams, useRouter } from "next/navigation"
 import { useTheme } from "next-themes"
 import Image from "next/image"
 import { AnimatePresence, motion } from "framer-motion"
@@ -49,6 +49,7 @@ import {
   IconMenu2,
   IconBuilding,
   IconBeer,
+  IconChevronDown,
 } from "@tabler/icons-react"
 
 type SidebarCtx = { open: boolean; setOpen: (v: boolean) => void }
@@ -72,43 +73,52 @@ function useStoredCountry(
   const localeFromPath =
     segments.length >= 1 && isValidLocale(segments[0]) ? segments[0] : null
 
-  const [stored] = useState(() => {
-    if (typeof window === "undefined") {
-      return {
-        country: initialCountry ?? "ni",
-        locale: initialLocale ?? "es",
-      }
-    }
-    try {
-      return {
-        country:
-          localStorage.getItem("justo-country") ?? initialCountry ?? "ni",
-        locale: localStorage.getItem("justo-locale") ?? initialLocale ?? "es",
-      }
-    } catch {
-      return { country: initialCountry ?? "ni", locale: initialLocale ?? "es" }
-    }
-  })
+  if (countryFromPath && localeFromPath) {
+    return { country: countryFromPath, locale: localeFromPath }
+  }
 
-  return {
-    country: countryFromPath ?? stored.country,
-    locale: localeFromPath ?? stored.locale,
+  if (typeof window === "undefined") {
+    return {
+      country: initialCountry ?? "ni",
+      locale: initialLocale ?? "es",
+    }
+  }
+
+  try {
+    return {
+      country:
+        localStorage.getItem("justo-country") ?? initialCountry ?? "ni",
+      locale: localStorage.getItem("justo-locale") ?? initialLocale ?? "es",
+    }
+  } catch {
+    return { country: initialCountry ?? "ni", locale: initialLocale ?? "es" }
   }
 }
 
 const sidebarIcons: Record<string, React.ReactNode> = {
   Chat: <IconMessageCircle className="h-5 w-5 shrink-0" />,
   "Calculadora de liquidacion": <IconCalculator className="h-5 w-5 shrink-0" />,
+  "Settlement calculator": <IconCalculator className="h-5 w-5 shrink-0" />,
   "Calculadora de vacaciones": <IconBeach className="h-5 w-5 shrink-0" />,
+  "Vacation calculator": <IconBeach className="h-5 w-5 shrink-0" />,
   "Salario neto": <IconCoins className="h-5 w-5 shrink-0" />,
+  "Net salary": <IconCoins className="h-5 w-5 shrink-0" />,
   "Aguinaldo / decimo / bono": <IconGift className="h-5 w-5 shrink-0" />,
+  "Bonus / 13th salary": <IconGift className="h-5 w-5 shrink-0" />,
   "Simulador de terminacion": <IconSwitch className="h-5 w-5 shrink-0" />,
+  "Termination simulator": <IconSwitch className="h-5 w-5 shrink-0" />,
   "Generador de contratos": (
     <IconFileDescription className="h-5 w-5 shrink-0" />
   ),
+  "Contract generator": (
+    <IconFileDescription className="h-5 w-5 shrink-0" />
+  ),
   Herramientas: <IconTools className="h-5 w-5 shrink-0" />,
+  Tools: <IconTools className="h-5 w-5 shrink-0" />,
   "Guia laboral": <IconChartBar className="h-5 w-5 shrink-0" />,
+  "Labor guide": <IconChartBar className="h-5 w-5 shrink-0" />,
   "Marco legal": <IconBook className="h-5 w-5 shrink-0" />,
+  "Legal framework": <IconBook className="h-5 w-5 shrink-0" />,
 }
 
 export function AppShell({
@@ -124,6 +134,8 @@ export function AppShell({
   const isDocs = pathname.startsWith("/docs")
   const [open, setOpen] = useState(true)
   const [mobileOpen, setMobileOpen] = useState(false)
+  const searchParams = useSearchParams()
+  const [toolsOpen, setToolsOpen] = useState(searchParams?.has("tool") ?? false)
   const { country, locale } = useStoredCountry(
     pathname,
     initialLocale,
@@ -131,42 +143,49 @@ export function AppShell({
   )
   const { push } = useRouter()
   const { resolvedTheme, setTheme } = useTheme()
-  const [mounted, setMounted] = useState(false)
-  useEffect(() => setMounted(true), []) // eslint-disable-line react-hooks/set-state-in-effect
   const toggleMobile = useCallback(() => setMobileOpen((p) => !p), [])
+
+  useEffect(() => {
+    try {
+      document.cookie = `justo-country=${country};path=/;max-age=31536000;SameSite=Lax`
+    } catch {}
+  }, [country])
 
   if (isDocs) return <>{children}</>
 
   const homePath = `/${locale}/${country}`
   const legalLinks = getLegalLinks(locale)
 
+  const t = (es: string, en: string) => (locale === "en" ? en : es)
+
+  const localePrefix = locale === "en" ? "/en" : ""
   const headerLinks = [
     {
-      label: "Herramientas",
-      href: "/tools",
+      label: t("Herramientas", "Tools"),
+      href: `${localePrefix}/tools?country=${country}`,
       icon: <IconTools className="size-4" />,
     },
     {
-      label: "Documentacion",
+      label: t("Documentacion", "Docs"),
       href: "/docs/legal",
       icon: <IconBook className="size-4" />,
     },
   ]
 
   const sidebarLinks = [
-    { label: "Chat", href: homePath },
-    {
-      label: "Calculadora de liquidacion",
-      href: `${homePath}?tool=settlement`,
-    },
-    { label: "Calculadora de vacaciones", href: `${homePath}?tool=vacations` },
-    { label: "Salario neto", href: `${homePath}?tool=salary-net` },
-    { label: "Aguinaldo / decimo / bono", href: `${homePath}?tool=bonus` },
-    { label: "Simulador de terminacion", href: `${homePath}?tool=termination` },
-    { label: "Generador de contratos", href: `${homePath}?tool=contract` },
-    { label: "Herramientas", href: "/tools" },
-    { label: "Guia laboral", href: "/guia-laboral" },
-    { label: "Marco legal", href: "/docs/legal" },
+    { label: t("Chat", "Chat"), href: homePath },
+    { label: t("Guia laboral", "Labor guide"), href: `${localePrefix}/guia-laboral?country=${country}` },
+    { label: t("Marco legal", "Legal framework"), href: "/docs/legal" },
+  ]
+
+  const toolItems = [
+    { label: t("Calculadora de liquidacion", "Settlement calculator"), href: `${homePath}?tool=settlement`, icon: <IconCalculator className="h-5 w-5 shrink-0" /> },
+    { label: t("Calculadora de vacaciones", "Vacation calculator"), href: `${homePath}?tool=vacations`, icon: <IconBeach className="h-5 w-5 shrink-0" /> },
+    { label: t("Salario neto", "Net salary"), href: `${homePath}?tool=salary-net`, icon: <IconCoins className="h-5 w-5 shrink-0" /> },
+    { label: t("Aguinaldo / decimo / bono", "Bonus / 13th salary"), href: `${homePath}?tool=bonus`, icon: <IconGift className="h-5 w-5 shrink-0" /> },
+    { label: t("Simulador de terminacion", "Termination simulator"), href: `${homePath}?tool=termination`, icon: <IconSwitch className="h-5 w-5 shrink-0" /> },
+    { label: t("Generador de contratos", "Contract generator"), href: `${homePath}?tool=contract`, icon: <IconFileDescription className="h-5 w-5 shrink-0" /> },
+    { label: t("Herramientas", "Tools"), href: `${localePrefix}/tools?country=${country}`, icon: <IconTools className="h-5 w-5 shrink-0" /> },
   ]
 
   const comingSoonSidebarLinks = [
@@ -283,7 +302,71 @@ export function AppShell({
 
       <div className="border-t border-sidebar-border pt-3">
         <nav className="flex flex-col gap-1">
-          {sidebarLinks.map((link) => (
+          {sidebarLinks.slice(0, 1).map((link) => (
+            <Link
+              key={link.label}
+              href={link.href}
+              className={cn(
+                "flex items-center gap-2 rounded-lg px-2 py-2 text-sm text-sidebar-foreground transition-colors hover:bg-sidebar-accent",
+                expanded ? "" : "justify-center"
+              )}
+              onClick={onNavigate}
+            >
+              {sidebarIcons[link.label]}
+              {expanded ? (
+                <span className="whitespace-nowrap">{link.label}</span>
+              ) : null}
+            </Link>
+          ))}
+          {expanded ? (
+            <div>
+              <button
+                type="button"
+                onClick={() => setToolsOpen((p) => !p)}
+                className="flex w-full items-center gap-2 rounded-lg px-2 py-2 text-sm text-sidebar-foreground transition-colors hover:bg-sidebar-accent"
+              >
+                <IconTools className="h-5 w-5 shrink-0" />
+                <span className="flex-1 whitespace-nowrap text-left">
+                  {t("Herramientas", "Tools")}
+                </span>
+                <IconChevronDown
+                  className={cn(
+                    "size-4 shrink-0 text-sidebar-foreground/50 transition-transform",
+                    toolsOpen ? "rotate-0" : "-rotate-90"
+                  )}
+                />
+              </button>
+              <AnimatePresence initial={false}>
+                {toolsOpen && (
+                  <motion.div
+                    initial={{ height: 0, opacity: 0 }}
+                    animate={{ height: "auto", opacity: 1 }}
+                    exit={{ height: 0, opacity: 0 }}
+                    className="overflow-hidden"
+                  >
+                    <div className="ml-3 flex flex-col gap-0.5 border-l border-sidebar-border pl-3 pt-1">
+                      {toolItems.map((item) => (
+                        <Link
+                          key={item.label}
+                          href={item.href}
+                          onClick={onNavigate}
+                          className="flex items-center gap-2 rounded-lg px-2 py-1.5 text-sm text-sidebar-foreground/80 transition-colors hover:bg-sidebar-accent hover:text-sidebar-foreground"
+                        >
+                          {item.icon}
+                          <span className="whitespace-nowrap">{item.label}</span>
+                        </Link>
+                      ))}
+                    </div>
+                  </motion.div>
+                )}
+              </AnimatePresence>
+            </div>
+          ) : (
+            <div className="flex justify-center">
+              <IconTools className="h-5 w-5 shrink-0 text-sidebar-foreground" />
+            </div>
+          )}
+          {sidebarLinks.slice(1).map((link) => (
             <Link
               key={link.label}
               href={link.href}
@@ -507,21 +590,6 @@ export function AppShell({
                     <span className="hidden sm:inline">{link.label}</span>
                   </Link>
                 ))}
-                <button
-                  type="button"
-                  onClick={() =>
-                    setTheme(resolvedTheme === "dark" ? "light" : "dark")
-                  }
-                  className="inline-flex size-8 items-center justify-center rounded-lg border border-border bg-card text-foreground transition-colors hover:bg-accent"
-                >
-                  {!mounted ? (
-                    <div className="size-4 rounded-full border border-border" />
-                  ) : resolvedTheme === "dark" ? (
-                    <IconSun className="size-4" />
-                  ) : (
-                    <IconMoon className="size-4" />
-                  )}
-                </button>
                 <a
                   href="https://github.com/sbarkerzamora/justo"
                   target="_blank"
@@ -554,13 +622,42 @@ function LanguageToggle({
   push: (url: string) => void
   open: boolean
 }) {
+  const pathname = usePathname()
+
+  const navigateTo = useCallback(
+    (targetLocale: string) => {
+      const segments = pathname.split("/").filter(Boolean)
+      const isEn = segments[0] === "en"
+      const routeSegments = isEn ? segments.slice(1) : segments
+      const mainSegment = routeSegments[0]
+      const qs = typeof window !== "undefined"
+        ? new URLSearchParams(window.location.search).toString()
+        : ""
+      const query = qs ? `?${qs}` : ""
+
+      if (mainSegment === "tools") {
+        const rest = routeSegments.slice(1).join("/")
+        const prefix = targetLocale === "en" ? "/en" : ""
+        push(`${prefix}/tools${rest ? `/${rest}` : ""}${query}`)
+        return
+      }
+
+      if (mainSegment === "guia-laboral") {
+        const prefix = targetLocale === "en" ? "/en" : ""
+        push(`${prefix}/guia-laboral${query}`)
+        return
+      }
+
+      push(localizedCountryPath(targetLocale as "es" | "en", country))
+    },
+    [pathname, country, push]
+  )
+
   if (!open) {
     return (
       <button
         type="button"
-        onClick={() =>
-          push(localizedCountryPath(current === "es" ? "en" : "es", country))
-        }
+        onClick={() => navigateTo(current === "es" ? "en" : "es")}
         className="inline-flex h-7 w-7 items-center justify-center rounded-lg border border-sidebar-border text-[11px] font-medium text-sidebar-foreground/70 transition-colors hover:bg-sidebar-accent hover:text-sidebar-foreground"
       >
         {current.toUpperCase()}
@@ -572,7 +669,7 @@ function LanguageToggle({
     <div className="flex rounded-lg border border-sidebar-border text-[11px] font-medium">
       <button
         type="button"
-        onClick={() => push(localizedCountryPath("es", country))}
+        onClick={() => navigateTo("es")}
         className={cn(
           "rounded-l-md px-2 py-1 transition-colors",
           current === "es"
@@ -584,7 +681,7 @@ function LanguageToggle({
       </button>
       <button
         type="button"
-        onClick={() => push(localizedCountryPath("en", country))}
+        onClick={() => navigateTo("en")}
         className={cn(
           "rounded-r-md px-2 py-1 transition-colors",
           current === "en"

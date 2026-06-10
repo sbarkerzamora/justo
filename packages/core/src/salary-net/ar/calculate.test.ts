@@ -39,4 +39,16 @@ describe("calculateArgentinaSalaryNet", () => {
       }),
     ).toThrow("El salario bruto debe ser positivo")
   })
+
+  test("applies IR progresivo when salary exceeds the minimum tax-free threshold", () => {
+    const result = calculateArgentinaSalaryNet({
+      countryCode: "ar",
+      grossSalary: 2000000,
+      frequency: "mensual",
+    })
+
+    expect(result.deductions).toHaveLength(4)
+    const ir = result.deductions.find((d) => d.label === "IR")
+    expect(ir?.amount).toBeGreaterThan(0)
+  })
 })

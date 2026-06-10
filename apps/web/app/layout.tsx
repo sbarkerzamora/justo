@@ -24,6 +24,9 @@ export const viewport = {
 
 export const metadata: Metadata = {
   metadataBase: new URL(SITE_URL),
+  title: "Justo · Asistente laboral con IA y calculadoras",
+  description:
+    "Consulta derechos laborales con IA entrenada en 11 países. Calcula liquidación, vacaciones y más. Gratis y open source.",
   applicationName: "Justo",
   authors: [{ name: "Justo" }],
   creator: "Justo",

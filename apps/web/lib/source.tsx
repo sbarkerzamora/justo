@@ -1072,6 +1072,7 @@ total_deducciones = igss_laboral + isr_laboral`}</code></pre>
               <li><Link className="block rounded-lg border border-border bg-card px-3 py-2 hover:bg-accent" href="/docs/legal/honduras/salario-proporcional">🧾 Salario pendiente</Link></li>
               <li><Link className="block rounded-lg border border-border bg-card px-3 py-2 hover:bg-accent" href="/docs/legal/honduras/deducciones">➖ Deducciones legales</Link></li>
               <li><Link className="block rounded-lg border border-border bg-card px-3 py-2 hover:bg-accent" href="/docs/legal/honduras/ihss">🛡 IHSS laboral</Link></li>
+              <li className="sm:col-span-2"><Link className="block rounded-lg border border-border bg-card px-3 py-2 hover:bg-accent" href="/docs/legal/honduras/isr">📊 ISR rentas del trabajo</Link></li>
             </ul>
             <div className="rounded-xl border border-border bg-card p-3 text-sm text-muted-foreground">
               Aviso: contenido informativo. Para casos complejos validar con asesoria legal.
@@ -1425,6 +1426,7 @@ total_deducciones = ihss_laboral`}</code></pre>
               <li><Link className="block rounded-lg border border-border bg-card px-3 py-2 hover:bg-accent" href="/docs/legal/elsalvador/deducciones">➖ Deducciones legales</Link></li>
               <li><Link className="block rounded-lg border border-border bg-card px-3 py-2 hover:bg-accent" href="/docs/legal/elsalvador/isss">🏥 ISSS laboral</Link></li>
               <li className="sm:col-span-2"><Link className="block rounded-lg border border-border bg-card px-3 py-2 hover:bg-accent" href="/docs/legal/elsalvador/afp">💰 AFP laboral</Link></li>
+              <li className="sm:col-span-2"><Link className="block rounded-lg border border-border bg-card px-3 py-2 hover:bg-accent" href="/docs/legal/elsalvador/isr">📊 ISR rentas del trabajo</Link></li>
             </ul>
             <div className="rounded-xl border border-border bg-card p-3 text-sm text-muted-foreground">
               Aviso: contenido informativo. Para casos complejos validar con asesoria legal.
@@ -1809,6 +1811,7 @@ total = isss + afp
               <li><Link className="block rounded-lg border border-border bg-card px-3 py-2 hover:bg-accent" href="/docs/legal/costarica/salario-proporcional">🧾 Salario pendiente</Link></li>
               <li><Link className="block rounded-lg border border-border bg-card px-3 py-2 hover:bg-accent" href="/docs/legal/costarica/deducciones">➖ Deducciones legales</Link></li>
               <li><Link className="block rounded-lg border border-border bg-card px-3 py-2 hover:bg-accent" href="/docs/legal/costarica/ccss">🏥 CCSS laboral</Link></li>
+              <li className="sm:col-span-2"><Link className="block rounded-lg border border-border bg-card px-3 py-2 hover:bg-accent" href="/docs/legal/costarica/impuesto-sobre-la-renta">📊 Impuesto sobre la Renta</Link></li>
             </ul>
             <div className="rounded-xl border border-border bg-card p-3 text-sm text-muted-foreground">
               Aviso: contenido informativo. Para casos complejos validar con asesoria legal.
@@ -2149,6 +2152,7 @@ total_deducciones = ccss_laboral`}</code></pre>
               <li><Link className="block rounded-lg border border-border bg-card px-3 py-2 hover:bg-accent" href="/docs/legal/panama/salario-proporcional">🧾 Salario pendiente</Link></li>
               <li><Link className="block rounded-lg border border-border bg-card px-3 py-2 hover:bg-accent" href="/docs/legal/panama/deducciones">➖ Deducciones legales</Link></li>
               <li><Link className="block rounded-lg border border-border bg-card px-3 py-2 hover:bg-accent" href="/docs/legal/panama/css">🏥 CSS laboral</Link></li>
+              <li className="sm:col-span-2"><Link className="block rounded-lg border border-border bg-card px-3 py-2 hover:bg-accent" href="/docs/legal/panama/impuesto-sobre-la-renta">📊 Impuesto sobre la Renta</Link></li>
             </ul>
             <div className="rounded-xl border border-border bg-card p-3 text-sm text-muted-foreground">
               Aviso: contenido informativo. Para casos complejos validar con asesoria legal.
@@ -2480,6 +2484,7 @@ total_deducciones = css_laboral
               <li><Link className="block rounded-lg border border-border bg-card px-3 py-2 hover:bg-accent" href="/docs/legal/mexico/salario-proporcional">🧾 Salario proporcional</Link></li>
               <li><Link className="block rounded-lg border border-border bg-card px-3 py-2 hover:bg-accent" href="/docs/legal/mexico/deducciones">➖ Deducciones</Link></li>
               <li><Link className="block rounded-lg border border-border bg-card px-3 py-2 hover:bg-accent" href="/docs/legal/mexico/imss">🏥 IMSS</Link></li>
+              <li className="sm:col-span-2"><Link className="block rounded-lg border border-border bg-card px-3 py-2 hover:bg-accent" href="/docs/legal/mexico/isr">📊 ISR rentas del trabajo</Link></li>
             </ul>
             <div className="rounded-xl border border-border bg-card p-3 text-sm text-muted-foreground">
               Aviso: contenido informativo. Para casos complejos validar con asesoria legal.
@@ -2706,6 +2711,7 @@ total = salario_diario * 90 + salario_diario * anos * 12 + salario_diario * anos
               <li><Link className="block rounded-lg border border-border bg-card px-3 py-2 hover:bg-accent" href="/docs/legal/colombia/salario-proporcional">🧾 Salario pendiente</Link></li>
               <li><Link className="block rounded-lg border border-border bg-card px-3 py-2 hover:bg-accent" href="/docs/legal/colombia/deducciones">➖ Deducciones legales</Link></li>
               <li className="sm:col-span-2"><Link className="block rounded-lg border border-border bg-card px-3 py-2 hover:bg-accent" href="/docs/legal/colombia/eps-pension">🏥 EPS y Pension</Link></li>
+              <li className="sm:col-span-2"><Link className="block rounded-lg border border-border bg-card px-3 py-2 hover:bg-accent" href="/docs/legal/colombia/impuesto-sobre-la-renta">📊 Impuesto sobre la Renta</Link></li>
             </ul>
             <div className="rounded-xl border border-border bg-card p-3 text-sm text-muted-foreground">
               Aviso: contenido informativo. Para casos complejos validar con asesoria legal.
@@ -3274,6 +3280,7 @@ pension = base * 0.04`}</code></pre>
               <li><Link className="block rounded-lg border border-border bg-card px-3 py-2 hover:bg-accent" href="/docs/legal/peru/salario-proporcional">🧾 Salario proporcional</Link></li>
               <li><Link className="block rounded-lg border border-border bg-card px-3 py-2 hover:bg-accent" href="/docs/legal/peru/deducciones">➖ Deducciones</Link></li>
               <li className="sm:col-span-2"><Link className="block rounded-lg border border-border bg-card px-3 py-2 hover:bg-accent" href="/docs/legal/peru/onp-afp">🏦 ONP y AFP</Link></li>
+              <li className="sm:col-span-2"><Link className="block rounded-lg border border-border bg-card px-3 py-2 hover:bg-accent" href="/docs/legal/peru/impuesto-a-la-renta">📊 Impuesto a la Renta</Link></li>
             </ul>
             <div className="rounded-xl border border-border bg-card p-3 text-sm text-muted-foreground">Aviso: contenido informativo.</div>
           </div>
@@ -3472,6 +3479,7 @@ indemnizacion = (salario/30) * dias`}</code></pre>
               <li><Link className="block rounded-lg border border-border bg-card px-3 py-2 hover:bg-accent" href="/docs/legal/argentina/vacaciones">🌴 Vacaciones</Link></li>
               <li><Link className="block rounded-lg border border-border bg-card px-3 py-2 hover:bg-accent" href="/docs/legal/argentina/salario-proporcional">🧾 Salario proporcional</Link></li>
               <li><Link className="block rounded-lg border border-border bg-card px-3 py-2 hover:bg-accent" href="/docs/legal/argentina/deducciones">➖ Deducciones</Link></li>
+              <li className="sm:col-span-2"><Link className="block rounded-lg border border-border bg-card px-3 py-2 hover:bg-accent" href="/docs/legal/argentina/impuesto-a-las-ganancias">📊 Impuesto a las Ganancias</Link></li>
             </ul>
             <div className="rounded-xl border border-border bg-card p-3 text-sm text-muted-foreground">Aviso: contenido informativo.</div>
           </div>
@@ -3673,6 +3681,7 @@ vacaciones = salario_vacacional * dias_pendientes`}</code></pre>
               <li><Link className="block rounded-lg border border-border bg-card px-3 py-2 hover:bg-accent" href="/docs/legal/chile/afp">💰 AFP</Link></li>
               <li><Link className="block rounded-lg border border-border bg-card px-3 py-2 hover:bg-accent" href="/docs/legal/chile/salud">🏥 Salud</Link></li>
               <li className="sm:col-span-2"><Link className="block rounded-lg border border-border bg-card px-3 py-2 hover:bg-accent" href="/docs/legal/chile/afc">🛡 AFC</Link></li>
+              <li className="sm:col-span-2"><Link className="block rounded-lg border border-border bg-card px-3 py-2 hover:bg-accent" href="/docs/legal/chile/impuesto-unico-de-trabajo">📊 Impuesto Unico de Trabajo</Link></li>
             </ul>
             <div className="rounded-xl border border-border bg-card p-3 text-sm text-muted-foreground">Aviso: contenido informativo.</div>
           </div>
@@ -3842,6 +3851,234 @@ vacaciones = (salario/30) * (15 + feriado_extra)`}</code></pre>
         ),
       },
     },
+    {
+      type: "page",
+      path: "legal/honduras/isr",
+      data: {
+        title: "📊 ISR rentas del trabajo",
+        description: "Impuesto Sobre la Renta progresivo. Tramos del 15%, 20% y 25%.",
+        body: (
+          <div className="space-y-6">
+            <section><h2 className="text-base font-semibold">Base legal</h2><p className="text-sm">Ley de Impuesto Sobre la Renta (Decreto 25-2019, reformando Decreto 129-2013).</p></section>
+            <section><h2 className="text-base font-semibold">Tramos imponibles (anuales, HNL)</h2>
+              <table className="w-full text-sm"><thead><tr className="border-b border-border"><th className="pr-4 text-left font-medium">Desde</th><th className="pr-4 text-left font-medium">Hasta</th><th className="text-left font-medium">Tasa</th></tr></thead><tbody>
+                <tr className="border-b border-border"><td className="py-1 pr-4 font-mono text-xs">0</td><td className="py-1 pr-4 font-mono text-xs">228,324</td><td className="py-1 font-mono text-xs">0% (exento)</td></tr>
+                <tr className="border-b border-border"><td className="py-1 pr-4 font-mono text-xs">228,325</td><td className="py-1 pr-4 font-mono text-xs">348,154</td><td className="py-1 font-mono text-xs">15%</td></tr>
+                <tr className="border-b border-border"><td className="py-1 pr-4 font-mono text-xs">348,155</td><td className="py-1 pr-4 font-mono text-xs">809,661</td><td className="py-1 font-mono text-xs">20%</td></tr>
+                <tr><td className="py-1 pr-4 font-mono text-xs">809,662</td><td className="py-1 pr-4 font-mono text-xs">+</td><td className="py-1 font-mono text-xs">25%</td></tr>
+              </tbody></table>
+            </section>
+            <section><h2 className="text-base font-semibold">Formula</h2><pre className="rounded-lg bg-muted p-3 text-xs"><code>{`isr_anual = sum(taxable_en_tramo_i x tasa_i)`}</code></pre></section>
+            <section><h2 className="text-base font-semibold">Vigencia</h2><p className="text-sm text-muted-foreground">Ley ISR. Corpus: <code>hn-v0.2.0</code></p></section>
+          </div>
+        ),
+      },
+    },
+    {
+      type: "page",
+      path: "legal/elsalvador/isr",
+      data: {
+        title: "📊 ISR rentas del trabajo",
+        description: "ISR progresivo. Tramos del 10%, 20% y 30%. Ley ISR.",
+        body: (
+          <div className="space-y-6">
+            <section><h2 className="text-base font-semibold">Base legal</h2><p className="text-sm">Ley de Impuesto sobre la Renta (Decreto Legislativo 134).</p></section>
+            <section><h2 className="text-base font-semibold">Tramos imponibles (anuales, USD)</h2>
+              <table className="w-full text-sm"><thead><tr className="border-b border-border"><th className="pr-4 text-left font-medium">Desde</th><th className="pr-4 text-left font-medium">Hasta</th><th className="text-left font-medium">Tasa</th></tr></thead><tbody>
+                <tr className="border-b border-border"><td className="py-1 pr-4 font-mono text-xs">0</td><td className="py-1 pr-4 font-mono text-xs">6,600</td><td className="py-1 font-mono text-xs">0% (exento)</td></tr>
+                <tr className="border-b border-border"><td className="py-1 pr-4 font-mono text-xs">6,600</td><td className="py-1 pr-4 font-mono text-xs">9,143</td><td className="py-1 font-mono text-xs">10%</td></tr>
+                <tr className="border-b border-border"><td className="py-1 pr-4 font-mono text-xs">9,143</td><td className="py-1 pr-4 font-mono text-xs">22,857</td><td className="py-1 font-mono text-xs">20%</td></tr>
+                <tr><td className="py-1 pr-4 font-mono text-xs">22,857</td><td className="py-1 pr-4 font-mono text-xs">+</td><td className="py-1 font-mono text-xs">30%</td></tr>
+              </tbody></table>
+            </section>
+            <section><h2 className="text-base font-semibold">Formula</h2><pre className="rounded-lg bg-muted p-3 text-xs"><code>{`isr_anual = sum(taxable_en_tramo_i x tasa_i)`}</code></pre></section>
+            <section><h2 className="text-base font-semibold">Vigencia</h2><p className="text-sm text-muted-foreground">Ley ISR. Corpus: <code>sv-v0.2.0</code></p></section>
+          </div>
+        ),
+      },
+    },
+    {
+      type: "page",
+      path: "legal/costarica/impuesto-sobre-la-renta",
+      data: {
+        title: "📊 Impuesto sobre la Renta",
+        description: "IR progresivo. Tramos del 10%, 15%, 20% y 25%.",
+        body: (
+          <div className="space-y-6">
+            <section><h2 className="text-base font-semibold">Base legal</h2><p className="text-sm">Ley del Impuesto sobre la Renta No. 7092.</p></section>
+            <section><h2 className="text-base font-semibold">Tramos imponibles (anuales, CRC)</h2>
+              <table className="w-full text-sm"><thead><tr className="border-b border-border"><th className="pr-4 text-left font-medium">Desde</th><th className="pr-4 text-left font-medium">Hasta</th><th className="text-left font-medium">Tasa</th></tr></thead><tbody>
+                <tr className="border-b border-border"><td className="py-1 pr-4 font-mono text-xs">0</td><td className="py-1 pr-4 font-mono text-xs">4,094,000</td><td className="py-1 font-mono text-xs">0% (exento)</td></tr>
+                <tr className="border-b border-border"><td className="py-1 pr-4 font-mono text-xs">4,094,000</td><td className="py-1 pr-4 font-mono text-xs">6,115,000</td><td className="py-1 font-mono text-xs">10%</td></tr>
+                <tr className="border-b border-border"><td className="py-1 pr-4 font-mono text-xs">6,115,000</td><td className="py-1 pr-4 font-mono text-xs">10,200,000</td><td className="py-1 font-mono text-xs">15%</td></tr>
+                <tr className="border-b border-border"><td className="py-1 pr-4 font-mono text-xs">10,200,000</td><td className="py-1 pr-4 font-mono text-xs">20,442,000</td><td className="py-1 font-mono text-xs">20%</td></tr>
+                <tr><td className="py-1 pr-4 font-mono text-xs">20,442,000</td><td className="py-1 pr-4 font-mono text-xs">+</td><td className="py-1 font-mono text-xs">25%</td></tr>
+              </tbody></table>
+            </section>
+            <section><h2 className="text-base font-semibold">Formula</h2><pre className="rounded-lg bg-muted p-3 text-xs"><code>{`ir_anual = sum(taxable_en_tramo_i x tasa_i)`}</code></pre></section>
+            <section><h2 className="text-base font-semibold">Vigencia</h2><p className="text-sm text-muted-foreground">Ley ISR. Corpus: <code>cr-v0.2.0</code></p></section>
+          </div>
+        ),
+      },
+    },
+    {
+      type: "page",
+      path: "legal/panama/impuesto-sobre-la-renta",
+      data: {
+        title: "📊 Impuesto sobre la Renta",
+        description: "IR progresivo. 0% hasta 11,000 USD, luego 15% y 25%.",
+        body: (
+          <div className="space-y-6">
+            <section><h2 className="text-base font-semibold">Base legal</h2><p className="text-sm">Codigo Fiscal de Panama (Ley 52 de 1999).</p></section>
+            <section><h2 className="text-base font-semibold">Tramos imponibles (anuales, USD)</h2>
+              <table className="w-full text-sm"><thead><tr className="border-b border-border"><th className="pr-4 text-left font-medium">Desde</th><th className="pr-4 text-left font-medium">Hasta</th><th className="text-left font-medium">Tasa</th></tr></thead><tbody>
+                <tr className="border-b border-border"><td className="py-1 pr-4 font-mono text-xs">0</td><td className="py-1 pr-4 font-mono text-xs">11,000</td><td className="py-1 font-mono text-xs">0% (exento)</td></tr>
+                <tr className="border-b border-border"><td className="py-1 pr-4 font-mono text-xs">11,000</td><td className="py-1 pr-4 font-mono text-xs">50,000</td><td className="py-1 font-mono text-xs">15%</td></tr>
+                <tr><td className="py-1 pr-4 font-mono text-xs">50,000</td><td className="py-1 pr-4 font-mono text-xs">+</td><td className="py-1 font-mono text-xs">25%</td></tr>
+              </tbody></table>
+            </section>
+            <section><h2 className="text-base font-semibold">Formula</h2><pre className="rounded-lg bg-muted p-3 text-xs"><code>{`ir_anual = sum(taxable_en_tramo_i x tasa_i)`}</code></pre></section>
+            <section><h2 className="text-base font-semibold">Vigencia</h2><p className="text-sm text-muted-foreground">Codigo Fiscal. Corpus: <code>pa-v0.2.0</code></p></section>
+          </div>
+        ),
+      },
+    },
+    {
+      type: "page",
+      path: "legal/mexico/isr",
+      data: {
+        title: "📊 ISR rentas del trabajo",
+        description: "ISR progresivo. Tramos del 1.92% al 35% sobre ingreso mensual.",
+        body: (
+          <div className="space-y-6">
+            <section><h2 className="text-base font-semibold">Base legal</h2><p className="text-sm">Ley del Impuesto sobre la Renta (LISR), Titulo IV, Arts. 94-98.</p></section>
+            <section><h2 className="text-base font-semibold">Tramos imponibles (mensuales, MXN)</h2>
+              <table className="w-full text-sm"><thead><tr className="border-b border-border"><th className="pr-4 text-left font-medium">Desde</th><th className="pr-4 text-left font-medium">Hasta</th><th className="text-left font-medium">Tasa</th></tr></thead><tbody>
+                <tr className="border-b border-border"><td className="py-1 pr-4 font-mono text-xs">0.01</td><td className="py-1 pr-4 font-mono text-xs">10,135.11</td><td className="py-1 font-mono text-xs">1.92%</td></tr>
+                <tr className="border-b border-border"><td className="py-1 pr-4 font-mono text-xs">10,135.12</td><td className="py-1 pr-4 font-mono text-xs">86,022.11</td><td className="py-1 font-mono text-xs">6.40%</td></tr>
+                <tr className="border-b border-border"><td className="py-1 pr-4 font-mono text-xs">86,022.12</td><td className="py-1 pr-4 font-mono text-xs">151,176.19</td><td className="py-1 font-mono text-xs">10.88%</td></tr>
+                <tr className="border-b border-border"><td className="py-1 pr-4 font-mono text-xs">151,176.20</td><td className="py-1 pr-4 font-mono text-xs">175,735.66</td><td className="py-1 font-mono text-xs">16.00%</td></tr>
+                <tr className="border-b border-border"><td className="py-1 pr-4 font-mono text-xs">175,735.67</td><td className="py-1 pr-4 font-mono text-xs">210,403.69</td><td className="py-1 font-mono text-xs">17.92%</td></tr>
+                <tr className="border-b border-border"><td className="py-1 pr-4 font-mono text-xs">210,403.70</td><td className="py-1 pr-4 font-mono text-xs">424,353.97</td><td className="py-1 font-mono text-xs">21.36%</td></tr>
+                <tr className="border-b border-border"><td className="py-1 pr-4 font-mono text-xs">424,353.98</td><td className="py-1 pr-4 font-mono text-xs">668,840.14</td><td className="py-1 font-mono text-xs">23.52%</td></tr>
+                <tr className="border-b border-border"><td className="py-1 pr-4 font-mono text-xs">668,840.15</td><td className="py-1 pr-4 font-mono text-xs">1,276,925.98</td><td className="py-1 font-mono text-xs">30.00%</td></tr>
+                <tr className="border-b border-border"><td className="py-1 pr-4 font-mono text-xs">1,276,925.99</td><td className="py-1 pr-4 font-mono text-xs">1,702,567.97</td><td className="py-1 font-mono text-xs">32.00%</td></tr>
+                <tr className="border-b border-border"><td className="py-1 pr-4 font-mono text-xs">1,702,567.98</td><td className="py-1 pr-4 font-mono text-xs">5,107,703.92</td><td className="py-1 font-mono text-xs">34.00%</td></tr>
+                <tr><td className="py-1 pr-4 font-mono text-xs">5,107,703.93</td><td className="py-1 pr-4 font-mono text-xs">+</td><td className="py-1 font-mono text-xs">35.00%</td></tr>
+              </tbody></table>
+            </section>
+            <section><h2 className="text-base font-semibold">Formula</h2><pre className="rounded-lg bg-muted p-3 text-xs"><code>{`isr_mensual = sum(ingreso_en_tramo_i x tasa_i)`}</code></pre></section>
+            <section><h2 className="text-base font-semibold">Vigencia</h2><p className="text-sm text-muted-foreground">LISR. Corpus: <code>mx-v0.2.0</code></p></section>
+          </div>
+        ),
+      },
+    },
+    {
+      type: "page",
+      path: "legal/colombia/impuesto-sobre-la-renta",
+      data: {
+        title: "📊 Impuesto sobre la Renta",
+        description: "IR progresivo por UVT. Tramos del 19% al 39%.",
+        body: (
+          <div className="space-y-6">
+            <section><h2 className="text-base font-semibold">Base legal</h2><p className="text-sm">Estatuto Tributario, Art. 241-254. UVT 2025 = COP 49,799.</p></section>
+            <section><h2 className="text-base font-semibold">Tramos imponibles (anuales, COP)</h2>
+              <table className="w-full text-sm"><thead><tr className="border-b border-border"><th className="pr-4 text-left font-medium">Desde</th><th className="pr-4 text-left font-medium">Hasta</th><th className="text-left font-medium">Tasa</th></tr></thead><tbody>
+                <tr className="border-b border-border"><td className="py-1 pr-4 font-mono text-xs">0</td><td className="py-1 pr-4 font-mono text-xs">54,280,910</td><td className="py-1 font-mono text-xs">0% (exento)</td></tr>
+                <tr className="border-b border-border"><td className="py-1 pr-4 font-mono text-xs">54,280,910</td><td className="py-1 pr-4 font-mono text-xs">84,658,300</td><td className="py-1 font-mono text-xs">19%</td></tr>
+                <tr className="border-b border-border"><td className="py-1 pr-4 font-mono text-xs">84,658,300</td><td className="py-1 pr-4 font-mono text-xs">204,175,900</td><td className="py-1 font-mono text-xs">28%</td></tr>
+                <tr className="border-b border-border"><td className="py-1 pr-4 font-mono text-xs">204,175,900</td><td className="py-1 pr-4 font-mono text-xs">431,757,330</td><td className="py-1 font-mono text-xs">33%</td></tr>
+                <tr className="border-b border-border"><td className="py-1 pr-4 font-mono text-xs">431,757,330</td><td className="py-1 pr-4 font-mono text-xs">944,678,030</td><td className="py-1 font-mono text-xs">35%</td></tr>
+                <tr className="border-b border-border"><td className="py-1 pr-4 font-mono text-xs">944,678,030</td><td className="py-1 pr-4 font-mono text-xs">1,543,769,000</td><td className="py-1 font-mono text-xs">37%</td></tr>
+                <tr><td className="py-1 pr-4 font-mono text-xs">1,543,769,000</td><td className="py-1 pr-4 font-mono text-xs">+</td><td className="py-1 font-mono text-xs">39%</td></tr>
+              </tbody></table>
+            </section>
+            <section><h2 className="text-base font-semibold">Formula</h2><pre className="rounded-lg bg-muted p-3 text-xs"><code>{`ir_anual = sum(taxable_en_tramo_i x tasa_i)`}</code></pre></section>
+            <section><h2 className="text-base font-semibold">Vigencia</h2><p className="text-sm text-muted-foreground">Estatuto Tributario. Corpus: <code>co-v0.2.0</code></p></section>
+          </div>
+        ),
+      },
+    },
+    {
+      type: "page",
+      path: "legal/peru/impuesto-a-la-renta",
+      data: {
+        title: "📊 Impuesto a la Renta",
+        description: "IR progresivo. Tramos del 8% al 30%. UIT 2025 = PEN 5,350.",
+        body: (
+          <div className="space-y-6">
+            <section><h2 className="text-base font-semibold">Base legal</h2><p className="text-sm">Ley del Impuesto a la Renta (D.S. 179-2004-EF). UIT 2025 = PEN 5,350.</p></section>
+            <section><h2 className="text-base font-semibold">Tramos imponibles (anuales, PEN)</h2>
+              <table className="w-full text-sm"><thead><tr className="border-b border-border"><th className="pr-4 text-left font-medium">Desde</th><th className="pr-4 text-left font-medium">Hasta</th><th className="text-left font-medium">Tasa</th></tr></thead><tbody>
+                <tr className="border-b border-border"><td className="py-1 pr-4 font-mono text-xs">0</td><td className="py-1 pr-4 font-mono text-xs">37,450</td><td className="py-1 font-mono text-xs">0% (exento 7 UIT)</td></tr>
+                <tr className="border-b border-border"><td className="py-1 pr-4 font-mono text-xs">37,450</td><td className="py-1 pr-4 font-mono text-xs">64,200</td><td className="py-1 font-mono text-xs">8%</td></tr>
+                <tr className="border-b border-border"><td className="py-1 pr-4 font-mono text-xs">64,200</td><td className="py-1 pr-4 font-mono text-xs">144,450</td><td className="py-1 font-mono text-xs">14%</td></tr>
+                <tr className="border-b border-border"><td className="py-1 pr-4 font-mono text-xs">144,450</td><td className="py-1 pr-4 font-mono text-xs">224,700</td><td className="py-1 font-mono text-xs">17%</td></tr>
+                <tr className="border-b border-border"><td className="py-1 pr-4 font-mono text-xs">224,700</td><td className="py-1 pr-4 font-mono text-xs">278,200</td><td className="py-1 font-mono text-xs">20%</td></tr>
+                <tr><td className="py-1 pr-4 font-mono text-xs">278,200</td><td className="py-1 pr-4 font-mono text-xs">+</td><td className="py-1 font-mono text-xs">30%</td></tr>
+              </tbody></table>
+            </section>
+            <section><h2 className="text-base font-semibold">Formula</h2><pre className="rounded-lg bg-muted p-3 text-xs"><code>{`ir_anual = sum(taxable_en_tramo_i x tasa_i)`}</code></pre></section>
+            <section><h2 className="text-base font-semibold">Vigencia</h2><p className="text-sm text-muted-foreground">Ley IR. Corpus: <code>pe-v0.2.0</code></p></section>
+          </div>
+        ),
+      },
+    },
+    {
+      type: "page",
+      path: "legal/argentina/impuesto-a-las-ganancias",
+      data: {
+        title: "📊 Impuesto a las Ganancias",
+        description: "Impuesto progresivo. Tramos del 5% al 35%. Ley 20.628.",
+        body: (
+          <div className="space-y-6">
+            <section><h2 className="text-base font-semibold">Base legal</h2><p className="text-sm">Ley 20.628 de Impuesto a las Ganancias, modificada por Leyes 27.743 y 27.725.</p></section>
+            <section><h2 className="text-base font-semibold">Tramos imponibles (anuales, ARS)</h2>
+              <table className="w-full text-sm"><thead><tr className="border-b border-border"><th className="pr-4 text-left font-medium">Desde</th><th className="pr-4 text-left font-medium">Hasta</th><th className="text-left font-medium">Tasa</th></tr></thead><tbody>
+                <tr className="border-b border-border"><td className="py-1 pr-4 font-mono text-xs">0</td><td className="py-1 pr-4 font-mono text-xs">15,750,000</td><td className="py-1 font-mono text-xs">0%</td></tr>
+                <tr className="border-b border-border"><td className="py-1 pr-4 font-mono text-xs">15,750,000</td><td className="py-1 pr-4 font-mono text-xs">30,750,000</td><td className="py-1 font-mono text-xs">5%</td></tr>
+                <tr className="border-b border-border"><td className="py-1 pr-4 font-mono text-xs">30,750,000</td><td className="py-1 pr-4 font-mono text-xs">45,750,000</td><td className="py-1 font-mono text-xs">9%</td></tr>
+                <tr className="border-b border-border"><td className="py-1 pr-4 font-mono text-xs">45,750,000</td><td className="py-1 pr-4 font-mono text-xs">60,750,000</td><td className="py-1 font-mono text-xs">12%</td></tr>
+                <tr className="border-b border-border"><td className="py-1 pr-4 font-mono text-xs">60,750,000</td><td className="py-1 pr-4 font-mono text-xs">90,750,000</td><td className="py-1 font-mono text-xs">15%</td></tr>
+                <tr className="border-b border-border"><td className="py-1 pr-4 font-mono text-xs">90,750,000</td><td className="py-1 pr-4 font-mono text-xs">130,750,000</td><td className="py-1 font-mono text-xs">19%</td></tr>
+                <tr className="border-b border-border"><td className="py-1 pr-4 font-mono text-xs">130,750,000</td><td className="py-1 pr-4 font-mono text-xs">180,750,000</td><td className="py-1 font-mono text-xs">23%</td></tr>
+                <tr className="border-b border-border"><td className="py-1 pr-4 font-mono text-xs">180,750,000</td><td className="py-1 pr-4 font-mono text-xs">260,750,000</td><td className="py-1 font-mono text-xs">27%</td></tr>
+                <tr className="border-b border-border"><td className="py-1 pr-4 font-mono text-xs">260,750,000</td><td className="py-1 pr-4 font-mono text-xs">380,750,000</td><td className="py-1 font-mono text-xs">31%</td></tr>
+                <tr><td className="py-1 pr-4 font-mono text-xs">380,750,000</td><td className="py-1 pr-4 font-mono text-xs">+</td><td className="py-1 font-mono text-xs">35%</td></tr>
+              </tbody></table>
+            </section>
+            <section><h2 className="text-base font-semibold">Formula</h2><pre className="rounded-lg bg-muted p-3 text-xs"><code>{`ganancias_anual = sum(taxable_en_tramo_i x tasa_i)`}</code></pre></section>
+            <section><h2 className="text-base font-semibold">Vigencia</h2><p className="text-sm text-muted-foreground">Ley 20.628. Corpus: <code>ar-v0.2.0</code></p></section>
+          </div>
+        ),
+      },
+    },
+    {
+      type: "page",
+      path: "legal/chile/impuesto-unico-de-trabajo",
+      data: {
+        title: "📊 Impuesto Unico de Trabajo",
+        description: "IUT progresivo. Tramos del 4% al 35.5%. DL 824.",
+        body: (
+          <div className="space-y-6">
+            <section><h2 className="text-base font-semibold">Base legal</h2><p className="text-sm">D.L. 824 (Ley de la Renta), Arts. 42-43, modificado por Ley 21.325.</p></section>
+            <section><h2 className="text-base font-semibold">Tramos imponibles (anuales, CLP)</h2>
+              <table className="w-full text-sm"><thead><tr className="border-b border-border"><th className="pr-4 text-left font-medium">Desde</th><th className="pr-4 text-left font-medium">Hasta</th><th className="text-left font-medium">Tasa</th></tr></thead><tbody>
+                <tr className="border-b border-border"><td className="py-1 pr-4 font-mono text-xs">0</td><td className="py-1 pr-4 font-mono text-xs">10,800,000</td><td className="py-1 font-mono text-xs">0% (exento)</td></tr>
+                <tr className="border-b border-border"><td className="py-1 pr-4 font-mono text-xs">10,800,000</td><td className="py-1 pr-4 font-mono text-xs">24,000,000</td><td className="py-1 font-mono text-xs">4%</td></tr>
+                <tr className="border-b border-border"><td className="py-1 pr-4 font-mono text-xs">24,000,000</td><td className="py-1 pr-4 font-mono text-xs">40,000,000</td><td className="py-1 font-mono text-xs">8%</td></tr>
+                <tr className="border-b border-border"><td className="py-1 pr-4 font-mono text-xs">40,000,000</td><td className="py-1 pr-4 font-mono text-xs">56,000,000</td><td className="py-1 font-mono text-xs">13.5%</td></tr>
+                <tr className="border-b border-border"><td className="py-1 pr-4 font-mono text-xs">56,000,000</td><td className="py-1 pr-4 font-mono text-xs">72,000,000</td><td className="py-1 font-mono text-xs">23%</td></tr>
+                <tr className="border-b border-border"><td className="py-1 pr-4 font-mono text-xs">72,000,000</td><td className="py-1 pr-4 font-mono text-xs">96,000,000</td><td className="py-1 font-mono text-xs">30.4%</td></tr>
+                <tr><td className="py-1 pr-4 font-mono text-xs">96,000,000</td><td className="py-1 pr-4 font-mono text-xs">+</td><td className="py-1 font-mono text-xs">35.5%</td></tr>
+              </tbody></table>
+            </section>
+            <section><h2 className="text-base font-semibold">Formula</h2><pre className="rounded-lg bg-muted p-3 text-xs"><code>{`iut_anual = sum(taxable_en_tramo_i x tasa_i)`}</code></pre></section>
+            <section><h2 className="text-base font-semibold">Vigencia</h2><p className="text-sm text-muted-foreground">DL 824. Corpus: <code>cl-v0.2.0</code></p></section>
+          </div>
+        ),
+      },
+    },
   ],
   metas: [
     {
@@ -3874,6 +4111,7 @@ vacaciones = (salario/30) * (15 + feriado_extra)`}</code></pre>
           "afp",
           "salud",
           "afc",
+          "impuesto-unico-de-trabajo",
         ],
       },
     },
@@ -3890,6 +4128,7 @@ vacaciones = (salario/30) * (15 + feriado_extra)`}</code></pre>
           "vacaciones",
           "salario-proporcional",
           "deducciones",
+          "impuesto-a-las-ganancias",
         ],
       },
     },
@@ -3907,6 +4146,7 @@ vacaciones = (salario/30) * (15 + feriado_extra)`}</code></pre>
           "salario-proporcional",
           "deducciones",
           "onp-afp",
+          "impuesto-a-la-renta",
         ],
       },
     },
@@ -3924,6 +4164,7 @@ vacaciones = (salario/30) * (15 + feriado_extra)`}</code></pre>
           "salario-proporcional",
           "deducciones",
           "eps-pension",
+          "impuesto-sobre-la-renta",
         ],
       },
     },
@@ -3940,6 +4181,7 @@ vacaciones = (salario/30) * (15 + feriado_extra)`}</code></pre>
           "salario-proporcional",
           "deducciones",
           "imss",
+          "isr",
         ],
       },
     },
@@ -3956,6 +4198,7 @@ vacaciones = (salario/30) * (15 + feriado_extra)`}</code></pre>
           "salario-proporcional",
           "deducciones",
           "css",
+          "impuesto-sobre-la-renta",
         ],
       },
     },
@@ -3972,6 +4215,7 @@ vacaciones = (salario/30) * (15 + feriado_extra)`}</code></pre>
           "salario-proporcional",
           "deducciones",
           "ccss",
+          "impuesto-sobre-la-renta",
         ],
       },
     },
@@ -4022,6 +4266,7 @@ vacaciones = (salario/30) * (15 + feriado_extra)`}</code></pre>
           "salario-proporcional",
           "deducciones",
           "ihss",
+          "isr",
         ],
       },
     },
@@ -4039,6 +4284,7 @@ vacaciones = (salario/30) * (15 + feriado_extra)`}</code></pre>
           "deducciones",
           "isss",
           "afp",
+          "isr",
         ],
       },
     },

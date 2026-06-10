@@ -87,10 +87,12 @@ export const calculateColombiaSettlement = (
   const grossIncome = round2(incomes.reduce((sum, line) => sum + line.amount, 0))
 
   // Deducciones EPS + Pension
-  const { epsRate, pensionRate } = getColombiaLegalRates()
+  const { epsRate, pensionRate, irFlatRate } = getColombiaLegalRates()
   const deductionBase = round2(proportionalSalary + vacationPay)
   const eps = round2(deductionBase * epsRate)
   const pension = round2(deductionBase * pensionRate)
+  const ssTotal = round2(eps + pension)
+  const ir = round2(Math.max(0, grossIncome - ssTotal) * irFlatRate)
 
   const deductions: SettlementLine[] = [
     {
@@ -104,6 +106,12 @@ export const calculateColombiaSettlement = (
       amount: pension,
       formula: `(${deductionBase} x ${(pensionRate * 100).toFixed(0)}%)`,
       legalReference: "Ley 100 de 1993 (4% pension)",
+    },
+    {
+      label: "IR",
+      amount: ir,
+      formula: `max(0, ${grossIncome} - ${ssTotal}) x ${(irFlatRate * 100).toFixed(0)}%`,
+      legalReference: "Estatuto Tributario (tasa minima)",
     },
   ]
 

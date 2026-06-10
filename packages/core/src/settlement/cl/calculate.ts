@@ -67,12 +67,14 @@ export const calculateChileSettlement = (
 
   const grossIncome = round2(incomes.reduce((sum, line) => sum + line.amount, 0))
 
-  // Deducciones: AFP 11.5% + Salud 7% + AFC 0.6%
-  const { afpRate, saludRate, afcRate } = getChileLegalRates()
+  // Deducciones: AFP 11.5% + Salud 7% + AFC 0.6% + IR 4%
+  const { afpRate, saludRate, afcRate, irFlatRate } = getChileLegalRates()
   const deductionBase = round2(proportionalSalary + vacationPay)
   const afp = round2(deductionBase * afpRate)
   const salud = round2(deductionBase * saludRate)
   const afc = round2(deductionBase * afcRate)
+  const ssTotal = round2(afp + salud + afc)
+  const ir = round2(Math.max(0, grossIncome - ssTotal) * irFlatRate)
 
   const deductions: SettlementLine[] = [
     {
@@ -92,6 +94,12 @@ export const calculateChileSettlement = (
       amount: afc,
       formula: `(${deductionBase} x ${(afcRate * 100).toFixed(1)}%)`,
       legalReference: "Ley 19.728 (0.6% trabajador)",
+    },
+    {
+      label: "IR",
+      amount: ir,
+      formula: `max(0, ${grossIncome} - ${ssTotal}) x ${(irFlatRate * 100).toFixed(0)}%`,
+      legalReference: "D.L. 824 (Impuesto Unico de Trabajo, tasa minima)",
     },
   ]
 

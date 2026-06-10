@@ -41,7 +41,10 @@ export async function generateLaborResponse(input: {
 
   const chatModelConfig = getChatModelConfig()
 
-  return streamText({
+  const topics = [...new Set(retrieval.hits.map((h) => h.topic).filter(Boolean))] as string[]
+
+  return {
+    stream: streamText({
     model: chatModelConfig.model,
     system: systemPrompt,
     messages:
@@ -50,10 +53,10 @@ export async function generateLaborResponse(input: {
     temperature: chatModelConfig.temperature,
     topP: chatModelConfig.topP,
     providerOptions: chatModelConfig.providerOptions,
-    stopWhen: stepCountIs(3),
+    stopWhen: stepCountIs(4),
     tools: {
       legalCorpusLookup: tool({
-        description: `Busca mas informacion en el corpus legal de ${countryMeta[countryCode]?.name ?? "este pais"} cuando el contexto inicial no alcanza. Acepta un \`topic\` (texto libre) y opcionalmente \`section\` para restringir la busqueda a una seccion especifica (ej: base_legal, formula, regla_operativa, texto_legal, vigencia_fuente).`,
+        description: `Busqueda vectorial en el corpus legal completo de ${countryMeta[countryCode]?.name ?? "este pais"}. Usala CUANDO el contexto inicial no tenga suficiente informacion para responder. Ideal para buscar tasas especificas, articulos legales, formulas detalladas o conceptos no cubiertos en el contexto recuperado. El parametro \`topic\` acepta texto libre (palabras clave del tema a buscar). Opcionalmente \`section\` restringe a una parte especifica del documento: base_legal (articulos de ley), texto_legal (texto completo del articulo), regla_operativa (como se aplica), formula (ecuacion matematica), variables (definicion de terminos), supuestos (condiciones), excepciones (casos especiales). NO la uses si el contexto inicial ya responde la pregunta del usuario.`,
         inputSchema: zodSchema(
           z.object({
             topic: z
@@ -371,5 +374,7 @@ export async function generateLaborResponse(input: {
       }),
     },
     maxRetries: 1,
-  })
+  }),
+    topics,
+  }
 }

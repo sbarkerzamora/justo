@@ -35,11 +35,13 @@ describe("calculateElSalvadorSettlement", () => {
       endDate: "2026-05-11",
     })
 
-    expect(result.deductions.length).toBe(2)
+    expect(result.deductions.length).toBe(3)
     expect(result.deductions[0]?.label).toBe("ISSS laboral")
     expect(result.deductions[0]?.amount).toBeGreaterThan(0)
     expect(result.deductions[1]?.label).toBe("AFP laboral")
     expect(result.deductions[1]?.amount).toBeGreaterThan(0)
+    expect(result.deductions[2]?.label).toBe("IR")
+    expect(result.deductions[2]?.amount).toBeGreaterThan(0)
     expect(result.netTotal).toBeGreaterThan(0)
   })
 
@@ -58,5 +60,23 @@ describe("calculateElSalvadorSettlement", () => {
     const aguinaldo = result.incomes.find((line) => line.label === "Aguinaldo proporcional")
     expect(aguinaldo).toBeDefined()
     expect(aguinaldo?.legalReference).toContain("Arts. 196")
+  })
+
+  test("calcula salario proporcional segun el dia de fin del mes", () => {
+    const result = calculateElSalvadorSettlement({
+      countryCode: "sv",
+      employeeName: "Marta",
+      employerName: "Test SV",
+      monthlySalary: 3000,
+      frequency: "mensual",
+      unusedVacationDays: 0,
+      startDate: "2025-01-01",
+      endDate: "2026-05-18",
+    })
+
+    const sp = result.incomes.find((line) => line.label === "Salario proporcional")
+    expect(sp).toBeDefined()
+    expect(sp?.amount).toBe(1800)
+    expect(sp?.formula).toContain("18 dias")
   })
 })

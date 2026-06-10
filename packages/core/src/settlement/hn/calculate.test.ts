@@ -35,9 +35,11 @@ describe("calculateHondurasSettlement", () => {
       endDate: "2026-05-11",
     })
 
-    expect(result.deductions.length).toBe(1)
+    expect(result.deductions.length).toBe(2)
     expect(result.deductions[0]?.label).toBe("IHSS laboral")
     expect(result.deductions[0]?.amount).toBeGreaterThan(0)
+    expect(result.deductions[1]?.label).toBe("IR")
+    expect(result.deductions[1]?.amount).toBeGreaterThan(0)
     expect(result.netTotal).toBeGreaterThan(0)
   })
 
@@ -55,5 +57,23 @@ describe("calculateHondurasSettlement", () => {
 
     expect(result.incomes[0]?.amount).toBeGreaterThan(0)
     expect(result.incomes[0]?.legalReference).toContain("120")
+  })
+
+  test("calcula salario proporcional segun el dia de fin del mes", () => {
+    const result = calculateHondurasSettlement({
+      countryCode: "hn",
+      employeeName: "Pedro",
+      employerName: "Test HN",
+      monthlySalary: 3000,
+      frequency: "mensual",
+      unusedVacationDays: 0,
+      startDate: "2025-01-01",
+      endDate: "2026-05-20",
+    })
+
+    const sp = result.incomes.find((line) => line.label === "Salario proporcional")
+    expect(sp).toBeDefined()
+    expect(sp?.amount).toBe(2000)
+    expect(sp?.formula).toContain("20 dias")
   })
 })

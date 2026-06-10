@@ -31,6 +31,7 @@ import {
   formatNumberInput,
   parseCurrencyInput,
 } from "@/components/tools/input-formatters"
+import { StepNavigation } from "@/components/tools/step-navigation"
 
 export type VacationStep =
   | "welcome"
@@ -181,6 +182,13 @@ export function VacationsTool({
     return vacationSteps[idx + 1] ?? "confirm"
   }
 
+  const prevStep = (s: VacationStep): VacationStep | null => {
+    if (s === "welcome" || s === "done") return null
+    const idx = vacationSteps.indexOf(s)
+    if (idx <= 0) return "welcome"
+    return vacationSteps[idx - 1]
+  }
+
   const applyField = (
     field: keyof VacationFormData,
     value: string
@@ -240,6 +248,14 @@ export function VacationsTool({
   const handleSubmit = () => {
     if (step === "welcome" || step === "confirm" || step === "done") return
     advance()
+  }
+
+  const handleBack = () => {
+    const prev = prevStep(step)
+    if (prev) {
+      dispatch({ type: "setStep", step: prev })
+      setInputValue("")
+    }
   }
 
   const runCalculation = () => {
@@ -408,13 +424,13 @@ export function VacationsTool({
             {step === "done" ? "OK" : `P${stepIndex(step)}`}
           </span>
         </div>
-        <div className="h-1.5 rounded-full bg-muted">
+        <div className="h-2 rounded-full bg-muted">
           <div
-            className="h-1.5 rounded-full bg-primary transition-all duration-300"
+            className="h-2 rounded-full bg-primary transition-all duration-300"
             style={{ width: `${(stepIndex(step) / 6) * 100}%` }}
           />
         </div>
-        <div className="flex items-center gap-1.5 text-[11px] text-muted-foreground">
+        <div className="flex items-center gap-1.5 text-xs text-muted-foreground">
           <Image
             src={`https://flagcdn.com/w40/${countryCode}.png`}
             alt={countryName}
@@ -513,19 +529,13 @@ export function VacationsTool({
                 {askText(step)}
               </p>
             </div>
-            <div className="relative w-full max-w-xl pb-4">
+            <div className="w-full max-w-xl">
               <input
                 ref={inputRef}
                 value={inputValue}
                 onChange={(e) =>
                   setInputValue(getFormattedInputValue(step, e.target.value))
                 }
-                onKeyDown={(e) => {
-                  if (e.key === "Enter") {
-                    e.preventDefault()
-                    handleSubmit()
-                  }
-                }}
                 inputMode={
                   step === "monthlySalary"
                     ? "decimal"
@@ -536,19 +546,24 @@ export function VacationsTool({
                         : "text"
                 }
                 placeholder={copy.askPlaceholder}
-                className="h-12 w-full rounded-2xl border border-border bg-card px-4 text-sm text-foreground transition-colors outline-none placeholder:text-muted-foreground focus:border-foreground/30"
+                className="h-12 w-full rounded-2xl border border-border bg-card pl-4 pr-4 text-sm text-foreground transition-colors outline-none placeholder:text-muted-foreground focus:border-foreground/30"
               />
-              <button
-                type="button"
-                onClick={handleSubmit}
-                disabled={!inputValue.trim()}
-                className="absolute top-1/2 right-2 inline-flex h-8 -translate-y-1/2 items-center justify-center rounded-full bg-primary px-3 text-xs font-medium text-primary-foreground disabled:opacity-30"
-              >
-                {copy.send}
-              </button>
             </div>
           </div>
         )}
+
+        {step !== "welcome" &&
+          step !== "confirm" &&
+          step !== "done" && (
+            <StepNavigation
+              onBack={handleBack}
+              onContinue={handleSubmit}
+              canContinue={!!inputValue.trim()}
+              showBack={step !== "monthlySalary"}
+              backLabel={copy.backToPrevious}
+              continueLabel={copy.send}
+            />
+          )}
       </div>
     </div>
   )
@@ -585,9 +600,9 @@ function OnboardingPanel({
           {steps.map((step, i) => (
             <span
               key={i}
-              className="inline-flex items-center gap-1.5 rounded-full bg-muted px-2.5 py-1 text-[11px] text-muted-foreground"
+              className="inline-flex items-center gap-1.5 rounded-full bg-muted px-2.5 py-1 text-xs text-muted-foreground"
             >
-              <span className="flex h-4 w-4 items-center justify-center rounded-full bg-primary/10 text-[9px] font-medium text-primary">
+              <span className="flex h-5 w-5 items-center justify-center rounded-full bg-primary/10 text-[11px] font-medium text-primary">
                 {i + 1}
               </span>
               {step.label}
@@ -660,7 +675,7 @@ function ConfirmPanel({
         <SummaryRow
           icon={<IconBeach className="size-4 text-muted-foreground" />}
           label={copy.vacations}
-          value={`${form.usedVacationDays} días`}
+          value={`${form.usedVacationDays} ${copy.daysLabel}`}
         />
       </div>
       <div className="mt-5 flex flex-wrap gap-2">
@@ -735,7 +750,7 @@ function EditPanel({
             onChange={(e) =>
               onSetEditField("editSalary", formatCurrencyInput(e.target.value))
             }
-            className="h-10 rounded-xl border border-border bg-background px-3 text-foreground outline-none focus:border-foreground/30"
+            className="h-11 rounded-xl border border-border bg-background px-3 text-foreground outline-none focus:border-foreground/30"
           />
         </label>
       ) : editMode === "vacations" ? (
@@ -747,7 +762,7 @@ function EditPanel({
             onChange={(e) =>
               onSetEditField("editVacations", formatNumberInput(e.target.value))
             }
-            className="h-10 rounded-xl border border-border bg-background px-3 text-foreground outline-none focus:border-foreground/30"
+            className="h-11 rounded-xl border border-border bg-background px-3 text-foreground outline-none focus:border-foreground/30"
           />
         </label>
       ) : editMode === "dates" ? (
@@ -761,7 +776,7 @@ function EditPanel({
               onChange={(e) =>
                 onSetEditField("editStartDate", formatDateInput(e.target.value))
               }
-              className="h-10 rounded-xl border border-border bg-background px-3 text-foreground outline-none focus:border-foreground/30"
+              className="h-11 rounded-xl border border-border bg-background px-3 text-foreground outline-none focus:border-foreground/30"
             />
           </label>
           <label className="grid gap-1.5">
@@ -773,7 +788,7 @@ function EditPanel({
               onChange={(e) =>
                 onSetEditField("editEndDate", formatDateInput(e.target.value))
               }
-              className="h-10 rounded-xl border border-border bg-background px-3 text-foreground outline-none focus:border-foreground/30"
+              className="h-11 rounded-xl border border-border bg-background px-3 text-foreground outline-none focus:border-foreground/30"
             />
           </label>
         </div>
@@ -825,7 +840,7 @@ function ResultPanel({
               {copy.legalVersion}: {result.legalCorpusVersion}
             </div>
             <h3 className="mt-2 text-sm font-semibold text-foreground">
-              {locale === "en" ? "Vacation result" : "Resultado de vacaciones"}
+              {copy.vacationResultHeading}
             </h3>
           </div>
           <div className="rounded-xl bg-primary/10 p-2.5">
@@ -835,7 +850,7 @@ function ResultPanel({
 
         <div className="mt-4">
           <p className="text-xs font-medium tracking-wider text-muted-foreground uppercase">
-            {locale === "en" ? "Amount" : "Monto"}
+            {copy.amount}
           </p>
           <p className="mt-1 text-3xl font-semibold tracking-tight text-foreground">
             {fmt(result.amount)}
@@ -848,11 +863,11 @@ function ResultPanel({
               <IconSun className="size-4 text-blue-600" />
             </div>
             <div>
-              <p className="text-[11px] text-muted-foreground">
-                {locale === "en" ? "Accrued days" : "Días acumulados"}
+              <p className="text-xs text-muted-foreground">
+                {copy.accruedDays}
               </p>
               <p className="text-sm font-semibold text-foreground">
-                {result.accruedVacationDays} días
+                {result.accruedVacationDays} {copy.daysLabel}
               </p>
             </div>
           </div>
@@ -861,11 +876,11 @@ function ResultPanel({
               <IconBeach className="size-4 text-emerald-600" />
             </div>
             <div>
-              <p className="text-[11px] text-muted-foreground">
-                {locale === "en" ? "Used days" : "Días gozados"}
+              <p className="text-xs text-muted-foreground">
+                {copy.usedDays}
               </p>
               <p className="text-sm font-semibold text-foreground">
-                {result.usedVacationDays} días
+                {result.usedVacationDays} {copy.daysLabel}
               </p>
             </div>
           </div>
@@ -874,11 +889,11 @@ function ResultPanel({
               <IconCalendar className="size-4 text-amber-600" />
             </div>
             <div>
-              <p className="text-[11px] text-muted-foreground">
-                {locale === "en" ? "Pending days" : "Días pendientes"}
+              <p className="text-xs text-muted-foreground">
+                {copy.pendingDays}
               </p>
               <p className="text-sm font-semibold text-foreground">
-                {result.pendingVacationDays} días
+                {result.pendingVacationDays} {copy.daysLabel}
               </p>
             </div>
           </div>
@@ -887,8 +902,8 @@ function ResultPanel({
               <IconCoin className="size-4 text-violet-600" />
             </div>
             <div>
-              <p className="text-[11px] text-muted-foreground">
-                {locale === "en" ? "Daily salary" : "Salario diario"}
+              <p className="text-xs text-muted-foreground">
+                {copy.dailySalary}
               </p>
               <p className="text-sm font-semibold text-foreground">
                 {fmt(result.dailySalary)}
@@ -899,16 +914,16 @@ function ResultPanel({
 
         <div className="mt-4 space-y-2 rounded-xl bg-muted/30 p-3">
           <div>
-            <p className="text-[11px] text-muted-foreground">
-              {locale === "en" ? "Formula" : "Fórmula"}
+            <p className="text-xs text-muted-foreground">
+              {copy.formulaLabel}
             </p>
             <p className="mt-0.5 font-mono text-sm text-foreground">
               {result.formula}
             </p>
           </div>
           <div>
-            <p className="text-[11px] text-muted-foreground">
-              {locale === "en" ? "Legal reference" : "Referencia legal"}
+            <p className="text-xs text-muted-foreground">
+              {copy.legalRefLabel}
             </p>
             <p className="mt-0.5 text-sm text-foreground">
               {result.legalReference}

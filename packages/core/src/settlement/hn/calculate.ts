@@ -83,10 +83,11 @@ export const calculateHondurasSettlement = (
 
   const grossIncome = round2(incomes.reduce((sum, line) => sum + line.amount, 0))
 
-  // Deducciones IHSS 3.5%
-  const { ihssRate } = getHondurasLegalRates()
+  // Deducciones IHSS 3.5% + IR 15%
+  const { ihssRate, irFlatRate } = getHondurasLegalRates()
   const ihssBase = round2(proportionalSalary + vacationPay)
   const ihss = round2(ihssBase * ihssRate)
+  const ir = round2(Math.max(0, grossIncome - ihss) * irFlatRate)
 
   const deductions: SettlementLine[] = [
     {
@@ -94,6 +95,12 @@ export const calculateHondurasSettlement = (
       amount: ihss,
       formula: `(${ihssBase} x ${(ihssRate * 100).toFixed(1)}%)`,
       legalReference: "Ley del IHSS (tasa propuesta)",
+    },
+    {
+      label: "IR",
+      amount: ir,
+      formula: `max(0, ${grossIncome} - ${ihss}) x ${(irFlatRate * 100).toFixed(0)}%`,
+      legalReference: "Ley de Impuesto Sobre la Renta (tasa minima)",
     },
   ]
 

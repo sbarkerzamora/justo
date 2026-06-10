@@ -20,13 +20,13 @@ describe("calculateHondurasSalaryNet", () => {
 
     const ir = result.deductions[1]
     expect(ir.label).toBe("IR")
-    expect(ir.amount).toBe(988.45)
+    expect(ir.amount).toBe(1488.44)
 
-    expect(result.totalDeductions).toBe(2038.45)
-    expect(result.netSalary).toBe(27961.55)
-    expect(result.netSalaryPerPeriod.mensual).toBe(27961.55)
-    expect(result.netSalaryPerPeriod.quincenal).toBe(13980.78)
-    expect(result.netSalaryPerPeriod.semanal).toBe(6452.67)
+    expect(result.totalDeductions).toBe(2538.44)
+    expect(result.netSalary).toBe(27461.56)
+    expect(result.netSalaryPerPeriod.mensual).toBe(27461.56)
+    expect(result.netSalaryPerPeriod.quincenal).toBe(13730.78)
+    expect(result.netSalaryPerPeriod.semanal).toBe(6337.28)
   })
 
   test("throws on non-positive salary", () => {

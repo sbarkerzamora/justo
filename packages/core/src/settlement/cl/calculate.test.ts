@@ -35,13 +35,15 @@ describe("calculateChileSettlement", () => {
       endDate: "2026-05-11",
     })
 
-    expect(result.deductions.length).toBe(3)
+    expect(result.deductions.length).toBe(4)
     expect(result.deductions[0]?.label).toBe("AFP")
     expect(result.deductions[0]?.amount).toBeGreaterThan(0)
     expect(result.deductions[1]?.label).toBe("Salud (FONASA/ISAPRE)")
     expect(result.deductions[1]?.amount).toBeGreaterThan(0)
     expect(result.deductions[2]?.label).toBe("AFC (Seguro Cesantia)")
     expect(result.deductions[2]?.amount).toBeGreaterThan(0)
+    expect(result.deductions[3]?.label).toBe("IR")
+    expect(result.deductions[3]?.amount).toBeGreaterThan(0)
     expect(result.netTotal).toBeGreaterThan(0)
   })
 

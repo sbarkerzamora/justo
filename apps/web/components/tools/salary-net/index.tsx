@@ -26,6 +26,7 @@ import {
   formatCurrencyInput,
   parseCurrencyInput,
 } from "@/components/tools/input-formatters"
+import { StepNavigation } from "@/components/tools/step-navigation"
 
 export type SalaryNetStep =
   | "welcome"
@@ -169,6 +170,14 @@ export function SalaryNetTool({
     return salaryNetSteps[idx + 1] ?? "confirm"
   }
 
+  const prevStep = (s: SalaryNetStep): SalaryNetStep | null => {
+    if (s === "welcome" || s === "done") return null
+    if (s === "confirm") return "frequency"
+    const idx = salaryNetSteps.indexOf(s)
+    if (idx <= 0) return "welcome"
+    return salaryNetSteps[idx - 1]
+  }
+
   const applyField = (
     field: "salary" | "frequency",
     value: string
@@ -216,6 +225,14 @@ export function SalaryNetTool({
     )
       return
     advance()
+  }
+
+  const handleBack = () => {
+    const prev = prevStep(step)
+    if (prev) {
+      dispatch({ type: "setStep", step: prev })
+      setInputValue("")
+    }
   }
 
   const onFrequencySelect = (f: "mensual" | "quincenal" | "semanal") => {
@@ -356,13 +373,13 @@ export function SalaryNetTool({
             {step === "done" ? "OK" : `P${stepIndex(step)}`}
           </span>
         </div>
-        <div className="h-1.5 rounded-full bg-muted">
+        <div className="h-2 rounded-full bg-muted">
           <div
-            className="h-1.5 rounded-full bg-primary transition-all duration-300"
+            className="h-2 rounded-full bg-primary transition-all duration-300"
             style={{ width: `${(stepIndex(step) / totalSteps) * 100}%` }}
           />
         </div>
-        <div className="flex items-center gap-1.5 text-[11px] text-muted-foreground">
+        <div className="flex items-center gap-1.5 text-xs text-muted-foreground">
           <Image
             src={`https://flagcdn.com/w40/${countryCode}.png`}
             alt={countryName}
@@ -432,6 +449,7 @@ export function SalaryNetTool({
                 dispatch({ type: "setPensionSystem", value: v })
                 dispatch({ type: "setStep", step: "confirm" })
               }}
+              copy={copy}
             />
           </div>
         ) : step === "confirm" ? (
@@ -472,34 +490,35 @@ export function SalaryNetTool({
                 {askText(step)}
               </p>
             </div>
-            <div className="relative w-full max-w-xl pb-4">
+            <div className="w-full max-w-xl">
               <input
                 ref={inputRef}
                 value={inputValue}
                 onChange={(e) =>
                   setInputValue(formatCurrencyInput(e.target.value))
                 }
-                onKeyDown={(e) => {
-                  if (e.key === "Enter") {
-                    e.preventDefault()
-                    handleSubmit()
-                  }
-                }}
                 inputMode="decimal"
                 placeholder={copy.askPlaceholder}
-                className="h-12 w-full rounded-2xl border border-border bg-card px-4 text-sm text-foreground transition-colors outline-none placeholder:text-muted-foreground focus:border-foreground/30"
+                className="h-12 w-full rounded-2xl border border-border bg-card pl-4 pr-4 text-sm text-foreground transition-colors outline-none placeholder:text-muted-foreground focus:border-foreground/30"
               />
-              <button
-                type="button"
-                onClick={handleSubmit}
-                disabled={!inputValue.trim()}
-                className="absolute top-1/2 right-2 inline-flex h-8 -translate-y-1/2 items-center justify-center rounded-full bg-primary px-3 text-xs font-medium text-primary-foreground disabled:opacity-30"
-              >
-                {copy.send}
-              </button>
             </div>
           </div>
         )}
+
+        {step !== "welcome" &&
+          step !== "frequency" &&
+          step !== "pensionSystem" &&
+          step !== "confirm" &&
+          step !== "done" && (
+            <StepNavigation
+              onBack={handleBack}
+              onContinue={handleSubmit}
+              canContinue={!!inputValue.trim()}
+              showBack={false}
+              backLabel={copy.backToPrevious}
+              continueLabel={copy.send}
+            />
+          )}
       </div>
     </div>
   )
@@ -536,9 +555,9 @@ function OnboardingPanel({
           {steps.map((step, i) => (
             <span
               key={i}
-              className="inline-flex items-center gap-1.5 rounded-full bg-muted px-2.5 py-1 text-[11px] text-muted-foreground"
+              className="inline-flex items-center gap-1.5 rounded-full bg-muted px-2.5 py-1 text-xs text-muted-foreground"
             >
-              <span className="flex h-4 w-4 items-center justify-center rounded-full bg-primary/10 text-[9px] font-medium text-primary">
+              <span className="flex h-5 w-5 items-center justify-center rounded-full bg-primary/10 text-[11px] font-medium text-primary">
                 {i + 1}
               </span>
               {step.label}
@@ -590,7 +609,7 @@ function FrequencyPicker({
       <p className="mb-2 text-xs font-medium text-muted-foreground">
         {copy.frequencyOption}
       </p>
-      <div className="flex gap-2">
+      <div className="flex flex-wrap gap-2">
         {(["mensual", "quincenal", "semanal"] as const).map((f) => (
           <button
             key={f}
@@ -617,16 +636,18 @@ function FrequencyPicker({
 function PensionSelector({
   selected,
   onSelect,
+  copy,
 }: {
   selected: "afp" | "onp"
   onSelect: (v: "afp" | "onp") => void
+  copy: (typeof homeCopy)["es" | "en"]
 }) {
   return (
     <div className="rounded-2xl border border-border bg-card p-3 motion-safe:animate-in motion-safe:duration-200 motion-safe:fade-in motion-safe:slide-in-from-bottom-1">
       <p className="mb-2 text-xs font-medium text-muted-foreground">
-        Sistema de pensiones
+        {copy.pensionSystem}
       </p>
-      <div className="flex gap-2">
+      <div className="flex flex-wrap gap-2">
         <button
           type="button"
           onClick={() => onSelect("onp")}
@@ -760,13 +781,13 @@ function EditPanel({
             onChange={(e) =>
               onSetEditField("editSalary", formatCurrencyInput(e.target.value))
             }
-            className="h-10 rounded-xl border border-border bg-background px-3 text-foreground outline-none focus:border-foreground/30"
+            className="h-11 rounded-xl border border-border bg-background px-3 text-foreground outline-none focus:border-foreground/30"
           />
         </label>
       ) : editMode === "frequency" ? (
         <label className="grid gap-2 text-sm">
           <span className="text-foreground">{copy.frequencyOption}</span>
-          <div className="flex gap-2">
+          <div className="flex flex-wrap gap-2">
             {(["mensual", "quincenal", "semanal"] as const).map((f) => (
               <button
                 key={f}
@@ -794,7 +815,7 @@ function EditPanel({
           </div>
         </label>
       ) : null}
-      <div className="mt-4 flex gap-2">
+      <div className="mt-4 flex flex-wrap gap-2">
         <button
           type="button"
           onClick={saveEdit}
@@ -855,7 +876,7 @@ function ResultPanel({
 
         <div className="mt-4">
           <p className="text-xs font-medium tracking-wider text-muted-foreground uppercase">
-            {locale === "en" ? "Net salary" : "Salario neto"} (
+              {copy.netSalaryHeading} (
             {frequency === "mensual"
               ? copy.monthly
               : frequency === "quincenal"
@@ -874,7 +895,7 @@ function ResultPanel({
               <IconTrendingUp className="size-4 text-emerald-600" />
             </div>
             <div>
-              <p className="text-[11px] text-muted-foreground">
+              <p className="text-xs text-muted-foreground">
                 {copy.grossSalary}
               </p>
               <p className="text-sm font-semibold text-foreground">
@@ -887,7 +908,7 @@ function ResultPanel({
               <IconTrendingDown className="size-4 text-rose-600" />
             </div>
             <div>
-              <p className="text-[11px] text-muted-foreground">
+              <p className="text-xs text-muted-foreground">
                 {copy.deductions}
               </p>
               <p className="text-sm font-semibold text-foreground">
@@ -900,8 +921,8 @@ function ResultPanel({
               <IconTrendingDown className="size-4 text-amber-600" />
             </div>
             <div>
-              <p className="text-[11px] text-muted-foreground">
-                {locale === "en" ? "Deduction rate" : "Tasa de deducción"}
+              <p className="text-xs text-muted-foreground">
+                {copy.deductionRate}
               </p>
               <p className="text-sm font-semibold text-foreground">
                 {((result.totalDeductions / result.grossSalary) * 100).toFixed(
@@ -919,7 +940,7 @@ function ResultPanel({
           </p>
           <div className="grid gap-2 sm:grid-cols-3">
             <div className="rounded-lg border border-border bg-card p-3 text-center">
-              <p className="text-[11px] text-muted-foreground">
+              <p className="text-xs text-muted-foreground">
                 {copy.monthly}
               </p>
               <p className="mt-1 text-sm font-semibold text-foreground">
@@ -927,7 +948,7 @@ function ResultPanel({
               </p>
             </div>
             <div className="rounded-lg border border-border bg-card p-3 text-center">
-              <p className="text-[11px] text-muted-foreground">
+              <p className="text-xs text-muted-foreground">
                 {copy.biweekly}
               </p>
               <p className="mt-1 text-sm font-semibold text-foreground">
@@ -935,7 +956,7 @@ function ResultPanel({
               </p>
             </div>
             <div className="rounded-lg border border-border bg-card p-3 text-center">
-              <p className="text-[11px] text-muted-foreground">{copy.weekly}</p>
+              <p className="text-xs text-muted-foreground">{copy.weekly}</p>
               <p className="mt-1 text-sm font-semibold text-foreground">
                 {fmt(result.netSalaryPerPeriod.semanal)}
               </p>
@@ -952,13 +973,13 @@ function ResultPanel({
               {copy.fullBreakdown}
             </span>
             <span className="text-xs text-muted-foreground">
-              {locale === "en" ? "Expand" : "Ver"}
+              {copy.expandLabel}
             </span>
           </summary>
           <div className="space-y-4 border-t border-border p-4">
             <div className="space-y-2">
               <p className="text-xs font-medium tracking-wider text-rose-600 uppercase">
-                {locale === "en" ? "Deductions" : "Deducciones"}
+                {copy.deductions}
               </p>
               {result.deductions.map(
                 (d: {
@@ -973,7 +994,7 @@ function ResultPanel({
                   >
                     <div className="min-w-0">
                       <p className="font-medium text-foreground">{d.label}</p>
-                      <p className="text-[11px] text-muted-foreground">
+                      <p className="text-xs text-muted-foreground">
                         {d.formula}
                       </p>
                     </div>
@@ -981,7 +1002,7 @@ function ResultPanel({
                       <p className="font-medium text-rose-600">
                         {fmt(d.amount)}
                       </p>
-                      <p className="text-[10px] text-muted-foreground">
+                      <p className="text-[11px] text-muted-foreground">
                         {d.legalReference}
                       </p>
                     </div>

@@ -26,22 +26,36 @@ export function getToolPageMetadata({
   tool,
   country,
   title,
+  pageLocale = "es",
 }: {
   slug: string
   tool: JustoTool
   country: CountryCode | null
   title: string
+  pageLocale?: string
 }): Metadata {
   const canonical = getToolCanonical(slug, country)
   const countryInfo = countryList.find((item) => item.code === country)
   const locale = countryInfo ? countryInfo.locale.replace("-", "_") : "es_419"
 
+  const alternates: Metadata["alternates"] = {
+    canonical,
+  }
+
+  if (country) {
+    const prefix = pageLocale === "en" ? "/en" : ""
+    const otherPrefix = pageLocale === "en" ? "" : "/en"
+    alternates.languages = {
+      es: `${SITE_URL}${pageLocale === "es" ? prefix : otherPrefix}/tools/${slug}?country=${country}`,
+      en: `${SITE_URL}${pageLocale === "en" ? prefix : otherPrefix}/tools/${slug}?country=${country}`,
+      "x-default": `${SITE_URL}/tools/${slug}`,
+    }
+  }
+
   return {
     title,
     description: tool.longDescription,
-    alternates: {
-      canonical,
-    },
+    alternates,
     openGraph: {
       title,
       description: tool.longDescription,
@@ -65,16 +79,20 @@ export function buildToolJsonLd({
   tool,
   country,
   title,
+  pageLocale = "es",
 }: {
   slug: string
   tool: JustoTool
   country: CountryCode | null
   title: string
+  pageLocale?: string
 }) {
   const canonical = getToolCanonical(slug, country)
   const countryName = getToolCountryName(country)
-  const countryInfo = countryList.find((item) => item.code === country)
   const currentName = countryName ? `${tool.name} en ${countryName}` : tool.name
+  const toolsLabel = pageLocale === "en" ? "Tools" : "Herramientas"
+  const toolsUrl = pageLocale === "en" ? `${SITE_URL}/en/tools` : `${SITE_URL}/tools`
+  const lang = pageLocale === "en" ? "en" : "es"
 
   return [
     {
@@ -84,7 +102,7 @@ export function buildToolJsonLd({
       url: canonical,
       applicationCategory: "FinanceApplication",
       operatingSystem: "Web",
-      inLanguage: countryInfo?.locale ?? "es",
+      inLanguage: lang,
       offers: { "@type": "Offer", price: "0", priceCurrency: "USD" },
       description: tool.longDescription,
     },
@@ -96,8 +114,8 @@ export function buildToolJsonLd({
         {
           "@type": "ListItem",
           position: 2,
-          name: "Herramientas",
-          item: `${SITE_URL}/tools`,
+          name: toolsLabel,
+          item: toolsUrl,
         },
         {
           "@type": "ListItem",

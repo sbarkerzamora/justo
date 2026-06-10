@@ -180,6 +180,19 @@ agrega un tool en `apps/web/lib/ai/respond.ts` similar a `quickEstimate` o `quic
 
 ---
 
+## Nuevos países y tu herramienta
+
+Toda herramienta debe funcionar en **todos** los países actuales y futuros. Al crear una herramienta:
+
+- Usa el tipo canónico `CountryCode` de `packages/core/src/settlement/types.ts` como fuente de verdad. Nunca hardcodees países literalmente.
+- Define un `Record<CountryCode, CalculatorFn>` en `packages/tools/src/{tool}.ts`. Esto fuerza a TypeScript a verificar que cada país tiene su calculadora.
+- Si un país aún no tiene lógica para esta herramienta, lanza un error descriptivo: `throw new Error("Herramienta no disponible para {país}")`.
+- El enum Zod `countryCodes` en el schema debe usar `SUPPORTED_COUNTRIES` o el union `CountryCode`, no valores literales.
+- Agrega `countryOverrides` por cada país en el tool registry con al menos `corpusVersion` y `legalReferences`.
+- Cuando se agregue un nuevo país (ver [`docs/adding-a-country.md`](./adding-a-country.md)), se detectará en TypeScript como error de compilación si tu herramienta no lo cubre.
+
+---
+
 ## Resumen de archivos a tocar
 
 | Archivo | Que hacer |

@@ -24,6 +24,7 @@ import {
 } from "@tabler/icons-react"
 import type { Locale } from "@/lib/i18n"
 import { homeCopy } from "@/lib/home-copy"
+import { contractCopy } from "@/components/tools/contract/contract-copy"
 import type { ContractFormData } from "@/components/tools/tool-types"
 import {
   formatCurrencyInput,
@@ -231,6 +232,7 @@ export function ContractTool({
   onCancel: () => void
 }) {
   const copy = homeCopy[locale]
+  const c = contractCopy[locale === "en" ? "en" : "es"]
   const [state, dispatch] = useReducer(reducer, countryCode, initialState)
   const { step, form, error } = state
 
@@ -273,8 +275,8 @@ export function ContractTool({
       dispatch({
         type: "setError",
         error: details
-          ? `No se pudo generar el PDF. Revisa: ${details}.`
-          : data?.error ?? "No se pudo generar el PDF.",
+          ? c.errorPdfDetail(details)
+          : data?.error ?? c.errorPdf,
       })
       return
     }
@@ -291,29 +293,20 @@ export function ContractTool({
     onComplete([
       {
         role: "assistant",
-        text: "Vamos a generar un contrato de trabajo.",
+        text: c.welcomeMessage,
       },
-      { role: "user", text: "Iniciar generación de contrato" },
+      { role: "user", text: c.welcomeStart },
     ])
   }
 
-  const stepTitle = () => {
-    const titles: Partial<Record<ContractStep, string>> = {
-      workerInfo: "Datos del trabajador",
-      employerInfo: "Datos del empleador",
-      jobInfo: "Información del puesto",
-      contractType: "Tipo de contrato y fechas",
-      salary: "Salario y forma de pago",
-    }
-    return titles[step] ?? ""
-  }
+  const stepTitle = () => c.stepTitle[step] ?? ""
 
   return (
     <div className="flex min-h-0 flex-1 flex-col">
       <div className="mb-4 flex w-full items-center justify-between">
         <div className="inline-flex items-center gap-2 rounded-full border border-border bg-card px-3 py-1.5 text-xs font-medium text-foreground">
           <IconFileDescription className="size-3.5 text-primary" />
-          {locale === "en" ? "Contract generator" : "Generador de contratos"}
+          {c.badge}
         </div>
         <button
           type="button"
@@ -321,7 +314,7 @@ export function ContractTool({
           className="inline-flex items-center gap-1.5 text-xs font-medium text-muted-foreground transition-colors hover:text-foreground"
         >
           <IconArrowLeft className="size-3.5" />
-          {locale === "en" ? "Back" : "Volver"}
+          {c.back}
         </button>
       </div>
 
@@ -337,9 +330,9 @@ export function ContractTool({
           <span className="max-sm:hidden">{stepTitle()}</span>
         </div>
         {step !== "welcome" && step !== "done" && (
-          <div className="h-1.5 rounded-full bg-muted">
+          <div className="h-2 rounded-full bg-muted">
             <div
-              className="h-1.5 rounded-full bg-primary transition-all duration-300"
+              className="h-2 rounded-full bg-primary transition-all duration-300"
               style={{
                 width: `${
                   (stepIndex(step) / totalSteps) * 100
@@ -391,32 +384,32 @@ export function ContractTool({
           />
         ) : step === "workerInfo" ? (
           <MultiFieldInput
-            title="Datos del trabajador"
+            title={c.stepTitle.workerInfo}
             fields={[
-              { key: "workerName", label: "Nombre completo", placeholder: "Ej. Juan Pérez" },
-              { key: "workerId", label: "Cédula de identidad", placeholder: "Ej. 001-123456-7890" },
-              { key: "workerAddress", label: "Dirección", placeholder: "Ej. Managua, Distrito I" },
+              { key: "workerName", label: c.field.workerName, placeholder: c.placeholder.workerName },
+              { key: "workerId", label: c.field.workerId, placeholder: c.placeholder.workerId },
+              { key: "workerAddress", label: c.field.workerAddress, placeholder: c.placeholder.workerAddress },
             ]}
             form={form}
             onFieldChange={setField}
             onNext={advance}
             onBack={goBack}
-            lastFieldKey="workerAddress"
+            c={c}
           />
         ) : step === "employerInfo" ? (
           <MultiFieldInput
-            title="Datos del empleador"
+            title={c.stepTitle.employerInfo}
             fields={[
-              { key: "employerName", label: "Razón social", placeholder: "Ej. Empresa S.A." },
-              { key: "employerId", label: "RUC", placeholder: "Ej. J123456789" },
-              { key: "employerRepresentative", label: "Representante legal", placeholder: "Ej. María García" },
-              { key: "employerAddress", label: "Dirección", placeholder: "Ej. Managua, Carretera Masaya" },
+              { key: "employerName", label: c.field.employerName, placeholder: c.placeholder.employerName },
+              { key: "employerId", label: c.field.employerRuc, placeholder: c.placeholder.employerRuc },
+              { key: "employerRepresentative", label: c.field.employerRep, placeholder: c.placeholder.employerRep },
+              { key: "employerAddress", label: c.field.employerAddress, placeholder: c.placeholder.employerAddress },
             ]}
             form={form}
             onFieldChange={setField}
             onNext={advance}
             onBack={goBack}
-            lastFieldKey="employerAddress"
+            c={c}
           />
         ) : step === "jobInfo" ? (
           <JobInfoStep
@@ -424,6 +417,7 @@ export function ContractTool({
             onFieldChange={setField}
             onNext={advance}
             onBack={goBack}
+            c={c}
           />
         ) : step === "contractType" ? (
           <ContractTypeStep
@@ -432,6 +426,7 @@ export function ContractTool({
             onNext={advance}
             onBack={goBack}
             dispatch={dispatch}
+            c={c}
           />
         ) : step === "salary" ? (
           <SalaryStep
@@ -441,6 +436,7 @@ export function ContractTool({
             onBack={goBack}
             currencyLabel={currencyLabel}
             dispatch={dispatch}
+            c={c}
           />
         ) : step === "confirm" ? (
           <div className="max-w-xl mx-auto space-y-4 overflow-y-auto motion-safe:animate-in motion-safe:duration-200 motion-safe:fade-in motion-safe:slide-in-from-bottom-1">
@@ -456,35 +452,35 @@ export function ContractTool({
                 {copy.summaryTitle}
               </div>
               <div className="space-y-3">
-                <SectionBlock icon={<IconUser />} label="Trabajador">
-                  <DetailRow label="Nombre" value={form.workerName} />
-                  <DetailRow label="Cédula" value={form.workerId} />
-                  <DetailRow label="Dirección" value={form.workerAddress} />
+                <SectionBlock icon={<IconUser />} label={c.confirm.workerSection}>
+                  <DetailRow label={c.confirm.name} value={form.workerName} />
+                  <DetailRow label={c.confirm.id} value={form.workerId} />
+                  <DetailRow label={c.confirm.address} value={form.workerAddress} />
                 </SectionBlock>
-                <SectionBlock icon={<IconBuilding />} label="Empleador">
-                  <DetailRow label="Razón social" value={form.employerName} />
-                  <DetailRow label="RUC" value={form.employerId} />
+                <SectionBlock icon={<IconBuilding />} label={c.confirm.employerSection}>
+                  <DetailRow label={c.confirm.legalName} value={form.employerName} />
+                  <DetailRow label={c.confirm.ruc} value={form.employerId} />
                   <DetailRow
-                    label="Representante legal"
+                    label={c.confirm.representative}
                     value={form.employerRepresentative}
                   />
-                  <DetailRow label="Dirección" value={form.employerAddress} />
+                  <DetailRow label={c.confirm.address} value={form.employerAddress} />
                 </SectionBlock>
-                <SectionBlock icon={<IconBriefcase />} label="Puesto">
-                  <DetailRow label="Título" value={form.jobTitle} />
-                  <DetailRow label="Funciones" value={form.jobDescription} />
-                  <DetailRow label="Lugar" value={form.workLocation} />
+                <SectionBlock icon={<IconBriefcase />} label={c.confirm.jobSection}>
+                  <DetailRow label={c.confirm.title} value={form.jobTitle} />
+                  <DetailRow label={c.confirm.functions} value={form.jobDescription} />
+                  <DetailRow label={c.confirm.place} value={form.workLocation} />
                   <DetailRow
-                    label="Jornada"
+                    label={c.confirm.schedule}
                     value={
                       jornadaOptions.find((o) => o.value === form.jornada)
                         ?.label ?? form.jornada
                     }
                   />
                 </SectionBlock>
-                <SectionBlock icon={<IconCalendarEvent />} label="Contrato">
+                <SectionBlock icon={<IconCalendarEvent />} label={c.confirm.contractSection}>
                   <DetailRow
-                    label="Tipo"
+                    label={c.confirm.type}
                     value={
                       contractTypeOptions.find(
                         (o) => o.value === form.contractType,
@@ -492,23 +488,23 @@ export function ContractTool({
                     }
                   />
                   <DetailRow
-                    label="Inicio"
+                    label={c.confirm.start}
                     value={displayDate(form.startDate)}
                   />
                   {form.contractType === "plazo_fijo" && (
                     <DetailRow
-                      label="Fin"
+                      label={c.confirm.end}
                       value={displayDate(form.endDate ?? "")}
                     />
                   )}
                 </SectionBlock>
-                <SectionBlock icon={<IconCoins />} label="Salario">
+                <SectionBlock icon={<IconCoins />} label={c.confirm.salarySection}>
                   <DetailRow
-                    label="Monto mensual"
+                    label={c.confirm.monthlyAmount}
                     value={fmt(form.monthlySalary)}
                   />
                   <DetailRow
-                    label="Frecuencia"
+                    label={c.confirm.frequency}
                     value={
                       paymentFreqOptions.find(
                         (o) => o.value === form.paymentFrequency,
@@ -516,7 +512,7 @@ export function ContractTool({
                     }
                   />
                   <DetailRow
-                    label="Forma de pago"
+                    label={c.confirm.method}
                     value={
                       paymentMethodOptions.find(
                         (o) => o.value === form.paymentMethod,
@@ -525,18 +521,18 @@ export function ContractTool({
                   />
                 </SectionBlock>
                 {form.celebrationPlace && (
-                  <SectionBlock icon={<IconMapPin />} label="Celebración">
+                  <SectionBlock icon={<IconMapPin />} label={c.confirm.celebration}>
                     <DetailRow
-                      label="Lugar"
+                      label={c.confirm.place}
                       value={form.celebrationPlace}
                     />
                   </SectionBlock>
                 )}
                 {form.trialPeriodDays && (
-                  <SectionBlock icon={<IconClock />} label="Período de prueba">
+                  <SectionBlock icon={<IconClock />} label={c.confirm.trialPeriod}>
                     <DetailRow
-                      label="Días"
-                      value={`${form.trialPeriodDays} días`}
+                      label={c.confirm.days}
+                      value={`${form.trialPeriodDays} ${c.confirm.days.toLowerCase()}`}
                     />
                   </SectionBlock>
                 )}
@@ -547,7 +543,7 @@ export function ContractTool({
                 className="mt-5 inline-flex w-full items-center justify-center gap-2 rounded-xl bg-primary px-4 py-3 text-sm font-medium text-primary-foreground shadow-sm transition-opacity hover:opacity-90"
               >
                 <IconFileDescription className="size-4" />
-                {locale === "en" ? "Generate contract" : "Generar contrato"}
+                {c.done.generate}
                 <IconArrowRight className="size-4" />
               </button>
             </div>
@@ -568,10 +564,10 @@ export function ContractTool({
                     {copy.legalVersion}: ni-v0.3.0
                   </div>
                   <h3 className="mt-2 text-sm font-semibold text-foreground">
-                    {locale === "en" ? "Contract generated" : "Contrato generado"}
+                    {c.done.heading}
                   </h3>
                   <p className="mt-0.5 text-xs text-muted-foreground">
-                    {locale === "en" ? "Contract for" : "Contrato para"}{" "}
+                    {c.done.subtitle}{" "}
                     {form.workerName} - {form.employerName}
                   </p>
                 </div>
@@ -643,7 +639,7 @@ function OnboardingPanel({
               key={i}
               className="inline-flex items-center gap-1.5 rounded-full bg-muted px-2.5 py-1 text-[11px] text-muted-foreground"
             >
-              <span className="flex h-4 w-4 min-w-4 items-center justify-center rounded-full bg-primary/10 text-[9px] font-medium text-primary">
+              <span className="flex h-5 w-5 items-center justify-center rounded-full bg-primary/10 text-[11px] font-medium text-primary">
                 {i + 1}
               </span>
               {step.label}
@@ -699,7 +695,7 @@ function MultiFieldInput({
   onFieldChange,
   onNext,
   onBack,
-  lastFieldKey,
+  c,
 }: {
   title: string
   fields: { key: keyof ContractFormData; label: string; placeholder: string }[]
@@ -707,7 +703,7 @@ function MultiFieldInput({
   onFieldChange: (key: keyof ContractFormData, value: string) => void
   onNext: () => void
   onBack: () => void
-  lastFieldKey: string
+  c: typeof contractCopy["es"] | typeof contractCopy["en"]
 }) {
   const allFilled = fields.every((f) => (form[f.key] as string)?.trim())
 
@@ -723,17 +719,15 @@ function MultiFieldInput({
               value={form[f.key] as string}
               onChange={(v) => onFieldChange(f.key, v)}
               placeholder={f.placeholder}
-              isLast={f.key === lastFieldKey}
-              onEnter={allFilled ? onNext : undefined}
             />
           ))}
         </div>
       </div>
-      <div className="flex gap-2">
+      <div className="sticky bottom-0 z-10 flex items-center gap-3 border-t border-border bg-background p-4">
         <button
           type="button"
           onClick={onBack}
-          className="inline-flex min-h-[44px] items-center justify-center gap-1.5 rounded-xl border border-border bg-card px-4 text-xs font-medium text-muted-foreground transition-colors hover:bg-accent"
+          className="inline-flex min-h-[44px] items-center justify-center gap-1.5 rounded-xl border border-border bg-card px-4 text-sm font-medium text-foreground transition-colors hover:bg-accent"
         >
           <IconArrowLeft className="size-4" />
         </button>
@@ -741,9 +735,9 @@ function MultiFieldInput({
           type="button"
           onClick={onNext}
           disabled={!allFilled}
-          className="flex min-h-[44px] flex-1 items-center justify-center gap-2 rounded-xl bg-primary px-4 text-sm font-medium text-primary-foreground shadow-sm transition-opacity disabled:opacity-40 hover:opacity-90"
+          className="flex flex-1 min-h-[44px] items-center justify-center gap-2 rounded-xl bg-primary px-4 text-sm font-medium text-primary-foreground shadow-sm transition-opacity disabled:opacity-40 hover:opacity-90"
         >
-          Continuar
+          {c.continue}
           <IconArrowRight className="size-4" />
         </button>
       </div>
@@ -756,15 +750,11 @@ function LabelledInput({
   value,
   onChange,
   placeholder,
-  isLast,
-  onEnter,
 }: {
   label: string
   value: string
   onChange: (v: string) => void
   placeholder?: string
-  isLast?: boolean
-  onEnter?: () => void
 }) {
   return (
     <div>
@@ -776,16 +766,6 @@ function LabelledInput({
         value={value}
         onChange={(e) => onChange(e.target.value)}
         placeholder={placeholder}
-        onKeyDown={
-          isLast && onEnter
-            ? (e) => {
-                if (e.key === "Enter") {
-                  e.preventDefault()
-                  onEnter()
-                }
-              }
-            : undefined
-        }
         className="h-11 w-full rounded-xl border border-border bg-background px-3.5 text-sm text-foreground outline-none transition-colors placeholder:text-muted-foreground focus:border-foreground/30"
       />
     </div>
@@ -833,11 +813,13 @@ function JobInfoStep({
   onFieldChange,
   onNext,
   onBack,
+  c,
 }: {
   form: ContractFormData
   onFieldChange: (k: keyof ContractFormData, v: string) => void
   onNext: () => void
   onBack: () => void
+  c: typeof contractCopy["es"]
 }) {
   const canContinue = form.jobTitle && form.jobDescription && form.workLocation
 
@@ -845,42 +827,40 @@ function JobInfoStep({
     <div className="max-w-xl mx-auto space-y-4 motion-safe:animate-in motion-safe:duration-200 motion-safe:fade-in motion-safe:slide-in-from-bottom-1">
       <div className="w-full rounded-2xl border border-border bg-card p-5 shadow-sm">
         <p className="mb-4 text-sm font-semibold text-foreground">
-          Información del puesto
+          {c.stepTitle.jobInfo}
         </p>
         <div className="space-y-3">
           <LabelledInput
-            label="Título del puesto"
+            label={c.field.positionTitle}
             value={form.jobTitle}
             onChange={(v) => onFieldChange("jobTitle", v)}
-            placeholder="Ej. Asistente administrativo"
+            placeholder={c.placeholder.positionTitle}
           />
           <LabelledInput
-            label="Descripción de funciones"
+            label={c.field.positionDescription}
             value={form.jobDescription}
             onChange={(v) => onFieldChange("jobDescription", v)}
-            placeholder="Ej. Atención al cliente, archivo, reportes"
+            placeholder={c.placeholder.positionDescription}
           />
           <LabelledInput
-            label="Lugar de trabajo"
+            label={c.field.workplace}
             value={form.workLocation}
             onChange={(v) => onFieldChange("workLocation", v)}
-            placeholder="Ej. Managua"
-            isLast
-            onEnter={canContinue ? onNext : undefined}
+            placeholder={c.placeholder.workplace}
           />
           <ChipGroup
-            label="Jornada"
+            label={c.field.schedule}
             options={jornadaOptions}
             selected={form.jornada}
             onChange={(v) => onFieldChange("jornada", v)}
           />
         </div>
       </div>
-      <div className="flex gap-2">
+      <div className="sticky bottom-0 z-10 flex items-center gap-3 border-t border-border bg-background p-4">
         <button
           type="button"
           onClick={onBack}
-          className="inline-flex min-h-[44px] items-center justify-center gap-1.5 rounded-xl border border-border bg-card px-4 text-xs font-medium text-muted-foreground transition-colors hover:bg-accent"
+          className="inline-flex min-h-[44px] items-center justify-center gap-1.5 rounded-xl border border-border bg-card px-4 text-sm font-medium text-foreground transition-colors hover:bg-accent"
         >
           <IconArrowLeft className="size-4" />
         </button>
@@ -888,9 +868,9 @@ function JobInfoStep({
           type="button"
           onClick={onNext}
           disabled={!canContinue}
-          className="flex min-h-[44px] flex-1 items-center justify-center gap-2 rounded-xl bg-primary px-4 text-sm font-medium text-primary-foreground shadow-sm transition-opacity disabled:opacity-40 hover:opacity-90"
+          className="flex flex-1 min-h-[44px] items-center justify-center gap-2 rounded-xl bg-primary px-4 text-sm font-medium text-primary-foreground shadow-sm transition-opacity disabled:opacity-40 hover:opacity-90"
         >
-          Continuar
+          {c.continue}
           <IconArrowRight className="size-4" />
         </button>
       </div>
@@ -904,12 +884,14 @@ function ContractTypeStep({
   onNext,
   onBack,
   dispatch,
+  c,
 }: {
   form: ContractFormData
   onFieldChange: (k: keyof ContractFormData, v: string | number | undefined) => void
   onNext: () => void
   onBack: () => void
   dispatch: Dispatch
+  c: typeof contractCopy["es"]
 }) {
   const [localStart, setLocalStart] = useState(() => displayDate(form.startDate))
   const [localEnd, setLocalEnd] = useState(() => displayDate(form.endDate ?? ""))
@@ -920,7 +902,7 @@ function ContractTypeStep({
   const commitAndNext = () => {
     const isoStart = toIsoDate(localStart)
     if (!isoStart) {
-      dispatch({ type: "setError", error: "Fecha de inicio inválida. Usa DD/MM/AAAA." })
+      dispatch({ type: "setError", error: c.error.invalidStartDate })
       return
     }
 
@@ -928,16 +910,16 @@ function ContractTypeStep({
 
     if (form.contractType === "plazo_fijo") {
       if (!localEnd.trim()) {
-        dispatch({ type: "setError", error: "Indica la fecha de fin para contratos a plazo fijo." })
+        dispatch({ type: "setError", error: c.error.missingEndDate })
         return
       }
       const isoEnd = toIsoDate(localEnd)
       if (!isoEnd) {
-        dispatch({ type: "setError", error: "Fecha de fin inválida. Usa DD/MM/AAAA." })
+        dispatch({ type: "setError", error: c.error.invalidEndDate })
         return
       }
       if (isoEnd <= isoStart) {
-        dispatch({ type: "setError", error: "La fecha de fin debe ser posterior a la fecha de inicio." })
+        dispatch({ type: "setError", error: c.error.endBeforeStart })
         return
       }
       patch.endDate = isoEnd
@@ -960,30 +942,32 @@ function ContractTypeStep({
     <div className="max-w-xl mx-auto space-y-4 motion-safe:animate-in motion-safe:duration-200 motion-safe:fade-in motion-safe:slide-in-from-bottom-1">
       <div className="w-full rounded-2xl border border-border bg-card p-5 shadow-sm">
         <p className="mb-4 text-sm font-semibold text-foreground">
-          Tipo de contrato y fechas
+          {c.stepTitle.contractType}
         </p>
         <div className="space-y-3">
           <ChipGroup
-            label="Tipo de contrato"
+            label={c.field.contractType}
             options={contractTypeOptions}
             selected={form.contractType}
             onChange={(v) => onFieldChange("contractType", v)}
           />
           <DateInput
-            label="Fecha de inicio"
+            label={c.field.startDate}
             value={localStart}
             onChange={setLocalStart}
+            c={c}
           />
           {form.contractType === "plazo_fijo" && (
             <DateInput
-              label="Fecha de fin"
+              label={c.field.endDate}
               value={localEnd}
               onChange={setLocalEnd}
+              c={c}
             />
           )}
           <div>
             <label className="mb-1.5 block text-xs font-medium text-muted-foreground">
-              Período de prueba (días, opcional, máx. 30)
+              {c.field.trialPeriod}
             </label>
             <input
               type="number"
@@ -1001,16 +985,16 @@ function ContractTypeStep({
                 }
               }}
               placeholder="Ej. 30"
-              className="h-11 w-28 rounded-xl border border-border bg-background px-3.5 text-sm text-foreground outline-none transition-colors placeholder:text-muted-foreground focus:border-foreground/30"
+              className="h-11 w-full max-w-28 rounded-xl border border-border bg-background px-3.5 text-sm text-foreground outline-none transition-colors placeholder:text-muted-foreground focus:border-foreground/30"
             />
           </div>
         </div>
       </div>
-      <div className="flex gap-2">
+      <div className="sticky bottom-0 z-10 flex items-center gap-3 border-t border-border bg-background p-4">
         <button
           type="button"
           onClick={onBack}
-          className="inline-flex min-h-[44px] items-center justify-center gap-1.5 rounded-xl border border-border bg-card px-4 text-xs font-medium text-muted-foreground transition-colors hover:bg-accent"
+          className="inline-flex min-h-[44px] items-center justify-center gap-1.5 rounded-xl border border-border bg-card px-4 text-sm font-medium text-foreground transition-colors hover:bg-accent"
         >
           <IconArrowLeft className="size-4" />
         </button>
@@ -1018,9 +1002,9 @@ function ContractTypeStep({
           type="button"
           onClick={commitAndNext}
           disabled={!localStart}
-          className="flex min-h-[44px] flex-1 items-center justify-center gap-2 rounded-xl bg-primary px-4 text-sm font-medium text-primary-foreground shadow-sm transition-opacity disabled:opacity-40 hover:opacity-90"
+          className="flex flex-1 min-h-[44px] items-center justify-center gap-2 rounded-xl bg-primary px-4 text-sm font-medium text-primary-foreground shadow-sm transition-opacity disabled:opacity-40 hover:opacity-90"
         >
-          Continuar
+          {c.continue}
           <IconArrowRight className="size-4" />
         </button>
       </div>
@@ -1032,32 +1016,24 @@ function DateInput({
   label,
   value,
   onChange,
+  c,
 }: {
   label: string
   value: string
   onChange: (v: string) => void
+  c: typeof contractCopy["es"]
 }) {
   return (
     <div>
       <label className="mb-1.5 block text-xs font-medium text-muted-foreground">
-        {label} (DD/MM/AAAA)
+        {label} {c.dateFormatLabel}
       </label>
       <input
         type="text"
         inputMode="numeric"
         value={value}
         onChange={(e) => onChange(formatDateInput(e.target.value))}
-        onKeyDown={(e) => {
-          if (e.key === "Enter") {
-            e.preventDefault()
-            const parent = e.currentTarget.closest("form") ?? e.currentTarget.closest("div")
-            const btns = parent?.querySelectorAll("button")
-            btns?.forEach((b) => {
-              if (b.textContent?.includes("Continuar")) b.click()
-            })
-          }
-        }}
-        placeholder="DD/MM/AAAA"
+        placeholder={c.dateFormatHint}
         maxLength={10}
         className="h-11 w-full rounded-xl border border-border bg-background px-3.5 text-sm text-foreground outline-none transition-colors placeholder:text-muted-foreground focus:border-foreground/30"
       />
@@ -1072,6 +1048,7 @@ function SalaryStep({
   onBack,
   currencyLabel,
   dispatch,
+  c,
 }: {
   form: ContractFormData
   onFieldChange: (k: keyof ContractFormData, v: string | number | undefined) => void
@@ -1079,6 +1056,7 @@ function SalaryStep({
   onBack: () => void
   currencyLabel: string
   dispatch: Dispatch
+  c: typeof contractCopy["es"]
 }) {
   const [salaryDisplay, setSalaryDisplay] = useState(() =>
     form.monthlySalary ? String(form.monthlySalary) : "",
@@ -1090,11 +1068,11 @@ function SalaryStep({
   const commitAndNext = () => {
     const salary = parseCurrencyInput(salaryDisplay)
     if (!Number.isFinite(salary) || salary <= 0) {
-      dispatch({ type: "setError", error: "Salario inválido." })
+      dispatch({ type: "setError", error: c.error.invalidSalary })
       return
     }
     if (!celebrationLocal.trim()) {
-      dispatch({ type: "setError", error: "Indica el lugar de celebración del contrato." })
+      dispatch({ type: "setError", error: c.error.missingCelebrationPlace })
       return
     }
     dispatch({
@@ -1111,12 +1089,12 @@ function SalaryStep({
     <div className="max-w-xl mx-auto space-y-4 motion-safe:animate-in motion-safe:duration-200 motion-safe:fade-in motion-safe:slide-in-from-bottom-1">
       <div className="w-full rounded-2xl border border-border bg-card p-5 shadow-sm">
         <p className="mb-4 text-sm font-semibold text-foreground">
-          Salario y forma de pago
+          {c.stepTitle.salary}
         </p>
         <div className="space-y-3">
           <div>
             <label className="mb-1.5 block text-xs font-medium text-muted-foreground">
-              Salario mensual en {currencyLabel}
+              {c.field.monthlySalaryCurrency(currencyLabel)}
             </label>
             <input
               type="text"
@@ -1129,37 +1107,35 @@ function SalaryStep({
                   commitAndNext()
                 }
               }}
-              placeholder="Ej. 15,000"
+              placeholder={c.placeholder.monthlySalary}
               className="h-11 w-full rounded-xl border border-border bg-background px-3.5 text-sm text-foreground outline-none transition-colors placeholder:text-muted-foreground focus:border-foreground/30"
             />
           </div>
           <ChipGroup
-            label="Frecuencia de pago"
+            label={c.field.paymentFrequency}
             options={paymentFreqOptions}
             selected={form.paymentFrequency}
             onChange={(v) => onFieldChange("paymentFrequency", v)}
           />
           <ChipGroup
-            label="Forma de pago"
+            label={c.field.paymentMethod}
             options={paymentMethodOptions}
             selected={form.paymentMethod}
             onChange={(v) => onFieldChange("paymentMethod", v)}
           />
           <LabelledInput
-            label="Lugar de celebración del contrato"
+            label={c.field.celebrationPlace}
             value={celebrationLocal}
             onChange={setCelebrationLocal}
-            placeholder="Ej. Managua"
-            isLast
-            onEnter={commitAndNext}
+            placeholder={c.placeholder.celebrationPlace}
           />
         </div>
       </div>
-      <div className="flex gap-2">
+      <div className="sticky bottom-0 z-10 flex items-center gap-3 border-t border-border bg-background p-4">
         <button
           type="button"
           onClick={onBack}
-          className="inline-flex min-h-[44px] items-center justify-center gap-1.5 rounded-xl border border-border bg-card px-4 text-xs font-medium text-muted-foreground transition-colors hover:bg-accent"
+          className="inline-flex min-h-[44px] items-center justify-center gap-1.5 rounded-xl border border-border bg-card px-4 text-sm font-medium text-foreground transition-colors hover:bg-accent"
         >
           <IconArrowLeft className="size-4" />
         </button>
@@ -1167,9 +1143,9 @@ function SalaryStep({
           type="button"
           onClick={commitAndNext}
           disabled={!salaryDisplay || !celebrationLocal.trim()}
-          className="flex min-h-[44px] flex-1 items-center justify-center gap-2 rounded-xl bg-primary px-4 text-sm font-medium text-primary-foreground shadow-sm transition-opacity disabled:opacity-40 hover:opacity-90"
+          className="flex flex-1 min-h-[44px] items-center justify-center gap-2 rounded-xl bg-primary px-4 text-sm font-medium text-primary-foreground shadow-sm transition-opacity disabled:opacity-40 hover:opacity-90"
         >
-          Continuar
+          {c.continue}
           <IconArrowRight className="size-4" />
         </button>
       </div>

@@ -90,12 +90,14 @@ export const calculateArgentinaSettlement = (
 
   const grossIncome = round2(incomes.reduce((sum, line) => sum + line.amount, 0))
 
-  // Deducciones: Jubilacion 11% + PAMI 3% + Obra Social 3%
-  const { jubilacionRate, pamiRate, obraSocialRate } = getArgentinaLegalRates()
+  // Deducciones: Jubilacion 11% + PAMI 3% + Obra Social 3% + IR 5%
+  const { jubilacionRate, pamiRate, obraSocialRate, irFlatRate } = getArgentinaLegalRates()
   const deductionBase = round2(proportionalSalary + vacationPay)
   const jubilacion = round2(deductionBase * jubilacionRate)
   const pami = round2(deductionBase * pamiRate)
   const obraSocial = round2(deductionBase * obraSocialRate)
+  const ssTotal = round2(jubilacion + pami + obraSocial)
+  const ir = round2(Math.max(0, grossIncome - ssTotal) * irFlatRate)
 
   const deductions: SettlementLine[] = [
     {
@@ -115,6 +117,12 @@ export const calculateArgentinaSettlement = (
       amount: obraSocial,
       formula: `(${deductionBase} x ${(obraSocialRate * 100).toFixed(0)}%)`,
       legalReference: "Ley 23.660 (3%)",
+    },
+    {
+      label: "IR",
+      amount: ir,
+      formula: `max(0, ${grossIncome} - ${ssTotal}) x ${(irFlatRate * 100).toFixed(0)}%`,
+      legalReference: "Ley 20.628 (Impuesto a las Ganancias, tasa minima)",
     },
   ]
 

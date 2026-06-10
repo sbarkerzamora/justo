@@ -30,6 +30,7 @@ import {
   formatDateInput,
   parseCurrencyInput,
 } from "@/components/tools/input-formatters"
+import { StepNavigation } from "@/components/tools/step-navigation"
 
 export type TerminationStep =
   | "welcome"
@@ -244,6 +245,13 @@ export function TerminationTool({
     return terminationSteps[idx + 1] ?? "confirm"
   }
 
+  const prevStep = (s: TerminationStep): TerminationStep | null => {
+    if (s === "welcome" || s === "done") return null
+    const idx = terminationSteps.indexOf(s)
+    if (idx <= 0) return "welcome"
+    return terminationSteps[idx - 1]
+  }
+
   const advance = () => {
     if (step === "monthlySalary") {
       const n = parseCurrencyInput(inputValue)
@@ -285,6 +293,11 @@ export function TerminationTool({
   const handleSubmit = () => {
     if (step === "welcome" || step === "confirm" || step === "done") return
     advance()
+  }
+
+  const handleBack = () => {
+    const prev = prevStep(step)
+    if (prev) { dispatch({ type: "setStep", step: prev }); setInputValue("") }
   }
 
   const runCalculation = () => {
@@ -433,13 +446,13 @@ export function TerminationTool({
             {step === "done" ? "OK" : `P${stepIndex(step)}`}
           </span>
         </div>
-        <div className="h-1.5 rounded-full bg-muted">
+        <div className="h-2 rounded-full bg-muted">
           <div
-            className="h-1.5 rounded-full bg-primary transition-all duration-300"
+            className="h-2 rounded-full bg-primary transition-all duration-300"
             style={{ width: `${(stepIndex(step) / totalSteps) * 100}%` }}
           />
         </div>
-        <div className="flex items-center gap-1.5 text-[11px] text-muted-foreground">
+        <div className="flex items-center gap-1.5 text-xs text-muted-foreground">
           <Image
             src={`https://flagcdn.com/w40/${countryCode}.png`}
             alt={countryName}
@@ -533,7 +546,7 @@ export function TerminationTool({
                 {askText(step)}
               </p>
             </div>
-            <div className="relative w-full max-w-xl pb-4">
+            <div className="w-full max-w-xl">
               <input
                 ref={inputRef}
                 value={inputValue}
@@ -544,31 +557,30 @@ export function TerminationTool({
                       : formatDateInput(e.target.value),
                   )
                 }
-                onKeyDown={(e) => {
-                  if (e.key === "Enter") {
-                    e.preventDefault()
-                    handleSubmit()
-                  }
-                }}
                 inputMode={step === "monthlySalary" ? "decimal" : "text"}
                 placeholder={
                   step === "monthlySalary"
                     ? copy.askPlaceholder
                     : copy.endDate
                 }
-                className="h-12 w-full rounded-2xl border border-border bg-card px-4 text-sm text-foreground transition-colors outline-none placeholder:text-muted-foreground focus:border-foreground/30"
+                className="h-12 w-full rounded-2xl border border-border bg-card pl-4 pr-4 text-sm text-foreground transition-colors outline-none placeholder:text-muted-foreground focus:border-foreground/30"
               />
-              <button
-                type="button"
-                onClick={handleSubmit}
-                disabled={!inputValue.trim()}
-                className="absolute top-1/2 right-2 inline-flex h-8 -translate-y-1/2 items-center justify-center rounded-full bg-primary px-3 text-xs font-medium text-primary-foreground disabled:opacity-30"
-              >
-                {copy.send}
-              </button>
             </div>
           </div>
         )}
+
+        {step !== "welcome" &&
+          step !== "confirm" &&
+          step !== "done" && (
+            <StepNavigation
+              onBack={handleBack}
+              onContinue={handleSubmit}
+              canContinue={!!inputValue.trim()}
+              showBack={step !== "monthlySalary"}
+              backLabel={copy.backToPrevious}
+              continueLabel={copy.send}
+            />
+          )}
       </div>
     </div>
   )
@@ -621,9 +633,9 @@ function OnboardingPanel({
           {steps.map((step, i) => (
             <span
               key={i}
-              className="inline-flex items-center gap-1.5 rounded-full bg-muted px-2.5 py-1 text-[11px] text-muted-foreground"
+              className="inline-flex items-center gap-1.5 rounded-full bg-muted px-2.5 py-1 text-xs text-muted-foreground"
             >
-              <span className="flex h-4 w-4 items-center justify-center rounded-full bg-primary/10 text-[9px] font-medium text-primary">
+              <span className="flex h-5 w-5 items-center justify-center rounded-full bg-primary/10 text-[11px] font-medium text-primary">
                 {i + 1}
               </span>
               {step.label}
@@ -759,7 +771,7 @@ function EditPanel({
             onChange={(e) =>
               onSetEditField("editSalary", formatCurrencyInput(e.target.value))
             }
-            className="h-10 rounded-xl border border-border bg-background px-3 text-foreground outline-none focus:border-foreground/30"
+            className="h-11 rounded-xl border border-border bg-background px-3 text-foreground outline-none focus:border-foreground/30"
           />
         </label>
       ) : editMode === "dates" ? (
@@ -770,11 +782,11 @@ function EditPanel({
             onChange={(e) =>
               onSetEditField("editStartDate", formatDateInput(e.target.value))
             }
-            className="h-10 rounded-xl border border-border bg-background px-3 text-foreground outline-none focus:border-foreground/30"
+            className="h-11 rounded-xl border border-border bg-background px-3 text-foreground outline-none focus:border-foreground/30"
           />
         </label>
       ) : null}
-      <div className="mt-4 flex gap-2">
+      <div className="mt-4 flex flex-wrap gap-2">
         <button
           type="button"
           onClick={saveEdit}
@@ -798,10 +810,12 @@ function ScenarioCard({
   scenario,
   fmt,
   locale,
+  copy,
 }: {
   scenario: TerminationScenario
   fmt: (v: number) => string
   locale: Locale
+  copy: typeof homeCopy["es"] | typeof homeCopy["en"]
 }) {
   const colors = scenarioColors[scenario.type] ?? {
     border: "border-border",
@@ -823,12 +837,12 @@ function ScenarioCard({
         </div>
         {scenario.applicable ? (
           <span
-            className={`rounded-full px-2 py-0.5 text-[10px] font-medium ${colors.badge}`}
+            className={`rounded-full px-2 py-0.5 text-[11px] font-medium ${colors.badge}`}
           >
             {fmt(scenario.total)}
           </span>
         ) : (
-          <span className="rounded-full bg-muted px-2 py-0.5 text-[10px] font-medium text-muted-foreground">
+          <span className="rounded-full bg-muted px-2 py-0.5 text-[11px] font-medium text-muted-foreground">
             N/A
           </span>
         )}
@@ -836,7 +850,7 @@ function ScenarioCard({
 
       {!scenario.applicable ? (
         <p className="text-xs text-muted-foreground mt-2">
-          {scenario.note ?? "No aplica para este caso."}
+          {scenario.note ?? copy.scenarioFallback}
         </p>
       ) : (
         <>
@@ -856,8 +870,8 @@ function ScenarioCard({
                       {fmt(line.amount)}
                     </span>
                   </div>
-                  <p className="text-[10px]">{line.formula}</p>
-                  <p className="text-[9px] text-muted-foreground/60">
+                  <p className="text-[11px]">{line.formula}</p>
+                  <p className="text-[11px] text-muted-foreground/60">
                     {line.legalReference}
                   </p>
                 </div>
@@ -866,7 +880,7 @@ function ScenarioCard({
           )}
 
           {scenario.note && (
-            <p className="mt-2 text-[10px] text-muted-foreground">
+            <p className="mt-2 text-[11px] text-muted-foreground">
               {scenario.note}
             </p>
           )}
@@ -936,6 +950,7 @@ function ResultPanel({
               scenario={scenario}
               fmt={fmt}
               locale={locale}
+              copy={copy}
             />
           )
         })}

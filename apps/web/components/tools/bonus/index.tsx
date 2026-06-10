@@ -28,6 +28,7 @@ import {
   formatDateInput,
   parseCurrencyInput,
 } from "@/components/tools/input-formatters"
+import { StepNavigation } from "@/components/tools/step-navigation"
 
 export type BonusStep =
   | "welcome"
@@ -181,6 +182,13 @@ export function BonusTool({
     return bonusSteps[idx + 1] ?? "confirm"
   }
 
+  const prevStep = (s: BonusStep): BonusStep | null => {
+    if (s === "welcome" || s === "done") return null
+    const idx = bonusSteps.indexOf(s)
+    if (idx <= 0) return "welcome"
+    return bonusSteps[idx - 1]
+  }
+
   const advance = () => {
     if (step === "monthlySalary") {
       const n = parseCurrencyInput(inputValue)
@@ -222,6 +230,11 @@ export function BonusTool({
   const handleSubmit = () => {
     if (step === "welcome" || step === "confirm" || step === "done") return
     advance()
+  }
+
+  const handleBack = () => {
+    const prev = prevStep(step)
+    if (prev) { dispatch({ type: "setStep", step: prev }); setInputValue("") }
   }
 
   const runCalculation = () => {
@@ -361,13 +374,13 @@ export function BonusTool({
             {step === "done" ? "OK" : `P${stepIndex(step)}`}
           </span>
         </div>
-        <div className="h-1.5 rounded-full bg-muted">
+        <div className="h-2 rounded-full bg-muted">
           <div
-            className="h-1.5 rounded-full bg-primary transition-all duration-300"
+            className="h-2 rounded-full bg-primary transition-all duration-300"
             style={{ width: `${(stepIndex(step) / totalSteps) * 100}%` }}
           />
         </div>
-        <div className="flex items-center gap-1.5 text-[11px] text-muted-foreground">
+        <div className="flex items-center gap-1.5 text-xs text-muted-foreground">
           <Image
             src={`https://flagcdn.com/w40/${countryCode}.png`}
             alt={countryName}
@@ -463,7 +476,7 @@ export function BonusTool({
                 {askText(step)}
               </p>
             </div>
-            <div className="relative w-full max-w-xl pb-4">
+            <div className="w-full max-w-xl">
               <input
                 ref={inputRef}
                 value={inputValue}
@@ -474,31 +487,30 @@ export function BonusTool({
                       : formatDateInput(e.target.value)
                   )
                 }
-                onKeyDown={(e) => {
-                  if (e.key === "Enter") {
-                    e.preventDefault()
-                    handleSubmit()
-                  }
-                }}
                 inputMode={step === "monthlySalary" ? "decimal" : "text"}
                 placeholder={
                   step === "monthlySalary"
                     ? copy.askPlaceholder
                     : copy.endDate
                 }
-                className="h-12 w-full rounded-2xl border border-border bg-card px-4 text-sm text-foreground transition-colors outline-none placeholder:text-muted-foreground focus:border-foreground/30"
+                className="h-12 w-full rounded-2xl border border-border bg-card pl-4 pr-4 text-sm text-foreground transition-colors outline-none placeholder:text-muted-foreground focus:border-foreground/30"
               />
-              <button
-                type="button"
-                onClick={handleSubmit}
-                disabled={!inputValue.trim()}
-                className="absolute top-1/2 right-2 inline-flex h-8 -translate-y-1/2 items-center justify-center rounded-full bg-primary px-3 text-xs font-medium text-primary-foreground disabled:opacity-30"
-              >
-                {copy.send}
-              </button>
             </div>
           </div>
         )}
+
+        {step !== "welcome" &&
+          step !== "confirm" &&
+          step !== "done" && (
+            <StepNavigation
+              onBack={handleBack}
+              onContinue={handleSubmit}
+              canContinue={!!inputValue.trim()}
+              showBack={step !== "monthlySalary"}
+              backLabel={copy.backToPrevious}
+              continueLabel={copy.send}
+            />
+          )}
       </div>
     </div>
   )
@@ -535,9 +547,9 @@ function OnboardingPanel({
           {steps.map((step, i) => (
             <span
               key={i}
-              className="inline-flex items-center gap-1.5 rounded-full bg-muted px-2.5 py-1 text-[11px] text-muted-foreground"
+              className="inline-flex items-center gap-1.5 rounded-full bg-muted px-2.5 py-1 text-xs text-muted-foreground"
             >
-              <span className="flex h-4 w-4 items-center justify-center rounded-full bg-primary/10 text-[9px] font-medium text-primary">
+              <span className="flex h-5 w-5 items-center justify-center rounded-full bg-primary/10 text-[11px] font-medium text-primary">
                 {i + 1}
               </span>
               {step.label}
@@ -673,7 +685,7 @@ function EditPanel({
             onChange={(e) =>
               onSetEditField("editSalary", formatCurrencyInput(e.target.value))
             }
-            className="h-10 rounded-xl border border-border bg-background px-3 text-foreground outline-none focus:border-foreground/30"
+            className="h-11 rounded-xl border border-border bg-background px-3 text-foreground outline-none focus:border-foreground/30"
           />
         </label>
       ) : editMode === "dates" ? (
@@ -684,7 +696,7 @@ function EditPanel({
             onChange={(e) =>
               onSetEditField("editStartDate", formatDateInput(e.target.value))
             }
-            className="h-10 rounded-xl border border-border bg-background px-3 text-foreground outline-none focus:border-foreground/30"
+            className="h-11 rounded-xl border border-border bg-background px-3 text-foreground outline-none focus:border-foreground/30"
           />
         </label>
       ) : null}
@@ -735,7 +747,7 @@ function ResultPanel({
               {copy.legalVersion}: {result.legalCorpusVersion}
             </div>
             <h3 className="mt-2 text-sm font-semibold text-foreground">
-              {locale === "en" ? "Bonus result" : "Resultado de aguinaldo"}
+              {copy.bonusHeading}
             </h3>
           </div>
           <div className="rounded-xl bg-primary/10 p-2.5">
@@ -745,7 +757,7 @@ function ResultPanel({
 
         <div className="mt-4">
           <p className="text-xs font-medium tracking-wider text-muted-foreground uppercase">
-            {locale === "en" ? "Estimated bonus" : "Aguinaldo estimado"}
+            {copy.estimatedBonus}
           </p>
           <p className="mt-1 text-3xl font-semibold tracking-tight text-foreground">
             {fmt(result.total)}
@@ -759,13 +771,11 @@ function ResultPanel({
 
         <div className="mt-4 rounded-xl bg-muted/30 p-4">
           <p className="mb-3 text-xs font-medium tracking-wider text-muted-foreground uppercase">
-            {locale === "en" ? "Breakdown" : "Desglose"}
+            {copy.breakdownLabel}
           </p>
           {result.lines.length === 0 ? (
             <p className="text-sm text-muted-foreground">
-              {locale === "en"
-                ? "No calculation lines available in MVP corpus."
-                : "No hay líneas de cálculo disponibles en el corpus MVP."}
+              {copy.scenarioFallback}
             </p>
           ) : (
             <div className="space-y-2">
@@ -778,10 +788,10 @@ function ResultPanel({
                     <p className="text-sm font-medium text-foreground">
                       {line.label}
                     </p>
-                    <p className="text-[11px] text-muted-foreground">
+                    <p className="text-xs text-muted-foreground">
                       {line.formula}
                     </p>
-                    <p className="text-[10px] text-muted-foreground">
+                    <p className="text-[11px] text-muted-foreground">
                       {line.legalReference}
                     </p>
                   </div>

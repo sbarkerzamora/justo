@@ -5,8 +5,8 @@ import {
   type CountryCode,
 } from "@/lib/ai/countries-meta"
 
-const TOP_K = 4
-const MAX_CONTEXT_CHARS = 5_500
+const TOP_K = 8
+const MAX_CONTEXT_CHARS = 8_000
 
 export type RetrievedHit = {
   text: string
@@ -51,6 +51,49 @@ const formatHits = (hits: RetrievedHit[]): string => {
   return blocks.join("\n\n---\n\n")
 }
 
+const QUERY_EXPANSION_MAP: Record<string, string[]> = {
+  indemnizacion: ["indemnizacion", "cesantia", "despido", "liquidacion", "antiguedad", "finiquito", "severance"],
+  aguinaldo: ["aguinaldo", "decimo", "decimotercer", "bono 14", "prima", "sac", "gratificaciones", "christmas bonus", "13th salary"],
+  vacaciones: ["vacaciones", "dias de descanso", "periodo vacacional", "descanso anual", "vacation"],
+  deducciones: ["deducciones", "descuentos", "retenciones", "aportes", "deductions"],
+  inss: ["inss", "seguro social", "seguridad social"],
+  igss: ["igss", "seguro social", "guatemala"],
+  ihss: ["ihss", "seguro social", "honduras"],
+  ccss: ["ccss", "seguro social", "costa rica"],
+  css: ["css", "seguro social", "panama"],
+  imss: ["imss", "seguro social", "mexico"],
+  isss: ["isss", "seguro social", "el salvador"],
+  afp: ["afp", "pension", "jubilacion", "retiro"],
+  "onp-afp": ["onp", "afp", "pension", "peru"],
+  "eps-pension": ["eps", "pension", "salud", "colombia"],
+  isr: ["isr", "ir", "impuesto", "renta", "income tax", "impuesto a la renta"],
+  salario: ["salario", "sueldo", "remuneracion", "ingreso", "salary", "wage"],
+  cesantia: ["cesantia", "indemnizacion", "despido", "auxilio de cesantia"],
+  preaviso: ["preaviso", "aviso", "notice", "aviso sustitutivo"],
+  cts: ["cts", "compensacion", "peru"],
+  "prima-servicios": ["prima", "servicios", "colombia"],
+  contrato: ["contrato", "trabajo", "employment contract"],
+  renuncia: ["renuncia", "resignation", "dimision", "retiro voluntario"],
+  despido: ["despido", "terminacion", "rescision", "despido injustificado", "despido justificado"],
+}
+
+const expandQuery = (query: string): string => {
+  const lower = query.toLowerCase()
+  const expansions = new Set<string>()
+
+  for (const [key, synonyms] of Object.entries(QUERY_EXPANSION_MAP)) {
+    if (lower.includes(key) || synonyms.some((s) => lower.includes(s))) {
+      synonyms.forEach((s) => expansions.add(s))
+    }
+  }
+
+  if (expansions.size === 0) return query
+
+  const expanded = [query, ...expansions].join(" ")
+  if (expanded.length > 500) return query
+  return expanded
+}
+
 const buildDegradedContext = (): string => {
   return [
     "AVISO: en este momento no se pudo consultar el corpus legal.",
@@ -89,7 +132,7 @@ export async function retrieveLegalContext(
       section?: string
       filename?: string
     }>({
-      data: trimmed,
+      data: expandQuery(trimmed),
       topK: TOP_K,
       filter: buildSectionFilter(cc, options.section),
       includeData: true,
@@ -153,15 +196,21 @@ MARCO LEGAL: ${meta.law}
 ${corpusBlock}${citations}${degradationNote}
 
 INSTRUCCIONES:
-- Si el CONTEXTO LEGAL RECUPERADO contiene informacion suficiente para responder, responde directamente sin llamar herramientas.
+- Si el CONTEXTO LEGAL RECUPERADO contiene suficiente informacion para responder, responde directamente SIN llamar herramientas adicionales.
 - Basa tu respuesta EXCLUSIVAMENTE en el CONTEXTO LEGAL RECUPERADO y en las herramientas deterministicas.
-- No inventes articulos, tasas ni precedentes. Si el contexto no alcanza, dilo claramente.
-- Para calculos usa SIEMPRE las herramientas \`quickEstimate\`, \`quickNetSalaryEstimate\`, \`quickBonusEstimate\`, \`quickTerminationEstimate\` o \`quickVacationEstimate\`. NUNCA calcules a mano.
-- Usa \`legalCorpusLookup\` solo cuando el CONTEXTO LEGAL RECUPERADO no contenga la informacion necesaria. Despues de usarla, redacta una respuesta final en texto para el usuario.
-- Cuando cites corpus, incluye el archivo y la seccion en formato \`filename.md :: seccion\`.
-- Responde SIEMPRE en espanol, de forma clara y amable.
+- No inventes articulos, tasas, precedentes ni formulas. Si el contexto no alcanza, dilo claramente.
+- Para CALCULOS NUMERICOS usa SIEMPRE las herramientas \`quickEstimate\`, \`quickNetSalaryEstimate\`, \`quickBonusEstimate\`, \`quickTerminationEstimate\` o \`quickVacationEstimate\`. NUNCA calcules montos manualmente, ni siquiera para estimaciones simples.
+- Usa \`legalCorpusLookup\` SOLO en estos casos:
+  1. El CONTEXTO LEGAL RECUPERADO no contiene la informacion necesaria y necesitas un tema especifico (ej: una tasa, un articulo, una formula).
+  2. El usuario pregunta por un concepto no cubierto en el contexto inicial.
+  Despues de \`legalCorpusLookup\`, redacta una respuesta final en texto para el usuario.
+- NO uses \`legalCorpusLookup\` si el contexto ya tiene suficiente informacion.
+- Cuando cites el corpus, incluye archivo y seccion: \`filename.md :: seccion\`.
+- Responde SIEMPRE en espanol, claro y amable.
 - Marca la interpretacion como informacion general, no asesoria legal profesional.
-- Si te preguntan algo fuera de derecho laboral de ${meta.name}, redirige cortesmente.
+- Si preguntan algo fuera de derecho laboral de ${meta.name}, redirige cortesmente al tema laboral.
 - Formato: maximo ~3000 caracteres, Markdown compacto (negritas, bullets cortos), 1-2 emojis por seccion maximo.
-- Para datos faltantes, haz 1-3 preguntas concretas y breves.`
+- Para datos faltantes, haz 1-3 preguntas concretas y breves.
+- Cuando expliques un calculo, muestra LOS PASOS y LA FORMULA usada, no solo el resultado final.
+- Si el usuario menciona "renuncia", "despido" o "terminacion", considera usar \`quickTerminationEstimate\` para comparar escenarios.`
 }

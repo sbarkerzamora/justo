@@ -37,11 +37,13 @@ export function proxy(request: NextRequest) {
   const secondSegment = segments[1]
 
   if (firstSegment && isValidLocale(firstSegment)) {
-    if (secondSegment && legalPageSlugs.has(secondSegment)) {
-      return NextResponse.next()
-    }
-
-    if (secondSegment && isValidCountry(secondSegment)) {
+    if (
+      secondSegment &&
+      (legalPageSlugs.has(secondSegment) ||
+        secondSegment === "tools" ||
+        secondSegment === "guia-laboral" ||
+        isValidCountry(secondSegment))
+    ) {
       return NextResponse.next()
     }
 

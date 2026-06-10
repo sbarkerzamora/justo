@@ -15,6 +15,7 @@ type HomeCopy = {
   thinking: string
   assistantThinking: string
   typing: string
+  typingMessages: string[]
   legalDisclaimer: string
   laborAssistant: string
   welcome: (countryName: string) => ReactNode
@@ -102,6 +103,31 @@ type HomeCopy = {
   hrCtaTitle: string
   hrCtaDescription: string
   hrCtaBadge: string
+  backToPrevious: string
+  resultHeading: string
+  incomesLabel: string
+  expandLabel: string
+  daysLabel: string
+  amount: string
+  accruedDays: string
+  usedDays: string
+  pendingDays: string
+  dailySalary: string
+  formulaLabel: string
+  legalRefLabel: string
+  corpusVersion: string
+  deductionRate: string
+  netSalaryHeading: string
+  bonusHeading: string
+  terminationHeading: string
+  estimatedBonus: string
+  breakdownLabel: string
+  scenarioFallback: string
+  tenureSubtitle: (years: number) => string
+  pensionSystem: string
+  errorCalculating: string
+  monthlyNetResult: string
+  vacationResultHeading: string
 }
 
 export const homeCopy: Record<Locale, HomeCopy> = {
@@ -119,6 +145,28 @@ export const homeCopy: Record<Locale, HomeCopy> = {
     thinking: "Pensando...",
     assistantThinking: "Justo esta pensando",
     typing: "Escribiendo",
+    typingMessages: [
+      "Interrogando al Codigo de Trabajo...",
+      "Consultando con los jueces laborales...",
+      "Revisando el expediente...",
+      "Invocando el espiritu de la ley laboral...",
+      "Puliendo los articulos legales...",
+      "Descifrando jerigonza juridica...",
+      "Sacando punta al lapiz legal...",
+      "Ajustando corbata y toga...",
+      "Buscando en el archivo muerto...",
+      "Contando vacaciones una por una...",
+      "Calculando el aguinaldo con carino...",
+      "Midieron el cafe de la oficina...",
+      "Consultando el oraculo laboral...",
+      "Aceitando los engranajes legales...",
+      "Cotejando con el libro gordo...",
+      "Preguntandole a un abogado imaginario...",
+      "Haciendo malabares con las formulas...",
+      "Traduciendo de legal a humano...",
+      "Buscando el articulo perdido...",
+      "Sacando la calculadora de bolsillo...",
+    ],
     legalDisclaimer: "No constituye asesoria legal profesional",
     laborAssistant: "Asistente laboral",
     welcome: (countryName) => (
@@ -227,6 +275,31 @@ export const homeCopy: Record<Locale, HomeCopy> = {
     hrCtaTitle: "Justo para RRHH",
     hrCtaDescription: "Herramientas avanzadas para gestión de talento, nómina y cumplimiento laboral.",
     hrCtaBadge: "Próximamente",
+    backToPrevious: "← Anterior",
+    resultHeading: "Resultado",
+    incomesLabel: "Ingresos",
+    expandLabel: "Ver",
+    daysLabel: "días",
+    amount: "Monto",
+    accruedDays: "Días acumulados",
+    usedDays: "Días gozados",
+    pendingDays: "Días pendientes",
+    dailySalary: "Salario diario",
+    formulaLabel: "Fórmula",
+    legalRefLabel: "Referencia legal",
+    corpusVersion: "Corpus",
+    deductionRate: "Tasa de deducción",
+    netSalaryHeading: "Resultado de salario neto",
+    bonusHeading: "Resultado de aguinaldo",
+    terminationHeading: "Comparación de escenarios",
+    estimatedBonus: "Aguinaldo estimado",
+    breakdownLabel: "Desglose",
+    scenarioFallback: "No aplica para este caso.",
+    tenureSubtitle: (years) => `Basado en ${years} años de antigüedad`,
+    pensionSystem: "Sistema de pensiones",
+    errorCalculating: "Error al calcular",
+    monthlyNetResult: "Salario neto mensual",
+    vacationResultHeading: "Resultado de vacaciones",
   },
   en: {
     preparing: "Preparing Justo...",
@@ -242,6 +315,28 @@ export const homeCopy: Record<Locale, HomeCopy> = {
     thinking: "Thinking...",
     assistantThinking: "Justo is thinking",
     typing: "Writing",
+    typingMessages: [
+      "Grilling the Labor Code...",
+      "Consulting the labor judges...",
+      "Reviewing the case file...",
+      "Summoning the spirit of labor law...",
+      "Polishing the legal articles...",
+      "Deciphering legal jargon...",
+      "Sharpening the legal pencil...",
+      "Adjusting tie and robe...",
+      "Digging through the archives...",
+      "Counting vacations one by one...",
+      "Calculating bonuses with care...",
+      "Measuring the office coffee...",
+      "Consulting the labor oracle...",
+      "Oiling the legal gears...",
+      "Cross-checking the big book...",
+      "Asking an imaginary lawyer...",
+      "Juggling the formulas...",
+      "Translating from legal to human...",
+      "Finding the missing article...",
+      "Getting the pocket calculator...",
+    ],
     legalDisclaimer: "Not professional legal advice",
     laborAssistant: "Labor assistant",
     welcome: (countryName) => (
@@ -349,5 +444,30 @@ export const homeCopy: Record<Locale, HomeCopy> = {
     hrCtaTitle: "Justo for HR",
     hrCtaDescription: "Advanced tools for talent management, payroll and labor compliance.",
     hrCtaBadge: "Coming soon",
+    backToPrevious: "← Previous",
+    resultHeading: "Result",
+    incomesLabel: "Incomes",
+    expandLabel: "Expand",
+    daysLabel: "days",
+    amount: "Amount",
+    accruedDays: "Accrued days",
+    usedDays: "Used days",
+    pendingDays: "Pending days",
+    dailySalary: "Daily salary",
+    formulaLabel: "Formula",
+    legalRefLabel: "Legal reference",
+    corpusVersion: "Corpus",
+    deductionRate: "Deduction rate",
+    netSalaryHeading: "Net salary result",
+    bonusHeading: "Bonus result",
+    terminationHeading: "Scenario comparison",
+    estimatedBonus: "Estimated bonus",
+    breakdownLabel: "Breakdown",
+    scenarioFallback: "Not applicable for this case.",
+    tenureSubtitle: (years) => `Based on ${years} years of tenure`,
+    pensionSystem: "Pension system",
+    errorCalculating: "Error calculating",
+    monthlyNetResult: "Monthly net salary",
+    vacationResultHeading: "Vacation result",
   },
 }
