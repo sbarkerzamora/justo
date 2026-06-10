@@ -103,6 +103,31 @@ type HomeCopy = {
   hrCtaTitle: string
   hrCtaDescription: string
   hrCtaBadge: string
+  backToPrevious: string
+  resultHeading: string
+  incomesLabel: string
+  expandLabel: string
+  daysLabel: string
+  amount: string
+  accruedDays: string
+  usedDays: string
+  pendingDays: string
+  dailySalary: string
+  formulaLabel: string
+  legalRefLabel: string
+  corpusVersion: string
+  deductionRate: string
+  netSalaryHeading: string
+  bonusHeading: string
+  terminationHeading: string
+  estimatedBonus: string
+  breakdownLabel: string
+  scenarioFallback: string
+  tenureSubtitle: (years: number) => string
+  pensionSystem: string
+  errorCalculating: string
+  monthlyNetResult: string
+  vacationResultHeading: string
 }
 
 export const homeCopy: Record<Locale, HomeCopy> = {
@@ -250,6 +275,31 @@ export const homeCopy: Record<Locale, HomeCopy> = {
     hrCtaTitle: "Justo para RRHH",
     hrCtaDescription: "Herramientas avanzadas para gestión de talento, nómina y cumplimiento laboral.",
     hrCtaBadge: "Próximamente",
+    backToPrevious: "← Anterior",
+    resultHeading: "Resultado",
+    incomesLabel: "Ingresos",
+    expandLabel: "Ver",
+    daysLabel: "días",
+    amount: "Monto",
+    accruedDays: "Días acumulados",
+    usedDays: "Días gozados",
+    pendingDays: "Días pendientes",
+    dailySalary: "Salario diario",
+    formulaLabel: "Fórmula",
+    legalRefLabel: "Referencia legal",
+    corpusVersion: "Corpus",
+    deductionRate: "Tasa de deducción",
+    netSalaryHeading: "Resultado de salario neto",
+    bonusHeading: "Resultado de aguinaldo",
+    terminationHeading: "Comparación de escenarios",
+    estimatedBonus: "Aguinaldo estimado",
+    breakdownLabel: "Desglose",
+    scenarioFallback: "No aplica para este caso.",
+    tenureSubtitle: (years) => `Basado en ${years} años de antigüedad`,
+    pensionSystem: "Sistema de pensiones",
+    errorCalculating: "Error al calcular",
+    monthlyNetResult: "Salario neto mensual",
+    vacationResultHeading: "Resultado de vacaciones",
   },
   en: {
     preparing: "Preparing Justo...",
@@ -394,5 +444,30 @@ export const homeCopy: Record<Locale, HomeCopy> = {
     hrCtaTitle: "Justo for HR",
     hrCtaDescription: "Advanced tools for talent management, payroll and labor compliance.",
     hrCtaBadge: "Coming soon",
+    backToPrevious: "← Previous",
+    resultHeading: "Result",
+    incomesLabel: "Incomes",
+    expandLabel: "Expand",
+    daysLabel: "days",
+    amount: "Amount",
+    accruedDays: "Accrued days",
+    usedDays: "Used days",
+    pendingDays: "Pending days",
+    dailySalary: "Daily salary",
+    formulaLabel: "Formula",
+    legalRefLabel: "Legal reference",
+    corpusVersion: "Corpus",
+    deductionRate: "Deduction rate",
+    netSalaryHeading: "Net salary result",
+    bonusHeading: "Bonus result",
+    terminationHeading: "Scenario comparison",
+    estimatedBonus: "Estimated bonus",
+    breakdownLabel: "Breakdown",
+    scenarioFallback: "Not applicable for this case.",
+    tenureSubtitle: (years) => `Based on ${years} years of tenure`,
+    pensionSystem: "Pension system",
+    errorCalculating: "Error calculating",
+    monthlyNetResult: "Monthly net salary",
+    vacationResultHeading: "Vacation result",
   },
 }

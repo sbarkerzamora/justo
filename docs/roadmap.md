@@ -32,6 +32,11 @@
 - [x] Chat container: prompt-kit (overflow-y-auto, reemplaza wrapper propio).
 - [x] Chat: mensajes assistant minimalistas (sin borde/card) + enlaces a docs por tópico.
 - [x] README: roadmap compacto (✅ Done + 🔜 4 prioridades detalladas).
+- [x] Tool UX: touch targets ≥44px, tipografía ≥12px, inputs con padding para botón enviar.
+- [x] Tool UX: navegación con botón "Anterior" en todas las herramientas.
+- [x] i18n: todas las herramientas traducidas al inglés (ES/EN completo).
+- [x] Contract tool: full i18n con contract-copy.ts (~75 strings ES/EN).
+- [x] Settlement panels: FrequencyPicker con labels traducidos.
 
 ---
 
