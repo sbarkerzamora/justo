@@ -4079,6 +4079,217 @@ vacaciones = (salario/30) * (15 + feriado_extra)`}</code></pre>
         ),
       },
     },
+    {
+      type: "page",
+      path: "legal/chile/preaviso",
+      data: {
+        title: "📢 Aviso sustitutivo",
+        description: "Indemnización sustitutiva del aviso previo. 30 días. DL 824 Arts. 161-162.",
+        body: (
+          <div className="space-y-6">
+            <section><h2 className="text-base font-semibold">Base legal</h2><p className="text-sm">DL 824 Arts. 161-162</p></section>
+            <section><h2 className="text-base font-semibold">Regla operativa</h2>
+              <ul className="list-disc space-y-1 pl-5 text-sm">
+                <li>30 días siempre (1 mes)</li>
+                <li>Pago sustitutivo: Sí (única modalidad)</li>
+                <li>Base de cálculo: Última remuneración</li>
+              </ul>
+            </section>
+            <section><h2 className="text-base font-semibold">Vigencia</h2><p className="text-sm text-muted-foreground">Corpus: <code>cl-v0.1.0</code></p></section>
+          </div>
+        ),
+      },
+    },
+    {
+      type: "page",
+      path: "legal/colombia/preaviso",
+      data: {
+        title: "📢 Preaviso",
+        description: "No existe preaviso patronal para contratos indefinidos. CST Art. 64.",
+        body: (
+          <div className="space-y-6">
+            <section><h2 className="text-base font-semibold">Base legal</h2><p className="text-sm">CST Art. 64</p></section>
+            <section><h2 className="text-base font-semibold">Regla operativa</h2>
+              <ul className="list-disc space-y-1 pl-5 text-sm">
+                <li>0 días (contrato indefinido). 30 días (contrato fijo, Art. 46)</li>
+                <li>Pago sustitutivo: No</li>
+                <li>Base de cálculo: N/A</li>
+              </ul>
+            </section>
+            <section><h2 className="text-base font-semibold">Nota</h2><p className="text-sm text-muted-foreground">Colombia no exige preaviso patronal. La indemnización por despido injustificado se calcula según Art. 64 CST.</p></section>
+            <section><h2 className="text-base font-semibold">Vigencia</h2><p className="text-sm text-muted-foreground">Corpus: <code>co-v0.1.0</code></p></section>
+          </div>
+        ),
+      },
+    },
+    {
+      type: "page",
+      path: "legal/costarica/preaviso",
+      data: {
+        title: "📢 Preaviso",
+        description: "Preaviso escalonado. 0-30 días según antigüedad. Código de Trabajo Art. 28.",
+        body: (
+          <div className="space-y-6">
+            <section><h2 className="text-base font-semibold">Base legal</h2><p className="text-sm">Código de Trabajo Art. 28</p></section>
+            <section><h2 className="text-base font-semibold">Regla operativa</h2>
+              <ul className="list-disc space-y-1 pl-5 text-sm">
+                <li>&lt;3m = 0d, 3-6m = 7d, 6-12m = 15d, ≥1a = 30d</li>
+                <li>Pago sustitutivo: Sí</li>
+                <li>Base de cálculo: Último salario</li>
+              </ul>
+            </section>
+            <section><h2 className="text-base font-semibold">Vigencia</h2><p className="text-sm text-muted-foreground">Corpus: <code>cr-v0.1.0</code></p></section>
+          </div>
+        ),
+      },
+    },
+    {
+      type: "page",
+      path: "legal/guatemala/preaviso",
+      data: {
+        title: "📢 Preaviso",
+        description: "Preaviso progresivo. 7-30 días según antigüedad. Código de Trabajo Art. 83.",
+        body: (
+          <div className="space-y-6">
+            <section><h2 className="text-base font-semibold">Base legal</h2><p className="text-sm">Código de Trabajo Art. 83</p></section>
+            <section><h2 className="text-base font-semibold">Regla operativa</h2>
+              <ul className="list-disc space-y-1 pl-5 text-sm">
+                <li>&lt;6m = 7d, 6-12m = 10d, 1-5a = 14d, ≥5a = 30d</li>
+                <li>Pago sustitutivo: Sí</li>
+                <li>Base de cálculo: Promedio 6 meses</li>
+              </ul>
+            </section>
+            <section><h2 className="text-base font-semibold">Vigencia</h2><p className="text-sm text-muted-foreground">Corpus: <code>gt-v0.1.0</code></p></section>
+          </div>
+        ),
+      },
+    },
+    {
+      type: "page",
+      path: "legal/honduras/preaviso",
+      data: {
+        title: "📢 Preaviso",
+        description: "Preaviso escalonado. Código de Trabajo Art. 116.",
+        body: (
+          <div className="space-y-6">
+            <section><h2 className="text-base font-semibold">Base legal</h2><p className="text-sm">Código de Trabajo Art. 116</p></section>
+            <section><h2 className="text-base font-semibold">Regla operativa</h2>
+              <ul className="list-disc space-y-1 pl-5 text-sm">
+                <li>Escalado por meses (implementado vía getPreavisoDaysHn)</li>
+                <li>Pago sustitutivo: Sí</li>
+                <li>Base de cálculo: Último salario</li>
+              </ul>
+            </section>
+            <section><h2 className="text-base font-semibold">Vigencia</h2><p className="text-sm text-muted-foreground">Corpus: <code>hn-v0.1.0</code></p></section>
+          </div>
+        ),
+      },
+    },
+    {
+      type: "page",
+      path: "legal/mexico/preaviso",
+      data: {
+        title: "📢 Preaviso",
+        description: "No existe preaviso patronal. Indemnización constitucional de 90 días. LFT Art. 48.",
+        body: (
+          <div className="space-y-6">
+            <section><h2 className="text-base font-semibold">Base legal</h2><p className="text-sm">LFT Art. 48, 50</p></section>
+            <section><h2 className="text-base font-semibold">Regla operativa</h2>
+              <ul className="list-disc space-y-1 pl-5 text-sm">
+                <li>0 días</li>
+                <li>Pago sustitutivo: No</li>
+                <li>Base de cálculo: SDI</li>
+              </ul>
+            </section>
+            <section><h2 className="text-base font-semibold">Vigencia</h2><p className="text-sm text-muted-foreground">Corpus: <code>mx-v0.1.0</code></p></section>
+          </div>
+        ),
+      },
+    },
+    {
+      type: "page",
+      path: "legal/nicaragua/preaviso",
+      data: {
+        title: "📢 Preaviso",
+        description: "Preaviso escalonado. 7-60 días según antigüedad. Ley 185 Arts. 44-45.",
+        body: (
+          <div className="space-y-6">
+            <section><h2 className="text-base font-semibold">Base legal</h2><p className="text-sm">Ley 185 (Código del Trabajo) Arts. 44-45</p></section>
+            <section><h2 className="text-base font-semibold">Regla operativa</h2>
+              <ul className="list-disc space-y-1 pl-5 text-sm">
+                <li>&lt;6m = 7d, 6-12m = 14d, 1-5a = 30d, ≥5a = 60d</li>
+                <li>Pago sustitutivo: Sí</li>
+                <li>Base de cálculo: Último salario</li>
+              </ul>
+            </section>
+            <section><h2 className="text-base font-semibold">Vigencia</h2><p className="text-sm text-muted-foreground">Corpus: <code>ni-v0.1.0</code></p></section>
+          </div>
+        ),
+      },
+    },
+    {
+      type: "page",
+      path: "legal/panama/preaviso",
+      data: {
+        title: "📢 Preaviso",
+        description: "30 días (<2 años). Estabilidad después. Código de Trabajo Art. 212.",
+        body: (
+          <div className="space-y-6">
+            <section><h2 className="text-base font-semibold">Base legal</h2><p className="text-sm">Código de Trabajo Art. 212</p></section>
+            <section><h2 className="text-base font-semibold">Regla operativa</h2>
+              <ul className="list-disc space-y-1 pl-5 text-sm">
+                <li>&lt;2a = 30d (general), 60d (técnicos). ≥2a = estabilidad</li>
+                <li>Pago sustitutivo: Sí</li>
+                <li>Base de cálculo: Último salario</li>
+              </ul>
+            </section>
+            <section><h2 className="text-base font-semibold">Vigencia</h2><p className="text-sm text-muted-foreground">Corpus: <code>pa-v0.1.0</code></p></section>
+          </div>
+        ),
+      },
+    },
+    {
+      type: "page",
+      path: "legal/peru/preaviso",
+      data: {
+        title: "📢 Preaviso",
+        description: "No existe preaviso para despido arbitrario. LPCL Art. 34, 38.",
+        body: (
+          <div className="space-y-6">
+            <section><h2 className="text-base font-semibold">Base legal</h2><p className="text-sm">LPCL (D.L. 728) Arts. 34, 38</p></section>
+            <section><h2 className="text-base font-semibold">Regla operativa</h2>
+              <ul className="list-disc space-y-1 pl-5 text-sm">
+                <li>0 días</li>
+                <li>Pago sustitutivo: No aplica</li>
+                <li>Base de cálculo: Última remuneración</li>
+              </ul>
+            </section>
+            <section><h2 className="text-base font-semibold">Vigencia</h2><p className="text-sm text-muted-foreground">Corpus: <code>pe-v0.1.0</code></p></section>
+          </div>
+        ),
+      },
+    },
+    {
+      type: "page",
+      path: "legal/elsalvador/preaviso",
+      data: {
+        title: "📢 Preaviso",
+        description: "No existe preaviso patronal. Indemnización 30 días por año. CT Art. 58.",
+        body: (
+          <div className="space-y-6">
+            <section><h2 className="text-base font-semibold">Base legal</h2><p className="text-sm">Código de Trabajo Art. 58</p></section>
+            <section><h2 className="text-base font-semibold">Regla operativa</h2>
+              <ul className="list-disc space-y-1 pl-5 text-sm">
+                <li>0 días</li>
+                <li>Pago sustitutivo: N/A</li>
+                <li>Base de cálculo: Salario básico diario</li>
+              </ul>
+            </section>
+            <section><h2 className="text-base font-semibold">Vigencia</h2><p className="text-sm text-muted-foreground">Corpus: <code>sv-v0.1.0</code></p></section>
+          </div>
+        ),
+      },
+    },
   ],
   metas: [
     {

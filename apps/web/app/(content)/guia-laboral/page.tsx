@@ -42,6 +42,11 @@ export async function generateMetadata({
     description: `${seo.intro} Datos anónimos y cómo funciona la calculadora de liquidación laboral para ${info.name}.`,
     alternates: {
       canonical: `${SITE_URL}/guia-laboral?country=${cc}`,
+      languages: {
+        es: `${SITE_URL}/guia-laboral?country=${cc}`,
+        en: `${SITE_URL}/en/guia-laboral?country=${cc}`,
+        "x-default": `${SITE_URL}/guia-laboral`,
+      },
     },
     openGraph: {
       title: `Guía laboral de ${info.name} · Justo`,

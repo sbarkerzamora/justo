@@ -1,5 +1,6 @@
 export * from "./bonus"
 export * from "./contract"
+export * from "./preaviso"
 export * from "./registry"
 export * from "./settlement"
 export * from "./salary-net"

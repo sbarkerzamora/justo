@@ -97,6 +97,12 @@ export type ContractFormData = {
   trialPeriodDays?: number
 }
 
+export type PreavisoFormData = {
+  countryCode: string
+  monthlySalary: number
+  tenureYears: number
+}
+
 export type SettlementApiResponse = {
   input: SettlementForm
   result: {

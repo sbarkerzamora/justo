@@ -347,6 +347,8 @@ export function ContractTool({
             alt={countryName}
             width={14}
             height={10}
+            sizes="14px"
+            loading="lazy"
             className="h-2.5 w-3.5 rounded-[1px] border border-border object-cover"
           />
           <span>{copy.calculatingUnder(countryName)}</span>
@@ -1108,7 +1110,7 @@ function SalaryStep({
                 }
               }}
               placeholder={c.placeholder.monthlySalary}
-              className="h-11 w-full rounded-xl border border-border bg-background px-3.5 text-sm text-foreground outline-none transition-colors placeholder:text-muted-foreground focus:border-foreground/30"
+        className="h-12 w-full rounded-2xl border border-border bg-card pl-4 pr-4 text-sm text-foreground outline-none transition-colors placeholder:text-muted-foreground focus:border-foreground/30"
             />
           </div>
           <ChipGroup

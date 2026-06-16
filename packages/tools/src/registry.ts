@@ -1,6 +1,7 @@
 import type { CountryCode } from "@justo/core"
 import { bonusTool } from "./bonus"
 import { contractTool } from "./contract"
+import { preavisoTool } from "./preaviso"
 import { salaryNetTool } from "./salary-net"
 import { settlementTool } from "./settlement"
 import { terminationTool } from "./termination"
@@ -51,6 +52,7 @@ export const tools = [
   vacationsTool,
   salaryNetTool,
   bonusTool,
+  preavisoTool,
   comingSoonTool({
     id: "overtime",
     slug: "horas-extra",

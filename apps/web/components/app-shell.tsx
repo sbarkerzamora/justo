@@ -49,6 +49,7 @@ import {
   IconMenu2,
   IconBuilding,
   IconBeer,
+  IconBell,
   IconChevronDown,
 } from "@tabler/icons-react"
 
@@ -185,6 +186,7 @@ export function AppShell({
     { label: t("Aguinaldo / decimo / bono", "Bonus / 13th salary"), href: `${homePath}?tool=bonus`, icon: <IconGift className="h-5 w-5 shrink-0" /> },
     { label: t("Simulador de terminacion", "Termination simulator"), href: `${homePath}?tool=termination`, icon: <IconSwitch className="h-5 w-5 shrink-0" /> },
     { label: t("Generador de contratos", "Contract generator"), href: `${homePath}?tool=contract`, icon: <IconFileDescription className="h-5 w-5 shrink-0" /> },
+    { label: t("Preaviso", "Notice period"), href: `${homePath}?tool=preaviso`, icon: <IconBell className="h-5 w-5 shrink-0" /> },
     { label: t("Herramientas", "Tools"), href: `${localePrefix}/tools?country=${country}`, icon: <IconTools className="h-5 w-5 shrink-0" /> },
   ]
 
@@ -459,7 +461,7 @@ export function AppShell({
         <aside
           className={cn(
             "flex shrink-0 flex-col overflow-y-auto border-r border-sidebar-border bg-sidebar px-4 transition-[width] duration-200 max-md:hidden",
-            open ? "w-[240px]" : "w-[56px]"
+            open ? "w-[300px]" : "w-[56px]"
           )}
           onMouseEnter={() => setOpen(true)}
           onMouseLeave={() => setOpen(false)}

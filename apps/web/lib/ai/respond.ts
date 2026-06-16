@@ -1,6 +1,7 @@
 import { stepCountIs, streamText, tool, zodSchema, type ModelMessage } from "ai"
 import { calculateSalaryNet } from "@justo/tools"
 import { calculateSettlement } from "@justo/tools"
+import { calculatePreaviso } from "@justo/tools"
 import { calculateVacations } from "@justo/tools"
 import { calculateBonus, calculateTermination } from "@justo/tools"
 import { z } from "zod"
@@ -13,9 +14,8 @@ import {
 import {
   countryMeta,
   SUPPORTED_COUNTRIES,
-  type CountryCode,
 } from "@/lib/ai/countries-meta"
-import type { SettlementInput } from "@justo/core"
+import type { CountryCode, SettlementInput } from "@justo/core"
 
 export { SUPPORTED_COUNTRIES, countryMeta }
 
@@ -313,6 +313,42 @@ export async function generateLaborResponse(input: {
             guide: 'Puedo ayudarte a generar un contrato de trabajo paso a paso. Usa la herramienta "Generador de contratos" desde el menú de herramientas o haz clic en el botón "Contrato" para empezar.',
             legalBasis: "Ley 185, Código del Trabajo de Nicaragua, Arts. 19-29",
           })
+        },
+      }),
+      preavisoEstimate: tool({
+        description: `Calcula los dias de preaviso e indemnizacion sustitutiva en ${countryMeta[countryCode]?.name ?? "este pais"} segun la antiguedad del trabajador. Usala cuando el usuario pregunte sobre preaviso, aviso previo, o cuanto le corresponde por aviso de despido.`,
+        inputSchema: zodSchema(
+          z.object({
+            monthlySalary: z
+              .number()
+              .positive()
+              .describe("Salario mensual del trabajador"),
+            tenureYears: z
+              .number()
+              .positive()
+              .describe("Años de antigüedad del trabajador"),
+          })
+        ),
+        execute: async ({ monthlySalary, tenureYears }) => {
+          try {
+            const result = calculatePreaviso({
+              countryCode: countryCode as CountryCode,
+              monthlySalary,
+              startDate: "",
+              endDate: "",
+              tenureYears,
+            })
+            return JSON.stringify({
+              noticeDays: result.noticeDays,
+              noticeAmount: result.noticeAmount,
+              hasSubstitutePayment: result.hasSubstitutePayment,
+              legalReference: result.legalReference,
+              note: result.calculationNote,
+              corpusVersion: result.legalCorpusVersion,
+            })
+          } catch (e) {
+            return `Error al calcular: ${e instanceof Error ? e.message : "error desconocido"}. Usa la calculadora guiada para un calculo mas preciso.`
+          }
         },
       }),
       quickVacationEstimate: tool({

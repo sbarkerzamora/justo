@@ -42,23 +42,34 @@ export function getToolPageMetadata({
     canonical,
   }
 
+  const prefix = pageLocale === "en" ? "/en" : ""
+  const otherPrefix = pageLocale === "en" ? "" : "/en"
+
   if (country) {
-    const prefix = pageLocale === "en" ? "/en" : ""
-    const otherPrefix = pageLocale === "en" ? "" : "/en"
     alternates.languages = {
       es: `${SITE_URL}${pageLocale === "es" ? prefix : otherPrefix}/tools/${slug}?country=${country}`,
       en: `${SITE_URL}${pageLocale === "en" ? prefix : otherPrefix}/tools/${slug}?country=${country}`,
       "x-default": `${SITE_URL}/tools/${slug}`,
     }
+  } else {
+    alternates.languages = {
+      es: `${SITE_URL}/tools/${slug}`,
+      en: `${SITE_URL}/en/tools/${slug}`,
+      "x-default": `${SITE_URL}/tools/${slug}`,
+    }
   }
 
+  const countryName = getToolCountryName(country)
+  const countrySuffix = countryName ? ` en ${countryName}` : ""
+  const yearSuffix = " 2026"
+
   return {
-    title,
-    description: tool.longDescription,
+    title: `${title}${yearSuffix} | Justo`,
+    description: `${tool.shortDescription}${countrySuffix}. ${tool.outputSummary.slice(0, 3).join(", ")}. Gratuito, open source, con referencias legales.`,
     alternates,
     openGraph: {
       title,
-      description: tool.longDescription,
+      description: `${tool.shortDescription}${countrySuffix}. ${tool.outputSummary.slice(0, 3).join(", ")}.`,
       url: canonical,
       siteName: "Justo",
       images: [{ url: OG_IMAGE, width: 1200, height: 630 }],
@@ -68,7 +79,7 @@ export function getToolPageMetadata({
     twitter: {
       card: "summary_large_image",
       title,
-      description: tool.longDescription,
+      description: `${tool.shortDescription}${countrySuffix}.`,
       images: [OG_IMAGE],
     },
   }

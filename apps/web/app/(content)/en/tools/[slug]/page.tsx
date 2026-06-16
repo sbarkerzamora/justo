@@ -13,6 +13,7 @@ import {
   IconGift,
   IconDoorExit,
   IconFileDescription,
+  IconBell,
 } from "@tabler/icons-react"
 import { isValidCountry } from "@/lib/countries"
 import { buildToolJsonLd, getToolPageMetadata } from "@/lib/tool-seo"
@@ -33,6 +34,7 @@ const toolConfigs: Record<string, ToolConfig> = {
   "aguinaldo-decimo-bono": { icon: <IconGift className="size-6" />, h1Prefix: "Bonus / 13th salary calculator", toolParam: "bonus", ctaLabel: "Open calculator" },
   "simulador-terminacion": { icon: <IconDoorExit className="size-6" />, h1Prefix: "Termination simulator", toolParam: "termination", ctaLabel: "Open calculator" },
   "generador-contratos": { icon: <IconFileDescription className="size-6" />, h1Prefix: "Employment contract generator", toolParam: "contract", ctaLabel: "Open generator" },
+  preaviso: { icon: <IconBell className="size-6" />, h1Prefix: "Notice period calculator", toolParam: "preaviso", ctaLabel: "Calculate notice" },
 }
 
 export async function generateStaticParams() {

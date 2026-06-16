@@ -19,6 +19,7 @@ import {
   IconArrowUp,
   IconCalculator,
   IconBeach,
+  IconBell,
   IconCoins,
   IconGift,
   IconDoorExit,
@@ -66,6 +67,7 @@ import { VacationsTool } from "@/components/tools/vacations"
 import { BonusTool } from "@/components/tools/bonus"
 import { TerminationTool } from "@/components/tools/termination"
 import { ContractTool } from "@/components/tools/contract"
+import { PreavisoTool } from "@/components/tools/preaviso"
 import GridLoader from "@/components/smoothui/grid-loader"
 import type { PresetPattern } from "@/components/smoothui/grid-loader"
 
@@ -80,6 +82,7 @@ type AppMode =
   | "bonus"
   | "termination"
   | "contract"
+  | "preaviso"
 
 type ChatAction = {
   mode?: AppMode
@@ -102,6 +105,7 @@ const validToolParams = new Set([
   "bonus",
   "termination",
   "contract",
+  "preaviso",
 ])
 function isValidToolParam(v: string): v is AppMode {
   return validToolParams.has(v)
@@ -158,7 +162,7 @@ export function LlmHome({
 }: {
   countryCode?: string
   locale: Locale
-  initialTool?: "settlement" | "vacations" | "salary-net"
+  initialTool?: AppMode
 }) {
   const cc = countryCode ?? "ni"
   const copy = homeCopy[locale]
@@ -202,6 +206,7 @@ export function LlmHome({
     if (tool === "bonus") return "bonus"
     if (tool === "termination") return "termination"
     if (tool === "contract") return "contract"
+    if (tool === "preaviso") return "preaviso"
     return "chat"
   })
 
@@ -563,6 +568,12 @@ function LlmHomeView(props: {
       labelEn: "Contract",
     },
     {
+      mode: "preaviso",
+      icon: IconBell,
+      labelEs: "Preaviso",
+      labelEn: "Notice",
+    },
+    {
       icon: IconMessageCircle,
       labelEs: "Nuevo chat",
       labelEn: "New chat",
@@ -730,6 +741,16 @@ function LlmHomeView(props: {
           />
         ) : mode === "contract" ? (
           <ContractTool
+            countryCode={cc}
+            countryName={countryName}
+            locale={locale}
+            currencyLabel={currencyLabel}
+            fmt={fmt}
+            onComplete={onToolComplete}
+            onCancel={onToolCancel}
+          />
+        ) : mode === "preaviso" ? (
+          <PreavisoTool
             countryCode={cc}
             countryName={countryName}
             locale={locale}
@@ -1105,6 +1126,8 @@ function WelcomeEmptyState({
             alt={countryName}
             width={14}
             height={10}
+            sizes="14px"
+            loading="lazy"
             className="h-2.5 w-3.5 rounded-[1px] border border-border object-cover"
           />
           <span>{copy.laborAssistant}</span>
