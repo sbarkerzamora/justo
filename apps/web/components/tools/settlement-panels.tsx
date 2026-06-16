@@ -1,15 +1,13 @@
-import Image from "next/image"
-import Link from "next/link"
 import { type ReactNode } from "react"
-import {
-  IconCheck,
-  IconDownload,
-  IconEdit,
-} from "@tabler/icons-react"
+import { IconCheck, IconDownload, IconEdit } from "@tabler/icons-react"
 import type { Locale } from "@/lib/i18n"
 import { homeCopy } from "@/lib/home-copy"
 import { stepOrder } from "./tool-types"
-import type { SettlementForm, SettlementApiResponse, EditMode, FlowStep } from "./tool-types"
+import type {
+  SettlementForm,
+  SettlementApiResponse,
+  EditMode,
+} from "./tool-types"
 
 export { stepOrder }
 
@@ -22,6 +20,9 @@ export const stepLabels: Record<Locale, Record<string, string>> = {
     endDate: "Fecha de salida",
     unusedVacationDays: "Vacaciones pendientes",
     frequency: "Frecuencia de pago",
+    terminationCause: "Causa de terminación",
+    contractType: "Tipo de contrato",
+    adjustments: "Ajustes adicionales",
     confirm: "Confirmar datos",
   },
   en: {
@@ -32,6 +33,9 @@ export const stepLabels: Record<Locale, Record<string, string>> = {
     endDate: "Exit date",
     unusedVacationDays: "Pending vacation days",
     frequency: "Payment frequency",
+    terminationCause: "Termination cause",
+    contractType: "Contract type",
+    adjustments: "Additional adjustments",
     confirm: "Confirm information",
   },
 }
@@ -62,8 +66,8 @@ function ActionButton({
       onClick={onClick}
       className={
         primary
-          ? "inline-flex items-center gap-2 rounded-xl bg-primary px-3 py-2.5 text-sm font-medium text-primary-foreground min-h-[44px]"
-          : "inline-flex items-center gap-2 rounded-xl border border-border bg-card px-3 py-2.5 text-sm font-medium text-foreground min-h-[44px]"
+          ? "inline-flex min-h-[44px] items-center gap-2 rounded-xl bg-primary px-3 py-2.5 text-sm font-medium text-primary-foreground"
+          : "inline-flex min-h-[44px] items-center gap-2 rounded-xl border border-border bg-card px-3 py-2.5 text-sm font-medium text-foreground"
       }
     >
       {icon}
@@ -95,7 +99,7 @@ export function FrequencyPicker({
             key={f}
             type="button"
             onClick={() => onSelect(f)}
-            className="rounded-xl border border-border px-3 py-2.5 text-sm font-medium text-foreground transition-colors duration-200 hover:bg-accent min-h-[44px] min-w-[44px]"
+            className="min-h-[44px] min-w-[44px] rounded-xl border border-border px-3 py-2.5 text-sm font-medium text-foreground transition-colors duration-200 hover:bg-accent"
           >
             {freqLabels[f]}
           </button>
@@ -119,7 +123,11 @@ export function ConfirmPanel({
   ) => Promise<void>
 }) {
   const freqLabel = (v: string) => {
-    const map: Record<string, string> = { mensual: copy.monthly, quincenal: copy.biweekly, semanal: copy.weekly }
+    const map: Record<string, string> = {
+      mensual: copy.monthly,
+      quincenal: copy.biweekly,
+      semanal: copy.weekly,
+    }
     return map[v] ?? v
   }
   return (
@@ -135,7 +143,10 @@ export function ConfirmPanel({
           label={copy.dates}
           value={`${form.startDate} -> ${form.endDate}`}
         />
-        <Row label={copy.vacations} value={`${form.unusedVacationDays} ${copy.daysLabel}`} />
+        <Row
+          label={copy.vacations}
+          value={`${form.unusedVacationDays} ${copy.daysLabel}`}
+        />
         <Row label={copy.frequency} value={freqLabel(form.frequency)} />
       </div>
       <div className="mt-4 flex flex-wrap gap-2">
@@ -244,10 +255,7 @@ export function EditPanel({
           label={copy.saveChanges}
           primary
         />
-        <ActionButton
-          onClick={() => onSetEditMode(null)}
-          label={copy.cancel}
-        />
+        <ActionButton onClick={() => onSetEditMode(null)} label={copy.cancel} />
       </div>
     </div>
   )
@@ -306,7 +314,7 @@ export function ResultPanel({
       <button
         type="button"
         onClick={() => void onExportPdf()}
-        className="mt-4 inline-flex items-center gap-2 rounded-xl border border-border bg-card px-4 py-2.5 text-sm font-semibold text-foreground transition-colors duration-200 hover:bg-accent min-h-[44px]"
+        className="mt-4 inline-flex min-h-[44px] items-center gap-2 rounded-xl border border-border bg-card px-4 py-2.5 text-sm font-semibold text-foreground transition-colors duration-200 hover:bg-accent"
       >
         <IconDownload className="size-4" />
         {copy.downloadPdf}
@@ -315,14 +323,14 @@ export function ResultPanel({
         <button
           type="button"
           onClick={startFlow}
-          className="inline-flex items-center justify-center rounded-xl bg-primary px-4 py-2.5 text-sm font-semibold text-primary-foreground transition-opacity duration-200 hover:opacity-90 min-h-[44px]"
+          className="inline-flex min-h-[44px] items-center justify-center rounded-xl bg-primary px-4 py-2.5 text-sm font-semibold text-primary-foreground transition-opacity duration-200 hover:opacity-90"
         >
           {copy.calculateAgain}
         </button>
         <button
           type="button"
           onClick={() => void backToLegalChat()}
-          className="inline-flex items-center justify-center rounded-xl border border-border bg-card px-4 py-2.5 text-sm font-semibold text-foreground transition-colors duration-200 hover:bg-accent min-h-[44px]"
+          className="inline-flex min-h-[44px] items-center justify-center rounded-xl border border-border bg-card px-4 py-2.5 text-sm font-semibold text-foreground transition-colors duration-200 hover:bg-accent"
         >
           {copy.writeQuestion}
         </button>
@@ -356,7 +364,7 @@ export function LastCalculationPanel({
       <button
         type="button"
         onClick={() => void onExportPdf(lastCalculation.input)}
-        className="mt-3 inline-flex items-center gap-2 rounded-xl border border-border bg-card px-4 py-2.5 text-sm font-semibold text-foreground transition-colors duration-200 hover:bg-accent min-h-[44px]"
+        className="mt-3 inline-flex min-h-[44px] items-center gap-2 rounded-xl border border-border bg-card px-4 py-2.5 text-sm font-semibold text-foreground transition-colors duration-200 hover:bg-accent"
       >
         <IconDownload className="size-4" />
         {copy.downloadPdf}

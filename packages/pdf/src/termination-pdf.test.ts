@@ -9,6 +9,8 @@ describe("buildTerminationPdf", () => {
       monthlySalary: 30000,
       startDate: "2020-01-01",
       endDate: "2025-01-01",
+      terminationCause: "despido_injustificado" as const,
+      contractType: "indeterminado" as const,
     }
     const result = calculateNicaraguaTermination(input)
     const bytes = await buildTerminationPdf(input, result)

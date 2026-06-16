@@ -234,7 +234,10 @@ export function BonusTool({
 
   const handleBack = () => {
     const prev = prevStep(step)
-    if (prev) { dispatch({ type: "setStep", step: prev }); setInputValue("") }
+    if (prev) {
+      dispatch({ type: "setStep", step: prev })
+      setInputValue("")
+    }
   }
 
   const runCalculation = () => {
@@ -302,7 +305,10 @@ export function BonusTool({
         dispatch({ type: "setError", error: copy.endBeforeStart })
         return
       }
-      dispatch({ type: "patchForm", patch: { startDate: isoStart, endDate: isoEnd } })
+      dispatch({
+        type: "patchForm",
+        patch: { startDate: isoStart, endDate: isoEnd },
+      })
     }
     dispatch({ type: "setEditMode", editMode: null })
     dispatch({ type: "setError", error: null })
@@ -359,7 +365,9 @@ export function BonusTool({
       <div className="mb-4 flex w-full items-center justify-between">
         <div className="inline-flex items-center gap-2 rounded-full border border-border bg-card px-3 py-1.5 text-xs font-medium text-foreground">
           <IconGift className="size-3.5 text-primary" />
-          {locale === "en" ? "Bonus / 13th salary" : "Aguinaldo / décimo / bono"}
+          {locale === "en"
+            ? "Bonus / 13th salary"
+            : "Aguinaldo / décimo / bono"}
         </div>
         <button
           type="button"
@@ -441,7 +449,10 @@ export function BonusTool({
               onSetEditField={(field, value) =>
                 dispatch({
                   type: "setEditField",
-                  field: field as "editSalary" | "editStartDate" | "editEndDate",
+                  field: field as
+                    | "editSalary"
+                    | "editStartDate"
+                    | "editEndDate",
                   value,
                 })
               }
@@ -475,10 +486,7 @@ export function BonusTool({
               result={result}
               fmt={fmt}
               copy={copy}
-              locale={locale}
-              onRestart={() =>
-                dispatch({ type: "reset", countryCode })
-              }
+              onRestart={() => dispatch({ type: "reset", countryCode })}
               onComplete={handleComplete}
               onExportPdf={onExportPdf}
             />
@@ -503,28 +511,24 @@ export function BonusTool({
                 }
                 inputMode={step === "monthlySalary" ? "decimal" : "text"}
                 placeholder={
-                  step === "monthlySalary"
-                    ? copy.askPlaceholder
-                    : copy.endDate
+                  step === "monthlySalary" ? copy.askPlaceholder : copy.endDate
                 }
-                className="h-12 w-full rounded-2xl border border-border bg-card pl-4 pr-4 text-sm text-foreground transition-colors outline-none placeholder:text-muted-foreground focus:border-foreground/30"
+                className="h-12 w-full rounded-2xl border border-border bg-card pr-4 pl-4 text-sm text-foreground transition-colors outline-none placeholder:text-muted-foreground focus:border-foreground/30"
               />
             </div>
           </div>
         )}
 
-        {step !== "welcome" &&
-          step !== "confirm" &&
-          step !== "done" && (
-            <StepNavigation
-              onBack={handleBack}
-              onContinue={handleSubmit}
-              canContinue={!!inputValue.trim()}
-              showBack={step !== "monthlySalary"}
-              backLabel={copy.backToPrevious}
-              continueLabel={copy.send}
-            />
-          )}
+        {step !== "welcome" && step !== "confirm" && step !== "done" && (
+          <StepNavigation
+            onBack={handleBack}
+            onContinue={handleSubmit}
+            canContinue={!!inputValue.trim()}
+            showBack={step !== "monthlySalary"}
+            backLabel={copy.backToPrevious}
+            continueLabel={copy.send}
+          />
+        )}
       </div>
     </div>
   )
@@ -752,7 +756,6 @@ function ResultPanel({
   result,
   fmt,
   copy,
-  locale,
   onRestart,
   onComplete,
   onExportPdf,
@@ -760,7 +763,6 @@ function ResultPanel({
   result: ReturnType<typeof calculateBonus>
   fmt: (v: number) => string
   copy: (typeof homeCopy)[Locale]
-  locale: Locale
   onRestart: () => void
   onComplete: () => void
   onExportPdf: () => Promise<void>

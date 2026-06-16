@@ -123,10 +123,15 @@ export const terminationTool: CalculationTool<
     "Simulador abierto para comparar renuncia, despido justificado, despido injustificado u otros escenarios según país. Incluye indemnización, preaviso y prima de antigüedad según la legislación aplicable.",
   category: "calculation",
   availability: "available",
-  countrySupport: Object.keys(
-    terminationCalculators,
-  ) as CountryCode[],
-  inputRequirements: ["País", "Salario mensual", "Fecha de inicio", "Fecha de salida"],
+  countrySupport: Object.keys(terminationCalculators) as CountryCode[],
+  inputRequirements: [
+    "País",
+    "Salario mensual",
+    "Fecha de inicio",
+    "Fecha de salida",
+    "Causa de terminación",
+    "Tipo de contrato",
+  ],
   outputSummary: [
     "Comparación de escenarios",
     "Indemnización estimada",
@@ -151,12 +156,14 @@ export const terminationTool: CalculationTool<
   corpusVersion: "multi-v0.1.0",
   disclaimer:
     "Resultado informativo generado con reglas determinísticas y corpus legal versionado. No sustituye asesoría legal o contable profesional.",
-  countryOverrides:
-    terminationCountryOverrides as Record<CountryCode, CountryOverride>,
+  countryOverrides: terminationCountryOverrides as Record<
+    CountryCode,
+    CountryOverride
+  >,
 }
 
 export function calculateTermination(
-  input: TerminationInput,
+  input: TerminationInput
 ): TerminationResult {
   const calculator = terminationCalculators[input.countryCode]
 

@@ -12,6 +12,8 @@ function makeInput(overrides?: Partial<SettlementInput>): SettlementInput {
     unusedVacationDays: 5,
     startDate: "2020-01-01",
     endDate: "2025-06-01",
+    terminationCause: "despido_injustificado",
+    contractType: "indeterminado",
     ...overrides,
   }
 }
@@ -22,10 +24,20 @@ function makeResult(overrides?: Partial<SettlementResult>): SettlementResult {
     tenureDays: 1978,
     tenureText: "5 anos, 4 meses, 30 dias",
     incomes: [
-      { label: "Indemnizacion", amount: 30000, formula: "(10000 x 3)", legalReference: "Ley 185 Art. 45" },
+      {
+        label: "Indemnizacion",
+        amount: 30000,
+        formula: "(10000 x 3)",
+        legalReference: "Ley 185 Art. 45",
+      },
     ],
     deductions: [
-      { label: "INSS", amount: 1875, formula: "(30000 x 0.0625)", legalReference: "Ley INSS" },
+      {
+        label: "INSS",
+        amount: 1875,
+        formula: "(30000 x 0.0625)",
+        legalReference: "Ley INSS",
+      },
     ],
     grossIncome: 30000,
     totalDeductions: 1875,
@@ -87,7 +99,11 @@ describe("buildAnonymousRecord", () => {
 
   it("copies numeric fields correctly", () => {
     const input = makeInput({ monthlySalary: 15000, unusedVacationDays: 10 })
-    const result = makeResult({ grossIncome: 50000, totalDeductions: 5000, netTotal: 45000 })
+    const result = makeResult({
+      grossIncome: 50000,
+      totalDeductions: 5000,
+      netTotal: 45000,
+    })
     const record = buildAnonymousRecord(input, result)
 
     expect(record.monthlySalary).toBe(15000)

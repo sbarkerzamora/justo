@@ -14,7 +14,8 @@ describe("buildSettlementPdf", () => {
       unusedVacationDays: 0,
       startDate: "2024-01-01",
       endDate: "2025-01-01",
-      terminationType: "renuncia" as const,
+      terminationCause: "renuncia" as const,
+      contractType: "indeterminado" as const,
     }
     const result = calculateNicaraguaSettlement(input)
     const bytes = await buildSettlementPdf(input, result)
