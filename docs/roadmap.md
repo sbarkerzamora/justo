@@ -1,6 +1,6 @@
 # Justo OSS Roadmap
 
-## ✅ Done (68 items)
+## ✅ Done (72 items)
 
 - [x] 6 herramientas OSS disponibles: liquidación, vacaciones, salario neto, bono/aguinaldo, terminación y contratos — **11 países** cada una.
 - [x] Chat con 6 modos de herramienta vía `?tool=` desde sidebar y URL.
@@ -43,6 +43,10 @@
 - [x] Node.js actualizado a v22.22.3 via NVM.
 - [x] Re-ingesta del corpus: 11 países indexados (~5,200 chunks).
 - [x] Preaviso standalone tool: módulo core + tool registration + API + UI + corpus.
+- [x] Estandarización UI: PreavisoTool rewrite con OnboardingPanel + SummaryRow + StepNavigation.
+- [x] Estandarización UI: Settlement migrado de ProgressHeader a inline progress bar.
+- [x] Estandarización UI: Contract inputs unificados (h-12, rounded-2xl, bg-card).
+- [x] Estandarización UI: ProgressHeader eliminado de settlement-panels.tsx.
 
 ---
 
@@ -191,6 +195,7 @@
 | Node.js | ✅ v22.22.3 (NVM) |
 | RAG corpus ingestion | ✅ 11 países re-ingeridos (~5,200 chunks) |
 | Preaviso tool | ✅ Core + tools + API + UI + corpus (11 países) |
+| UI estandarización | ✅ Preaviso rewrite, Settlement inline progress, Contract inputs unificados |
 | **Horas extra, checklist, hiring** | ⬜ (🔜 #1) |
 | **Tool flow framework** | ⬜ (🔜 #2) |
 | **Accesibilidad WCAG** | ⬜ (🔜 #3) |
