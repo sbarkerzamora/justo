@@ -624,8 +624,8 @@ function OnboardingPanel({
   onStart: () => void
 }) {
   return (
-    <div className="flex h-full flex-col items-center justify-center gap-6 px-2 motion-safe:animate-in motion-safe:duration-300 motion-safe:fade-in motion-safe:slide-in-from-bottom-2">
-      <div className="flex max-w-md flex-col items-center gap-4 text-center">
+    <div className="flex h-full flex-col items-center justify-center gap-8 px-2 motion-safe:animate-in motion-safe:duration-300 motion-safe:fade-in motion-safe:slide-in-from-bottom-2">
+      <div className="flex max-w-md flex-col items-center gap-5 text-center">
         <div className="flex h-16 w-16 items-center justify-center rounded-2xl bg-primary/10">
           {icon}
         </div>
@@ -639,7 +639,7 @@ function OnboardingPanel({
           {steps.map((step, i) => (
             <span
               key={i}
-              className="inline-flex items-center gap-1.5 rounded-full bg-muted px-2.5 py-1 text-[11px] text-muted-foreground"
+              className="inline-flex items-center gap-1.5 rounded-full bg-muted px-2.5 py-1 text-xs text-muted-foreground"
             >
               <span className="flex h-5 w-5 items-center justify-center rounded-full bg-primary/10 text-[11px] font-medium text-primary">
                 {i + 1}
@@ -651,7 +651,7 @@ function OnboardingPanel({
         <button
           type="button"
           onClick={onStart}
-          className="inline-flex items-center gap-2 rounded-xl bg-primary px-5 py-3 text-sm font-medium text-primary-foreground shadow-sm transition-opacity hover:opacity-90"
+          className="inline-flex items-center gap-2 rounded-xl bg-primary px-5 py-2.5 text-sm font-medium text-primary-foreground shadow-sm transition-opacity hover:opacity-90"
         >
           {startLabel}
           <IconArrowRight className="size-4" />

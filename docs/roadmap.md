@@ -80,22 +80,23 @@
 
 ---
 
-### 2. Validación y hardening (7 herramientas)
+### 2. Layout + Clarify + Polish UI
 
-Estandarizar validaciones, manejo de errores y edge cases en todas las herramientas.
+Estandarizar espaciado, migrar ternarios a copy keys, agregar interactividad y feedback visual.
 
 | # | Tarea | Archivos |
 |---|-------|----------|
-| 2.1 | Fix bonus/termination edit-dates bug (saveEdit ignora endDate) | `bonus/index.tsx`, `termination/index.tsx` |
-| 2.2 | Fix preaviso schema (startDate/endDate no usados, tenureYears sin max) | `preaviso/schema.ts` |
-| 2.3 | Fix settlement zero-salary mismatch (n >= 0 → n > 0) | `settlement/index.tsx` |
-| 2.4 | Add finite() a todos los campos numericos | `schema.ts` de 6 tools |
-| 2.5 | Add date regex a settlement/vacations schemas | `settlement/schema.ts`, `vacations/schema.ts` |
-| 2.6 | Add int() a vacationDays schemas | `settlement/schema.ts`, `vacations/schema.ts` |
-| 2.7 | Estandarizar PDF error handling (6 rutas) | `api/*/pdf/route.ts` + `components/tools/*/index.tsx` |
-| 2.8 | Add countrySupport checks faltantes | `api/bonus/calculate`, `api/termination/calculate`, PDF routes |
+| 2.1 | Layout: preavito stat cards, summary rows, header padding | `preaviso/index.tsx` |
+| 2.2 | Layout: contract onboarding gaps, badge text, button padding | `contract/index.tsx` |
+| 2.3 | Clarify: 9 copy keys nuevas en home-copy.tsx | `home-copy.tsx` |
+| 2.4 | Clarify: migrar ternarios preaviso a copy keys | `preaviso/index.tsx` |
+| 2.5 | Clarify: salary-net showBack condicional | `salary-net/index.tsx` |
+| 2.6 | Polish: focus rings, hover scales, active states en inputs/botones | 7 herramientas |
+| 2.7 | Polish: fade-in/slide-up animaciones en resultados | 7 herramientas |
+| 2.8 | Polish: responsive (stat cards apiladas, full-width mobile) | 7 herramientas |
+| 2.9 | Polish: touch targets 48px, disabled states mejorados | 7 herramientas |
 
-**Verificación:** `pnpm test` + `pnpm typecheck`
+**Verificación:** `pnpm typecheck` + `pnpm test`
 
 | # | Tarea | Archivos |
 |---|-------|----------|
@@ -215,7 +216,8 @@ Estandarizar validaciones, manejo de errores y edge cases en todas las herramien
 | RAG corpus ingestion | ✅ 11 países re-ingeridos (~5,200 chunks) |
 | Preaviso tool | ✅ Core + tools + API + UI + corpus (11 países) |
 | UI estandarización | ✅ Preaviso rewrite, Settlement inline progress, Contract inputs unificados |
-| Validación hardening | ⬜ (🔜 #2) |
+| Validación hardening | ✅ Schemas, preaviso types, edit-dates bug fix, countrySupport routes |
+| Layout + Clarify + Polish UI | ⬜ (🔜 #2) |
 | **Horas extra, checklist, hiring** | ⬜ (🔜 #1) |
 | **Tool flow framework** | ⬜ (🔜 #3) |
 | **Tool flow framework** | ⬜ (🔜 #2) |

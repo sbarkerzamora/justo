@@ -95,6 +95,15 @@ type HomeCopy = {
   salaryNetWelcomeDescription: string
   preavisoWelcomeTitle: string
   preavisoWelcomeDescription: string
+  preavisoBadge: string
+  preavisoResultHeading: string
+  preavisoDaysLabel: string
+  preavisoAmountLabel: string
+  preavisoSubstitutePayment: string
+  preavisoLegalRef: string
+  preavisoTenureHint: string
+  preavisoStepSalary: string
+  preavisoStepTenure: string
   grossSalary: string
   netResult: string
   netPerPeriod: string
@@ -269,6 +278,15 @@ export const homeCopy: Record<Locale, HomeCopy> = {
     salaryNetWelcomeDescription: "Calcula tu salario neto después de deducciones legales (INSS, IR, ISSS, AFP, etc.) con fórmulas transparentes.",
     preavisoWelcomeTitle: "Calculadora de preaviso laboral",
     preavisoWelcomeDescription: "Calculá los días de preaviso y la indemnización sustitutiva según la antigüedad del trabajador y la legislación aplicable.",
+    preavisoBadge: "Preaviso",
+    preavisoResultHeading: "Resultado de Preaviso",
+    preavisoDaysLabel: "Días de preaviso",
+    preavisoAmountLabel: "Monto",
+    preavisoSubstitutePayment: "Pago sustitutivo",
+    preavisoLegalRef: "Referencia legal",
+    preavisoTenureHint: "Años de servicio continuo con el empleador.",
+    preavisoStepSalary: "Salario mensual",
+    preavisoStepTenure: "Antigüedad",
     grossSalary: "Salario bruto",
     netResult: "Salario neto",
     netPerPeriod: "Salario neto por período",
@@ -440,6 +458,15 @@ export const homeCopy: Record<Locale, HomeCopy> = {
     salaryNetWelcomeDescription: "Calculate your net salary after legal deductions (INSS, IR, ISSS, AFP, etc.) with transparent formulas.",
     preavisoWelcomeTitle: "Notice Period Calculator",
     preavisoWelcomeDescription: "Calculate the notice period and substitute payment based on the worker's tenure and applicable legislation.",
+    preavisoBadge: "Notice Period",
+    preavisoResultHeading: "Notice Period Result",
+    preavisoDaysLabel: "Notice days",
+    preavisoAmountLabel: "Amount",
+    preavisoSubstitutePayment: "Substitute payment",
+    preavisoLegalRef: "Legal reference",
+    preavisoTenureHint: "Years of continuous service with the employer.",
+    preavisoStepSalary: "Salary",
+    preavisoStepTenure: "Seniority",
     grossSalary: "Gross salary",
     netResult: "Net salary",
     netPerPeriod: "Net salary by period",

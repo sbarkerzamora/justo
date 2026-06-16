@@ -95,8 +95,7 @@ export function PreavisoTool({
   }
 
   const advance = useCallback(() => {
-    const next = nextStep(step)
-    dispatch({ type: "setStep", step: next })
+    dispatch({ type: "setStep", step: nextStep(step) })
   }, [step])
 
   const goBack = useCallback(() => {
@@ -120,7 +119,7 @@ export function PreavisoTool({
       { role: "user", text: `${copy.send} preaviso` },
       {
         role: "assistant",
-        text: `${locale === "en" ? "Notice period result" : "Resultado de preaviso"}: ${result!.noticeDays} ${locale === "en" ? "days" : "días"}, ${fmt(result!.noticeAmount)}. ${result!.legalReference}.`,
+        text: `${copy.preavisoResultHeading}: ${result!.noticeDays} ${locale === "en" ? "days" : "días"}, ${fmt(result!.noticeAmount)}. ${result!.legalReference}.`,
       },
     ])
   }, [onComplete, copy, result, fmt, locale])
@@ -132,12 +131,12 @@ export function PreavisoTool({
       <div className="mb-4 flex w-full items-center justify-between">
         <div className="inline-flex items-center gap-2 rounded-full border border-border bg-card px-3 py-1.5 text-xs font-medium text-foreground">
           <IconBell className="size-3.5 text-primary" />
-          {locale === "en" ? "Notice Period" : "Preaviso"}
+          {copy.preavisoBadge}
         </div>
         <button
           type="button"
           onClick={onCancel}
-          className="inline-flex items-center gap-1.5 text-xs font-medium text-muted-foreground transition-colors hover:text-foreground"
+          className="inline-flex items-center gap-1.5 text-xs font-medium text-muted-foreground transition-colors hover:text-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary/30"
         >
           <IconArrowLeft className="size-3.5" />
           {locale === "en" ? "Back" : "Volver"}
@@ -161,6 +160,8 @@ export function PreavisoTool({
               alt={countryName}
               width={14}
               height={10}
+              sizes="14px"
+              loading="lazy"
               className="h-2.5 w-3.5 rounded-[1px] border border-border object-cover"
             />
             <span>{copy.calculatingUnder(countryName)}</span>
@@ -189,14 +190,14 @@ export function PreavisoTool({
               </p>
               <div className="flex flex-wrap justify-center gap-2">
                 {[
-                  locale === "en" ? "Salary" : "Salario mensual",
-                  locale === "en" ? "Seniority" : "Antigüedad",
+                  copy.preavisoStepSalary,
+                  copy.preavisoStepTenure,
                   locale === "en" ? "Review" : "Revisar",
                   locale === "en" ? "Result" : "Resultado",
                 ].map((label, i) => (
                   <span
                     key={i}
-                    className="inline-flex items-center gap-1.5 rounded-full bg-muted px-2.5 py-1 text-xs text-muted-foreground"
+                    className="inline-flex items-center gap-1.5 rounded-full bg-muted px-2.5 py-1 text-xs text-muted-foreground transition-transform hover:scale-105"
                   >
                     <span className="flex h-5 w-5 items-center justify-center rounded-full bg-primary/10 text-[11px] font-medium text-primary">
                       {i + 1}
@@ -208,7 +209,7 @@ export function PreavisoTool({
               <button
                 type="button"
                 onClick={() => dispatch({ type: "setStep", step: "salary" })}
-                className="inline-flex items-center gap-2 rounded-xl bg-primary px-5 py-2.5 text-sm font-medium text-primary-foreground shadow-sm transition-opacity hover:opacity-90"
+                className="inline-flex items-center gap-2 rounded-xl bg-primary px-5 py-2.5 text-sm font-medium text-primary-foreground shadow-sm transition-all hover:scale-[1.02] hover:opacity-90 active:scale-[0.98] active:bg-primary/90 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary/30 disabled:cursor-not-allowed disabled:opacity-40 disabled:scale-100"
               >
                 {copy.startButton}
                 <IconArrowRight className="size-4" />
@@ -218,7 +219,7 @@ export function PreavisoTool({
         ) : step === "confirm" ? (
           <div className="mx-auto max-w-xl space-y-6 px-2">
             {error && (
-              <div className="flex items-center gap-2 rounded-xl border border-rose-200 bg-rose-50 px-4 py-3 text-sm text-rose-700">
+              <div className="flex items-center gap-2 rounded-xl border border-rose-200 bg-rose-50 px-4 py-3 text-sm text-rose-700 motion-safe:animate-in motion-safe:duration-200 motion-safe:fade-in motion-safe:slide-in-from-top-1">
                 <IconAlertCircle className="size-4 shrink-0" />
                 {error}
               </div>
@@ -230,17 +231,11 @@ export function PreavisoTool({
               </div>
               <div className="space-y-3">
                 <div className="flex items-center justify-between rounded-xl bg-muted/50 px-4 py-2.5">
-                  <span className="text-xs text-muted-foreground">
-                    {locale === "en" ? "Monthly salary" : "Salario mensual"}
-                  </span>
-                  <span className="text-sm font-medium text-foreground">
-                    {fmt(form.monthlySalary)}
-                  </span>
+                  <span className="text-xs text-muted-foreground">{copy.preavisoStepSalary}</span>
+                  <span className="text-sm font-medium text-foreground">{fmt(form.monthlySalary)}</span>
                 </div>
                 <div className="flex items-center justify-between rounded-xl bg-muted/50 px-4 py-2.5">
-                  <span className="text-xs text-muted-foreground">
-                    {locale === "en" ? "Years of seniority" : "Años de antigüedad"}
-                  </span>
+                  <span className="text-xs text-muted-foreground">{copy.preavisoStepTenure}</span>
                   <span className="text-sm font-medium text-foreground">
                     {form.tenureYears} {locale === "en" ? "years" : "años"}
                   </span>
@@ -250,23 +245,23 @@ export function PreavisoTool({
             <button
               type="button"
               onClick={handleConfirm}
-              className="inline-flex w-full items-center justify-center gap-2 rounded-xl bg-primary px-4 py-2.5 text-sm font-medium text-primary-foreground shadow-sm transition-opacity hover:opacity-90"
+              className="inline-flex w-full items-center justify-center gap-2 rounded-xl bg-primary px-4 py-2.5 text-sm font-medium text-primary-foreground shadow-sm transition-all hover:scale-[1.02] hover:opacity-90 active:scale-[0.98] active:bg-primary/90 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary/30 disabled:cursor-not-allowed disabled:opacity-40 disabled:scale-100"
             >
               <IconCheck className="size-4" />
-              {locale === "en" ? "Calculate notice period" : "Calcular preaviso"}
+              {copy.confirmAndCalculate}
             </button>
           </div>
         ) : step === "done" && result ? (
           <div className="mx-auto max-w-xl space-y-6 px-2">
-            <div className="w-full rounded-2xl border border-border bg-card p-6 shadow-sm motion-safe:animate-in motion-safe:duration-200 motion-safe:fade-in motion-safe:slide-in-from-bottom-1">
+            <div className="w-full rounded-2xl border border-border bg-card p-6 shadow-sm motion-safe:animate-in motion-safe:duration-300 motion-safe:fade-in motion-safe:slide-in-from-bottom-2">
               <div className="flex items-start justify-between">
                 <div>
-                  <div className="mb-1 inline-flex items-center gap-1.5 rounded-full border border-border bg-card px-2.5 py-1 text-[11px] font-medium text-muted-foreground">
+                  <div className="mb-1 inline-flex items-center gap-1.5 rounded-full border border-border bg-card px-2.5 py-1 text-xs font-medium text-muted-foreground transition-transform hover:scale-105">
                     <IconFileDescription className="size-3" />
                     {copy.legalVersion}: {result.legalCorpusVersion}
                   </div>
                   <h3 className="mt-2 text-sm font-semibold text-foreground">
-                    {locale === "en" ? "Notice Period Result" : "Resultado de Preaviso"}
+                    {copy.preavisoResultHeading}
                   </h3>
                 </div>
                 <div className="rounded-xl bg-primary/10 p-2.5">
@@ -275,25 +270,21 @@ export function PreavisoTool({
               </div>
 
               <div className="mt-4 grid gap-3 sm:grid-cols-2">
-                <div className="flex items-center gap-3 rounded-xl bg-muted/50 p-3">
+                <div className="flex items-center gap-3 rounded-xl bg-muted/50 p-3 motion-safe:animate-in motion-safe:duration-300 motion-safe:fade-in motion-safe:slide-in-from-left">
                   <div className="flex h-8 w-8 shrink-0 items-center justify-center rounded-lg bg-primary/10">
                     <IconBell className="size-4 text-primary" />
                   </div>
                   <div>
-                    <p className="text-xs text-muted-foreground">
-                      {locale === "en" ? "Notice days" : "Días de preaviso"}
-                    </p>
-                    <p className="text-sm font-semibold text-foreground">{result.noticeDays}</p>
+                    <p className="text-xs text-muted-foreground">{copy.preavisoDaysLabel}</p>
+                    <p className="text-sm font-semibold text-foreground motion-safe:animate-in motion-safe:zoom-in-95">{result.noticeDays}</p>
                   </div>
                 </div>
-                <div className="flex items-center gap-3 rounded-xl bg-muted/50 p-3">
+                <div className="flex items-center gap-3 rounded-xl bg-muted/50 p-3 motion-safe:animate-in motion-safe:duration-300 motion-safe:fade-in motion-safe:slide-in-from-right">
                   <div className="flex h-8 w-8 shrink-0 items-center justify-center rounded-lg bg-emerald-500/10">
                     <IconDownload className="size-4 text-emerald-600" />
                   </div>
                   <div>
-                    <p className="text-xs text-muted-foreground">
-                      {locale === "en" ? "Amount" : "Monto"}
-                    </p>
+                    <p className="text-xs text-muted-foreground">{copy.preavisoAmountLabel}</p>
                     <p className="text-sm font-semibold text-foreground">{fmt(result.noticeAmount)}</p>
                   </div>
                 </div>
@@ -301,9 +292,7 @@ export function PreavisoTool({
 
               <div className="mt-4 space-y-2 border-t border-border pt-4 text-xs">
                 <div className="flex justify-between">
-                  <span className="text-muted-foreground">
-                    {locale === "en" ? "Substitute payment" : "Pago sustitutivo"}
-                  </span>
+                  <span className="text-muted-foreground">{copy.preavisoSubstitutePayment}</span>
                   <span className="font-medium text-foreground">
                     {result.hasSubstitutePayment
                       ? locale === "en" ? "Yes" : "Sí"
@@ -311,17 +300,13 @@ export function PreavisoTool({
                   </span>
                 </div>
                 <div className="flex justify-between">
-                  <span className="text-muted-foreground">
-                    {locale === "en" ? "Legal reference" : "Referencia legal"}
-                  </span>
-                  <span className="max-w-[50%] text-right font-medium text-foreground">
-                    {result.legalReference}
-                  </span>
+                  <span className="text-muted-foreground">{copy.preavisoLegalRef}</span>
+                  <span className="max-w-[50%] text-right font-medium text-foreground">{result.legalReference}</span>
                 </div>
               </div>
 
               {result.calculationNote && (
-                <div className="mt-4 rounded-xl bg-amber-50 border border-amber-200 p-3 text-xs text-amber-800">
+                <div className="mt-4 rounded-xl bg-amber-50 border border-amber-200 p-3 text-xs text-amber-800 motion-safe:animate-in motion-safe:duration-300 motion-safe:fade-in">
                   {result.calculationNote}
                 </div>
               )}
@@ -331,9 +316,7 @@ export function PreavisoTool({
           <div className="flex h-full flex-col items-center justify-center gap-8 px-2">
             <div className="w-full max-w-xl rounded-2xl border border-border bg-card p-6 shadow-sm motion-safe:animate-in motion-safe:duration-200 motion-safe:fade-in motion-safe:slide-in-from-bottom-1">
               <p className="text-base font-medium text-foreground">
-                {step === "salary"
-                  ? (locale === "en" ? "Enter the monthly salary" : "Ingresá el salario mensual")
-                  : (locale === "en" ? "Years of seniority" : "Años de antigüedad")}
+                {step === "salary" ? copy.preavisoStepSalary : copy.preavisoStepTenure}
               </p>
               <input
                 type="text"
@@ -344,18 +327,11 @@ export function PreavisoTool({
                   if (step === "salary") setSalaryDisplay(v)
                   else setTenureDisplay(v)
                 }}
-                placeholder={step === "salary"
-                  ? copy.askPlaceholder
-                  : (locale === "en" ? "E.g. 5" : "Ej. 5")
-                }
-                className="mt-3 h-12 w-full rounded-2xl border border-border bg-card pl-4 pr-4 text-sm text-foreground placeholder:text-muted-foreground outline-none transition-colors focus:border-foreground/30"
+                placeholder={step === "salary" ? copy.askPlaceholder : (locale === "en" ? "E.g. 5" : "Ej. 5")}
+                className="mt-3 h-12 w-full rounded-2xl border border-border bg-card pl-4 pr-4 text-sm text-foreground placeholder:text-muted-foreground outline-none transition-colors focus:border-foreground/30 focus-visible:ring-2 focus-visible:ring-primary/30 focus-visible:ring-offset-1"
               />
               {step === "tenure" && (
-                <p className="mt-2 text-xs text-muted-foreground">
-                  {locale === "en"
-                    ? "Years of continuous service with the employer."
-                    : "Años de servicio continuo con el empleador."}
-                </p>
+                <p className="mt-2 text-xs text-muted-foreground">{copy.preavisoTenureHint}</p>
               )}
             </div>
           </div>
@@ -367,14 +343,14 @@ export function PreavisoTool({
           <button
             type="button"
             onClick={() => dispatch({ type: "setStep", step: "welcome" })}
-            className="inline-flex flex-1 items-center justify-center gap-2 rounded-xl border border-border bg-card px-4 py-2.5 text-sm font-medium text-foreground transition-colors hover:bg-accent"
+            className="inline-flex min-h-[48px] flex-1 items-center justify-center gap-2 rounded-xl border border-border bg-card px-4 py-2.5 text-sm font-medium text-foreground transition-all hover:scale-[1.02] hover:bg-accent active:scale-[0.98] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary/30 disabled:cursor-not-allowed disabled:opacity-40 disabled:scale-100"
           >
             <IconRefresh className="size-4" /> {copy.calculateAgain}
           </button>
           <button
             type="button"
             onClick={handleComplete}
-            className="inline-flex flex-1 items-center justify-center gap-2 rounded-xl border border-border bg-card px-4 py-2.5 text-sm font-medium text-foreground transition-colors hover:bg-accent"
+            className="inline-flex min-h-[48px] flex-1 items-center justify-center gap-2 rounded-xl border border-border bg-card px-4 py-2.5 text-sm font-medium text-foreground transition-all hover:scale-[1.02] hover:bg-accent active:scale-[0.98] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary/30 disabled:cursor-not-allowed disabled:opacity-40 disabled:scale-100"
           >
             <IconMessageCircle className="size-4" /> {copy.backToChat}
           </button>
