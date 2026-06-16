@@ -1,4 +1,8 @@
-import { daysBetween, type SettlementInput, type SettlementResult } from "@justo/core"
+import {
+  daysBetween,
+  type SettlementInput,
+  type SettlementResult,
+} from "@justo/core"
 import type { AnonymousSettlementRecord } from "@/lib/stats/types"
 import crypto from "node:crypto"
 
@@ -16,7 +20,7 @@ export function buildAnonymousRecord(
     frequency: input.frequency,
     tenureDays: daysBetween(start, end),
     unusedVacationDays: input.unusedVacationDays,
-    terminationType: input.terminationType,
+    terminationType: input.terminationType ?? input.terminationCause,
     grossIncome: result.grossIncome,
     totalDeductions: result.totalDeductions,
     netTotal: result.netTotal,

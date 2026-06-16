@@ -89,12 +89,12 @@ describe("buildAnonymousRecord", () => {
     expect(record.terminationType).toBe("despido_injustificado")
   })
 
-  it("leaves terminationType undefined when not provided", () => {
+  it("uses terminationCause when terminationType is not provided", () => {
     const input = makeInput()
     const result = makeResult()
     const record = buildAnonymousRecord(input, result)
 
-    expect(record.terminationType).toBeUndefined()
+    expect(record.terminationType).toBe("despido_injustificado")
   })
 
   it("copies numeric fields correctly", () => {

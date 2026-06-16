@@ -36,6 +36,17 @@ const isSeveranceLine = (line: SettlementLine) => {
   )
 }
 
+const isIncomeTaxLine = (line: SettlementLine) => {
+  const label = normalized(line.label)
+  return (
+    label === "ir" ||
+    label.includes("ir estimado") ||
+    label.includes("isr") ||
+    label.includes("impuesto") ||
+    label.includes("renta")
+  )
+}
+
 const shouldKeepCountrySpecificLine = (
   input: SettlementInput,
   line: SettlementLine
@@ -107,16 +118,20 @@ export function applySettlementInputAdjustments(
       line
     )
   })
+  const deductions = result.deductions.filter((line) => !isIncomeTaxLine(line))
 
   const grossIncome = round2(
     incomes.reduce((sum, line) => sum + line.amount, 0)
   )
-  const totalDeductions = result.totalDeductions
+  const totalDeductions = round2(
+    deductions.reduce((sum, line) => sum + line.amount, 0)
+  )
   const netTotal = round2(grossIncome - totalDeductions)
 
   return applyExplicitSettlementAdjustments(input, {
     ...result,
     incomes,
+    deductions,
     grossIncome,
     totalDeductions,
     netTotal,

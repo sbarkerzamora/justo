@@ -60,6 +60,29 @@ describe("settlementTool", () => {
     expect(result.netTotal).toBeGreaterThan(0)
   })
 
+  test("removes income tax deductions when severance is suppressed", () => {
+    const result = calculateSettlement({
+      countryCode: "ni",
+      employeeName: "Trabajador",
+      employerName: "Empleador",
+      monthlySalary: 30000,
+      frequency: "mensual",
+      unusedVacationDays: 0,
+      startDate: "2019-01-01",
+      endDate: "2025-01-01",
+      terminationCause: "renuncia",
+      contractType: "indeterminado",
+    })
+
+    expect(result.incomes.some((line) => line.label === "Indemnizacion")).toBe(
+      false
+    )
+    expect(result.deductions.some((line) => line.label.includes("IR"))).toBe(
+      false
+    )
+    expect(result.netTotal).toBeGreaterThan(0)
+  })
+
   test("keeps Guatemala indemnity for resignation under current country model", () => {
     const result = calculateSettlement({
       countryCode: "gt",
