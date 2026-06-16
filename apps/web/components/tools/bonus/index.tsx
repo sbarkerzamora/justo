@@ -234,7 +234,10 @@ export function BonusTool({
 
   const handleBack = () => {
     const prev = prevStep(step)
-    if (prev) { dispatch({ type: "setStep", step: prev }); setInputValue("") }
+    if (prev) {
+      dispatch({ type: "setStep", step: prev })
+      setInputValue("")
+    }
   }
 
   const runCalculation = () => {
@@ -268,12 +271,18 @@ export function BonusTool({
         field: "editSalary",
         value: String(form.monthlySalary || ""),
       })
-    if (action === "dates")
+    if (action === "dates") {
       dispatch({
         type: "setEditField",
         field: "editStartDate",
         value: displayDate(form.startDate),
       })
+      dispatch({
+        type: "setEditField",
+        field: "editEndDate",
+        value: displayDate(form.endDate),
+      })
+    }
   }
 
   const saveEdit = () => {
@@ -287,11 +296,19 @@ export function BonusTool({
     }
     if (editMode === "dates") {
       const isoStart = toIsoDate(state.editStartDate)
-      if (!isoStart) {
+      const isoEnd = toIsoDate(state.editEndDate)
+      if (!isoStart || !isoEnd) {
         dispatch({ type: "setError", error: copy.invalidDates })
         return
       }
-      dispatch({ type: "patchForm", patch: { startDate: isoStart } })
+      if (isoEnd < isoStart) {
+        dispatch({ type: "setError", error: copy.endBeforeStart })
+        return
+      }
+      dispatch({
+        type: "patchForm",
+        patch: { startDate: isoStart, endDate: isoEnd },
+      })
     }
     dispatch({ type: "setEditMode", editMode: null })
     dispatch({ type: "setError", error: null })
@@ -348,7 +365,9 @@ export function BonusTool({
       <div className="mb-4 flex w-full items-center justify-between">
         <div className="inline-flex items-center gap-2 rounded-full border border-border bg-card px-3 py-1.5 text-xs font-medium text-foreground">
           <IconGift className="size-3.5 text-primary" />
-          {locale === "en" ? "Bonus / 13th salary" : "Aguinaldo / décimo / bono"}
+          {locale === "en"
+            ? "Bonus / 13th salary"
+            : "Aguinaldo / décimo / bono"}
         </div>
         <button
           type="button"
@@ -426,10 +445,14 @@ export function BonusTool({
               editMode={editMode}
               editSalary={state.editSalary}
               editStartDate={state.editStartDate}
+              editEndDate={state.editEndDate}
               onSetEditField={(field, value) =>
                 dispatch({
                   type: "setEditField",
-                  field: field as "editSalary" | "editStartDate" | "editEndDate",
+                  field: field as
+                    | "editSalary"
+                    | "editStartDate"
+                    | "editEndDate",
                   value,
                 })
               }
@@ -463,10 +486,7 @@ export function BonusTool({
               result={result}
               fmt={fmt}
               copy={copy}
-              locale={locale}
-              onRestart={() =>
-                dispatch({ type: "reset", countryCode })
-              }
+              onRestart={() => dispatch({ type: "reset", countryCode })}
               onComplete={handleComplete}
               onExportPdf={onExportPdf}
             />
@@ -491,28 +511,24 @@ export function BonusTool({
                 }
                 inputMode={step === "monthlySalary" ? "decimal" : "text"}
                 placeholder={
-                  step === "monthlySalary"
-                    ? copy.askPlaceholder
-                    : copy.endDate
+                  step === "monthlySalary" ? copy.askPlaceholder : copy.endDate
                 }
-                className="h-12 w-full rounded-2xl border border-border bg-card pl-4 pr-4 text-sm text-foreground transition-colors outline-none placeholder:text-muted-foreground focus:border-foreground/30"
+                className="h-12 w-full rounded-2xl border border-border bg-card pr-4 pl-4 text-sm text-foreground transition-colors outline-none placeholder:text-muted-foreground focus:border-foreground/30"
               />
             </div>
           </div>
         )}
 
-        {step !== "welcome" &&
-          step !== "confirm" &&
-          step !== "done" && (
-            <StepNavigation
-              onBack={handleBack}
-              onContinue={handleSubmit}
-              canContinue={!!inputValue.trim()}
-              showBack={step !== "monthlySalary"}
-              backLabel={copy.backToPrevious}
-              continueLabel={copy.send}
-            />
-          )}
+        {step !== "welcome" && step !== "confirm" && step !== "done" && (
+          <StepNavigation
+            onBack={handleBack}
+            onContinue={handleSubmit}
+            canContinue={!!inputValue.trim()}
+            showBack={step !== "monthlySalary"}
+            backLabel={copy.backToPrevious}
+            continueLabel={copy.send}
+          />
+        )}
       </div>
     </div>
   )
@@ -663,6 +679,7 @@ function EditPanel({
   editMode,
   editSalary,
   editStartDate,
+  editEndDate,
   onSetEditField,
   onSetEditMode,
   saveEdit,
@@ -671,6 +688,7 @@ function EditPanel({
   editMode: BonusEditMode
   editSalary: string
   editStartDate: string
+  editEndDate: string
   onSetEditField: (field: string, value: string) => void
   onSetEditMode: (mode: BonusEditMode) => void
   saveEdit: () => void
@@ -691,16 +709,28 @@ function EditPanel({
           />
         </label>
       ) : editMode === "dates" ? (
-        <label className="grid gap-2 text-sm">
-          <span className="text-foreground">{copy.startDate}</span>
-          <input
-            value={editStartDate}
-            onChange={(e) =>
-              onSetEditField("editStartDate", formatDateInput(e.target.value))
-            }
-            className="h-11 rounded-xl border border-border bg-background px-3 text-foreground outline-none focus:border-foreground/30"
-          />
-        </label>
+        <div className="space-y-3">
+          <label className="grid gap-2 text-sm">
+            <span className="text-foreground">{copy.startDate}</span>
+            <input
+              value={editStartDate}
+              onChange={(e) =>
+                onSetEditField("editStartDate", formatDateInput(e.target.value))
+              }
+              className="h-11 rounded-xl border border-border bg-background px-3 text-foreground outline-none focus:border-foreground/30"
+            />
+          </label>
+          <label className="grid gap-2 text-sm">
+            <span className="text-foreground">{copy.endDate}</span>
+            <input
+              value={editEndDate}
+              onChange={(e) =>
+                onSetEditField("editEndDate", formatDateInput(e.target.value))
+              }
+              className="h-11 rounded-xl border border-border bg-background px-3 text-foreground outline-none focus:border-foreground/30"
+            />
+          </label>
+        </div>
       ) : null}
       <div className="mt-4 flex gap-2">
         <button
@@ -726,7 +756,6 @@ function ResultPanel({
   result,
   fmt,
   copy,
-  locale,
   onRestart,
   onComplete,
   onExportPdf,
@@ -734,7 +763,6 @@ function ResultPanel({
   result: ReturnType<typeof calculateBonus>
   fmt: (v: number) => string
   copy: (typeof homeCopy)[Locale]
-  locale: Locale
   onRestart: () => void
   onComplete: () => void
   onExportPdf: () => Promise<void>

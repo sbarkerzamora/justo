@@ -37,6 +37,10 @@ export async function POST(request: Request) {
     )
   }
 
+  if (!bonusTool.countrySupport.includes(parsed.data.countryCode)) {
+    return NextResponse.json({ error: "Pais no soportado" }, { status: 400 })
+  }
+
   const result = calculateBonus(parsed.data)
   return NextResponse.json({ input: parsed.data, result })
 }

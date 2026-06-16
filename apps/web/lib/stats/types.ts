@@ -3,6 +3,7 @@ import type {
   CurrencyCode,
   PayrollFrequency,
   TipoDespido,
+  TerminationCause,
 } from "@justo/core"
 
 export type { TipoDespido }
@@ -14,7 +15,7 @@ export interface AnonymousSettlementRecord {
   frequency: PayrollFrequency
   tenureDays: number
   unusedVacationDays: number
-  terminationType?: TipoDespido
+  terminationType?: TipoDespido | TerminationCause
   grossIncome: number
   totalDeductions: number
   netTotal: number

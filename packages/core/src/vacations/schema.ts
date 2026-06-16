@@ -6,10 +6,10 @@ const countryCodes = [
 
 export const vacationInputSchema = z.object({
   countryCode: z.enum(countryCodes),
-  monthlySalary: z.number().positive(),
-  startDate: z.string().min(10),
-  endDate: z.string().min(10),
-  usedVacationDays: z.number().min(0).max(365),
+  monthlySalary: z.number().positive().finite(),
+  startDate: z.string().regex(/^\d{4}-\d{2}-\d{2}$/),
+  endDate: z.string().regex(/^\d{4}-\d{2}-\d{2}$/),
+  usedVacationDays: z.number().int().min(0).max(365),
   seniorityYears: z.number().min(0).optional(),
 })
 

@@ -37,6 +37,8 @@ export type TerminationStep =
   | "monthlySalary"
   | "startDate"
   | "endDate"
+  | "terminationCause"
+  | "contractType"
   | "confirm"
   | "done"
 
@@ -76,6 +78,8 @@ const initialState = (cc: string): TerminationToolState => ({
     monthlySalary: 0,
     startDate: "",
     endDate: "",
+    terminationCause: "despido_injustificado",
+    contractType: "indeterminado",
   },
   result: null,
   editMode: null,
@@ -87,7 +91,7 @@ const initialState = (cc: string): TerminationToolState => ({
 
 function reducer(
   state: TerminationToolState,
-  action: Action,
+  action: Action
 ): TerminationToolState {
   switch (action.type) {
     case "setStep":
@@ -136,6 +140,8 @@ const terminationSteps: TerminationStep[] = [
   "monthlySalary",
   "startDate",
   "endDate",
+  "terminationCause",
+  "contractType",
   "confirm",
   "done",
 ]
@@ -147,13 +153,42 @@ const stepIndex = (step: TerminationStep) => {
   return idx + 1
 }
 
-const totalSteps = 4
+const totalSteps = 6
+
+const terminationCauseOptions = [
+  { value: "renuncia", es: "Renuncia", en: "Resignation" },
+  {
+    value: "despido_justificado",
+    es: "Despido con causa",
+    en: "Dismissal with cause",
+  },
+  {
+    value: "despido_injustificado",
+    es: "Despido sin causa",
+    en: "Dismissal without cause",
+  },
+  { value: "mutuo_acuerdo", es: "Mutuo acuerdo", en: "Mutual agreement" },
+  { value: "fin_plazo", es: "Fin de plazo", en: "End of fixed term" },
+  { value: "obra_terminada", es: "Obra terminada", en: "Project completed" },
+] as const
+
+const contractTypeOptions = [
+  { value: "indeterminado", es: "Indefinido", en: "Indefinite" },
+  { value: "plazo_fijo", es: "Plazo fijo", en: "Fixed term" },
+  { value: "obra_determinada", es: "Obra determinada", en: "Specific project" },
+  { value: "temporada", es: "Temporada", en: "Seasonal" },
+  { value: "periodo_prueba", es: "Periodo de prueba", en: "Trial period" },
+] as const
 
 const scenarioIcons: Record<string, ReactNode> = {
   renuncia: <IconDoorExit className="size-4 text-amber-500" />,
   despido_justificado: <IconAlertTriangle className="size-4 text-red-500" />,
   despido_injustificado: <IconAlertCircle className="size-4 text-rose-500" />,
   mutuo_acuerdo: <IconHandshake className="size-4 text-blue-500" />,
+  fin_plazo: <IconCalendar className="size-4 text-slate-500" />,
+  obra_terminada: <IconFileText className="size-4 text-slate-500" />,
+  jubilacion: <IconReceipt className="size-4 text-slate-500" />,
+  fallecimiento: <IconAlertTriangle className="size-4 text-slate-500" />,
 }
 
 function IconHandshake({ className }: { className?: string }) {
@@ -200,6 +235,26 @@ const scenarioColors: Record<
     bg: "bg-blue-50",
     badge: "bg-blue-100 text-blue-700",
   },
+  fin_plazo: {
+    border: "border-slate-200",
+    bg: "bg-slate-50",
+    badge: "bg-slate-100 text-slate-700",
+  },
+  obra_terminada: {
+    border: "border-slate-200",
+    bg: "bg-slate-50",
+    badge: "bg-slate-100 text-slate-700",
+  },
+  jubilacion: {
+    border: "border-slate-200",
+    bg: "bg-slate-50",
+    badge: "bg-slate-100 text-slate-700",
+  },
+  fallecimiento: {
+    border: "border-slate-200",
+    bg: "bg-slate-50",
+    badge: "bg-slate-100 text-slate-700",
+  },
 }
 
 export function TerminationTool({
@@ -216,9 +271,7 @@ export function TerminationTool({
   locale: Locale
   currencyLabel: string
   fmt: (v: number) => string
-  onComplete: (
-    messages: { role: "user" | "assistant"; text: string }[],
-  ) => void
+  onComplete: (messages: { role: "user" | "assistant"; text: string }[]) => void
   onCancel: () => void
 }) {
   const copy = homeCopy[locale]
@@ -234,10 +287,18 @@ export function TerminationTool({
         monthlySalary: copy.monthlySalaryQuestion(currencyLabel),
         startDate: copy.startDateQuestion,
         endDate: copy.endDateQuestion,
+        terminationCause:
+          locale === "en"
+            ? "What is the termination cause?"
+            : "¿Cuál es la causa de terminación?",
+        contractType:
+          locale === "en"
+            ? "What type of contract is it?"
+            : "¿Qué tipo de contrato es?",
       }
       return map[s] ?? ""
     },
-    [copy, currencyLabel],
+    [copy, currencyLabel, locale]
   )
 
   const nextStep = (s: TerminationStep): TerminationStep => {
@@ -287,6 +348,10 @@ export function TerminationTool({
       setInputValue("")
       return true
     }
+    if (step === "terminationCause" || step === "contractType") {
+      dispatch({ type: "setStep", step: nextStep(step) })
+      return true
+    }
     return false
   }
 
@@ -297,7 +362,10 @@ export function TerminationTool({
 
   const handleBack = () => {
     const prev = prevStep(step)
-    if (prev) { dispatch({ type: "setStep", step: prev }); setInputValue("") }
+    if (prev) {
+      dispatch({ type: "setStep", step: prev })
+      setInputValue("")
+    }
   }
 
   const runCalculation = () => {
@@ -307,6 +375,8 @@ export function TerminationTool({
         monthlySalary: form.monthlySalary,
         startDate: form.startDate,
         endDate: form.endDate,
+        terminationCause: form.terminationCause,
+        contractType: form.contractType,
       })
       dispatch({ type: "setResult", result })
       dispatch({ type: "setStep", step: "done" })
@@ -331,12 +401,18 @@ export function TerminationTool({
         field: "editSalary",
         value: String(form.monthlySalary || ""),
       })
-    if (action === "dates")
+    if (action === "dates") {
       dispatch({
         type: "setEditField",
         field: "editStartDate",
         value: displayDate(form.startDate),
       })
+      dispatch({
+        type: "setEditField",
+        field: "editEndDate",
+        value: displayDate(form.endDate),
+      })
+    }
   }
 
   const saveEdit = () => {
@@ -350,11 +426,19 @@ export function TerminationTool({
     }
     if (editMode === "dates") {
       const isoStart = toIsoDate(state.editStartDate)
-      if (!isoStart) {
+      const isoEnd = toIsoDate(state.editEndDate)
+      if (!isoStart || !isoEnd) {
         dispatch({ type: "setError", error: copy.invalidDates })
         return
       }
-      dispatch({ type: "patchForm", patch: { startDate: isoStart } })
+      if (isoEnd < isoStart) {
+        dispatch({ type: "setError", error: copy.endBeforeStart })
+        return
+      }
+      dispatch({
+        type: "patchForm",
+        patch: { startDate: isoStart, endDate: isoEnd },
+      })
     }
     dispatch({ type: "setEditMode", editMode: null })
     dispatch({ type: "setError", error: null })
@@ -369,6 +453,8 @@ export function TerminationTool({
         monthlySalary: form.monthlySalary,
         startDate: form.startDate,
         endDate: form.endDate,
+        terminationCause: form.terminationCause,
+        contractType: form.contractType,
       }),
     })
     if (!response.ok) return
@@ -392,6 +478,13 @@ export function TerminationTool({
       { role: "user", text: displayDate(form.startDate) },
       { role: "assistant", text: copy.endDateQuestion },
       { role: "user", text: displayDate(form.endDate) },
+      {
+        role: "assistant",
+        text:
+          locale === "en"
+            ? "Termination cause and contract type captured."
+            : "Causa de terminación y tipo de contrato capturados.",
+      },
     ]
     if (result) {
       const scenariosText = result.scenarios
@@ -407,7 +500,7 @@ export function TerminationTool({
         {
           role: "assistant",
           text: `Comparación de escenarios de terminación (${result.tenureYears} años de antigüedad):\n${scenariosText}`,
-        },
+        }
       )
     }
     onComplete(messages)
@@ -482,6 +575,8 @@ export function TerminationTool({
               { label: copy.salary },
               { label: copy.startDate },
               { label: copy.endDate },
+              { label: locale === "en" ? "Cause" : "Causa" },
+              { label: locale === "en" ? "Contract" : "Contrato" },
             ]}
             startLabel={copy.startButton}
             onStart={() => dispatch({ type: "setStep", step: "monthlySalary" })}
@@ -498,10 +593,14 @@ export function TerminationTool({
               editMode={editMode}
               editSalary={state.editSalary}
               editStartDate={state.editStartDate}
+              editEndDate={state.editEndDate}
               onSetEditField={(field, value) =>
                 dispatch({
                   type: "setEditField",
-                  field: field as "editSalary" | "editStartDate" | "editEndDate",
+                  field: field as
+                    | "editSalary"
+                    | "editStartDate"
+                    | "editEndDate",
                   value,
                 })
               }
@@ -524,11 +623,21 @@ export function TerminationTool({
               monthlySalary={form.monthlySalary}
               startDate={form.startDate}
               endDate={form.endDate}
+              terminationCause={form.terminationCause}
+              contractType={form.contractType}
               fmt={fmt}
+              locale={locale}
               copy={copy}
               onConfirmAction={onConfirmAction}
             />
           </div>
+        ) : step === "terminationCause" || step === "contractType" ? (
+          <ChoicePanel
+            step={step}
+            form={form}
+            locale={locale}
+            onPatch={(patch) => dispatch({ type: "patchForm", patch })}
+          />
         ) : result && step === "done" ? (
           <div className="space-y-4 overflow-y-auto">
             <ResultPanel
@@ -556,33 +665,33 @@ export function TerminationTool({
                   setInputValue(
                     step === "monthlySalary"
                       ? formatCurrencyInput(e.target.value)
-                      : formatDateInput(e.target.value),
+                      : formatDateInput(e.target.value)
                   )
                 }
                 inputMode={step === "monthlySalary" ? "decimal" : "text"}
                 placeholder={
-                  step === "monthlySalary"
-                    ? copy.askPlaceholder
-                    : copy.endDate
+                  step === "monthlySalary" ? copy.askPlaceholder : copy.endDate
                 }
-                className="h-12 w-full rounded-2xl border border-border bg-card pl-4 pr-4 text-sm text-foreground transition-colors outline-none placeholder:text-muted-foreground focus:border-foreground/30"
+                className="h-12 w-full rounded-2xl border border-border bg-card pr-4 pl-4 text-sm text-foreground transition-colors outline-none placeholder:text-muted-foreground focus:border-foreground/30"
               />
             </div>
           </div>
         )}
 
-        {step !== "welcome" &&
-          step !== "confirm" &&
-          step !== "done" && (
-            <StepNavigation
-              onBack={handleBack}
-              onContinue={handleSubmit}
-              canContinue={!!inputValue.trim()}
-              showBack={step !== "monthlySalary"}
-              backLabel={copy.backToPrevious}
-              continueLabel={copy.send}
-            />
-          )}
+        {step !== "welcome" && step !== "confirm" && step !== "done" && (
+          <StepNavigation
+            onBack={handleBack}
+            onContinue={handleSubmit}
+            canContinue={
+              step === "terminationCause" || step === "contractType"
+                ? true
+                : !!inputValue.trim()
+            }
+            showBack={step !== "monthlySalary"}
+            backLabel={copy.backToPrevious}
+            continueLabel={copy.send}
+          />
+        )}
       </div>
     </div>
   )
@@ -600,8 +709,68 @@ const scenarioLabel = (type: string, locale: Locale): string => {
       en: "Unjustified dismissal",
     },
     mutuo_acuerdo: { es: "Mutuo acuerdo", en: "Mutual agreement" },
+    fin_plazo: { es: "Fin de plazo", en: "End of fixed term" },
+    obra_terminada: { es: "Obra terminada", en: "Project completed" },
+    jubilacion: { es: "Jubilación", en: "Retirement" },
+    fallecimiento: { es: "Fallecimiento", en: "Death" },
   }
   return labels[type]?.[locale] ?? type
+}
+
+const contractTypeLabel = (type: string, locale: Locale): string => {
+  const option = contractTypeOptions.find((item) => item.value === type)
+  return option?.[locale] ?? type
+}
+
+function ChoicePanel({
+  step,
+  form,
+  locale,
+  onPatch,
+}: {
+  step: "terminationCause" | "contractType"
+  form: TerminationFormData
+  locale: Locale
+  onPatch: (patch: Partial<TerminationFormData>) => void
+}) {
+  return (
+    <div className="flex h-full flex-col items-center justify-center gap-6 px-2">
+      <div className="w-full max-w-xl rounded-2xl border border-border bg-card p-6 shadow-sm motion-safe:animate-in motion-safe:duration-200 motion-safe:fade-in motion-safe:slide-in-from-bottom-1">
+        <p className="text-base font-medium text-foreground">
+          {step === "terminationCause"
+            ? locale === "en"
+              ? "What is the termination cause?"
+              : "¿Cuál es la causa de terminación?"
+            : locale === "en"
+              ? "What type of contract is it?"
+              : "¿Qué tipo de contrato es?"}
+        </p>
+        <div className="mt-4 grid gap-2 sm:grid-cols-2">
+          {step === "terminationCause"
+            ? terminationCauseOptions.map((option) => (
+                <button
+                  key={option.value}
+                  type="button"
+                  onClick={() => onPatch({ terminationCause: option.value })}
+                  className={`rounded-xl border px-3 py-2 text-left text-sm transition-all focus-visible:ring-2 focus-visible:ring-primary/30 focus-visible:outline-none ${form.terminationCause === option.value ? "border-primary bg-primary text-primary-foreground" : "border-border bg-card text-foreground hover:bg-accent"}`}
+                >
+                  {option[locale]}
+                </button>
+              ))
+            : contractTypeOptions.map((option) => (
+                <button
+                  key={option.value}
+                  type="button"
+                  onClick={() => onPatch({ contractType: option.value })}
+                  className={`rounded-xl border px-3 py-2 text-left text-sm transition-all focus-visible:ring-2 focus-visible:ring-primary/30 focus-visible:outline-none ${form.contractType === option.value ? "border-primary bg-primary text-primary-foreground" : "border-border bg-card text-foreground hover:bg-accent"}`}
+                >
+                  {option[locale]}
+                </button>
+              ))}
+        </div>
+      </div>
+    </div>
+  )
 }
 
 function OnboardingPanel({
@@ -681,14 +850,20 @@ function ConfirmPanel({
   monthlySalary,
   startDate,
   endDate,
+  terminationCause,
+  contractType,
   fmt,
+  locale,
   copy,
   onConfirmAction,
 }: {
   monthlySalary: number
   startDate: string
   endDate: string
+  terminationCause: string
+  contractType: string
   fmt: (v: number) => string
+  locale: Locale
   copy: (typeof homeCopy)[Locale]
   onConfirmAction: (action: "confirm" | "salary" | "dates") => void
 }) {
@@ -713,6 +888,16 @@ function ConfirmPanel({
           icon={<IconCalendar className="size-4 text-muted-foreground" />}
           label={copy.endDate}
           value={displayDate(endDate)}
+        />
+        <SummaryRow
+          icon={<IconDoorExit className="size-4 text-muted-foreground" />}
+          label={locale === "en" ? "Termination cause" : "Causa de terminación"}
+          value={scenarioLabel(terminationCause, locale)}
+        />
+        <SummaryRow
+          icon={<IconFileText className="size-4 text-muted-foreground" />}
+          label={locale === "en" ? "Contract type" : "Tipo de contrato"}
+          value={contractTypeLabel(contractType, locale)}
         />
       </div>
       <div className="mt-5 flex flex-wrap gap-2">
@@ -749,6 +934,7 @@ function EditPanel({
   editMode,
   editSalary,
   editStartDate,
+  editEndDate,
   onSetEditField,
   onSetEditMode,
   saveEdit,
@@ -757,6 +943,7 @@ function EditPanel({
   editMode: TerminationEditMode
   editSalary: string
   editStartDate: string
+  editEndDate: string
   onSetEditField: (field: string, value: string) => void
   onSetEditMode: (mode: TerminationEditMode) => void
   saveEdit: () => void
@@ -777,16 +964,28 @@ function EditPanel({
           />
         </label>
       ) : editMode === "dates" ? (
-        <label className="grid gap-2 text-sm">
-          <span className="text-foreground">{copy.startDate}</span>
-          <input
-            value={editStartDate}
-            onChange={(e) =>
-              onSetEditField("editStartDate", formatDateInput(e.target.value))
-            }
-            className="h-11 rounded-xl border border-border bg-background px-3 text-foreground outline-none focus:border-foreground/30"
-          />
-        </label>
+        <div className="space-y-3">
+          <label className="grid gap-2 text-sm">
+            <span className="text-foreground">{copy.startDate}</span>
+            <input
+              value={editStartDate}
+              onChange={(e) =>
+                onSetEditField("editStartDate", formatDateInput(e.target.value))
+              }
+              className="h-11 rounded-xl border border-border bg-background px-3 text-foreground outline-none focus:border-foreground/30"
+            />
+          </label>
+          <label className="grid gap-2 text-sm">
+            <span className="text-foreground">{copy.endDate}</span>
+            <input
+              value={editEndDate}
+              onChange={(e) =>
+                onSetEditField("editEndDate", formatDateInput(e.target.value))
+              }
+              className="h-11 rounded-xl border border-border bg-background px-3 text-foreground outline-none focus:border-foreground/30"
+            />
+          </label>
+        </div>
       ) : null}
       <div className="mt-4 flex flex-wrap gap-2">
         <button
@@ -817,20 +1016,22 @@ function ScenarioCard({
   scenario: TerminationScenario
   fmt: (v: number) => string
   locale: Locale
-  copy: typeof homeCopy["es"] | typeof homeCopy["en"]
+  copy: (typeof homeCopy)["es"] | (typeof homeCopy)["en"]
 }) {
   const colors = scenarioColors[scenario.type] ?? {
     border: "border-border",
     bg: "bg-card",
     badge: "bg-muted text-muted-foreground",
   }
-  const icon = scenarioIcons[scenario.type] ?? <IconDoorExit className="size-4" />
+  const icon = scenarioIcons[scenario.type] ?? (
+    <IconDoorExit className="size-4" />
+  )
 
   return (
     <div
       className={`rounded-2xl border p-4 ${colors.border} ${colors.bg} shadow-sm`}
     >
-      <div className="flex items-start justify-between mb-1">
+      <div className="mb-1 flex items-start justify-between">
         <div className="flex items-center gap-2">
           {icon}
           <h4 className="text-sm font-semibold text-foreground">
@@ -851,7 +1052,7 @@ function ScenarioCard({
       </div>
 
       {!scenario.applicable ? (
-        <p className="text-xs text-muted-foreground mt-2">
+        <p className="mt-2 text-xs text-muted-foreground">
           {scenario.note ?? copy.scenarioFallback}
         </p>
       ) : (
@@ -914,6 +1115,10 @@ function ResultPanel({
     "despido_justificado",
     "despido_injustificado",
     "mutuo_acuerdo",
+    "fin_plazo",
+    "obra_terminada",
+    "jubilacion",
+    "fallecimiento",
   ]
 
   return (
@@ -930,7 +1135,7 @@ function ResultPanel({
                 ? "Termination scenarios comparison"
                 : "Comparación de escenarios de terminación"}
             </h3>
-            <p className="text-xs text-muted-foreground mt-0.5">
+            <p className="mt-0.5 text-xs text-muted-foreground">
               {locale === "en"
                 ? `Based on ${result.tenureYears} years of seniority`
                 : `Basado en ${result.tenureYears} años de antigüedad`}

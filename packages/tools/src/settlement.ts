@@ -6,6 +6,7 @@ import {
   calculateElSalvadorSettlement,
   calculateGuatemalaSettlement,
   calculateHondurasSettlement,
+  applySettlementInputAdjustments,
   calculateMexicoSettlement,
   calculateNicaraguaSettlement,
   calculatePanamaSettlement,
@@ -50,7 +51,9 @@ const settlementCountryOverrides: Partial<Record<CountryCode, SOverride>> = {
   gt: {
     longDescription:
       "Calcula liquidación laboral en Guatemala según el Decreto 1441 (Código de Trabajo). Incluye indemnización por tiempo servido (Arts. 78, 82), vacaciones (Art. 130), aguinaldo (Decreto 76-78), bono 14 (Decreto 42-92) y deducciones (IGSS, ISR).",
-    legalReferences: ["Decreto 1441 Arts. 78, 82, 130; Decreto 76-78; Decreto 42-92"],
+    legalReferences: [
+      "Decreto 1441 Arts. 78, 82, 130; Decreto 76-78; Decreto 42-92",
+    ],
   },
   hn: {
     longDescription:
@@ -70,17 +73,23 @@ const settlementCountryOverrides: Partial<Record<CountryCode, SOverride>> = {
   mx: {
     longDescription:
       "Calcula liquidación laboral en México según la Ley Federal del Trabajo. Incluye indemnización (Arts. 48-50), vacaciones (Arts. 76, 77, 78, 80), aguinaldo (Art. 87) y deducciones (IMSS, ISR).",
-    legalReferences: ["Ley Federal del Trabajo Arts. 48-50, 76, 77, 78, 80, 87"],
+    legalReferences: [
+      "Ley Federal del Trabajo Arts. 48-50, 76, 77, 78, 80, 87",
+    ],
   },
   co: {
     longDescription:
       "Calcula liquidación laboral en Colombia según el Código Sustantivo del Trabajo. Incluye indemnización (Art. 64), cesantías (Arts. 249, 253), vacaciones (Arts. 186, 189), prima de servicios (Arts. 306, 307) y deducciones (EPS, pensión).",
-    legalReferences: ["Código Sustantivo del Trabajo Arts. 64, 186, 189, 249, 253, 306, 307"],
+    legalReferences: [
+      "Código Sustantivo del Trabajo Arts. 64, 186, 189, 249, 253, 306, 307",
+    ],
   },
   pe: {
     longDescription:
       "Calcula liquidación laboral en Perú según la Ley General de Trabajo. Incluye indemnización (Art. 167), CTS (Art. 219), vacaciones (Arts. 285, 289), gratificaciones (Arts. 206-208) y deducciones (ONP, AFP).",
-    legalReferences: ["Ley General de Trabajo Arts. 167, 206-208, 219, 285, 289"],
+    legalReferences: [
+      "Ley General de Trabajo Arts. 167, 206-208, 219, 285, 289",
+    ],
   },
   cl: {
     longDescription:
@@ -90,11 +99,16 @@ const settlementCountryOverrides: Partial<Record<CountryCode, SOverride>> = {
   ar: {
     longDescription:
       "Calcula liquidación laboral en Argentina según la Ley 20.744 (Ley de Contrato de Trabajo). Incluye indemnización (Arts. 245, 246), preaviso (Arts. 231-233), SAC proporcional (Art. 123), vacaciones (Arts. 150, 151, 153, 155) y deducciones (INSS, IR).",
-    legalReferences: ["Ley 20.744 Arts. 123, 150, 151, 153, 155, 231-233, 245, 246"],
+    legalReferences: [
+      "Ley 20.744 Arts. 123, 150, 151, 153, 155, 231-233, 245, 246",
+    ],
   },
 }
 
-export const settlementTool: CalculationTool<SettlementInput, SettlementResult> = {
+export const settlementTool: CalculationTool<
+  SettlementInput,
+  SettlementResult
+> = {
   id: "settlement",
   slug: "liquidacion-laboral",
   name: "Liquidación laboral",
@@ -114,7 +128,11 @@ export const settlementTool: CalculationTool<SettlementInput, SettlementResult> 
     "Fecha de inicio",
     "Fecha de salida",
     "Días de vacaciones pendientes",
-    "Tipo de terminación, cuando aplique",
+    "Causa de terminación",
+    "Tipo de contrato",
+    "Salario pendiente adicional (opcional)",
+    "Horas extra/comisiones pendientes (opcional)",
+    "Prestaciones ya pagadas u otras deducciones (opcional)",
   ],
   outputSummary: [
     "Ingresos",
@@ -133,7 +151,10 @@ export const settlementTool: CalculationTool<SettlementInput, SettlementResult> 
   corpusVersion: "per-result",
   disclaimer:
     "Resultado informativo generado con reglas determinísticas y corpus legal versionado. No sustituye asesoría legal o contable profesional.",
-  countryOverrides: settlementCountryOverrides as Record<CountryCode, { longDescription: string; legalReferences: readonly string[] }>,
+  countryOverrides: settlementCountryOverrides as Record<
+    CountryCode,
+    { longDescription: string; legalReferences: readonly string[] }
+  >,
 }
 
 export function calculateSettlement(input: SettlementInput): SettlementResult {
@@ -143,5 +164,5 @@ export function calculateSettlement(input: SettlementInput): SettlementResult {
     throw new Error(`Pais no soportado: ${input.countryCode}`)
   }
 
-  return calculator(input)
+  return applySettlementInputAdjustments(input, calculator(input))
 }

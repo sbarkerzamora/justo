@@ -35,6 +35,10 @@ export async function POST(request: Request) {
     return NextResponse.json({ error: "Datos invalidos para PDF" }, { status: 400 })
   }
 
+  if (!bonusTool.countrySupport.includes(parsed.data.countryCode)) {
+    return NextResponse.json({ error: "Pais no soportado para PDF" }, { status: 400 })
+  }
+
   const result = calculateBonus(parsed.data)
   const bytes = await buildBonusPdf(parsed.data, result)
 

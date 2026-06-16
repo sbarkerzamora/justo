@@ -43,6 +43,10 @@ export async function POST(request: Request) {
     )
   }
 
+  if (!terminationTool.countrySupport.includes(parsed.data.countryCode)) {
+    return NextResponse.json({ error: "Pais no soportado para PDF" }, { status: 400 })
+  }
+
   const result = calculateTermination(parsed.data)
   const bytes = await buildTerminationPdf(parsed.data, result)
 

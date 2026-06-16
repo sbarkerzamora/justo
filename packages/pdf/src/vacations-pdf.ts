@@ -6,33 +6,13 @@ import {
   drawLine,
   drawBox,
   drawSectionTitle,
+  drawIcon,
   drawKeyValue,
   drawSignatureBoxes,
   drawFooter,
+  money,
+  COLORS,
 } from "./pdf-helpers"
-
-const currencyLocaleMap: Record<string, string> = {
-  NIO: "es-NI",
-  USD: "es-SV",
-  GTQ: "es-GT",
-  HNL: "es-HN",
-  CRC: "es-CR",
-  MXN: "es-MX",
-  COP: "es-CO",
-  PEN: "es-PE",
-  ARS: "es-AR",
-  CLP: "es-CL",
-}
-
-const currencyFormatters: Record<string, Intl.NumberFormat> = Object.fromEntries(
-  Object.entries(currencyLocaleMap).map(([curr, locale]) => [
-    curr,
-    new Intl.NumberFormat(locale, { style: "currency", currency: curr, minimumFractionDigits: 2 }),
-  ]),
-)
-
-const money = (amount: number, currencyCode: string) =>
-  (currencyFormatters[currencyCode] ?? currencyFormatters.NIO).format(amount)
 
 export const buildVacationsPdf = async (
   input: VacationInput,
@@ -48,109 +28,43 @@ export const buildVacationsPdf = async (
   const right = W - 48
   let y = H - 48
 
-  // ── HEADER ──
-  drawText(page, "VACACIONES", left, y, { size: 24, bold: true, fontSet })
-  y -= 32
-  drawText(page, `Reporte generado automaticamente · ${result.currency}`, left, y, {
-    size: 10,
-    color: [0.55, 0.55, 0.55],
-    fontSet,
+  drawIcon(page, "◆", "VACACIONES", left, y, fontSet)
+  y -= 24
+  drawText(page, `${result.currency} · ${new Date(result.generatedAt).toLocaleString()})`, left, y, {
+    size: 9, color: COLORS.muted, fontSet,
   })
-
-  const dateStr = new Date(result.generatedAt).toLocaleString("es-NI")
-  const corpusStr = `Corpus: ${result.legalCorpusVersion}`
-  drawText(page, dateStr, right, y + 16, { size: 9, color: [0.55, 0.55, 0.55], align: "right", fontSet })
-  drawText(page, corpusStr, right, y, { size: 9, color: [0.55, 0.55, 0.55], align: "right", fontSet })
-
-  y -= 12
-  drawLine(page, left, y, right, y, { color: [0.1, 0.1, 0.1], width: 1 })
-
-  // ── DATOS DEL CASO ──
-  y = drawSectionTitle(page, "Datos del caso", left, y - 12, fontSet)
-  const cardY = y + 4
-  const cardH = 72
-  drawBox(page, left - 4, cardY - cardH + 4, right - left + 8, cardH, {
-    borderColor: [0.85, 0.85, 0.85],
-    borderWidth: 1,
-    fillColor: [0.98, 0.98, 0.98],
+  drawText(page, `Corpus: ${result.legalCorpusVersion}`, right, y, {
+    size: 9, color: COLORS.muted, align: "right", fontSet,
   })
-  y = cardY - 10
-  y = drawKeyValue(page, "Salario mensual:", money(input.monthlySalary, result.currency), left, y, fontSet)
-  y = drawKeyValue(page, "Periodo:", `${input.startDate} -> ${input.endDate}`, left, y, fontSet)
-  y = drawKeyValue(page, "Dias gozados:", `${input.usedVacationDays} dias`, left, y, fontSet)
+  y -= 10
+  drawLine(page, left, y, right, y, { color: COLORS.border, width: 0.5 })
+
+  y = drawSectionTitle(page, "Datos del caso", left, y - 8, fontSet, { compact: true })
+  drawBox(page, left, y - 56, right - left, 54, { fillColor: COLORS.bg })
   y -= 4
+  y = drawKeyValue(page, "Salario mensual:", money(input.monthlySalary, result.currency), left, y, fontSet)
+  y = drawKeyValue(page, "Periodo:", `${input.startDate} → ${input.endDate}`, left, y, fontSet)
+  y = drawKeyValue(page, "Dias gozados:", `${input.usedVacationDays} dias`, left, y, fontSet)
 
-  // ── RESULTADO ──
-  y = drawSectionTitle(page, "Resultado", left, y - 8, fontSet)
-
-  const netBoxH = 56
-  const netBoxY = y - netBoxH
-  drawBox(page, left, netBoxY, right - left, netBoxH, {
-    borderColor: [0.1, 0.1, 0.1],
-    borderWidth: 1.5,
-    fillColor: [1, 1, 1],
+  y = drawSectionTitle(page, "Resultado", left, y - 4, fontSet, { compact: true })
+  drawBox(page, left, y - 52, right - left, 48, { borderColor: COLORS.border, borderWidth: 1, fillColor: COLORS.white })
+  drawText(page, "MONTO ESTIMADO", left + 16, y - 14, { size: 10, bold: true, fontSet })
+  drawText(page, money(result.amount, result.currency), right - 16, y - 18, { size: 18, bold: true, color: [0.2, 0.4, 0.8], align: "right", fontSet })
+  drawText(page, `Acumulados: ${result.accruedVacationDays} · Pendientes: ${result.pendingVacationDays} · Diario: ${money(result.dailySalary, result.currency)}`, left + 16, y - 30, {
+    size: 8, color: COLORS.muted, fontSet,
   })
-  drawText(page, "MONTO ESTIMADO", left + 16, netBoxY + 34, { size: 11, bold: true, fontSet })
-  const amountStr = money(result.amount, result.currency)
-  drawText(page, amountStr, right - 16, netBoxY + 28, { size: 20, bold: true, align: "right", fontSet })
+  y = y - 56
 
-  drawText(page, `Dias acumulados: ${result.accruedVacationDays}`, left + 16, netBoxY + 10, {
-    size: 9,
-    color: [0.55, 0.55, 0.55],
-    fontSet,
-  })
-  drawText(page, `Dias pendientes: ${result.pendingVacationDays}`, left + 220, netBoxY + 10, {
-    size: 9,
-    color: [0.55, 0.55, 0.55],
-    fontSet,
-  })
-  drawText(page, `Salario diario: ${money(result.dailySalary, result.currency)}`, left + 380, netBoxY + 10, {
-    size: 9,
-    color: [0.55, 0.55, 0.55],
-    fontSet,
-  })
+  y = drawSectionTitle(page, "Detalle", left, y - 4, fontSet, { compact: true })
+  drawBox(page, left, y - 62, right - left, 58, { fillColor: COLORS.bg })
+  drawText(page, "Formula aplicada", left + 8, y - 10, { size: 9, color: COLORS.muted, fontSet })
+  drawText(page, result.formula, left + 8, y - 24, { size: 9, bold: true, fontSet })
+  drawText(page, "Referencia legal", left + 8, y - 40, { size: 9, color: COLORS.muted, fontSet })
+  drawText(page, result.legalReference, left + 8, y - 54, { size: 8, fontSet })
+  y = y - 66
 
-  y = netBoxY - 12
-
-  // ── DETALLE ──
-  y = drawSectionTitle(page, "Detalle", left, y - 8, fontSet)
-
-  const detailCardH = 80
-  const detailCardY = y - detailCardH
-  drawBox(page, left - 4, detailCardY + 4, right - left + 8, detailCardH, {
-    borderColor: [0.85, 0.85, 0.85],
-    borderWidth: 1,
-    fillColor: [0.98, 0.98, 0.98],
-  })
-
-  drawText(page, "Formula aplicada", left, detailCardY + detailCardH - 14, {
-    size: 10,
-    color: [0.45, 0.45, 0.45],
-    fontSet,
-  })
-  drawText(page, result.formula, left, detailCardY + detailCardH - 32, {
-    size: 10,
-    bold: true,
-    fontSet,
-  })
-
-  drawText(page, "Referencia legal", left, detailCardY + detailCardH - 52, {
-    size: 10,
-    color: [0.45, 0.45, 0.45],
-    fontSet,
-  })
-  drawText(page, result.legalReference, left, detailCardY + detailCardH - 68, {
-    size: 9,
-    fontSet,
-  })
-
-  y = detailCardY - 12
-
-  // ── FIRMAS ──
-  y = drawSectionTitle(page, "Firmas", left, y - 8, fontSet)
+  y = drawSectionTitle(page, "Firmas", left, y - 4, fontSet, { compact: true })
   y = drawSignatureBoxes(page, y, left, fontSet)
-
-  // ── FOOTER ──
   drawFooter(page, y, left, right, fontSet)
 
   return pdf.save()
