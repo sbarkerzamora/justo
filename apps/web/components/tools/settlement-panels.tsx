@@ -72,60 +72,6 @@ function ActionButton({
   )
 }
 
-export function ProgressHeader({
-  cc,
-  countryName,
-  locale,
-  copy,
-  step,
-  stepIdx,
-}: {
-  cc: string
-  countryName: string
-  locale: Locale
-  copy: (typeof homeCopy)[Locale]
-  step: FlowStep
-  stepIdx: number
-}) {
-  return (
-    <div className="mb-3 space-y-2 motion-safe:animate-in motion-safe:duration-200 motion-safe:fade-in motion-safe:slide-in-from-top-1 max-sm:mb-2">
-      <div className="mb-1 flex items-center justify-between text-xs text-muted-foreground">
-        <span>{copy.progressStep(stepIdx)}</span>
-        <span className="max-sm:hidden">
-          {step === "done"
-            ? copy.result
-            : stepLabels[locale][stepOrder[stepIdx - 1]]}
-        </span>
-        <span className="sm:hidden">
-          {step === "done" ? "OK" : locale === "en" ? `S${stepIdx}` : `P${stepIdx}`}
-        </span>
-      </div>
-      <div className="h-2 rounded-full bg-muted">
-        <div
-          className="h-2 rounded-full bg-primary transition-all duration-300"
-          style={{ width: `${(stepIdx / 8) * 100}%` }}
-        />
-      </div>
-      <div className="flex items-center gap-1.5 text-xs text-muted-foreground">
-        <Image
-          src={`https://flagcdn.com/w40/${cc}.png`}
-          alt={countryName}
-          width={14}
-          height={10}
-          className="h-2.5 w-3.5 rounded-[1px] border border-border object-cover"
-        />
-        <span>{copy.calculatingUnder(countryName)}</span>
-        <Link
-          href="/docs"
-          className="ml-auto underline underline-offset-2 hover:text-foreground"
-        >
-          {copy.legalDocs}
-        </Link>
-      </div>
-    </div>
-  )
-}
-
 export function FrequencyPicker({
   onSelect,
   copy,
