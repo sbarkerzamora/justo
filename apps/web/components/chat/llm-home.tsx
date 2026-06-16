@@ -1126,6 +1126,8 @@ function WelcomeEmptyState({
             alt={countryName}
             width={14}
             height={10}
+            sizes="14px"
+            loading="lazy"
             className="h-2.5 w-3.5 rounded-[1px] border border-border object-cover"
           />
           <span>{copy.laborAssistant}</span>

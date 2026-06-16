@@ -32,7 +32,6 @@ import {
   parseCurrencyInput,
 } from "@/components/tools/input-formatters"
 import { StepNavigation } from "@/components/tools/step-navigation"
-import { LegalFooter } from "@/components/tools/legal-footer"
 
 export type VacationStep =
   | "welcome"
@@ -437,6 +436,8 @@ export function VacationsTool({
             alt={countryName}
             width={14}
             height={10}
+            sizes="14px"
+            loading="lazy"
             className="h-2.5 w-3.5 rounded-[1px] border border-border object-cover"
           />
           <span>{copy.calculatingUnder(countryName)}</span>
@@ -448,7 +449,7 @@ export function VacationsTool({
           </Link>
         </div>
       </div>
-      <LegalFooter countryCode={countryCode} countryName={countryName} locale={locale} />
+
       <div className="min-h-0 flex-1 py-2">
         {step === "welcome" ? (
           <OnboardingPanel
