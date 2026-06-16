@@ -17,7 +17,10 @@ import {
 } from "@justo/core"
 import type { CalculationTool, JustoToolCountryOverride } from "./types"
 
-const preavisoCalculators: Record<CountryCode, (input: PreavisoInput) => PreavisoResult> = {
+const preavisoCalculators: Record<
+  CountryCode,
+  (input: PreavisoInput) => PreavisoResult
+> = {
   ar: calculateArgentinaPreaviso,
   cl: calculateChilePreaviso,
   co: calculateColombiaPreaviso,
@@ -37,7 +40,9 @@ export function calculatePreaviso(input: PreavisoInput): PreavisoResult {
   return calc(input)
 }
 
-const countryOverrides: Partial<Record<CountryCode, { corpusVersion: string }>> = {
+const countryOverrides: Partial<
+  Record<CountryCode, { corpusVersion: string }>
+> = {
   ar: { corpusVersion: "ar-v0.1.0" },
   cl: { corpusVersion: "cl-v0.1.0" },
   co: { corpusVersion: "co-v0.1.0" },
@@ -61,23 +66,40 @@ export const preavisoTool: CalculationTool<PreavisoInput, PreavisoResult> = {
   category: "calculation",
   availability: "available",
   countrySupport: [
-    "ar", "cl", "co", "cr", "gt", "hn", "mx", "ni", "pa", "pe", "sv",
+    "ar",
+    "cl",
+    "co",
+    "cr",
+    "gt",
+    "hn",
+    "mx",
+    "ni",
+    "pa",
+    "pe",
+    "sv",
   ] as const,
   inputRequirements: [
     "País",
     "Salario mensual",
-    "Fecha de inicio",
-    "Fecha de fin",
     "Años de antigüedad",
+    "Causa de terminación",
+    "Tipo de contrato",
+    "Preaviso otorgado por escrito",
+    "Días de preaviso otorgados",
+    "Sustitución en dinero",
   ] as const,
-  outputSummary: ["Días de preaviso", "Monto del preaviso", "Referencia legal"] as const,
-  legalReferences: [
-    "Leyes laborales de cada país",
+  outputSummary: [
+    "Días de preaviso",
+    "Monto del preaviso",
+    "Referencia legal",
   ] as const,
+  legalReferences: ["Leyes laborales de cada país"] as const,
   corpusVersion: "v0.1.0",
   disclaimer:
     "Herramienta informativa. Los cálculos de preaviso pueden variar según el tipo de contrato y causales específicas. Consulte con un abogado laboral para casos concretos.",
   inputSchema: PreavisoInputSchema,
   calculate: calculatePreaviso,
-  countryOverrides: countryOverrides as Partial<Record<CountryCode, JustoToolCountryOverride>>,
+  countryOverrides: countryOverrides as Partial<
+    Record<CountryCode, JustoToolCountryOverride>
+  >,
 }

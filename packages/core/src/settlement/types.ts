@@ -1,8 +1,31 @@
+import type { JurisdictionContractType, TerminationCause } from "../shared"
+
 export type PayrollFrequency = "mensual" | "quincenal" | "semanal"
 
-export type CountryCode = "ni" | "gt" | "hn" | "sv" | "cr" | "pa" | "mx" | "co" | "pe" | "ar" | "cl"
+export type CountryCode =
+  | "ni"
+  | "gt"
+  | "hn"
+  | "sv"
+  | "cr"
+  | "pa"
+  | "mx"
+  | "co"
+  | "pe"
+  | "ar"
+  | "cl"
 
-export type CurrencyCode = "NIO" | "GTQ" | "HNL" | "USD" | "CRC" | "MXN" | "COP" | "PEN" | "ARS" | "CLP"
+export type CurrencyCode =
+  | "NIO"
+  | "GTQ"
+  | "HNL"
+  | "USD"
+  | "CRC"
+  | "MXN"
+  | "COP"
+  | "PEN"
+  | "ARS"
+  | "CLP"
 
 export type TipoDespido =
   | "renuncia"
@@ -20,6 +43,13 @@ export interface SettlementInput {
   unusedVacationDays: number
   startDate: string
   endDate: string
+  terminationCause: TerminationCause
+  contractType: JurisdictionContractType
+  pendingSalaryAmount?: number
+  pendingOvertimeAmount?: number
+  pendingBonusAmount?: number
+  benefitsAlreadyPaidAmount?: number
+  otherDeductionsAmount?: number
   terminationType?: TipoDespido
 }
 

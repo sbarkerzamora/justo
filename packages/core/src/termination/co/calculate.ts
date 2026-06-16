@@ -3,7 +3,7 @@ import type { TerminationInput, TerminationResult } from "../types"
 import { getColombiaTerminationParams } from "./legal-params"
 
 export const calculateColombiaTermination = (
-  input: TerminationInput,
+  input: TerminationInput
 ): TerminationResult => {
-  return buildTermination(input, getColombiaTerminationParams())
+  return buildTermination(input, getColombiaTerminationParams(input))
 }

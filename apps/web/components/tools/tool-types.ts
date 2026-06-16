@@ -8,6 +8,9 @@ export const stepOrder: FlowStep[] = [
   "endDate",
   "unusedVacationDays",
   "frequency",
+  "terminationCause",
+  "contractType",
+  "adjustments",
   "confirm",
 ]
 
@@ -20,6 +23,9 @@ export type FlowStep =
   | "endDate"
   | "unusedVacationDays"
   | "frequency"
+  | "terminationCause"
+  | "contractType"
+  | "adjustments"
   | "confirm"
   | "done"
 
@@ -34,6 +40,26 @@ export type SettlementForm = {
   unusedVacationDays: number
   startDate: string
   endDate: string
+  terminationCause:
+    | "renuncia"
+    | "despido_justificado"
+    | "despido_injustificado"
+    | "mutuo_acuerdo"
+    | "fin_plazo"
+    | "obra_terminada"
+    | "jubilacion"
+    | "fallecimiento"
+  contractType:
+    | "indeterminado"
+    | "plazo_fijo"
+    | "obra_determinada"
+    | "temporada"
+    | "periodo_prueba"
+  pendingSalaryAmount?: number
+  pendingOvertimeAmount?: number
+  pendingBonusAmount?: number
+  benefitsAlreadyPaidAmount?: number
+  otherDeductionsAmount?: number
 }
 
 export type VacationFormData = {
@@ -72,6 +98,21 @@ export type TerminationFormData = {
   monthlySalary: number
   startDate: string
   endDate: string
+  terminationCause:
+    | "renuncia"
+    | "despido_justificado"
+    | "despido_injustificado"
+    | "mutuo_acuerdo"
+    | "fin_plazo"
+    | "obra_terminada"
+    | "jubilacion"
+    | "fallecimiento"
+  contractType:
+    | "indeterminado"
+    | "plazo_fijo"
+    | "obra_determinada"
+    | "temporada"
+    | "periodo_prueba"
 }
 
 export type ContractFormData = {
@@ -101,6 +142,24 @@ export type PreavisoFormData = {
   countryCode: string
   monthlySalary: number
   tenureYears: number
+  terminationCause:
+    | "renuncia"
+    | "despido_justificado"
+    | "despido_injustificado"
+    | "mutuo_acuerdo"
+    | "fin_plazo"
+    | "obra_terminada"
+    | "jubilacion"
+    | "fallecimiento"
+  contractType:
+    | "indeterminado"
+    | "plazo_fijo"
+    | "obra_determinada"
+    | "temporada"
+    | "periodo_prueba"
+  noticeGivenInWriting: boolean
+  noticeDaysGiven?: number
+  replaceNoticeWithPayment: boolean
 }
 
 export type SettlementApiResponse = {

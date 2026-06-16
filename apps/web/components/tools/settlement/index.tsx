@@ -51,6 +51,9 @@ export type SettlementStep =
   | "endDate"
   | "unusedVacationDays"
   | "frequency"
+  | "terminationCause"
+  | "contractType"
+  | "adjustments"
   | "confirm"
   | "done"
 
@@ -73,7 +76,11 @@ type Action =
   | { type: "patchForm"; patch: Partial<SettlementForm> }
   | { type: "setResult"; result: ReturnType<typeof calculateSettlement> | null }
   | { type: "setEditMode"; editMode: EditMode }
-  | { type: "setEditField"; field: "editSalary" | "editVacations" | "editStartDate" | "editEndDate"; value: string }
+  | {
+      type: "setEditField"
+      field: "editSalary" | "editVacations" | "editStartDate" | "editEndDate"
+      value: string
+    }
   | { type: "setError"; error: string | null }
   | { type: "reset"; countryCode: string }
 
@@ -88,6 +95,13 @@ const initialState = (cc: string): SettlementToolState => ({
     unusedVacationDays: 0,
     startDate: "",
     endDate: "",
+    terminationCause: "despido_injustificado",
+    contractType: "indeterminado",
+    pendingSalaryAmount: 0,
+    pendingOvertimeAmount: 0,
+    pendingBonusAmount: 0,
+    benefitsAlreadyPaidAmount: 0,
+    otherDeductionsAmount: 0,
   },
   result: null,
   editMode: null,
@@ -98,7 +112,10 @@ const initialState = (cc: string): SettlementToolState => ({
   error: null,
 })
 
-function reducer(state: SettlementToolState, action: Action): SettlementToolState {
+function reducer(
+  state: SettlementToolState,
+  action: Action
+): SettlementToolState {
   switch (action.type) {
     case "setStep":
       return { ...state, step: action.step }
@@ -126,7 +143,11 @@ const toIsoDate = (displayDate: string) => {
   const mo = Number(m[2])
   const y = Number(m[3])
   const dt = new Date(Date.UTC(y, mo - 1, d))
-  if (dt.getUTCFullYear() !== y || dt.getUTCMonth() + 1 !== mo || dt.getUTCDate() !== d)
+  if (
+    dt.getUTCFullYear() !== y ||
+    dt.getUTCMonth() + 1 !== mo ||
+    dt.getUTCDate() !== d
+  )
     return null
   return `${y.toString().padStart(4, "0")}-${mo.toString().padStart(2, "0")}-${d.toString().padStart(2, "0")}`
 }
@@ -150,6 +171,39 @@ const prevStep = (s: SettlementStep): SettlementStep | null => {
   if (idx <= 0) return "welcome"
   return stepOrder[idx - 1] as SettlementStep
 }
+
+const terminationCauseOptions = [
+  { value: "renuncia", es: "Renuncia", en: "Resignation" },
+  {
+    value: "despido_justificado",
+    es: "Despido con causa",
+    en: "Dismissal with cause",
+  },
+  {
+    value: "despido_injustificado",
+    es: "Despido sin causa",
+    en: "Dismissal without cause",
+  },
+  { value: "mutuo_acuerdo", es: "Mutuo acuerdo", en: "Mutual agreement" },
+  { value: "fin_plazo", es: "Fin de plazo", en: "End of fixed term" },
+  { value: "obra_terminada", es: "Obra terminada", en: "Project completed" },
+] as const
+
+const contractTypeOptions = [
+  { value: "indeterminado", es: "Indefinido", en: "Indefinite" },
+  { value: "plazo_fijo", es: "Plazo fijo", en: "Fixed term" },
+  { value: "obra_determinada", es: "Obra determinada", en: "Specific project" },
+  { value: "temporada", es: "Temporada", en: "Seasonal" },
+  { value: "periodo_prueba", es: "Periodo de prueba", en: "Trial period" },
+] as const
+
+const terminationCauseLabel = (value: string, locale: Locale) =>
+  terminationCauseOptions.find((option) => option.value === value)?.[locale] ??
+  value
+
+const contractTypeLabel = (value: string, locale: Locale) =>
+  contractTypeOptions.find((option) => option.value === value)?.[locale] ??
+  value
 
 export function SettlementTool({
   countryCode,
@@ -175,47 +229,82 @@ export function SettlementTool({
 
   const { step, form, result, editMode, error } = state
 
-  const askText = useCallback((s: SettlementStep) => {
-    const map: Record<string, string> = {
-      employeeName: copy.employeeNameQuestion,
-      employerName: copy.employerNameQuestion,
-      monthlySalary: copy.monthlySalaryQuestion(currencyLabel),
-      startDate: copy.startDateQuestion,
-      endDate: copy.endDateQuestion,
-      unusedVacationDays: copy.vacationDaysQuestion,
-      frequency: copy.frequencyQuestion,
-    }
-    return map[s] ?? ""
-  }, [copy, currencyLabel])
+  const askText = useCallback(
+    (s: SettlementStep) => {
+      const map: Record<string, string> = {
+        employeeName: copy.employeeNameQuestion,
+        employerName: copy.employerNameQuestion,
+        monthlySalary: copy.monthlySalaryQuestion(currencyLabel),
+        startDate: copy.startDateQuestion,
+        endDate: copy.endDateQuestion,
+        unusedVacationDays: copy.vacationDaysQuestion,
+        frequency: copy.frequencyQuestion,
+        terminationCause:
+          locale === "en"
+            ? "What is the termination cause?"
+            : "¿Cuál es la causa de terminación?",
+        contractType:
+          locale === "en"
+            ? "What type of contract is it?"
+            : "¿Qué tipo de contrato es?",
+        adjustments:
+          locale === "en"
+            ? "Any pending payments or authorized deductions?"
+            : "¿Hay pagos pendientes o deducciones autorizadas?",
+      }
+      return map[s] ?? ""
+    },
+    [copy, currencyLabel, locale]
+  )
 
   const applyField = (field: keyof SettlementForm, value: string): boolean => {
     if (field === "monthlySalary") {
       const n = parseCurrencyInput(value)
       if (Number.isNaN(n) || n <= 0) return false
-      dispatch({ type: "patchForm", patch: { [field]: n } as Partial<SettlementForm> })
+      dispatch({
+        type: "patchForm",
+        patch: { [field]: n } as Partial<SettlementForm>,
+      })
       return true
     }
     if (field === "unusedVacationDays") {
       const n = Number(value)
       if (Number.isNaN(n) || n < 0) return false
-      dispatch({ type: "patchForm", patch: { [field]: n } as Partial<SettlementForm> })
+      dispatch({
+        type: "patchForm",
+        patch: { [field]: n } as Partial<SettlementForm>,
+      })
       return true
     }
     if (field === "startDate" || field === "endDate") {
       const iso = toIsoDate(value.trim())
       if (!iso) return false
-      dispatch({ type: "patchForm", patch: { [field]: value.trim() } as Partial<SettlementForm> })
+      dispatch({
+        type: "patchForm",
+        patch: { [field]: value.trim() } as Partial<SettlementForm>,
+      })
       return true
     }
     if (field === "frequency") {
       const v = value.toLowerCase().trim()
-      if (!(["mensual", "quincenal", "semanal"] as const).includes(v as SettlementForm["frequency"])) return false
-      dispatch({ type: "patchForm", patch: { frequency: v as SettlementForm["frequency"] } })
+      if (
+        !(["mensual", "quincenal", "semanal"] as const).includes(
+          v as SettlementForm["frequency"]
+        )
+      )
+        return false
+      dispatch({
+        type: "patchForm",
+        patch: { frequency: v as SettlementForm["frequency"] },
+      })
       return true
     }
     const v = value.trim()
     if (v.length < 2) return false
-    dispatch({ type: "patchForm", patch: { [field]: v } as Partial<SettlementForm> })
+    dispatch({
+      type: "patchForm",
+      patch: { [field]: v } as Partial<SettlementForm>,
+    })
     return true
   }
 
@@ -246,7 +335,13 @@ export function SettlementTool({
   }
 
   const handleSubmit = () => {
-    if (step === "welcome" || step === "frequency" || step === "confirm" || step === "done") return
+    if (
+      step === "welcome" ||
+      step === "frequency" ||
+      step === "confirm" ||
+      step === "done"
+    )
+      return
     advance()
   }
 
@@ -260,43 +355,80 @@ export function SettlementTool({
 
   const onFrequencySelect = (f: SettlementForm["frequency"]) => {
     dispatch({ type: "patchForm", patch: { frequency: f } })
-    dispatch({ type: "setStep", step: "confirm" })
+    dispatch({ type: "setStep", step: nextStep("frequency") })
   }
 
   const runCalculation = () => {
     const start = toIsoDate(form.startDate)
     const end = toIsoDate(form.endDate)
     if (!start || !end || end < start) return
-    const payload = { ...form, startDate: start, endDate: end, countryCode: countryCode as CountryCode }
+    const payload = {
+      ...form,
+      startDate: start,
+      endDate: end,
+      countryCode: countryCode as CountryCode,
+    }
     try {
       const result = calculateSettlement(payload)
       dispatch({ type: "setResult", result })
       dispatch({ type: "setStep", step: "done" })
       dispatch({ type: "setError", error: null })
     } catch (err) {
-      dispatch({ type: "setError", error: err instanceof Error ? err.message : copy.errorCalculating })
+      dispatch({
+        type: "setError",
+        error: err instanceof Error ? err.message : copy.errorCalculating,
+      })
     }
   }
 
-  const onConfirmAction = (action: "confirm" | "salary" | "dates" | "vacations") => {
+  const onConfirmAction = (
+    action: "confirm" | "salary" | "dates" | "vacations"
+  ) => {
     if (action === "confirm") {
       runCalculation()
       return
     }
     dispatch({ type: "setEditMode", editMode: action })
-    if (action === "salary") dispatch({ type: "setEditField", field: "editSalary", value: String(form.monthlySalary || "") })
+    if (action === "salary")
+      dispatch({
+        type: "setEditField",
+        field: "editSalary",
+        value: String(form.monthlySalary || ""),
+      })
     if (action === "dates") {
-      dispatch({ type: "setEditField", field: "editStartDate", value: form.startDate })
-      dispatch({ type: "setEditField", field: "editEndDate", value: form.endDate })
+      dispatch({
+        type: "setEditField",
+        field: "editStartDate",
+        value: form.startDate,
+      })
+      dispatch({
+        type: "setEditField",
+        field: "editEndDate",
+        value: form.endDate,
+      })
     }
-    if (action === "vacations") dispatch({ type: "setEditField", field: "editVacations", value: String(form.unusedVacationDays || 0) })
+    if (action === "vacations")
+      dispatch({
+        type: "setEditField",
+        field: "editVacations",
+        value: String(form.unusedVacationDays || 0),
+      })
   }
 
   const saveEdit = () => {
-    if (editMode === "salary" && !applyField("monthlySalary", state.editSalary)) return
-    if (editMode === "vacations" && !applyField("unusedVacationDays", state.editVacations)) return
+    if (editMode === "salary" && !applyField("monthlySalary", state.editSalary))
+      return
+    if (
+      editMode === "vacations" &&
+      !applyField("unusedVacationDays", state.editVacations)
+    )
+      return
     if (editMode === "dates") {
-      if (!applyField("startDate", state.editStartDate) || !applyField("endDate", state.editEndDate)) return
+      if (
+        !applyField("startDate", state.editStartDate) ||
+        !applyField("endDate", state.editEndDate)
+      )
+        return
     }
     dispatch({ type: "setEditMode", editMode: null })
   }
@@ -338,6 +470,13 @@ export function SettlementTool({
       { role: "user", text: String(form.unusedVacationDays) },
       { role: "assistant", text: copy.frequencyQuestion },
       { role: "user", text: form.frequency },
+      {
+        role: "assistant",
+        text:
+          locale === "en"
+            ? "Termination cause, contract type, and final adjustments captured."
+            : "Causa de terminación, tipo de contrato y ajustes finales capturados.",
+      },
     ]
     if (result) {
       messages.push(
@@ -351,7 +490,7 @@ export function SettlementTool({
 
   return (
     <div className="flex min-h-0 flex-1 flex-col">
-      <div className="mb-4 flex items-center justify-between w-full">
+      <div className="mb-4 flex w-full items-center justify-between">
         <div className="inline-flex items-center gap-2 rounded-full border border-border bg-card px-3 py-1.5 text-xs font-medium text-foreground">
           <IconCalculator className="size-3.5 text-primary" />
           {locale === "en" ? "Settlement" : "Liquidación"}
@@ -407,6 +546,9 @@ export function SettlementTool({
               { label: copy.dates },
               { label: copy.vacations },
               { label: copy.frequency },
+              { label: locale === "en" ? "Cause" : "Causa" },
+              { label: locale === "en" ? "Contract" : "Contrato" },
+              { label: locale === "en" ? "Adjustments" : "Ajustes" },
               { label: copy.result },
             ]}
             startLabel={copy.startButton}
@@ -420,8 +562,20 @@ export function SettlementTool({
               editVacations={state.editVacations}
               editStartDate={state.editStartDate}
               editEndDate={state.editEndDate}
-              onSetEditField={(field, value) => dispatch({ type: "setEditField", field: field as "editSalary" | "editVacations" | "editStartDate" | "editEndDate", value })}
-              onSetEditMode={(mode) => dispatch({ type: "setEditMode", editMode: mode })}
+              onSetEditField={(field, value) =>
+                dispatch({
+                  type: "setEditField",
+                  field: field as
+                    | "editSalary"
+                    | "editVacations"
+                    | "editStartDate"
+                    | "editEndDate",
+                  value,
+                })
+              }
+              onSetEditMode={(mode) =>
+                dispatch({ type: "setEditMode", editMode: mode })
+              }
               saveEdit={saveEdit}
               copy={copy}
             />
@@ -437,6 +591,7 @@ export function SettlementTool({
             <ConfirmPanelTool
               form={form}
               fmt={fmt}
+              locale={locale}
               copy={copy}
               onConfirmAction={onConfirmAction}
             />
@@ -445,13 +600,25 @@ export function SettlementTool({
           <div className="space-y-4 overflow-y-auto">
             <FrequencyPicker onSelect={onFrequencySelect} copy={copy} />
           </div>
+        ) : step === "terminationCause" || step === "contractType" ? (
+          <ChoicePanel
+            step={step}
+            form={form}
+            locale={locale}
+            onPatch={(patch) => dispatch({ type: "patchForm", patch })}
+          />
+        ) : step === "adjustments" ? (
+          <SettlementAdjustmentsPanel
+            form={form}
+            locale={locale}
+            onPatch={(patch) => dispatch({ type: "patchForm", patch })}
+          />
         ) : result && step === "done" ? (
           <div className="space-y-4 overflow-y-auto">
             <ResultPanelTool
               result={result}
               fmt={fmt}
               copy={copy}
-              locale={locale}
               onExportPdf={onExportPdf}
               onRestart={() => dispatch({ type: "reset", countryCode })}
               onComplete={handleComplete}
@@ -460,13 +627,17 @@ export function SettlementTool({
         ) : (
           <div className="flex h-full flex-col items-center justify-center gap-6 px-2">
             <div className="w-full max-w-xl rounded-2xl border border-border bg-card p-6 shadow-sm motion-safe:animate-in motion-safe:duration-200 motion-safe:fade-in motion-safe:slide-in-from-bottom-1">
-              <p className="text-base font-medium text-foreground">{askText(step)}</p>
+              <p className="text-base font-medium text-foreground">
+                {askText(step)}
+              </p>
             </div>
             <div className="w-full max-w-xl">
               <input
                 ref={inputRef}
                 value={inputValue}
-                onChange={(e) => setInputValue(getFormattedInputValue(step, e.target.value))}
+                onChange={(e) =>
+                  setInputValue(getFormattedInputValue(step, e.target.value))
+                }
                 inputMode={
                   step === "monthlySalary"
                     ? "decimal"
@@ -477,7 +648,7 @@ export function SettlementTool({
                         : "text"
                 }
                 placeholder={copy.askPlaceholder}
-                className="h-12 w-full rounded-2xl border border-border bg-card pl-4 pr-4 text-sm text-foreground placeholder:text-muted-foreground outline-none transition-colors focus:border-foreground/30"
+                className="h-12 w-full rounded-2xl border border-border bg-card pr-4 pl-4 text-sm text-foreground transition-colors outline-none placeholder:text-muted-foreground focus:border-foreground/30"
               />
             </div>
           </div>
@@ -486,6 +657,9 @@ export function SettlementTool({
         {step !== "welcome" &&
           step !== "confirm" &&
           step !== "frequency" &&
+          step !== "terminationCause" &&
+          step !== "contractType" &&
+          step !== "adjustments" &&
           step !== "done" &&
           !editMode && (
             <StepNavigation
@@ -497,6 +671,31 @@ export function SettlementTool({
               continueLabel={copy.send}
             />
           )}
+        {(step === "terminationCause" || step === "contractType") &&
+          !editMode && (
+            <StepNavigation
+              onBack={handleBack}
+              onContinue={() =>
+                dispatch({ type: "setStep", step: nextStep(step) })
+              }
+              canContinue
+              showBack
+              backLabel={copy.backToPrevious}
+              continueLabel={copy.send}
+            />
+          )}
+        {step === "adjustments" && !editMode && (
+          <StepNavigation
+            onBack={handleBack}
+            onContinue={() =>
+              dispatch({ type: "setStep", step: nextStep(step) })
+            }
+            canContinue
+            showBack
+            backLabel={copy.backToPrevious}
+            continueLabel={copy.send}
+          />
+        )}
       </div>
     </div>
   )
@@ -519,15 +718,22 @@ function OnboardingPanel({
 }) {
   return (
     <div className="flex h-full flex-col items-center justify-center gap-8 px-2 motion-safe:animate-in motion-safe:duration-300 motion-safe:fade-in motion-safe:slide-in-from-bottom-2">
-      <div className="flex flex-col items-center gap-5 text-center max-w-md">
+      <div className="flex max-w-md flex-col items-center gap-5 text-center">
         <div className="flex h-16 w-16 items-center justify-center rounded-2xl bg-primary/10">
           {icon}
         </div>
-        <h2 className="text-xl font-semibold tracking-tight text-foreground">{title}</h2>
-        <p className="text-sm leading-relaxed text-muted-foreground">{description}</p>
+        <h2 className="text-xl font-semibold tracking-tight text-foreground">
+          {title}
+        </h2>
+        <p className="text-sm leading-relaxed text-muted-foreground">
+          {description}
+        </p>
         <div className="flex flex-wrap justify-center gap-2">
           {steps.map((step, i) => (
-            <span key={i} className="inline-flex items-center gap-1.5 rounded-full bg-muted px-2.5 py-1 text-xs text-muted-foreground">
+            <span
+              key={i}
+              className="inline-flex items-center gap-1.5 rounded-full bg-muted px-2.5 py-1 text-xs text-muted-foreground"
+            >
               <span className="flex h-5 w-5 items-center justify-center rounded-full bg-primary/10 text-[11px] font-medium text-primary">
                 {i + 1}
               </span>
@@ -548,7 +754,15 @@ function OnboardingPanel({
   )
 }
 
-function SummaryRow({ icon, label, value }: { icon: ReactNode; label: string; value: string }) {
+function SummaryRow({
+  icon,
+  label,
+  value,
+}: {
+  icon: ReactNode
+  label: string
+  value: string
+}) {
   return (
     <div className="flex items-center justify-between rounded-xl bg-muted/50 px-4 py-2.5">
       <div className="flex items-center gap-2.5">
@@ -560,16 +774,206 @@ function SummaryRow({ icon, label, value }: { icon: ReactNode; label: string; va
   )
 }
 
+function ChoicePanel({
+  step,
+  form,
+  locale,
+  onPatch,
+}: {
+  step: "terminationCause" | "contractType"
+  form: SettlementForm
+  locale: Locale
+  onPatch: (patch: Partial<SettlementForm>) => void
+}) {
+  return (
+    <div className="flex h-full flex-col items-center justify-center gap-6 px-2">
+      <div className="w-full max-w-xl rounded-2xl border border-border bg-card p-6 shadow-sm motion-safe:animate-in motion-safe:duration-200 motion-safe:fade-in motion-safe:slide-in-from-bottom-1">
+        <p className="text-base font-medium text-foreground">
+          {step === "terminationCause"
+            ? locale === "en"
+              ? "What is the termination cause?"
+              : "¿Cuál es la causa de terminación?"
+            : locale === "en"
+              ? "What type of contract is it?"
+              : "¿Qué tipo de contrato es?"}
+        </p>
+        <div className="mt-4 grid gap-2 sm:grid-cols-2">
+          {step === "terminationCause"
+            ? terminationCauseOptions.map((option) => (
+                <button
+                  key={option.value}
+                  type="button"
+                  onClick={() => onPatch({ terminationCause: option.value })}
+                  className={`rounded-xl border px-3 py-2 text-left text-sm transition-all focus-visible:ring-2 focus-visible:ring-primary/30 focus-visible:outline-none ${form.terminationCause === option.value ? "border-primary bg-primary text-primary-foreground" : "border-border bg-card text-foreground hover:bg-accent"}`}
+                >
+                  {option[locale]}
+                </button>
+              ))
+            : contractTypeOptions.map((option) => (
+                <button
+                  key={option.value}
+                  type="button"
+                  onClick={() => onPatch({ contractType: option.value })}
+                  className={`rounded-xl border px-3 py-2 text-left text-sm transition-all focus-visible:ring-2 focus-visible:ring-primary/30 focus-visible:outline-none ${form.contractType === option.value ? "border-primary bg-primary text-primary-foreground" : "border-border bg-card text-foreground hover:bg-accent"}`}
+                >
+                  {option[locale]}
+                </button>
+              ))}
+        </div>
+      </div>
+    </div>
+  )
+}
+
+function SettlementAdjustmentsPanel({
+  form,
+  locale,
+  onPatch,
+}: {
+  form: SettlementForm
+  locale: Locale
+  onPatch: (patch: Partial<SettlementForm>) => void
+}) {
+  const fields: {
+    key: keyof Pick<
+      SettlementForm,
+      | "pendingSalaryAmount"
+      | "pendingOvertimeAmount"
+      | "pendingBonusAmount"
+      | "benefitsAlreadyPaidAmount"
+      | "otherDeductionsAmount"
+    >
+    label: string
+    shortLabel: string
+    kind: "income" | "deduction"
+  }[] = [
+    {
+      key: "pendingSalaryAmount",
+      label:
+        locale === "en"
+          ? "Additional pending salary"
+          : "Salario pendiente adicional",
+      shortLabel: locale === "en" ? "Salary" : "Salario",
+      kind: "income",
+    },
+    {
+      key: "pendingOvertimeAmount",
+      label:
+        locale === "en"
+          ? "Pending overtime/commissions"
+          : "Horas extra/comisiones pendientes",
+      shortLabel: locale === "en" ? "Overtime" : "Extras",
+      kind: "income",
+    },
+    {
+      key: "pendingBonusAmount",
+      label:
+        locale === "en"
+          ? "Additional pending benefits"
+          : "Prestaciones pendientes adicionales",
+      shortLabel: locale === "en" ? "Benefits" : "Prestaciones",
+      kind: "income",
+    },
+    {
+      key: "benefitsAlreadyPaidAmount",
+      label:
+        locale === "en" ? "Benefits already paid" : "Prestaciones ya pagadas",
+      shortLabel: locale === "en" ? "Already paid" : "Ya pagado",
+      kind: "deduction",
+    },
+    {
+      key: "otherDeductionsAmount",
+      label:
+        locale === "en"
+          ? "Other authorized deductions"
+          : "Otras deducciones autorizadas",
+      shortLabel: locale === "en" ? "Deductions" : "Deducciones",
+      kind: "deduction",
+    },
+  ]
+
+  return (
+    <div className="flex h-full flex-col items-center px-2 pb-24 sm:justify-center sm:pb-2">
+      <div className="w-full max-w-xl rounded-2xl border border-border bg-card p-4 shadow-sm motion-safe:animate-in motion-safe:duration-200 motion-safe:fade-in motion-safe:slide-in-from-bottom-1 sm:p-6">
+        <div className="flex items-start gap-2.5">
+          <div className="rounded-lg bg-primary/10 p-1.5 sm:rounded-xl sm:p-2">
+            <IconReceipt className="size-4 text-primary" />
+          </div>
+          <div className="min-w-0">
+            <p className="text-sm font-semibold text-foreground sm:text-base">
+              {locale === "en" ? "Final adjustments" : "Ajustes finales"}
+            </p>
+            <p className="mt-0.5 text-xs leading-snug text-muted-foreground sm:text-sm">
+              {locale === "en"
+                ? "Optional payroll-backed amounts. Leave zero if they do not apply."
+                : "Montos opcionales con soporte de planilla. Deja cero si no aplican."}
+            </p>
+          </div>
+        </div>
+        <div className="mt-4 divide-y divide-border rounded-xl border border-border bg-background/60 sm:mt-5">
+          {fields.map((field) => (
+            <label
+              key={field.key}
+              className="flex min-h-[54px] items-center gap-3 px-3 py-2 text-sm"
+            >
+              <span className="min-w-0 flex-1">
+                <span className="block truncate font-medium text-foreground sm:hidden">
+                  {field.shortLabel}
+                </span>
+                <span className="hidden font-medium text-foreground sm:block">
+                  {field.label}
+                </span>
+                <span
+                  className={`mt-0.5 inline-flex rounded-full px-1.5 py-0.5 text-[10px] font-medium sm:hidden ${field.kind === "income" ? "bg-emerald-500/10 text-emerald-700" : "bg-rose-500/10 text-rose-700"}`}
+                >
+                  {field.kind === "income"
+                    ? locale === "en"
+                      ? "adds"
+                      : "suma"
+                    : locale === "en"
+                      ? "deducts"
+                      : "resta"}
+                </span>
+              </span>
+              <input
+                inputMode="decimal"
+                value={formatCurrencyInput(String(form[field.key] ?? 0))}
+                onChange={(event) => {
+                  const amount = parseCurrencyInput(event.target.value)
+                  onPatch({
+                    [field.key]: Number.isNaN(amount) ? 0 : amount,
+                  } as Partial<SettlementForm>)
+                }}
+                aria-label={field.label}
+                className="h-10 w-28 shrink-0 rounded-xl border border-border bg-card px-3 text-right text-sm text-foreground outline-none focus:border-foreground/30 sm:w-40 sm:text-left"
+              />
+            </label>
+          ))}
+        </div>
+        <p className="mt-3 text-xs leading-snug text-muted-foreground">
+          {locale === "en"
+            ? "Positive rows add to income; deduction rows subtract from the net total."
+            : "Las filas de suma aumentan ingresos; las de resta reducen el neto."}
+        </p>
+      </div>
+    </div>
+  )
+}
+
 function ConfirmPanelTool({
   form,
   fmt,
+  locale,
   copy,
   onConfirmAction,
 }: {
   form: SettlementForm
   fmt: (v: number) => string
+  locale: Locale
   copy: (typeof homeCopy)[Locale]
-  onConfirmAction: (action: "confirm" | "salary" | "dates" | "vacations") => void
+  onConfirmAction: (
+    action: "confirm" | "salary" | "dates" | "vacations"
+  ) => void
 }) {
   return (
     <div className="w-full rounded-2xl border border-border bg-card p-5 shadow-sm motion-safe:animate-in motion-safe:duration-200 motion-safe:fade-in motion-safe:slide-in-from-bottom-1">
@@ -578,24 +982,85 @@ function ConfirmPanelTool({
         {copy.summaryTitle}
       </div>
       <div className="grid gap-2 text-sm">
-        <SummaryRow icon={<IconUser className="size-4 text-muted-foreground" />} label={copy.worker} value={form.employeeName} />
-        <SummaryRow icon={<IconBuilding className="size-4 text-muted-foreground" />} label={copy.employer} value={form.employerName} />
-        <SummaryRow icon={<IconCoin className="size-4 text-muted-foreground" />} label={copy.salary} value={fmt(form.monthlySalary)} />
-        <SummaryRow icon={<IconCalendar className="size-4 text-muted-foreground" />} label={copy.dates} value={`${form.startDate} → ${form.endDate}`} />
-        <SummaryRow icon={<IconBeach className="size-4 text-muted-foreground" />} label={copy.vacations} value={`${form.unusedVacationDays} días`} />
-        <SummaryRow icon={<IconCalendar className="size-4 text-muted-foreground" />} label={copy.frequency} value={form.frequency} />
+        <SummaryRow
+          icon={<IconUser className="size-4 text-muted-foreground" />}
+          label={copy.worker}
+          value={form.employeeName}
+        />
+        <SummaryRow
+          icon={<IconBuilding className="size-4 text-muted-foreground" />}
+          label={copy.employer}
+          value={form.employerName}
+        />
+        <SummaryRow
+          icon={<IconCoin className="size-4 text-muted-foreground" />}
+          label={copy.salary}
+          value={fmt(form.monthlySalary)}
+        />
+        <SummaryRow
+          icon={<IconCalendar className="size-4 text-muted-foreground" />}
+          label={copy.dates}
+          value={`${form.startDate} → ${form.endDate}`}
+        />
+        <SummaryRow
+          icon={<IconBeach className="size-4 text-muted-foreground" />}
+          label={copy.vacations}
+          value={`${form.unusedVacationDays} días`}
+        />
+        <SummaryRow
+          icon={<IconCalendar className="size-4 text-muted-foreground" />}
+          label={copy.frequency}
+          value={form.frequency}
+        />
+        <SummaryRow
+          icon={<IconFileText className="size-4 text-muted-foreground" />}
+          label={locale === "en" ? "Termination cause" : "Causa de terminación"}
+          value={terminationCauseLabel(form.terminationCause, locale)}
+        />
+        <SummaryRow
+          icon={<IconFileText className="size-4 text-muted-foreground" />}
+          label={locale === "en" ? "Contract type" : "Tipo de contrato"}
+          value={contractTypeLabel(form.contractType, locale)}
+        />
+        <SummaryRow
+          icon={<IconReceipt className="size-4 text-muted-foreground" />}
+          label={locale === "en" ? "Final adjustments" : "Ajustes finales"}
+          value={fmt(
+            (form.pendingSalaryAmount ?? 0) +
+              (form.pendingOvertimeAmount ?? 0) +
+              (form.pendingBonusAmount ?? 0) -
+              (form.benefitsAlreadyPaidAmount ?? 0) -
+              (form.otherDeductionsAmount ?? 0)
+          )}
+        />
       </div>
       <div className="mt-5 flex flex-wrap gap-2">
-        <button type="button" onClick={() => onConfirmAction("confirm")} className="inline-flex items-center gap-2 rounded-xl bg-primary px-4 py-2.5 text-sm font-medium text-primary-foreground shadow-sm transition-opacity hover:opacity-90">
+        <button
+          type="button"
+          onClick={() => onConfirmAction("confirm")}
+          className="inline-flex items-center gap-2 rounded-xl bg-primary px-4 py-2.5 text-sm font-medium text-primary-foreground shadow-sm transition-opacity hover:opacity-90"
+        >
           <IconCheck className="size-4" /> {copy.confirmAndCalculate}
         </button>
-        <button type="button" onClick={() => onConfirmAction("salary")} className="inline-flex items-center gap-2 rounded-xl border border-border bg-card px-4 py-2.5 text-sm font-medium text-foreground transition-colors hover:bg-accent">
+        <button
+          type="button"
+          onClick={() => onConfirmAction("salary")}
+          className="inline-flex items-center gap-2 rounded-xl border border-border bg-card px-4 py-2.5 text-sm font-medium text-foreground transition-colors hover:bg-accent"
+        >
           <IconEdit className="size-4" /> {copy.editSalary}
         </button>
-        <button type="button" onClick={() => onConfirmAction("dates")} className="inline-flex items-center gap-2 rounded-xl border border-border bg-card px-4 py-2.5 text-sm font-medium text-foreground transition-colors hover:bg-accent">
+        <button
+          type="button"
+          onClick={() => onConfirmAction("dates")}
+          className="inline-flex items-center gap-2 rounded-xl border border-border bg-card px-4 py-2.5 text-sm font-medium text-foreground transition-colors hover:bg-accent"
+        >
           <IconEdit className="size-4" /> {copy.editDates}
         </button>
-        <button type="button" onClick={() => onConfirmAction("vacations")} className="inline-flex items-center gap-2 rounded-xl border border-border bg-card px-4 py-2.5 text-sm font-medium text-foreground transition-colors hover:bg-accent">
+        <button
+          type="button"
+          onClick={() => onConfirmAction("vacations")}
+          className="inline-flex items-center gap-2 rounded-xl border border-border bg-card px-4 py-2.5 text-sm font-medium text-foreground transition-colors hover:bg-accent"
+        >
           <IconEdit className="size-4" /> {copy.editVacations}
         </button>
       </div>
@@ -629,28 +1094,70 @@ function EditPanelTool({
       {editMode === "salary" ? (
         <label className="grid gap-2 text-sm">
           <span className="text-foreground">{copy.newMonthlySalary}</span>
-          <input inputMode="decimal" value={editSalary} onChange={(e) => onSetEditField("editSalary", formatCurrencyInput(e.target.value))} className="h-11 rounded-xl border border-border bg-background px-3 text-foreground outline-none focus:border-foreground/30" />
+          <input
+            inputMode="decimal"
+            value={editSalary}
+            onChange={(e) =>
+              onSetEditField("editSalary", formatCurrencyInput(e.target.value))
+            }
+            className="h-11 rounded-xl border border-border bg-background px-3 text-foreground outline-none focus:border-foreground/30"
+          />
         </label>
       ) : editMode === "vacations" ? (
         <label className="grid gap-2 text-sm">
           <span className="text-foreground">{copy.newVacationDays}</span>
-          <input inputMode="numeric" value={editVacations} onChange={(e) => onSetEditField("editVacations", formatNumberInput(e.target.value))} className="h-11 rounded-xl border border-border bg-background px-3 text-foreground outline-none focus:border-foreground/30" />
+          <input
+            inputMode="numeric"
+            value={editVacations}
+            onChange={(e) =>
+              onSetEditField("editVacations", formatNumberInput(e.target.value))
+            }
+            className="h-11 rounded-xl border border-border bg-background px-3 text-foreground outline-none focus:border-foreground/30"
+          />
         </label>
       ) : editMode === "dates" ? (
         <div className="grid gap-3 text-sm">
           <label className="grid gap-1.5">
             <span className="text-foreground">{copy.startDate}</span>
-            <input inputMode="numeric" pattern="[0-9/]*" value={editStartDate} onChange={(e) => onSetEditField("editStartDate", formatDateInput(e.target.value))} className="h-11 rounded-xl border border-border bg-background px-3 text-foreground outline-none focus:border-foreground/30" />
+            <input
+              inputMode="numeric"
+              pattern="[0-9/]*"
+              value={editStartDate}
+              onChange={(e) =>
+                onSetEditField("editStartDate", formatDateInput(e.target.value))
+              }
+              className="h-11 rounded-xl border border-border bg-background px-3 text-foreground outline-none focus:border-foreground/30"
+            />
           </label>
           <label className="grid gap-1.5">
             <span className="text-foreground">{copy.endDate}</span>
-            <input inputMode="numeric" pattern="[0-9/]*" value={editEndDate} onChange={(e) => onSetEditField("editEndDate", formatDateInput(e.target.value))} className="h-11 rounded-xl border border-border bg-background px-3 text-foreground outline-none focus:border-foreground/30" />
+            <input
+              inputMode="numeric"
+              pattern="[0-9/]*"
+              value={editEndDate}
+              onChange={(e) =>
+                onSetEditField("editEndDate", formatDateInput(e.target.value))
+              }
+              className="h-11 rounded-xl border border-border bg-background px-3 text-foreground outline-none focus:border-foreground/30"
+            />
           </label>
         </div>
       ) : null}
       <div className="mt-4 flex gap-2">
-        <button type="button" onClick={() => saveEdit()} className="inline-flex items-center gap-2 rounded-xl bg-primary px-4 py-2.5 text-sm font-medium text-primary-foreground shadow-sm transition-opacity hover:opacity-90">{copy.saveChanges}</button>
-        <button type="button" onClick={() => onSetEditMode(null)} className="inline-flex items-center gap-2 rounded-xl border border-border bg-card px-4 py-2.5 text-sm font-medium text-foreground transition-colors hover:bg-accent">{copy.cancel}</button>
+        <button
+          type="button"
+          onClick={() => saveEdit()}
+          className="inline-flex items-center gap-2 rounded-xl bg-primary px-4 py-2.5 text-sm font-medium text-primary-foreground shadow-sm transition-opacity hover:opacity-90"
+        >
+          {copy.saveChanges}
+        </button>
+        <button
+          type="button"
+          onClick={() => onSetEditMode(null)}
+          className="inline-flex items-center gap-2 rounded-xl border border-border bg-card px-4 py-2.5 text-sm font-medium text-foreground transition-colors hover:bg-accent"
+        >
+          {copy.cancel}
+        </button>
       </div>
     </div>
   )
@@ -660,7 +1167,6 @@ function ResultPanelTool({
   result,
   fmt,
   copy,
-  locale,
   onExportPdf,
   onRestart,
   onComplete,
@@ -668,7 +1174,6 @@ function ResultPanelTool({
   result: ReturnType<typeof calculateSettlement>
   fmt: (v: number) => string
   copy: (typeof homeCopy)[Locale]
-  locale: Locale
   onExportPdf: () => Promise<void>
   onRestart: () => void
   onComplete: () => void
@@ -682,7 +1187,9 @@ function ResultPanelTool({
               <IconFileText className="size-3" />
               {copy.legalVersion}: {result.legalCorpusVersion}
             </div>
-            <h3 className="mt-2 text-sm font-semibold text-foreground">{copy.finalResult}</h3>
+            <h3 className="mt-2 text-sm font-semibold text-foreground">
+              {copy.finalResult}
+            </h3>
           </div>
           <div className="rounded-xl bg-primary/10 p-2.5">
             <IconCalculator className="size-5 text-primary" />
@@ -690,8 +1197,12 @@ function ResultPanelTool({
         </div>
 
         <div className="mt-4">
-          <p className="text-xs font-medium uppercase tracking-wider text-muted-foreground">{copy.net}</p>
-          <p className="mt-1 text-3xl font-semibold tracking-tight text-foreground">{fmt(result.netTotal)}</p>
+          <p className="text-xs font-medium tracking-wider text-muted-foreground uppercase">
+            {copy.net}
+          </p>
+          <p className="mt-1 text-3xl font-semibold tracking-tight text-foreground">
+            {fmt(result.netTotal)}
+          </p>
         </div>
 
         <div className="mt-5 grid gap-3 border-t border-border pt-4 sm:grid-cols-2">
@@ -700,8 +1211,12 @@ function ResultPanelTool({
               <IconTrendingUp className="size-4 text-emerald-600" />
             </div>
             <div>
-              <p className="text-xs text-muted-foreground">{copy.grossIncome}</p>
-              <p className="text-sm font-semibold text-foreground">{fmt(result.grossIncome)}</p>
+              <p className="text-xs text-muted-foreground">
+                {copy.grossIncome}
+              </p>
+              <p className="text-sm font-semibold text-foreground">
+                {fmt(result.grossIncome)}
+              </p>
             </div>
           </div>
           <div className="flex items-center gap-3 rounded-xl bg-muted/50 p-3">
@@ -710,64 +1225,116 @@ function ResultPanelTool({
             </div>
             <div>
               <p className="text-xs text-muted-foreground">{copy.deductions}</p>
-              <p className="text-sm font-semibold text-foreground">{fmt(result.totalDeductions)}</p>
+              <p className="text-sm font-semibold text-foreground">
+                {fmt(result.totalDeductions)}
+              </p>
             </div>
           </div>
         </div>
       </div>
 
-      <div className="rounded-2xl border border-border bg-card shadow-sm overflow-hidden">
+      <div className="overflow-hidden rounded-2xl border border-border bg-card shadow-sm">
         <details className="group">
-          <summary className="flex cursor-pointer items-center justify-between p-4 text-sm font-medium text-foreground transition-colors hover:bg-muted/30 list-none">
+          <summary className="flex cursor-pointer list-none items-center justify-between p-4 text-sm font-medium text-foreground transition-colors hover:bg-muted/30">
             <span className="flex items-center gap-2">
               <IconReceipt className="size-4 text-muted-foreground" />
               {copy.fullBreakdown}
             </span>
-            <span className="text-xs text-muted-foreground">{copy.expandLabel}</span>
+            <span className="text-xs text-muted-foreground">
+              {copy.expandLabel}
+            </span>
           </summary>
-          <div className="border-t border-border p-4 space-y-4">
+          <div className="space-y-4 border-t border-border p-4">
             <div className="space-y-2">
-              <p className="text-xs font-medium uppercase tracking-wider text-emerald-600">{copy.incomesLabel}</p>
-              {result.incomes.map((l: { label: string; amount: number; formula: string; legalReference: string }) => (
-                <div key={l.label} className="flex items-start justify-between gap-4 text-sm">
-                  <div className="min-w-0">
-                    <p className="font-medium text-foreground">{l.label}</p>
-                    <p className="text-xs text-muted-foreground">{l.formula}</p>
+              <p className="text-xs font-medium tracking-wider text-emerald-600 uppercase">
+                {copy.incomesLabel}
+              </p>
+              {result.incomes.map(
+                (l: {
+                  label: string
+                  amount: number
+                  formula: string
+                  legalReference: string
+                }) => (
+                  <div
+                    key={l.label}
+                    className="flex items-start justify-between gap-4 text-sm"
+                  >
+                    <div className="min-w-0">
+                      <p className="font-medium text-foreground">{l.label}</p>
+                      <p className="text-xs text-muted-foreground">
+                        {l.formula}
+                      </p>
+                    </div>
+                    <div className="shrink-0 text-right">
+                      <p className="font-medium text-emerald-600">
+                        {fmt(l.amount)}
+                      </p>
+                      <p className="text-[11px] text-muted-foreground">
+                        {l.legalReference}
+                      </p>
+                    </div>
                   </div>
-                  <div className="text-right shrink-0">
-                    <p className="font-medium text-emerald-600">{fmt(l.amount)}</p>
-                    <p className="text-[11px] text-muted-foreground">{l.legalReference}</p>
-                  </div>
-                </div>
-              ))}
+                )
+              )}
             </div>
-            <div className="border-t border-dashed border-border pt-3 space-y-2">
-              <p className="text-xs font-medium uppercase tracking-wider text-rose-600">{copy.deductions}</p>
-              {result.deductions.map((l: { label: string; amount: number; formula: string; legalReference: string }) => (
-                <div key={l.label} className="flex items-start justify-between gap-4 text-sm">
-                  <div className="min-w-0">
-                    <p className="font-medium text-foreground">{l.label}</p>
-                    <p className="text-xs text-muted-foreground">{l.formula}</p>
+            <div className="space-y-2 border-t border-dashed border-border pt-3">
+              <p className="text-xs font-medium tracking-wider text-rose-600 uppercase">
+                {copy.deductions}
+              </p>
+              {result.deductions.map(
+                (l: {
+                  label: string
+                  amount: number
+                  formula: string
+                  legalReference: string
+                }) => (
+                  <div
+                    key={l.label}
+                    className="flex items-start justify-between gap-4 text-sm"
+                  >
+                    <div className="min-w-0">
+                      <p className="font-medium text-foreground">{l.label}</p>
+                      <p className="text-xs text-muted-foreground">
+                        {l.formula}
+                      </p>
+                    </div>
+                    <div className="shrink-0 text-right">
+                      <p className="font-medium text-rose-600">
+                        {fmt(l.amount)}
+                      </p>
+                      <p className="text-[11px] text-muted-foreground">
+                        {l.legalReference}
+                      </p>
+                    </div>
                   </div>
-                  <div className="text-right shrink-0">
-                    <p className="font-medium text-rose-600">{fmt(l.amount)}</p>
-                    <p className="text-[11px] text-muted-foreground">{l.legalReference}</p>
-                  </div>
-                </div>
-              ))}
+                )
+              )}
             </div>
           </div>
         </details>
       </div>
 
       <div className="flex flex-wrap gap-2">
-        <button type="button" onClick={() => void onExportPdf()} className="inline-flex items-center gap-2 rounded-xl border border-border bg-card px-4 py-2.5 text-sm font-medium text-foreground transition-colors hover:bg-accent">
+        <button
+          type="button"
+          onClick={() => void onExportPdf()}
+          className="inline-flex items-center gap-2 rounded-xl border border-border bg-card px-4 py-2.5 text-sm font-medium text-foreground transition-colors hover:bg-accent"
+        >
           <IconDownload className="size-4" /> {copy.downloadPdf}
         </button>
-        <button type="button" onClick={onRestart} className="inline-flex items-center gap-2 rounded-xl bg-primary px-4 py-2.5 text-sm font-medium text-primary-foreground shadow-sm transition-opacity hover:opacity-90">
+        <button
+          type="button"
+          onClick={onRestart}
+          className="inline-flex items-center gap-2 rounded-xl bg-primary px-4 py-2.5 text-sm font-medium text-primary-foreground shadow-sm transition-opacity hover:opacity-90"
+        >
           <IconRefresh className="size-4" /> {copy.calculateAgain}
         </button>
-        <button type="button" onClick={onComplete} className="inline-flex items-center gap-2 rounded-xl border border-border bg-card px-4 py-2.5 text-sm font-medium text-foreground transition-colors hover:bg-accent">
+        <button
+          type="button"
+          onClick={onComplete}
+          className="inline-flex items-center gap-2 rounded-xl border border-border bg-card px-4 py-2.5 text-sm font-medium text-foreground transition-colors hover:bg-accent"
+        >
           <IconMessageCircle className="size-4" /> {copy.backToChat}
         </button>
       </div>

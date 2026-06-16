@@ -12,11 +12,15 @@ import {
   calculateArgentinaTermination,
   calculateChileTermination,
 } from "./index"
+import type { CountryCode } from "../settlement"
+import type { TerminationResult } from "./types"
 
 const baseInput = {
   monthlySalary: 30000,
   startDate: "2023-01-01",
   endDate: "2024-01-01",
+  terminationCause: "despido_injustificado" as const,
+  contractType: "indeterminado" as const,
 }
 
 describe("termination calculators", () => {
@@ -28,7 +32,7 @@ describe("termination calculators", () => {
     expect(result.currency).toBe("NIO")
     expect(result.tenureYears).toBe(1)
     const injust = result.scenarios.find(
-      (s) => s.type === "despido_injustificado",
+      (s) => s.type === "despido_injustificado"
     )
     expect(injust?.applicable).toBe(true)
     expect(injust?.total).toBe(30000)
@@ -44,7 +48,7 @@ describe("termination calculators", () => {
     })
     expect(result.currency).toBe("USD")
     const injust = result.scenarios.find(
-      (s) => s.type === "despido_injustificado",
+      (s) => s.type === "despido_injustificado"
     )
     expect(injust?.applicable).toBe(true)
     expect(injust?.total).toBe(30000)
@@ -61,7 +65,7 @@ describe("termination calculators", () => {
     expect(renuncia?.applicable).toBe(true)
     expect(renuncia?.total).toBe(30000)
     const injust = result.scenarios.find(
-      (s) => s.type === "despido_injustificado",
+      (s) => s.type === "despido_injustificado"
     )
     expect(injust?.applicable).toBe(true)
     expect(injust?.total).toBeGreaterThanOrEqual(30000)
@@ -74,7 +78,7 @@ describe("termination calculators", () => {
     })
     expect(result.currency).toBe("HNL")
     const injust = result.scenarios.find(
-      (s) => s.type === "despido_injustificado",
+      (s) => s.type === "despido_injustificado"
     )
     expect(injust?.applicable).toBe(true)
     expect(injust?.lines.length).toBeGreaterThanOrEqual(1)
@@ -88,7 +92,7 @@ describe("termination calculators", () => {
     })
     expect(result.currency).toBe("CRC")
     const injust = result.scenarios.find(
-      (s) => s.type === "despido_injustificado",
+      (s) => s.type === "despido_injustificado"
     )
     expect(injust?.applicable).toBe(true)
     expect(injust?.lines.length).toBeGreaterThanOrEqual(1)
@@ -102,7 +106,7 @@ describe("termination calculators", () => {
     })
     expect(result.currency).toBe("USD")
     const injust = result.scenarios.find(
-      (s) => s.type === "despido_injustificado",
+      (s) => s.type === "despido_injustificado"
     )
     expect(injust?.applicable).toBe(true)
     expect(injust?.lines.length).toBeGreaterThanOrEqual(2)
@@ -118,7 +122,7 @@ describe("termination calculators", () => {
     })
     expect(result.currency).toBe("MXN")
     const injust = result.scenarios.find(
-      (s) => s.type === "despido_injustificado",
+      (s) => s.type === "despido_injustificado"
     )
     expect(injust?.applicable).toBe(true)
     expect(injust?.lines).toHaveLength(3)
@@ -132,7 +136,7 @@ describe("termination calculators", () => {
     })
     expect(result.currency).toBe("COP")
     const injust = result.scenarios.find(
-      (s) => s.type === "despido_injustificado",
+      (s) => s.type === "despido_injustificado"
     )
     expect(injust?.applicable).toBe(true)
     expect(injust?.total).toBe(30000)
@@ -145,7 +149,7 @@ describe("termination calculators", () => {
     })
     expect(result.currency).toBe("PEN")
     const injust = result.scenarios.find(
-      (s) => s.type === "despido_injustificado",
+      (s) => s.type === "despido_injustificado"
     )
     expect(injust?.applicable).toBe(true)
     expect(injust?.total).toBe(90000)
@@ -158,7 +162,7 @@ describe("termination calculators", () => {
     })
     expect(result.currency).toBe("ARS")
     const injust = result.scenarios.find(
-      (s) => s.type === "despido_injustificado",
+      (s) => s.type === "despido_injustificado"
     )
     expect(injust?.applicable).toBe(true)
     expect(injust?.total).toBe(30000)
@@ -171,7 +175,7 @@ describe("termination calculators", () => {
     })
     expect(result.currency).toBe("CLP")
     const injust = result.scenarios.find(
-      (s) => s.type === "despido_injustificado",
+      (s) => s.type === "despido_injustificado"
     )
     expect(injust?.applicable).toBe(true)
     expect(injust?.lines).toHaveLength(2)
@@ -201,4 +205,111 @@ describe("termination calculators", () => {
     expect(result.tenureDays).toBeGreaterThan(0)
     expect(result.dailySalary).toBe(1000)
   })
+
+  test("adds selected country-specific closure cause as informational scenario", () => {
+    const result = calculateNicaraguaTermination({
+      ...baseInput,
+      countryCode: "ni",
+      terminationCause: "fin_plazo",
+      contractType: "plazo_fijo",
+    })
+    const finPlazo = result.scenarios.find((s) => s.type === "fin_plazo")
+    expect(result.selectedTerminationCause).toBe("fin_plazo")
+    expect(result.contractType).toBe("plazo_fijo")
+    expect(finPlazo?.applicable).toBe(true)
+    expect(finPlazo?.total).toBe(0)
+    expect(finPlazo?.note).toBeTruthy()
+  })
+
+  test("Nicaragua: trial period suppresses automatic indemnity", () => {
+    const result = calculateNicaraguaTermination({
+      ...baseInput,
+      countryCode: "ni",
+      terminationCause: "despido_injustificado",
+      contractType: "periodo_prueba",
+    })
+    const injust = result.scenarios.find(
+      (s) => s.type === "despido_injustificado"
+    )
+    expect(result.contractType).toBe("periodo_prueba")
+    expect(injust?.applicable).toBe(false)
+    expect(injust?.total).toBe(0)
+    expect(injust?.note).toContain("Periodo de prueba")
+  })
+
+  const personalizedCalculators: {
+    countryCode: CountryCode
+    name: string
+    calculate: (
+      input: typeof baseInput & { countryCode: CountryCode }
+    ) => TerminationResult
+  }[] = [
+    {
+      countryCode: "gt",
+      name: "Guatemala",
+      calculate: calculateGuatemalaTermination,
+    },
+    {
+      countryCode: "sv",
+      name: "El Salvador",
+      calculate: calculateElSalvadorTermination,
+    },
+    {
+      countryCode: "hn",
+      name: "Honduras",
+      calculate: calculateHondurasTermination,
+    },
+    {
+      countryCode: "cr",
+      name: "Costa Rica",
+      calculate: calculateCostaRicaTermination,
+    },
+    {
+      countryCode: "pa",
+      name: "Panama",
+      calculate: calculatePanamaTermination,
+    },
+    {
+      countryCode: "mx",
+      name: "Mexico",
+      calculate: calculateMexicoTermination,
+    },
+    {
+      countryCode: "co",
+      name: "Colombia",
+      calculate: calculateColombiaTermination,
+    },
+    {
+      countryCode: "pe",
+      name: "Peru",
+      calculate: calculatePeruTermination,
+    },
+    {
+      countryCode: "ar",
+      name: "Argentina",
+      calculate: calculateArgentinaTermination,
+    },
+    {
+      countryCode: "cl",
+      name: "Chile",
+      calculate: calculateChileTermination,
+    },
+  ]
+
+  for (const item of personalizedCalculators) {
+    test(`${item.name}: trial period suppresses automatic indemnity`, () => {
+      const result = item.calculate({
+        ...baseInput,
+        countryCode: item.countryCode,
+        terminationCause: "despido_injustificado",
+        contractType: "periodo_prueba",
+      })
+      const injust = result.scenarios.find(
+        (s) => s.type === "despido_injustificado"
+      )
+      expect(injust?.applicable).toBe(false)
+      expect(injust?.total).toBe(0)
+      expect(injust?.note).toContain("Periodo de prueba")
+    })
+  }
 })

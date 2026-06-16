@@ -1,4 +1,13 @@
 import { PDFDocument, PDFPage, rgb, StandardFonts } from "pdf-lib"
+import type { RGB } from "pdf-lib"
+
+type ColorInput = RGB | [number, number, number]
+
+const toRgb = (color: ColorInput): RGB =>
+  Array.isArray(color) ? rgb(...color) : color
+
+const sanitizePdfText = (content: string) =>
+  content.replaceAll("◆", "*").replaceAll("→", "->")
 
 export const COLORS = {
   text: rgb(0.1, 0.1, 0.1),
@@ -13,17 +22,29 @@ export const COLORS = {
 }
 
 export const currencyLocaleMap: Record<string, string> = {
-  NIO: "es-NI", USD: "es-SV", GTQ: "es-GT", HNL: "es-HN",
-  CRC: "es-CR", MXN: "es-MX", COP: "es-CO", PEN: "es-PE",
-  ARS: "es-AR", CLP: "es-CL",
+  NIO: "es-NI",
+  USD: "es-SV",
+  GTQ: "es-GT",
+  HNL: "es-HN",
+  CRC: "es-CR",
+  MXN: "es-MX",
+  COP: "es-CO",
+  PEN: "es-PE",
+  ARS: "es-AR",
+  CLP: "es-CL",
 }
 
-export const currencyFormatters: Record<string, Intl.NumberFormat> = Object.fromEntries(
-  Object.entries(currencyLocaleMap).map(([curr, locale]) => [
-    curr,
-    new Intl.NumberFormat(locale, { style: "currency", currency: curr, minimumFractionDigits: 2 }),
-  ]),
-)
+export const currencyFormatters: Record<string, Intl.NumberFormat> =
+  Object.fromEntries(
+    Object.entries(currencyLocaleMap).map(([curr, locale]) => [
+      curr,
+      new Intl.NumberFormat(locale, {
+        style: "currency",
+        currency: curr,
+        minimumFractionDigits: 2,
+      }),
+    ])
+  )
 
 export const money = (amount: number, currencyCode: string) =>
   (currencyFormatters[currencyCode] ?? currencyFormatters.NIO).format(amount)
@@ -46,19 +67,20 @@ export function drawText(
   opts: {
     size?: number
     bold?: boolean
-    color?: [number, number, number]
+    color?: ColorInput
     align?: "left" | "right"
     fontSet: FontSet
   }
 ) {
+  const safeContent = sanitizePdfText(content)
   const f = opts.bold ? opts.fontSet.bold : opts.fontSet.font
   const size = opts.size ?? 11
-  const color = opts.color ? rgb(...opts.color) : COLORS.text
+  const color = opts.color ? toRgb(opts.color) : COLORS.text
   let px = x
   if (opts.align === "right") {
-    px = x - f.widthOfTextAtSize(content, size)
+    px = x - f.widthOfTextAtSize(safeContent, size)
   }
-  page.drawText(content, { x: px, y, size, font: f, color })
+  page.drawText(safeContent, { x: px, y, size, font: f, color })
 }
 
 export function drawLine(
@@ -67,13 +89,13 @@ export function drawLine(
   y1: number,
   x2: number,
   y2: number,
-  opts?: { color?: [number, number, number]; width?: number }
+  opts?: { color?: ColorInput; width?: number }
 ) {
   page.drawLine({
     start: { x: x1, y: y1 },
     end: { x: x2, y: y2 },
     thickness: opts?.width ?? 0.5,
-    color: opts?.color ? rgb(...opts.color) : COLORS.border,
+    color: opts?.color ? toRgb(opts.color) : COLORS.border,
   })
 }
 
@@ -84,13 +106,19 @@ export function drawBox(
   w: number,
   h: number,
   opts?: {
-    borderColor?: [number, number, number]
+    borderColor?: ColorInput
     borderWidth?: number
-    fillColor?: [number, number, number]
+    fillColor?: ColorInput
   }
 ) {
   if (opts?.fillColor) {
-    page.drawRectangle({ x, y, width: w, height: h, color: rgb(...opts.fillColor) })
+    page.drawRectangle({
+      x,
+      y,
+      width: w,
+      height: h,
+      color: toRgb(opts.fillColor),
+    })
   }
   if (opts?.borderColor && (opts.borderWidth ?? 0) > 0) {
     page.drawRectangle({
@@ -98,7 +126,7 @@ export function drawBox(
       y,
       width: w,
       height: h,
-      borderColor: rgb(...opts.borderColor),
+      borderColor: toRgb(opts.borderColor),
       borderWidth: opts.borderWidth,
     })
   }
@@ -110,9 +138,14 @@ export function drawIcon(
   label: string,
   x: number,
   y: number,
-  fontSet: FontSet,
+  fontSet: FontSet
 ): void {
-  drawText(page, symbol, x, y, { size: 14, bold: true, color: [0.2, 0.4, 0.8], fontSet })
+  drawText(page, symbol, x, y, {
+    size: 14,
+    bold: true,
+    color: [0.2, 0.4, 0.8],
+    fontSet,
+  })
   drawText(page, label, x + 16, y + 3, { size: 20, bold: true, fontSet })
 }
 
@@ -124,10 +157,18 @@ export function drawSectionTitle(
   fontSet: FontSet,
   opts?: { compact?: boolean }
 ): number {
-  drawText(page, title, x, y, { size: 12, bold: true, color: [0.2, 0.4, 0.8], fontSet })
+  drawText(page, title, x, y, {
+    size: 12,
+    bold: true,
+    color: [0.2, 0.4, 0.8],
+    fontSet,
+  })
   const spacing = opts?.compact ? 10 : 14
   const newY = y - spacing
-  drawLine(page, x, newY, x + 499, newY, { color: [0.85, 0.85, 0.85], width: 0.3 })
+  drawLine(page, x, newY, x + 499, newY, {
+    color: [0.85, 0.85, 0.85],
+    width: 0.3,
+  })
   return newY - 4
 }
 
@@ -233,16 +274,17 @@ export function drawWrappedText(
   opts: {
     size?: number
     bold?: boolean
-    color?: [number, number, number]
+    color?: ColorInput
     fontSet: FontSet
     lineHeight?: number
   }
 ): { y: number; lines: number } {
+  const safeText = sanitizePdfText(text)
   const f = opts.bold ? opts.fontSet.bold : opts.fontSet.font
   const size = opts.size ?? 11
   const lh = opts.lineHeight ?? size + 4
-  const color = opts.color ? rgb(...opts.color) : COLORS.text
-  const words = text.split(/\s+/)
+  const color = opts.color ? toRgb(opts.color) : COLORS.text
+  const words = safeText.split(/\s+/)
   let line = ""
   let lines = 0
   let cy = y

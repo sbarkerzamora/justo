@@ -16,6 +16,8 @@ describe("terminationTool", () => {
       monthlySalary: 30000,
       startDate: "2020-01-01",
       endDate: "2025-01-01",
+      terminationCause: "despido_injustificado",
+      contractType: "indeterminado",
     })
 
     expect(result.currency).toBe("NIO")
@@ -33,6 +35,8 @@ describe("terminationTool", () => {
       monthlySalary: 9000,
       startDate: "2022-06-01",
       endDate: "2025-01-01",
+      terminationCause: "despido_injustificado",
+      contractType: "indeterminado",
     })
 
     expect(result.currency).toBe("GTQ")

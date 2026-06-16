@@ -8,11 +8,22 @@ import type {
   TerminationScenarioType,
 } from "./types"
 
+const baseScenarioTypes = new Set([
+  "renuncia",
+  "despido_justificado",
+  "despido_injustificado",
+  "mutuo_acuerdo",
+])
+
 export const scenarioLabels: Record<TerminationScenarioType, string> = {
   renuncia: "Renuncia voluntaria",
   despido_justificado: "Despido justificado",
   despido_injustificado: "Despido injustificado",
   mutuo_acuerdo: "Mutuo acuerdo",
+  fin_plazo: "Fin de plazo",
+  obra_terminada: "Obra terminada",
+  jubilacion: "Jubilación",
+  fallecimiento: "Fallecimiento",
 }
 
 export interface TerminationContext {
@@ -37,9 +48,21 @@ export interface TerminationParams {
   scenarios: TerminationScenarioConfig[]
 }
 
+export const isSpecialTerminationClosure = (input: TerminationInput) =>
+  !baseScenarioTypes.has(input.terminationCause) ||
+  input.contractType === "periodo_prueba"
+
+export const getSpecialTerminationClosureNote = (input: TerminationInput) => {
+  if (input.contractType === "periodo_prueba") {
+    return "Periodo de prueba: no se calcula indemnización automática sin validar reglas específicas del caso en el corpus legal."
+  }
+
+  return "Causa especial de cierre: se requiere regla específica por causa y contrato; no se agrega indemnización sin respaldo del corpus."
+}
+
 export function buildTermination(
   input: TerminationInput,
-  params: TerminationParams,
+  params: TerminationParams
 ): TerminationResult {
   const start = new Date(input.startDate)
   const end = new Date(input.endDate)
@@ -49,7 +72,9 @@ export function buildTermination(
   }
 
   if (end < start) {
-    throw new Error("La fecha de salida no puede ser menor que la fecha de inicio")
+    throw new Error(
+      "La fecha de salida no puede ser menor que la fecha de inicio"
+    )
   }
 
   const dailySalary = round2(input.monthlySalary / 30)
@@ -94,12 +119,24 @@ export function buildTermination(
     }
   })
 
+  if (!scenarios.some((scenario) => scenario.type === input.terminationCause)) {
+    scenarios.push({
+      type: input.terminationCause,
+      applicable: true,
+      total: 0,
+      lines: [],
+      note: "Escenario informativo. Esta causa requiere reglas específicas por contrato y país; no se agrega indemnización sin respaldo del corpus.",
+    })
+  }
+
   return {
     currency: params.currency,
     scenarios,
     dailySalary,
     tenureYears: round2(tenureYears),
     tenureDays: seniorityDays,
+    selectedTerminationCause: input.terminationCause,
+    contractType: input.contractType,
     generatedAt: new Date().toISOString(),
     legalCorpusVersion: params.corpusVersion,
   }
@@ -109,7 +146,7 @@ export function makeIndemnityLine(
   label: string,
   dailySalary: number,
   days: number,
-  legalReference: string,
+  legalReference: string
 ): TerminationLine {
   return {
     label,

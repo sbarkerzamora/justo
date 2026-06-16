@@ -518,7 +518,6 @@ export function VacationsTool({
               result={result}
               fmt={fmt}
               copy={copy}
-              locale={locale}
               onRestart={() => dispatch({ type: "reset", countryCode })}
               onComplete={handleComplete}
               onExportPdf={onExportPdf}
@@ -548,24 +547,22 @@ export function VacationsTool({
                         : "text"
                 }
                 placeholder={copy.askPlaceholder}
-                className="h-12 w-full rounded-2xl border border-border bg-card pl-4 pr-4 text-sm text-foreground transition-colors outline-none placeholder:text-muted-foreground focus:border-foreground/30"
+                className="h-12 w-full rounded-2xl border border-border bg-card pr-4 pl-4 text-sm text-foreground transition-colors outline-none placeholder:text-muted-foreground focus:border-foreground/30"
               />
             </div>
           </div>
         )}
 
-        {step !== "welcome" &&
-          step !== "confirm" &&
-          step !== "done" && (
-            <StepNavigation
-              onBack={handleBack}
-              onContinue={handleSubmit}
-              canContinue={!!inputValue.trim()}
-              showBack={step !== "monthlySalary"}
-              backLabel={copy.backToPrevious}
-              continueLabel={copy.send}
-            />
-          )}
+        {step !== "welcome" && step !== "confirm" && step !== "done" && (
+          <StepNavigation
+            onBack={handleBack}
+            onContinue={handleSubmit}
+            canContinue={!!inputValue.trim()}
+            showBack={step !== "monthlySalary"}
+            backLabel={copy.backToPrevious}
+            continueLabel={copy.send}
+          />
+        )}
       </div>
     </div>
   )
@@ -819,7 +816,6 @@ function ResultPanel({
   result,
   fmt,
   copy,
-  locale,
   onRestart,
   onComplete,
   onExportPdf,
@@ -827,7 +823,6 @@ function ResultPanel({
   result: ReturnType<typeof calculateVacations>
   fmt: (v: number) => string
   copy: (typeof homeCopy)[Locale]
-  locale: Locale
   onRestart: () => void
   onComplete: () => void
   onExportPdf: () => Promise<void>
@@ -878,9 +873,7 @@ function ResultPanel({
               <IconBeach className="size-4 text-emerald-600" />
             </div>
             <div>
-              <p className="text-xs text-muted-foreground">
-                {copy.usedDays}
-              </p>
+              <p className="text-xs text-muted-foreground">{copy.usedDays}</p>
               <p className="text-sm font-semibold text-foreground">
                 {result.usedVacationDays} {copy.daysLabel}
               </p>
@@ -916,9 +909,7 @@ function ResultPanel({
 
         <div className="mt-4 space-y-2 rounded-xl bg-muted/30 p-3">
           <div>
-            <p className="text-xs text-muted-foreground">
-              {copy.formulaLabel}
-            </p>
+            <p className="text-xs text-muted-foreground">{copy.formulaLabel}</p>
             <p className="mt-0.5 font-mono text-sm text-foreground">
               {result.formula}
             </p>
