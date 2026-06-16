@@ -31,6 +31,12 @@ const preavisoCalculators: Record<CountryCode, (input: PreavisoInput) => Preavis
   sv: calculateElSalvadorPreaviso,
 }
 
+export function calculatePreaviso(input: PreavisoInput): PreavisoResult {
+  const calc = preavisoCalculators[input.countryCode]
+  if (!calc) throw new Error(`País no soportado: ${input.countryCode}`)
+  return calc(input)
+}
+
 const countryOverrides: Partial<Record<CountryCode, { corpusVersion: string }>> = {
   ar: { corpusVersion: "ar-v0.1.0" },
   cl: { corpusVersion: "cl-v0.1.0" },
@@ -72,11 +78,7 @@ export const preavisoTool: CalculationTool<PreavisoInput, PreavisoResult> = {
   disclaimer:
     "Herramienta informativa. Los cálculos de preaviso pueden variar según el tipo de contrato y causales específicas. Consulte con un abogado laboral para casos concretos.",
   inputSchema: PreavisoInputSchema,
-  calculate: (input: PreavisoInput) => {
-    const calc = preavisoCalculators[input.countryCode]
-    if (!calc) throw new Error(`País no soportado: ${input.countryCode}`)
-    return calc(input)
-  },
+  calculate: calculatePreaviso,
   countryOverrides: Object.fromEntries(
     Object.entries(countryOverrides).map(([cc, o]) => [
       cc,
