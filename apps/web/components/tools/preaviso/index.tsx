@@ -1,6 +1,8 @@
 "use client"
 
 import { useReducer, useState, useCallback } from "react"
+import Image from "next/image"
+import Link from "next/link"
 import {
   IconArrowLeft,
   IconArrowRight,
@@ -18,7 +20,6 @@ import type { PreavisoFormData } from "@/components/tools/tool-types"
 import type { Locale } from "@/lib/i18n"
 import { homeCopy } from "@/lib/home-copy"
 import { StepNavigation } from "@/components/tools/step-navigation"
-import { LegalFooter } from "@/components/tools/legal-footer"
 
 export type PreavisoStep = "welcome" | "salary" | "tenure" | "confirm" | "done"
 
@@ -73,6 +74,7 @@ export function PreavisoTool({
   onCancel: () => void
 }) {
   const copy = homeCopy[locale]
+  const localePrefix = locale === "en" ? "/en" : ""
   const [state, dispatch] = useReducer(reducer, countryCode, initialState)
   const { step, form, result, error } = state
   const [salaryDisplay, setSalaryDisplay] = useState("")
@@ -165,9 +167,25 @@ export function PreavisoTool({
               style={{ width: `${((stepIndex) / (totalSteps - 1)) * 100}%` }}
             />
           </div>
+          <div className="flex items-center gap-1.5 text-xs text-muted-foreground">
+            <Image
+              src={`https://flagcdn.com/w40/${countryCode}.png`}
+              alt={countryName}
+              width={14}
+              height={10}
+              className="h-2.5 w-3.5 rounded-[1px] border border-border object-cover"
+            />
+            <span>{copy.calculatingUnder(countryName)}</span>
+            <Link
+              href={`${localePrefix}/guia-laboral?country=${countryCode}`}
+              className="ml-auto underline underline-offset-2 hover:text-foreground"
+            >
+              {copy.legalDocs}
+            </Link>
+          </div>
         </div>
       )}
-      <LegalFooter countryCode={countryCode} countryName={countryName} locale={locale} />
+
       <div className="min-h-0 flex-1 overflow-y-auto px-2">
         {step === "welcome" ? (
           <div className="flex h-full flex-col items-center justify-center gap-6">
