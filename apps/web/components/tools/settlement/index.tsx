@@ -2,6 +2,8 @@
 
 import type { ReactNode } from "react"
 import { useReducer, useState, useCallback, useRef } from "react"
+import Image from "next/image"
+import Link from "next/link"
 import {
   IconArrowLeft,
   IconArrowRight,
@@ -29,7 +31,6 @@ import { homeCopy } from "@/lib/home-copy"
 import type { SettlementForm } from "@/components/tools/tool-types"
 import type { FlowStep } from "@/components/tools/tool-types"
 import {
-  ProgressHeader,
   FrequencyPicker,
   stepOrder,
 } from "@/components/tools/settlement-panels"
@@ -40,7 +41,6 @@ import {
   parseCurrencyInput,
 } from "@/components/tools/input-formatters"
 import { StepNavigation } from "@/components/tools/step-navigation"
-import { LegalFooter } from "@/components/tools/legal-footer"
 
 export type SettlementStep =
   | "welcome"
@@ -365,17 +365,33 @@ export function SettlementTool({
           {locale === "en" ? "Back" : "Volver"}
         </button>
       </div>
-      <div className="w-full">
-        <ProgressHeader
-          cc={countryCode}
-          countryName={countryName}
-          locale={locale}
-          copy={copy}
-          step={step as FlowStep}
-          stepIdx={stepIndex(step)}
-        />
+      <div className="mb-3 w-full space-y-2 motion-safe:animate-in motion-safe:duration-200 motion-safe:fade-in motion-safe:slide-in-from-top-1 max-sm:mb-2">
+        <div className="mb-1 flex items-center justify-between text-xs text-muted-foreground">
+          <span>{copy.progressStep(stepIndex(step))}</span>
+        </div>
+        <div className="h-2 rounded-full bg-muted">
+          <div
+            className="h-2 rounded-full bg-primary transition-all duration-300"
+            style={{ width: `${(stepIndex(step) / stepOrder.length) * 100}%` }}
+          />
+        </div>
+        <div className="flex items-center gap-1.5 text-xs text-muted-foreground">
+          <Image
+            src={`https://flagcdn.com/w40/${countryCode}.png`}
+            alt={countryName}
+            width={14}
+            height={10}
+            className="h-2.5 w-3.5 rounded-[1px] border border-border object-cover"
+          />
+          <span>{copy.calculatingUnder(countryName)}</span>
+          <Link
+            href="/docs"
+            className="ml-auto underline underline-offset-2 hover:text-foreground"
+          >
+            {copy.legalDocs}
+          </Link>
+        </div>
       </div>
-      <LegalFooter countryCode={countryCode} countryName={countryName} locale={locale} />
       <div className="min-h-0 flex-1 py-2">
         {step === "welcome" ? (
           <OnboardingPanel
@@ -750,7 +766,7 @@ function ResultPanelTool({
           <IconRefresh className="size-4" /> {copy.calculateAgain}
         </button>
         <button type="button" onClick={onComplete} className="inline-flex items-center gap-2 rounded-xl border border-border bg-card px-4 py-2.5 text-sm font-medium text-foreground transition-colors hover:bg-accent">
-          <IconMessageCircle className="size-4" /> {copy.writeQuestion}
+          <IconMessageCircle className="size-4" /> {copy.backToChat}
         </button>
       </div>
     </div>

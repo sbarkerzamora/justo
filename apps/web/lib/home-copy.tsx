@@ -93,6 +93,8 @@ type HomeCopy = {
   contractWelcomeDescription: string
   salaryNetWelcomeTitle: string
   salaryNetWelcomeDescription: string
+  preavisoWelcomeTitle: string
+  preavisoWelcomeDescription: string
   grossSalary: string
   netResult: string
   netPerPeriod: string
@@ -265,6 +267,8 @@ export const homeCopy: Record<Locale, HomeCopy> = {
     contractWelcomeDescription: "Genera un contrato individual de trabajo listo para imprimir y firmar. Captura datos del trabajador, empleador, puesto, jornada, duración y salario según la Ley 185 de Nicaragua.",
     salaryNetWelcomeTitle: "Calculadora de salario neto",
     salaryNetWelcomeDescription: "Calcula tu salario neto después de deducciones legales (INSS, IR, ISSS, AFP, etc.) con fórmulas transparentes.",
+    preavisoWelcomeTitle: "Calculadora de preaviso laboral",
+    preavisoWelcomeDescription: "Calculá los días de preaviso y la indemnización sustitutiva según la antigüedad del trabajador y la legislación aplicable.",
     grossSalary: "Salario bruto",
     netResult: "Salario neto",
     netPerPeriod: "Salario neto por período",
@@ -434,6 +438,8 @@ export const homeCopy: Record<Locale, HomeCopy> = {
     contractWelcomeDescription: "Generate an individual employment contract ready to print and sign. Captures worker and employer data, job details, work schedule, duration and salary according to Nicaragua's Labor Code (Law 185).",
     salaryNetWelcomeTitle: "Net Salary Calculator",
     salaryNetWelcomeDescription: "Calculate your net salary after legal deductions (INSS, IR, ISSS, AFP, etc.) with transparent formulas.",
+    preavisoWelcomeTitle: "Notice Period Calculator",
+    preavisoWelcomeDescription: "Calculate the notice period and substitute payment based on the worker's tenure and applicable legislation.",
     grossSalary: "Gross salary",
     netResult: "Net salary",
     netPerPeriod: "Net salary by period",
