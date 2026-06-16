@@ -9,7 +9,24 @@ export const COLORS = {
   tableHeaderBg: rgb(0.94, 0.94, 0.94),
   white: rgb(1, 1, 1),
   black: rgb(0, 0, 0),
+  accent: rgb(0.2, 0.4, 0.8),
 }
+
+export const currencyLocaleMap: Record<string, string> = {
+  NIO: "es-NI", USD: "es-SV", GTQ: "es-GT", HNL: "es-HN",
+  CRC: "es-CR", MXN: "es-MX", COP: "es-CO", PEN: "es-PE",
+  ARS: "es-AR", CLP: "es-CL",
+}
+
+export const currencyFormatters: Record<string, Intl.NumberFormat> = Object.fromEntries(
+  Object.entries(currencyLocaleMap).map(([curr, locale]) => [
+    curr,
+    new Intl.NumberFormat(locale, { style: "currency", currency: curr, minimumFractionDigits: 2 }),
+  ]),
+)
+
+export const money = (amount: number, currencyCode: string) =>
+  (currencyFormatters[currencyCode] ?? currencyFormatters.NIO).format(amount)
 
 export type FontSet = { font: any; bold: any }
 
@@ -87,17 +104,31 @@ export function drawBox(
   }
 }
 
+export function drawIcon(
+  page: PDFPage,
+  symbol: string,
+  label: string,
+  x: number,
+  y: number,
+  fontSet: FontSet,
+): void {
+  drawText(page, symbol, x, y, { size: 14, bold: true, color: [0.2, 0.4, 0.8], fontSet })
+  drawText(page, label, x + 16, y + 3, { size: 20, bold: true, fontSet })
+}
+
 export function drawSectionTitle(
   page: PDFPage,
   title: string,
   x: number,
   y: number,
-  fontSet: FontSet
+  fontSet: FontSet,
+  opts?: { compact?: boolean }
 ): number {
-  drawText(page, title, x, y, { size: 13, bold: true, fontSet })
-  const newY = y - 18
-  drawLine(page, x, newY + 8, x + 499, newY + 8, { color: [0.85, 0.85, 0.85], width: 0.5 })
-  return newY
+  drawText(page, title, x, y, { size: 12, bold: true, color: [0.2, 0.4, 0.8], fontSet })
+  const spacing = opts?.compact ? 10 : 14
+  const newY = y - spacing
+  drawLine(page, x, newY, x + 499, newY, { color: [0.85, 0.85, 0.85], width: 0.3 })
+  return newY - 4
 }
 
 export function drawKeyValue(
