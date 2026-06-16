@@ -42,33 +42,15 @@
 - [x] Salario proporcional: tests unitarios para CR, HN, MX, PA, SV.
 - [x] Node.js actualizado a v22.22.3 via NVM.
 - [x] Re-ingesta del corpus: 11 países indexados (~5,200 chunks).
+- [x] Preaviso standalone tool: módulo core + tool registration + API + UI + corpus.
 
 ---
 
 ## 🔜 Next — OSS
 
-### 1. Preaviso como tópico standalone
+### 1. Herramientas nuevas
 
-Extraer preaviso de las fórmulas existentes en un cálculo independiente.
-
-| # | Tarea | Archivos |
-|---|-------|----------|
-| 1.1 | Investigar reglas de preaviso por país (TÚ — web research) | `docs/legal/*/` |
-| 1.2 | Crear documentos de corpus por país | `source.tsx` |
-| 1.3 | Agregar cálculo de preaviso a `@justo/core` | `core/src/preaviso/` |
-| 1.4 | Registrar como tool `?tool=notice` | `tools/src/` |
-| 1.5 | Crear UI component de tool | `components/tools/preaviso/` |
-| 1.6 | Crear PDF de preaviso | `pdf/src/notice/` |
-| 1.7 | Agregar a sidebar + tool detail pages (SEO) | `app-shell.tsx`, `app/(content)/tools/` |
-| 1.8 | Tests por país | `core/src/{país}/__tests__/` |
-
-**Verificación:** `pnpm test` + `pnpm typecheck`
-
----
-
-### 2. Herramientas nuevas
-
-#### 2.1 Horas extra
+#### 1.1 Horas extra
 
 | # | Tarea | Archivos |
 |---|-------|----------|
@@ -81,7 +63,7 @@ Extraer preaviso de las fórmulas existentes en un cálculo independiente.
 | 2.1.7 | Agregar tool detail page | `app/(content)/tools/horas-extra/` |
 | 2.1.8 | Tests por país | `core/src/{país}/__tests__/` |
 
-#### 2.2 Checklist laboral
+#### 1.2 Checklist laboral
 
 | # | Tarea | Archivos |
 |---|-------|----------|
@@ -90,7 +72,7 @@ Extraer preaviso de las fórmulas existentes en un cálculo independiente.
 | 2.2.3 | Crear UI component interactivo | `components/tools/checklist/` |
 | 2.2.4 | Agregar a sidebar | `components/app-shell.tsx` |
 
-#### 2.3 Asistente de contratación
+#### 1.3 Asistente de contratación
 
 | # | Tarea | Archivos |
 |---|-------|----------|
@@ -102,7 +84,7 @@ Extraer preaviso de las fórmulas existentes en un cálculo independiente.
 
 ---
 
-### 3. Tool flow framework unificado
+### 2. Tool flow framework unificado
 
 | # | Tarea | Archivos |
 |---|-------|----------|
@@ -122,7 +104,7 @@ Extraer preaviso de las fórmulas existentes en un cálculo independiente.
 
 ---
 
-### 4. Accesibilidad WCAG
+### 3. Accesibilidad WCAG
 
 | # | Tarea | Prioridad WCAG |
 |---|-------|----------------|
@@ -136,7 +118,7 @@ Extraer preaviso de las fórmulas existentes en un cálculo independiente.
 
 ---
 
-### 5. Traducción EN: bot de Telegram
+### 4. Traducción EN: bot de Telegram
 
 | # | Tarea | Archivos |
 |---|-------|----------|
@@ -147,7 +129,7 @@ Extraer preaviso de las fórmulas existentes en un cálculo independiente.
 
 ---
 
-### 6. Documentación pública del corpus legal
+### 5. Documentación pública del corpus legal
 
 | # | Tarea | Archivos |
 |---|-------|----------|
@@ -158,7 +140,7 @@ Extraer preaviso de las fórmulas existentes en un cálculo independiente.
 
 ---
 
-### 7. Auditoría legal/contable profesional
+### 6. Auditoría legal/contable profesional
 
 | # | Tarea | Por país |
 |---|-------|----------|
@@ -176,7 +158,6 @@ Extraer preaviso de las fórmulas existentes en un cálculo independiente.
 
 ## 📅 Later
 
-- [ ] Preaviso standalone tool (11 países, investigación web pendiente).
 - [ ] `CHANGELOG.md`, `SECURITY.md`, `CODE_OF_CONDUCT.md`.
 - [ ] Nuevos países y actualizaciones de corpus legal según demanda.
 - [ ] Mejores fixtures públicos para validar cálculos por jurisdicción.
@@ -209,11 +190,13 @@ Extraer preaviso de las fórmulas existentes en un cálculo independiente.
 | Corpus: salario-proporcional | ✅ 11 países — formulas verificadas + tests |
 | Node.js | ✅ v22.22.3 (NVM) |
 | RAG corpus ingestion | ✅ 11 países re-ingeridos (~5,200 chunks) |
-| **Preaviso standalone** | ⬜ (🔜 #1) |
-| **Horas extra, checklist, hiring** | ⬜ (🔜 #2) |
-| **Tool flow framework** | ⬜ (🔜 #3) |
-| **Accesibilidad WCAG** | ⬜ (🔜 #4) |
-| **Telegram bot EN** | ⬜ (🔜 #5) |
+| Preaviso tool | ✅ Core + tools + API + UI + corpus (11 países) |
+| **Horas extra, checklist, hiring** | ⬜ (🔜 #1) |
+| **Tool flow framework** | ⬜ (🔜 #2) |
+| **Accesibilidad WCAG** | ⬜ (🔜 #3) |
+| **Telegram bot EN** | ⬜ (🔜 #4) |
+| **Documentación corpus** | ⬜ (🔜 #5) |
+| **Auditoría legal** | ⬜ (🔜 #6) |
 | Tests | ✅ 128+ |
 | CI / Docker | ✅ |
 | `justo-pro` | Repo privado separado |
