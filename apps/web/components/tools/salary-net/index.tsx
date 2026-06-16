@@ -27,6 +27,7 @@ import {
   parseCurrencyInput,
 } from "@/components/tools/input-formatters"
 import { StepNavigation } from "@/components/tools/step-navigation"
+import { LegalFooter } from "@/components/tools/legal-footer"
 
 export type SalaryNetStep =
   | "welcome"
@@ -396,7 +397,7 @@ export function SalaryNetTool({
           </Link>
         </div>
       </div>
-
+      <LegalFooter countryCode={countryCode} countryName={countryName} locale={locale} />
       <div className="min-h-0 flex-1 py-2">
         {step === "welcome" ? (
           <OnboardingPanel

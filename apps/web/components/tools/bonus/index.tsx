@@ -29,6 +29,7 @@ import {
   parseCurrencyInput,
 } from "@/components/tools/input-formatters"
 import { StepNavigation } from "@/components/tools/step-navigation"
+import { LegalFooter } from "@/components/tools/legal-footer"
 
 export type BonusStep =
   | "welcome"
@@ -397,7 +398,7 @@ export function BonusTool({
           </Link>
         </div>
       </div>
-
+      <LegalFooter countryCode={countryCode} countryName={countryName} locale={locale} />
       <div className="min-h-0 flex-1 py-2">
         {step === "welcome" ? (
           <OnboardingPanel

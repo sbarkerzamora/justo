@@ -18,6 +18,7 @@ import type { PreavisoFormData } from "@/components/tools/tool-types"
 import type { Locale } from "@/lib/i18n"
 import { homeCopy } from "@/lib/home-copy"
 import { StepNavigation } from "@/components/tools/step-navigation"
+import { LegalFooter } from "@/components/tools/legal-footer"
 
 export type PreavisoStep = "welcome" | "salary" | "tenure" | "confirm" | "done"
 
@@ -166,7 +167,7 @@ export function PreavisoTool({
           </div>
         </div>
       )}
-
+      <LegalFooter countryCode={countryCode} countryName={countryName} locale={locale} />
       <div className="min-h-0 flex-1 overflow-y-auto px-2">
         {step === "welcome" ? (
           <div className="flex h-full flex-col items-center justify-center gap-6">
