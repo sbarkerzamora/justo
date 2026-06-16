@@ -19,6 +19,7 @@ import {
   IconArrowUp,
   IconCalculator,
   IconBeach,
+  IconBell,
   IconCoins,
   IconGift,
   IconDoorExit,
@@ -565,6 +566,12 @@ function LlmHomeView(props: {
       icon: IconFileDescription,
       labelEs: "Contrato",
       labelEn: "Contract",
+    },
+    {
+      mode: "preaviso",
+      icon: IconBell,
+      labelEs: "Preaviso",
+      labelEn: "Notice",
     },
     {
       icon: IconMessageCircle,
