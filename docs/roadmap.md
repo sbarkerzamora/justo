@@ -78,6 +78,25 @@
 
 #### 1.3 Asistente de contratación
 
+---
+
+### 2. Validación y hardening (7 herramientas)
+
+Estandarizar validaciones, manejo de errores y edge cases en todas las herramientas.
+
+| # | Tarea | Archivos |
+|---|-------|----------|
+| 2.1 | Fix bonus/termination edit-dates bug (saveEdit ignora endDate) | `bonus/index.tsx`, `termination/index.tsx` |
+| 2.2 | Fix preaviso schema (startDate/endDate no usados, tenureYears sin max) | `preaviso/schema.ts` |
+| 2.3 | Fix settlement zero-salary mismatch (n >= 0 → n > 0) | `settlement/index.tsx` |
+| 2.4 | Add finite() a todos los campos numericos | `schema.ts` de 6 tools |
+| 2.5 | Add date regex a settlement/vacations schemas | `settlement/schema.ts`, `vacations/schema.ts` |
+| 2.6 | Add int() a vacationDays schemas | `settlement/schema.ts`, `vacations/schema.ts` |
+| 2.7 | Estandarizar PDF error handling (6 rutas) | `api/*/pdf/route.ts` + `components/tools/*/index.tsx` |
+| 2.8 | Add countrySupport checks faltantes | `api/bonus/calculate`, `api/termination/calculate`, PDF routes |
+
+**Verificación:** `pnpm test` + `pnpm typecheck`
+
 | # | Tarea | Archivos |
 |---|-------|----------|
 | 2.3.1 | Definir flujo de preguntas por país | `tools/src/` |
@@ -196,7 +215,9 @@
 | RAG corpus ingestion | ✅ 11 países re-ingeridos (~5,200 chunks) |
 | Preaviso tool | ✅ Core + tools + API + UI + corpus (11 países) |
 | UI estandarización | ✅ Preaviso rewrite, Settlement inline progress, Contract inputs unificados |
+| Validación hardening | ⬜ (🔜 #2) |
 | **Horas extra, checklist, hiring** | ⬜ (🔜 #1) |
+| **Tool flow framework** | ⬜ (🔜 #3) |
 | **Tool flow framework** | ⬜ (🔜 #2) |
 | **Accesibilidad WCAG** | ⬜ (🔜 #3) |
 | **Telegram bot EN** | ⬜ (🔜 #4) |

@@ -3,8 +3,6 @@ import type { CountryCode, CurrencyCode } from "../settlement"
 export interface PreavisoInput {
   countryCode: CountryCode
   monthlySalary: number
-  startDate: string
-  endDate: string
   tenureYears: number
 }
 

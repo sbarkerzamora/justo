@@ -108,8 +108,6 @@ export function PreavisoTool({
     const r = calculatePreaviso({
       countryCode: countryCode as CountryCode,
       monthlySalary: form.monthlySalary,
-      startDate: "",
-      endDate: "",
       tenureYears: form.tenureYears,
     })
     dispatch({ type: "setResult", result: r })

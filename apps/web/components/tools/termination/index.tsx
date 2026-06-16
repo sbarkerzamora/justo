@@ -331,12 +331,18 @@ export function TerminationTool({
         field: "editSalary",
         value: String(form.monthlySalary || ""),
       })
-    if (action === "dates")
+    if (action === "dates") {
       dispatch({
         type: "setEditField",
         field: "editStartDate",
         value: displayDate(form.startDate),
       })
+      dispatch({
+        type: "setEditField",
+        field: "editEndDate",
+        value: displayDate(form.endDate),
+      })
+    }
   }
 
   const saveEdit = () => {
@@ -350,11 +356,16 @@ export function TerminationTool({
     }
     if (editMode === "dates") {
       const isoStart = toIsoDate(state.editStartDate)
-      if (!isoStart) {
+      const isoEnd = toIsoDate(state.editEndDate)
+      if (!isoStart || !isoEnd) {
         dispatch({ type: "setError", error: copy.invalidDates })
         return
       }
-      dispatch({ type: "patchForm", patch: { startDate: isoStart } })
+      if (isoEnd < isoStart) {
+        dispatch({ type: "setError", error: copy.endBeforeStart })
+        return
+      }
+      dispatch({ type: "patchForm", patch: { startDate: isoStart, endDate: isoEnd } })
     }
     dispatch({ type: "setEditMode", editMode: null })
     dispatch({ type: "setError", error: null })
@@ -498,6 +509,7 @@ export function TerminationTool({
               editMode={editMode}
               editSalary={state.editSalary}
               editStartDate={state.editStartDate}
+              editEndDate={state.editEndDate}
               onSetEditField={(field, value) =>
                 dispatch({
                   type: "setEditField",
@@ -749,6 +761,7 @@ function EditPanel({
   editMode,
   editSalary,
   editStartDate,
+  editEndDate,
   onSetEditField,
   onSetEditMode,
   saveEdit,
@@ -757,6 +770,7 @@ function EditPanel({
   editMode: TerminationEditMode
   editSalary: string
   editStartDate: string
+  editEndDate: string
   onSetEditField: (field: string, value: string) => void
   onSetEditMode: (mode: TerminationEditMode) => void
   saveEdit: () => void
@@ -777,16 +791,28 @@ function EditPanel({
           />
         </label>
       ) : editMode === "dates" ? (
-        <label className="grid gap-2 text-sm">
-          <span className="text-foreground">{copy.startDate}</span>
-          <input
-            value={editStartDate}
-            onChange={(e) =>
-              onSetEditField("editStartDate", formatDateInput(e.target.value))
-            }
-            className="h-11 rounded-xl border border-border bg-background px-3 text-foreground outline-none focus:border-foreground/30"
-          />
-        </label>
+        <div className="space-y-3">
+          <label className="grid gap-2 text-sm">
+            <span className="text-foreground">{copy.startDate}</span>
+            <input
+              value={editStartDate}
+              onChange={(e) =>
+                onSetEditField("editStartDate", formatDateInput(e.target.value))
+              }
+              className="h-11 rounded-xl border border-border bg-background px-3 text-foreground outline-none focus:border-foreground/30"
+            />
+          </label>
+          <label className="grid gap-2 text-sm">
+            <span className="text-foreground">{copy.endDate}</span>
+            <input
+              value={editEndDate}
+              onChange={(e) =>
+                onSetEditField("editEndDate", formatDateInput(e.target.value))
+              }
+              className="h-11 rounded-xl border border-border bg-background px-3 text-foreground outline-none focus:border-foreground/30"
+            />
+          </label>
+        </div>
       ) : null}
       <div className="mt-4 flex flex-wrap gap-2">
         <button

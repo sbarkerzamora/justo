@@ -334,8 +334,6 @@ export async function generateLaborResponse(input: {
             const result = calculatePreaviso({
               countryCode: countryCode as CountryCode,
               monthlySalary,
-              startDate: "",
-              endDate: "",
               tenureYears,
             })
             return JSON.stringify({

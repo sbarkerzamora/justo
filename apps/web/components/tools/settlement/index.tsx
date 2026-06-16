@@ -191,7 +191,7 @@ export function SettlementTool({
   const applyField = (field: keyof SettlementForm, value: string): boolean => {
     if (field === "monthlySalary") {
       const n = parseCurrencyInput(value)
-      if (Number.isNaN(n) || n < 0) return false
+      if (Number.isNaN(n) || n <= 0) return false
       dispatch({ type: "patchForm", patch: { [field]: n } as Partial<SettlementForm> })
       return true
     }

@@ -9,8 +9,6 @@ export const CountryCodesEnum = z.enum(countryCodes)
 
 export const PreavisoInputSchema = z.object({
   countryCode: CountryCodesEnum as z.ZodType<CountryCode>,
-  monthlySalary: z.number().positive(),
-  startDate: z.string().min(1),
-  endDate: z.string().min(1),
-  tenureYears: z.number().min(0),
+  monthlySalary: z.number().positive().finite(),
+  tenureYears: z.number().min(0).max(100),
 })
