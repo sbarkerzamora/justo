@@ -15,7 +15,7 @@ import {
   type PreavisoInput,
   type PreavisoResult,
 } from "@justo/core"
-import type { CalculationTool } from "./types"
+import type { CalculationTool, JustoToolCountryOverride } from "./types"
 
 const preavisoCalculators: Record<CountryCode, (input: PreavisoInput) => PreavisoResult> = {
   ar: calculateArgentinaPreaviso,
@@ -79,10 +79,5 @@ export const preavisoTool: CalculationTool<PreavisoInput, PreavisoResult> = {
     "Herramienta informativa. Los cálculos de preaviso pueden variar según el tipo de contrato y causales específicas. Consulte con un abogado laboral para casos concretos.",
   inputSchema: PreavisoInputSchema,
   calculate: calculatePreaviso,
-  countryOverrides: Object.fromEntries(
-    Object.entries(countryOverrides).map(([cc, o]) => [
-      cc,
-      { corpusVersion: o.corpusVersion },
-    ]),
-  ) as Partial<Record<CountryCode, { corpusVersion: string }>>,
+  countryOverrides: countryOverrides as Partial<Record<CountryCode, JustoToolCountryOverride>>,
 }

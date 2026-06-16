@@ -104,15 +104,6 @@ export function PreavisoTool({
     if (prev) dispatch({ type: "setStep", step: prev })
   }, [step])
 
-  const handleCalculate = useCallback(() => {
-    const s = Number.parseFloat(salaryDisplay)
-    const t = Number.parseFloat(tenureDisplay)
-    if (!s || !t || s <= 0 || t <= 0) return
-
-    dispatch({ type: "patchForm", patch: { monthlySalary: s, tenureYears: t } })
-    advance()
-  }, [salaryDisplay, tenureDisplay, advance])
-
   const handleConfirm = useCallback(() => {
     const r = calculatePreaviso({
       countryCode: countryCode as CountryCode,

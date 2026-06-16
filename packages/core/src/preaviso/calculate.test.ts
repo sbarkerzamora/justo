@@ -60,6 +60,11 @@ describe("preaviso — Honduras", () => {
     expect(r.noticeDays).toBe(7)
   })
 
+  test("menos de 3 meses = 1 día (trivial)", () => {
+    const r = calc({ countryCode: "hn", monthlySalary: 15000, startDate: "2026-02-01", endDate: "2026-03-15", tenureYears: 0.1 })
+    expect(r.noticeDays).toBe(1)
+  })
+
   test("más de 2 años = 60 días", () => {
     const r = calc({ countryCode: "hn", monthlySalary: 15000, startDate: "2020-01-01", endDate: "2026-05-11", tenureYears: 6 })
     expect(r.noticeDays).toBe(60)

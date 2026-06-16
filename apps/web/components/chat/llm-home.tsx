@@ -162,7 +162,7 @@ export function LlmHome({
 }: {
   countryCode?: string
   locale: Locale
-  initialTool?: "settlement" | "vacations" | "salary-net"
+  initialTool?: AppMode
 }) {
   const cc = countryCode ?? "ni"
   const copy = homeCopy[locale]
