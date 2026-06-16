@@ -461,7 +461,7 @@ export function AppShell({
         <aside
           className={cn(
             "flex shrink-0 flex-col overflow-y-auto border-r border-sidebar-border bg-sidebar px-4 transition-[width] duration-200 max-md:hidden",
-            open ? "w-[240px]" : "w-[56px]"
+            open ? "w-[300px]" : "w-[56px]"
           )}
           onMouseEnter={() => setOpen(true)}
           onMouseLeave={() => setOpen(false)}
