@@ -54,6 +54,7 @@ export type SettlementStep =
   | "frequency"
   | "terminationCause"
   | "contractType"
+  | "pensionSystem"
   | "adjustments"
   | "confirm"
   | "done"
@@ -329,8 +330,12 @@ export function SettlementTool({
     if (!field || !applyField(field, inputValue)) {
       return false
     }
-    const ns = nextStep(step)
-    dispatch({ type: "setStep", step: ns })
+    if (step === "contractType" && countryCode === "pe") {
+      dispatch({ type: "setStep", step: "pensionSystem" })
+    } else {
+      const ns = nextStep(step)
+      dispatch({ type: "setStep", step: ns })
+    }
     setInputValue("")
     return true
   }
@@ -339,6 +344,7 @@ export function SettlementTool({
     if (
       step === "welcome" ||
       step === "frequency" ||
+      step === "pensionSystem" ||
       step === "confirm" ||
       step === "done"
     )
@@ -347,6 +353,14 @@ export function SettlementTool({
   }
 
   const handleBack = () => {
+    if (step === "pensionSystem") {
+      dispatch({ type: "setStep", step: "contractType" })
+      return
+    }
+    if (step === "adjustments" && countryCode === "pe") {
+      dispatch({ type: "setStep", step: "pensionSystem" })
+      return
+    }
     const prev = prevStep(step)
     if (prev) {
       dispatch({ type: "setStep", step: prev })
@@ -368,6 +382,7 @@ export function SettlementTool({
       startDate: start,
       endDate: end,
       countryCode: countryCode as CountryCode,
+      ...(countryCode === "pe" ? { pensionSystem: form.pensionSystem ?? "onp" } : {}),
     }
     try {
       const result = calculateSettlement(payload)
@@ -443,7 +458,12 @@ export function SettlementTool({
     const start = toIsoDate(form.startDate)
     const end = toIsoDate(form.endDate)
     if (!start || !end) return
-    const payload = { ...form, startDate: start, endDate: end }
+    const payload = {
+      ...form,
+      startDate: start,
+      endDate: end,
+      ...(countryCode === "pe" ? { pensionSystem: form.pensionSystem ?? "onp" } : {}),
+    }
     const response = await fetch("/api/liquidation/pdf", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
@@ -616,6 +636,37 @@ export function SettlementTool({
             locale={locale}
             onPatch={(patch) => dispatch({ type: "patchForm", patch })}
           />
+        ) : step === "pensionSystem" ? (
+          <div className="flex h-full w-full flex-col items-center justify-center gap-6 px-2">
+            <div className="w-full max-w-xl rounded-2xl border border-border bg-card p-6 shadow-sm motion-safe:animate-in motion-safe:duration-200 motion-safe:fade-in motion-safe:slide-in-from-bottom-1">
+              <p className="text-base font-medium text-foreground">
+                {locale === "en" ? "Pension system" : "Sistema de pensiones"}
+              </p>
+              <p className="mt-1 text-sm text-muted-foreground">
+                {locale === "en"
+                  ? "Select your pension system"
+                  : "Selecciona tu sistema de pensiones"}
+              </p>
+              <div className="mt-4 flex gap-3">
+                <button
+                  type="button"
+                  onClick={() => dispatch({ type: "patchForm", patch: { pensionSystem: "onp" } })}
+                  className={`flex-1 rounded-xl border px-4 py-3 text-center text-sm transition-all focus-visible:ring-2 focus-visible:ring-primary/30 focus-visible:outline-none ${form.pensionSystem === "onp" ? "border-primary bg-primary text-primary-foreground" : "border-border bg-card text-foreground hover:bg-accent"}`}
+                >
+                  <div className="font-medium">ONP</div>
+                  <div className="mt-0.5 text-xs opacity-70">13%</div>
+                </button>
+                <button
+                  type="button"
+                  onClick={() => dispatch({ type: "patchForm", patch: { pensionSystem: "afp" } })}
+                  className={`flex-1 rounded-xl border px-4 py-3 text-center text-sm transition-all focus-visible:ring-2 focus-visible:ring-primary/30 focus-visible:outline-none ${form.pensionSystem === "afp" ? "border-primary bg-primary text-primary-foreground" : "border-border bg-card text-foreground hover:bg-accent"}`}
+                >
+                  <div className="font-medium">AFP</div>
+                  <div className="mt-0.5 text-xs opacity-70">11.2%</div>
+                </button>
+              </div>
+            </div>
+          </div>
         ) : step === "adjustments" ? (
           <SettlementAdjustmentsPanel
             cc={countryCode}
@@ -678,6 +729,7 @@ export function SettlementTool({
           step !== "frequency" &&
           step !== "terminationCause" &&
           step !== "contractType" &&
+          step !== "pensionSystem" &&
           step !== "adjustments" &&
           step !== "done" &&
           !editMode && (
@@ -694,15 +746,31 @@ export function SettlementTool({
           !editMode && (
             <StepNavigation
               onBack={handleBack}
-              onContinue={() =>
-                dispatch({ type: "setStep", step: nextStep(step) })
-              }
+              onContinue={() => {
+                if (step === "contractType" && countryCode === "pe") {
+                  dispatch({ type: "setStep", step: "pensionSystem" })
+                } else {
+                  dispatch({ type: "setStep", step: nextStep(step) })
+                }
+              }}
               canContinue
               showBack
               backLabel={copy.backToPrevious}
               continueLabel={copy.send}
             />
           )}
+        {step === "pensionSystem" && !editMode && (
+          <StepNavigation
+            onBack={handleBack}
+            onContinue={() =>
+              dispatch({ type: "setStep", step: "adjustments" })
+            }
+            canContinue={!!form.pensionSystem}
+            showBack
+            backLabel={copy.backToPrevious}
+            continueLabel={copy.send}
+          />
+        )}
         {step === "adjustments" && !editMode && (
           <StepNavigation
             onBack={handleBack}

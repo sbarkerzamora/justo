@@ -80,23 +80,29 @@ export const calculatePeruSettlement = (
 
   const grossIncome = round2(incomes.reduce((sum, line) => sum + line.amount, 0))
 
-  // Deducciones ONP
-  const { onpRate, irFlatRate } = getPeruLegalRates()
+  // Deducciones ONP / AFP
+  const { onpRate, afpRate, irFlatRate } = getPeruLegalRates()
+  const isAfp = input.pensionSystem === "afp"
+  const pensionRate = isAfp ? afpRate : onpRate
+  const pensionLabel = isAfp ? "AFP" : "ONP"
+  const pensionRef = isAfp
+    ? "Ley del Sistema Privado de Pensiones (AFP 11.2%)"
+    : "D.L. 19990 (Sistema Nacional de Pensiones ONP 13%)"
   const deductionBase = round2(proportionalSalary + vacationPay)
-  const onp = round2(deductionBase * onpRate)
-  const ir = round2(Math.max(0, grossIncome - onp) * irFlatRate)
+  const pensionDeduction = round2(deductionBase * pensionRate)
+  const ir = round2(Math.max(0, grossIncome - pensionDeduction) * irFlatRate)
 
   const deductions: SettlementLine[] = [
     {
-      label: "ONP",
-      amount: onp,
-      formula: `(${deductionBase} x ${(onpRate * 100).toFixed(0)}%)`,
-      legalReference: "D.L. 19990 (Sistema Nacional de Pensiones)",
+      label: pensionLabel,
+      amount: pensionDeduction,
+      formula: `(${deductionBase} x ${(pensionRate * 100).toFixed(1)}%)`,
+      legalReference: pensionRef,
     },
     {
       label: "IR",
       amount: ir,
-      formula: `max(0, ${grossIncome} - ${onp}) x ${(irFlatRate * 100).toFixed(0)}%`,
+      formula: `max(0, ${grossIncome} - ${pensionDeduction}) x ${(irFlatRate * 100).toFixed(0)}%`,
       legalReference: "Ley del IR (tasa minima)",
     },
   ]

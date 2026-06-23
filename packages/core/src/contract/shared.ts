@@ -23,6 +23,8 @@ const contractTypeLabel: Record<ContractType, string> = {
   indeterminado: "Tiempo indeterminado",
   plazo_fijo: "Plazo fijo",
   obra_determinada: "Obra o servicio determinado",
+  temporada: "Temporada",
+  periodo_prueba: "Periodo de prueba",
 }
 
 const paymentMethodLabel: Record<PaymentMethod, string> = {

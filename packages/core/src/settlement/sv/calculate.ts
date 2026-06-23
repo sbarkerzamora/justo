@@ -1,4 +1,5 @@
 import { clamp, round2, daysBetween, startOfYear, formatTenure } from "../shared"
+import { getMinimumWage } from "../../shared"
 import { SettlementInput, SettlementLine, SettlementResult } from "../types"
 import { getElSalvadorLegalRates } from "./legal-params"
 
@@ -23,10 +24,12 @@ export const calculateElSalvadorSettlement = (
   const dailySalary = input.monthlySalary / 30
   const tenureYears = tenureDays / 365
 
-  // Indemnizacion (Cesantia): Art. 58 - 30 dias por ano, min 15 dias
+  // Indemnizacion (Cesantia): Art. 58 - 30 dias por ano, min 15 dias, tope 4x SM diario
+  const svMinWage = getMinimumWage("sv")
+  const cappedDailySalary = svMinWage ? Math.min(dailySalary, svMinWage.daily * 4) : dailySalary
   const baseIndemnizacionDays = tenureYears * 30
   const indemnizacionDays = round2(Math.max(baseIndemnizacionDays, 15))
-  const indemnizacion = round2(dailySalary * indemnizacionDays)
+  const indemnizacion = round2(cappedDailySalary * indemnizacionDays)
 
   // Aguinaldo: Arts. 196-202 - escala segun antiguedad
   const tenureYearsFloat = tenureYears
@@ -57,8 +60,8 @@ export const calculateElSalvadorSettlement = (
     {
       label: "Indemnizacion",
       amount: indemnizacion,
-      formula: `(${round2(dailySalary)} x ${indemnizacionDays} dias)`,
-      legalReference: "Codigo de Trabajo Arts. 58 y 59 (30 dias/ano, min 15 dias)",
+      formula: `(${round2(cappedDailySalary)} x ${indemnizacionDays} dias, tope 4x SM)`,
+      legalReference: "Codigo de Trabajo Arts. 58 y 59 (30 dias/ano, min 15 dias, tope 4x SM)",
     },
     {
       label: "Aguinaldo proporcional",

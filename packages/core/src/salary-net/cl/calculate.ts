@@ -8,15 +8,15 @@ const LEGAL_CORPUS_VERSION = "cl-v0.2.0"
 export const calculateChileSalaryNet = (
   input: SalaryNetInput,
 ): SalaryNetResult => {
-  const { afpRate, saludRate, afcRate, irBrackets } = getChileSalaryNetLegalRates()
+  const { afpRate, saludRate, afcRate, afpSaludMaxBase, irBrackets } = getChileSalaryNetLegalRates()
 
   return buildNetSalary(
     input,
     CURRENCY,
     LEGAL_CORPUS_VERSION,
     [
-      { label: "AFP", rate: afpRate, legalReference: "D.L. 3.500" },
-      { label: "Salud", rate: saludRate, legalReference: "Ley 18.933" },
+      { label: "AFP", rate: afpRate, maxBase: afpSaludMaxBase, legalReference: "D.L. 3.500 (tope 80.2 UF)" },
+      { label: "Salud", rate: saludRate, maxBase: afpSaludMaxBase, legalReference: "Ley 18.933 (tope 80.2 UF)" },
       { label: "AFC", rate: afcRate, legalReference: "Ley 19.728" },
     ],
     {

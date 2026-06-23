@@ -1,4 +1,5 @@
 import { clamp, round2, daysBetween, startOfYear, formatTenure } from "../shared"
+import { getMinimumWage } from "../../shared"
 import { SettlementInput, SettlementLine, SettlementResult } from "../types"
 import { getMexicoLegalRates } from "./legal-params"
 
@@ -37,8 +38,10 @@ export const calculateMexicoSettlement = (
   // Indemnizacion por anos: Art. 50 - 12 dias/ano (reforma 2019)
   const indemnizacionAnual = round2(dailySalary * tenureYears * 12)
 
-  // Prima de antiguedad: Art. 162 - 12 dias/ano (tope 2x salario minimo, no aplicado en MVP)
-  const primaAntiguedad = round2(dailySalary * tenureYears * 12)
+  // Prima de antiguedad: Art. 162 - 12 dias/ano, tope 2x salario minimo
+  const mxMinWage = getMinimumWage("mx")
+  const cappedDailySalary = mxMinWage ? Math.min(dailySalary, mxMinWage.daily * 2) : dailySalary
+  const primaAntiguedad = round2(cappedDailySalary * tenureYears * 12)
 
   // Aguinaldo: Art. 87 - 15 dias, proporcional
   const accrualStart = start > startOfYear(end) ? start : startOfYear(end)
@@ -69,7 +72,7 @@ export const calculateMexicoSettlement = (
     {
       label: "Prima de antiguedad",
       amount: primaAntiguedad,
-      formula: `(${round2(dailySalary)} x ${round2(tenureYears)} anos x 12 dias)`,
+      formula: `(${round2(cappedDailySalary)} x ${round2(tenureYears)} anos x 12 dias, tope 2x SM)`,
       legalReference: "LFT Art. 162 (12 dias/ano, tope 2x SM)",
     },
     {

@@ -2,7 +2,7 @@ import type { CountryCode, CurrencyCode } from "../settlement"
 
 export type JornadaType = "diurna" | "mixta" | "nocturna"
 
-export type ContractType = "indeterminado" | "plazo_fijo" | "obra_determinada"
+export type ContractType = "indeterminado" | "plazo_fijo" | "obra_determinada" | "temporada" | "periodo_prueba"
 
 export type PaymentMethod = "unidad_tiempo" | "destajo" | "comision" | "otro"
 

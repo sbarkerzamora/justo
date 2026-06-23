@@ -1,8 +1,12 @@
+// Tope maximo imponible ANSES (2025, actualizar periodicamente - cambia con inflacion)
+const ANSES_MAX_BASE = 2500000 // ~$2,500,000 ARS/mes (Resolucion ANSES vigente)
+
 export const getArgentinaSalaryNetLegalRates = () => {
   return {
     jubilacionRate: 0.11,
     pamiRate: 0.03,
     obraSocialRate: 0.03,
+    ansesMaxBase: ANSES_MAX_BASE,
     irBrackets: [
       { from: 0, rate: 0 },
       { from: 15750000, rate: 0.05 },

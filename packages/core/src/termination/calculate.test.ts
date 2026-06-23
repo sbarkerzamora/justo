@@ -90,8 +90,8 @@ describe("termination calculators", () => {
       (s) => s.type === "despido_injustificado"
     )
     expect(injust?.applicable).toBe(true)
-    expect(injust?.total).toBe(30000)
-    expect(injust?.lines[0]?.formula).toContain("30 días")
+    expect(injust?.total).toBe(1460.4)
+    expect(injust?.lines[0]?.legalReference).toContain("4x SM")
   })
 
   test("Guatemala: indemnity applies to all scenarios including renuncia", () => {
@@ -165,7 +165,7 @@ describe("termination calculators", () => {
     )
     expect(injust?.applicable).toBe(true)
     expect(injust?.lines).toHaveLength(3)
-    expect(injust?.total).toBe(114000)
+    expect(injust?.total).toBe(108691.2)
   })
 
   test("Colombia: 30 base + 20d/year for unjustified dismissal", () => {

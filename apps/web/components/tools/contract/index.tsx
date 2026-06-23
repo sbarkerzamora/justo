@@ -170,6 +170,8 @@ const contractTypeOptions = [
   { value: "indeterminado" as const, label: "Tiempo indeterminado" },
   { value: "plazo_fijo" as const, label: "Plazo fijo" },
   { value: "obra_determinada" as const, label: "Obra determinada" },
+  { value: "temporada" as const, label: "Temporada" },
+  { value: "periodo_prueba" as const, label: "Periodo de prueba" },
 ]
 
 const paymentFreqOptions = [

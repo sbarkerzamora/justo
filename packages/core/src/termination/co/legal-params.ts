@@ -4,7 +4,26 @@ import {
   isSpecialTerminationClosure,
   makeIndemnityLine,
 } from "../shared"
+import { getMinimumWage } from "../../shared"
 import type { TerminationInput } from "../types"
+
+const indemnizacionColombia = (ctx: { dailySalary: number; fullYears: number; monthlySalary: number }) => {
+  const coMinWage = getMinimumWage("co")
+  const tenSmmlv = coMinWage ? coMinWage.monthly * 10 : Infinity
+  const isHighSalary = ctx.monthlySalary >= tenSmmlv
+
+  const baseDays = isHighSalary ? 20 : 30
+  const extraDays = Math.max(ctx.fullYears - 1, 0) * (isHighSalary ? 15 : 20)
+  const totalDays = baseDays + extraDays
+
+  return {
+    days: totalDays,
+    isHighSalary,
+    label: isHighSalary
+      ? "Indemnización Art. 64 (20 días base + 15 días/año adicional, salario ≥10 SMMLV)"
+      : "Indemnización Art. 64 (30 días base + 20 días/año adicional, salario <10 SMMLV)",
+  }
+}
 
 export const getColombiaTerminationParams = (
   input: TerminationInput
@@ -36,16 +55,13 @@ export const getColombiaTerminationParams = (
         applicable: !specialClosure,
         note: specialClosure ? closureNote : undefined,
         buildLines: (ctx) => {
-          const baseDays = 30
-          const extraDays = Math.max(ctx.fullYears - 1, 0) * 20
-          const totalDays = baseDays + extraDays
-
+          const info = indemnizacionColombia(ctx)
           return [
             makeIndemnityLine(
-              "Indemnización Art. 64 (30 días base + 20 días/año adicional, salario <10 SMMLV)",
+              info.label,
               ctx.dailySalary,
-              totalDays,
-              "CST Art. 64"
+              info.days,
+              `CST Art. 64 (${info.isHighSalary ? "≥10 SMMLV" : "<10 SMMLV"})`
             ),
           ]
         },

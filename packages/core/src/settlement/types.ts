@@ -51,6 +51,7 @@ export interface SettlementInput {
   benefitsAlreadyPaidAmount?: number
   otherDeductionsAmount?: number
   terminationType?: TipoDespido
+  pensionSystem?: "afp" | "onp"
 }
 
 export interface SettlementLine {
