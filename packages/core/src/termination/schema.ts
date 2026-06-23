@@ -40,6 +40,7 @@ export const terminationInputSchema = z.object({
   endDate: z.string().regex(/^\d{4}-\d{2}-\d{2}$/),
   terminationCause: z.enum(terminationCauses),
   contractType: z.enum(contractTypes),
+  noticeGivenInWriting: z.boolean().optional(),
 })
 
 export type TerminationInputPayload = z.infer<typeof terminationInputSchema>

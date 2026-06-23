@@ -1,9 +1,10 @@
 import { clamp, round2, daysBetween, startOfYear, formatTenure } from "../shared"
+import { getMinimumWage } from "../../shared"
 import { SettlementInput, SettlementLine, SettlementResult } from "../types"
 import { getColombiaLegalRates } from "./legal-params"
 
 const CURRENCY = "COP" as const
-const LEGAL_CORPUS_VERSION = "co-v0.2.0"
+const LEGAL_CORPUS_VERSION = "co-v0.3.0"
 
 export const calculateColombiaSettlement = (
   input: SettlementInput,
@@ -29,8 +30,14 @@ export const calculateColombiaSettlement = (
   // Intereses a las cesantias: Ley 52/1975 - 12% anual
   const interesesCesantia = round2(cesantia * 0.12 * Math.min(tenureYears, 1))
 
-  // Indemnizacion: Art. 64 - <10 SMMLV: 30d 1er ano + 20d adicionales
-  const indemnizacionDias = 30 + Math.max(0, tenureYears - 1) * 20
+  // Indemnizacion: Art. 64 - escala dual segun SMMLV
+  const coMinWage = getMinimumWage("co", input.endDate)
+  if (!coMinWage) throw new Error("No hay SMMLV CO para la fecha indicada")
+  const tenSmmlv = coMinWage.monthly * 10
+  const isHighSalary = input.monthlySalary >= tenSmmlv
+  const indemnizacionDias = isHighSalary
+    ? 20 + Math.max(0, tenureYears - 1) * 15
+    : 30 + Math.max(0, tenureYears - 1) * 20
   const indemnizacion = round2(dailySalary * indemnizacionDias)
 
   // Prima de servicios: Art. 306 - 30 dias/ano
@@ -61,8 +68,8 @@ export const calculateColombiaSettlement = (
     {
       label: "Indemnizacion por despido",
       amount: indemnizacion,
-      formula: `(${round2(dailySalary)} x ${indemnizacionDias} dias)`,
-      legalReference: "CST Art. 64 (30d 1er ano + 20d/adicional)",
+      formula: `(${round2(dailySalary)} x ${indemnizacionDias} dias, escala ${isHighSalary ? "≥10 SMMLV" : "<10 SMMLV"})`,
+      legalReference: `CST Art. 64 (${isHighSalary ? "20d + 15d/adicional, salario ≥10 SMMLV" : "30d + 20d/adicional, salario <10 SMMLV"}; SMMLV ${coMinWage.year})`,
     },
     {
       label: "Prima de servicios",

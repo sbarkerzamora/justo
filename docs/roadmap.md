@@ -1,257 +1,176 @@
 # Justo OSS Roadmap
 
-## ✅ Done (81 items)
+## ✅ Done
 
-- [x] 6 herramientas OSS disponibles: liquidación, vacaciones, salario neto, bono/aguinaldo, terminación y contratos — **11 países** cada una.
-- [x] Chat con 6 modos de herramienta vía `?tool=` desde sidebar y URL.
-- [x] Sidebar global con tool links + controles (país, idioma, tema, GitHub).
-- [x] Tool marketplace publico (`/tools`) con SEO por país para cada herramienta.
-- [x] `@justo/core` — Cálculos determinísticos para 11 países.
-- [x] `@justo/tools` — Tool registry con tipos, schemas Zod y country overrides.
-- [x] `@justo/pdf` — 6 PDFs (liquidación, vacaciones, salario neto, bono, terminación, contrato).
-- [x] App header global con selector de país sincronizado con URL.
-- [x] `/guia-laboral` — Estadísticas anónimas y explicación del proyecto.
-- [x] GridLoader animado en 3 estados (Thinking, Generating, Searching).
-- [x] Error boundary global (`app/error.tsx`).
-- [x] `.env.example` con variables de entorno documentadas.
-- [x] Documentación de API publica (`docs/API.md`).
-- [x] MIT License, README bilingüe, CONTRIBUTING.md, docs/architecture.md, docs/adding-a-tool.md.
-- [x] CI: Typecheck, lint, test, build.
-- [x] Docker + docker-compose para self-hosting.
-- [x] Tests: 160+ tests en core, tools y PDF.
-- [x] Reasoning integrado — componente colapsable con tags de pensamiento LLM.
-- [x] Doble scrollbar eliminado.
-- [x] RAG v2: TOP_K 8, query expansion, prompt mejorado, step limit 4.
-- [x] SEO EN: titles, descriptions, OG tags, SEO data por país en inglés.
-- [x] `/en/tools`, `/en/tools/[slug]`, `/en/guia-laboral` — contenido en inglés.
-- [x] LanguageToggle path-aware: preserva ruta y query params.
-- [x] proxy.ts: permite paso de `/en/tools` y `/en/guia-laboral`.
-- [x] Sidebar/header links locale-aware.
-- [x] GridLoader: 20 mensajes rotativos humorísticos (ES/EN) con animación TextSwap.
-- [x] Chat container: prompt-kit (overflow-y-auto, reemplaza wrapper propio).
-- [x] Chat: mensajes assistant minimalistas (sin borde/card) + enlaces a docs por tópico.
-- [x] README: roadmap compacto (✅ Done + 🔜 4 prioridades detalladas).
-- [x] Tool UX: touch targets ≥44px, tipografía ≥12px, inputs con padding para botón enviar.
-- [x] Tool UX: navegación con botón "Anterior" en todas las herramientas.
-- [x] i18n: todas las herramientas traducidas al inglés (ES/EN completo).
-- [x] Contract tool: full i18n con contract-copy.ts (~75 strings ES/EN).
-- [x] Settlement panels: FrequencyPicker con labels traducidos.
-- [x] ISR/IR: brackets progresivos en salary-net para AR, CL, HN, CO, CR (9 países).
-- [x] ISR/IR: tasa flat en settlement (tasa marginal mínima) — 9 países.
-- [x] ISR/IR: corpus legal `impuesto-sobre-la-renta` en source.tsx — 9 países.
-- [x] Salario proporcional: tests unitarios para CR, HN, MX, PA, SV.
-- [x] Node.js actualizado a v22.22.3 via NVM.
-- [x] Re-ingesta del corpus: 11 países indexados (~5,200 chunks).
-- [x] Preaviso standalone tool: módulo core + tool registration + API + UI + corpus.
-- [x] Estandarización UI: PreavisoTool rewrite con OnboardingPanel + SummaryRow + StepNavigation.
-- [x] Estandarización UI: Settlement migrado de ProgressHeader a inline progress bar.
-- [x] Estandarización UI: Contract inputs unificados (h-12, rounded-2xl, bg-card).
-- [x] Estandarización UI: ProgressHeader eliminado de settlement-panels.tsx.
-- [x] Tipos jurisdiccionales compartidos para campos transversales (`TerminationCause`, `JurisdictionContractType`, `BonusType`, perfiles básicos).
-- [x] Preaviso: captura y cálculo con causa de terminación, tipo de contrato, aviso escrito, días otorgados y sustitución en dinero.
-- [x] Terminación: captura de causa de terminación y tipo de contrato en schema, UI, tool AI y PDF payload.
-- [x] Terminación personalizada por causa/contrato en los 11 países (supresión conservadora en período de prueba/causas especiales).
-- [x] Liquidación: captura y ajuste conservador por causa de terminación/tipo de contrato en schema, UI, tool AI y PDF payload.
-- [x] Liquidación: ajustes finales explícitos en los 11 países para salario pendiente, horas extra/comisiones, prestaciones pendientes, prestaciones ya pagadas y deducciones autorizadas.
-- [x] Typecheck global reparado en `@justo/pdf` aceptando colores `RGB` y tuplas en `pdf-helpers`.
-- [x] PDF de Terminación corregido: sanitización de caracteres no soportados por Helvetica estándar en `pdf-lib`.
+| Área | Logro |
+|------|-------|
+| **Core** | 7 herramientas (liquidación, vacaciones, salario neto, aguinaldo, terminación, contrato, preaviso) × 11 países = 77 calculadoras determinísticas |
+| **Tools** | Registry con schemas Zod, country overrides, validación API |
+| **PDF** | 7 PDFs compactos B&W, sanitización WinAnsi, diseño 1-page para contratos. drawHeader unificado |
+| **Chat** | 7 modos de herramienta, refactor a componentes individuales, dropdown de herramientas en input, responsive (flex-wrap, sin overflow horizontal), contenido centrado mobile |
+| **UI** | Sidebar/header locale-aware, i18n ES/EN completo, tool flow estandarizado (onboarding, summary, steps, navigation), inputs unificados (h-12, rounded-2xl, bg-card), focus rings + animaciones |
+| **SEO** | Tool pages ES+EN por país (hreflang, JSON-LD, sitemap, meta tags, geo tags) |
+| **RAG** | V2 con query expansion, TOP_K 8, step limit 4, 11 países indexados (~5,200 chunks) |
+| **Terminación** | Personalizada por causa/contrato en 11 países con `isSpecialTerminationClosure`, `noticeGivenInWriting` para NI, 28 tests |
+| **Liquidación** | Ajustes explícitos (salario pendiente, horas extra, prestaciones) + ajustes conservadores por causa/contrato en 11 países |
+| **Preaviso** | Tool standalone: core + API + UI + PDF + corpus para 11 países. Estandarizada con StepNavigation |
+| **Salary-Net** | ISR/IR progresivo con brackets en 9 países, tasa flat en 2. Topes/documentación de SS |
+| **Vacaciones** | Días anuales (flat/escala), prima vacacional (0%/25%/30%), divisor diario (30/25) |
+| **Aguinaldo/Bono** | 13th month, aguinaldo escala, bono 14, prima, decimo, gratificaciones, SAC. Chile = fallback (gratificación legal requiere utilidades empresa) |
+| **Contrato** | 7 cláusulas estándar por país, IDs locales (RUC, DUI, NIT, etc.), cláusula extra MX capacitación |
+| **Infra** | Docker + compose, CI (typecheck+lint+test+build), Node 22 (NVM), proxy routes EN |
+| **Tests** | 160+ tests (core + tools + PDF), 28 tests de terminación |
+| **GridLoader** | 20 mensajes humorísticos rotativos ES/EN con TextSwap |
+| **Stats** | Persistencia anónima Upstash conectada vía fire-and-forget POST |
 
 ---
 
-## 🔜 Next — OSS
+## 🟡 En Progreso / Pendiente de Profundizar
 
-### 1. Herramientas nuevas
-
-#### 1.1 Horas extra
-
-| #     | Tarea                                     | Archivos                           |
-| ----- | ----------------------------------------- | ---------------------------------- |
-| 2.1.1 | Investigar reglas de horas extra por país | `docs/legal/*/horas-extra.md`      |
-| 2.1.2 | Agregar cálculo a `@justo/core`           | `core/src/{país}/`                 |
-| 2.1.3 | Registrar en tool registry                | `tools/src/tools.ts`               |
-| 2.1.4 | Crear UI component                        | `components/tools/overtime/`       |
-| 2.1.5 | Crear PDF                                 | `pdf/src/overtime/`                |
-| 2.1.6 | Agregar a sidebar                         | `components/app-shell.tsx`         |
-| 2.1.7 | Agregar tool detail page                  | `app/(content)/tools/horas-extra/` |
-| 2.1.8 | Tests por país                            | `core/src/{país}/__tests__/`       |
-
-#### 1.2 Checklist laboral
-
-| #     | Tarea                                        | Archivos                      |
-| ----- | -------------------------------------------- | ----------------------------- |
-| 2.2.1 | Definir checklist items genéricos + por país | `tools/src/`                  |
-| 2.2.2 | Registrar en tool registry                   | `tools/src/tools.ts`          |
-| 2.2.3 | Crear UI component interactivo               | `components/tools/checklist/` |
-| 2.2.4 | Agregar a sidebar                            | `components/app-shell.tsx`    |
-
-#### 1.3 Asistente de contratación
+| Item | Estado |
+|------|--------|
+| Precisión jurisdiccional — topes salariales | 🟡 Fase 1 (MX/SV/CO) |
+| Precisión jurisdiccional — topes imponibles SS | 🟡 Fase 2 (CL/AR) |
+| Precisión jurisdiccional — pensión PE consistente | 🟡 Fase 3 |
+| Precisión jurisdiccional — divisor 25 AR | 🟡 Fase 4 |
+| Precisión jurisdiccional — créditos fiscales | 🟡 Fase 5 (CL/AR/CO/PE) |
+| Employer-cost (costo patronal) | ⬜ Fase 6 |
+| Tipos de contrato completos (5 vs 3) | ⬜ Fase 7 |
+| Layout + Polish UI | ⬜ Pendiente |
+| Accesibilidad WCAG | ⬜ Pendiente |
+| Telegram bot EN | ⬜ Pendiente |
+| Documentación corpus | ⬜ Pendiente |
+| Auditoría legal profesional | ⬜ Pendiente |
+| Horas extra, checklist, hiring | ⬜ Pendiente |
 
 ---
 
-### 2. Precisión jurisdiccional por país
+## 🔜 Plan de Precisión Jurisdiccional (Priorizado)
 
-Usar los nuevos campos transversales para que las calculadoras no solo comparen escenarios genéricos, sino que condicionen reglas por país, causa de terminación y tipo de contrato.
+### Fase 1 — Topes salariales en Liquidación y Terminación
 
-| #   | Tarea                                                                                | Archivos                                                           |
-| --- | ------------------------------------------------------------------------------------ | ------------------------------------------------------------------ |
-| 2.1 | Personalizar Terminación Nicaragua como piloto                                       | ✅ `packages/core/src/termination/ni/`                             |
-| 2.2 | Extender personalización Terminación a GT, SV, HN, CR y PA                           | ✅ `packages/core/src/termination/{gt,sv,hn,cr,pa}/`               |
-| 2.3 | Extender personalización Terminación a MX, CO, PE, AR y CL                           | ✅ `packages/core/src/termination/{mx,co,pe,ar,cl}/`               |
-| 2.4 | Agregar fixtures por causa/contrato                                                  | 🟡 `packages/core/src/termination/calculate.test.ts`               |
-| 2.5 | Aplicar patrón base a Liquidación                                                    | ✅ `packages/core/src/settlement/`, `components/tools/settlement/` |
-| 2.6 | Profundizar Liquidación con salario pendiente, horas extra y prestaciones ya pagadas | ✅ `packages/core/src/settlement/`, `components/tools/settlement/` |
-| 2.7 | Aplicar patrón a Aguinaldo/Bono por tipo de prestación                               | `packages/core/src/bonus/`                                         |
-| 2.8 | Aplicar patrón a Salario Neto con perfiles de deducción                              | `packages/core/src/salary-net/`                                    |
+**Problema:** 3 países tienen topes basados en salario mínimo no implementados.
 
-**Verificación:** `pnpm --filter @justo/web typecheck` + tests por herramienta.
+| # | País | Tool | Regla | Archivos |
+|---|------|------|-------|----------|
+| 1.1 | MX | Liquidación + Terminación | Prima de antigüedad tope 2× SM (Art. 162 LFT) | `settlement/mx/`, `termination/mx/` |
+| 1.2 | SV | Liquidación + Terminación | Indemnización tope 4× SM diario (Art. 58 CT) | `settlement/sv/`, `termination/sv/` |
+| 1.3 | CO | Liquidación + Terminación | Escala dual <10 SMMLV / ≥10 SMMLV (Art. 64 CST) | `settlement/co/`, `termination/co/` |
+| 1.4 | — | Nuevo módulo | `shared/minimum-wages.ts` con valores vigentes por país | `packages/core/src/shared/` |
+
+**Verificación:** Tests por país con salarios bajo/sobre el tope.
 
 ---
 
-### 3. Layout + Clarify + Polish UI
+### Fase 2 — Topes imponibles en Salario Neto
 
-Estandarizar espaciado, migrar ternarios a copy keys, agregar interactividad y feedback visual.
+**Problema:** CL y AR no aplican topes a deducciones SS, sobreestimando descuentos para salarios altos.
 
-| #   | Tarea                                                              | Archivos               |
-| --- | ------------------------------------------------------------------ | ---------------------- |
-| 2.1 | Layout: preavito stat cards, summary rows, header padding          | `preaviso/index.tsx`   |
-| 2.2 | Layout: contract onboarding gaps, badge text, button padding       | `contract/index.tsx`   |
-| 2.3 | Clarify: 9 copy keys nuevas en home-copy.tsx                       | `home-copy.tsx`        |
-| 2.4 | Clarify: migrar ternarios preaviso a copy keys                     | `preaviso/index.tsx`   |
-| 2.5 | Clarify: salary-net showBack condicional                           | `salary-net/index.tsx` |
-| 2.6 | Polish: focus rings, hover scales, active states en inputs/botones | 7 herramientas         |
-| 2.7 | Polish: fade-in/slide-up animaciones en resultados                 | 7 herramientas         |
-| 2.8 | Polish: responsive (stat cards apiladas, full-width mobile)        | 7 herramientas         |
-| 2.9 | Polish: touch targets 48px, disabled states mejorados              | 7 herramientas         |
+| # | País | Regla | Archivos |
+|---|------|-------|----------|
+| 2.1 | CL | AFP + Salud tope 80.2 UF | `salary-net/cl/` |
+| 2.2 | AR | ANSES topes mínimo/máximo | `salary-net/ar/` |
 
-**Verificación:** `pnpm typecheck` + `pnpm test`
-
-| #     | Tarea                                         | Archivos                   |
-| ----- | --------------------------------------------- | -------------------------- |
-| 2.3.1 | Definir flujo de preguntas por país           | `tools/src/`               |
-| 2.3.2 | Registrar en tool registry                    | `tools/src/tools.ts`       |
-| 2.3.3 | Crear UI component conversacional             | `components/tools/hiring/` |
-| 2.3.4 | Integrar con generador de contratos existente |                            |
-| 2.3.5 | Agregar a sidebar                             | `components/app-shell.tsx` |
+**Solución:** Agregar `maxBase?: number` opcional al tipo de deducción SS en `salary-net/shared.ts`.
 
 ---
 
-### 4. Tool flow framework unificado
+### Fase 3 — Sistema de pensión consistente en PE
 
-| #    | Tarea                                                         | Archivos                                |
-| ---- | ------------------------------------------------------------- | --------------------------------------- |
-| 3.1  | Extraer patrón común de las 6 tools existentes                | `components/tools/*/index.tsx`          |
-| 3.2  | Crear hook `useToolFlow` con steps, state machine, validación | `components/tools/use-tool-flow.ts`     |
-| 3.3  | Crear `ToolFlowLayout` (header, steps, results)               | `components/tools/tool-flow-layout.tsx` |
-| 3.4  | Migrar settlement component                                   | `components/tools/settlement/`          |
-| 3.5  | Migrar vacations component                                    | `components/tools/vacations/`           |
-| 3.6  | Migrar salary-net component                                   | `components/tools/salary-net/`          |
-| 3.7  | Migrar bonus component                                        | `components/tools/bonus/`               |
-| 3.8  | Migrar termination component                                  | `components/tools/termination/`         |
-| 3.9  | Migrar contract component                                     | `components/tools/contract/`            |
-| 3.10 | Eliminar código duplicado post-migración                      |                                         |
-| 3.11 | Tests de integración del framework                            |                                         |
+**Problema:** Liquidación, terminación y bono de Perú usan ONP 13% fijo; ignoran elección AFP/ONP del usuario.
 
-**Verificación:** Las 6 tools existentes deben funcionar igual después de la migración.
+| # | Tool | Cambio |
+|---|------|--------|
+| 3.1 | Liquidación PE | Agregar `pensionSystem` al input y propagar |
+| 3.2 | Terminación PE | Idem |
+| 3.3 | Bonus PE | Idem |
+| 3.4 | Schema | Zod + types para SettlementInput, TerminationInput, BonusInput |
+| 3.5 | UI | Selector AFP/ONP reutilizable en pasos de cada tool |
 
 ---
 
-### 5. Accesibilidad WCAG
+### Fase 4 — Divisor 25 consistente en AR
 
-| #   | Tarea                                                     | Prioridad WCAG |
-| --- | --------------------------------------------------------- | -------------- |
-| 4.1 | Audit de contraste de color en tools                      | AA             |
-| 4.2 | Audit de navegación por teclado en flujos de herramientas | A              |
-| 4.3 | Audit de labels ARIA en inputs de herramientas            | A              |
-| 4.4 | Audit de foco visible en chat y sidebar                   | AA             |
-| 4.5 | Audit de anuncios de screen reader en modales             | A              |
-| 4.6 | Fix issues detectados                                     |                |
-| 4.7 | Re-audit post-fix                                         |                |
+**Problema:** Vacaciones AR usa divisor 25 (correcto). Liquidación AR usa 30.
+
+| # | Tool | Cambio |
+|---|------|--------|
+| 4.1 | Liquidación AR | Usar divisor 25 en vacaciones proporcionales |
+| 4.2 | Terminación AR | Verificar y corregir si aplica |
 
 ---
 
-### 6. Traducción EN: bot de Telegram
+### Fase 5 — Créditos y deducciones fiscales
 
-| #   | Tarea                                       | Archivos                                |
-| --- | ------------------------------------------- | --------------------------------------- |
-| 5.1 | Identificar strings hardcodeados en español | `apps/telegram-bot/`                    |
-| 5.2 | Crear archivo de traducciones EN            | `apps/telegram-bot/lib/translations.ts` |
-| 5.3 | Implementar locale detection por usuario    | `apps/telegram-bot/`                    |
-| 5.4 | Probar flujos completos en EN               |                                         |
+**Problema:** IR progresivo actual solo aplica brackets. No modela créditos ni deducciones personales.
 
----
-
-### 7. Documentación pública del corpus legal
-
-| #   | Tarea                                         | Archivos                         |
-| --- | --------------------------------------------- | -------------------------------- |
-| 6.1 | Documentar estructura del corpus por país     | `docs/corpus/README.md`          |
-| 6.2 | Documentar formato de documentos legales      | `docs/corpus/format.md`          |
-| 6.3 | Documentar proceso de contribución al corpus  | `docs/CONTRIBUTING.md` (ampliar) |
-| 6.4 | Documentar fuentes legales oficiales por país | `docs/corpus/sources.md`         |
+| # | País | Mejora |
+|---|------|--------|
+| 5.1 | CL | Crédito por gastos (crédito tributario) |
+| 5.2 | AR | Deducción especial para empleados (Ganancias) |
+| 5.3 | CO | Aportes a salud sobre UVT |
+| 5.4 | PE | Deducción de 5 UIT anual |
 
 ---
 
-### 8. Auditoría legal/contable profesional
+### Fase 6 — Módulo de costos patronales
 
-| #   | Tarea                               | Por país  |
-| --- | ----------------------------------- | --------- |
-| 7.1 | Revisión de fórmulas de liquidación | 11 países |
-| 7.2 | Revisión de vacaciones              | 11 países |
-| 7.3 | Revisión de salario neto            | 11 países |
-| 7.4 | Revisión de aguinaldo/décimo/bono   | 11 países |
-| 7.5 | Revisión de terminación             | 11 países |
-| 7.6 | Revisión de contratos               | 11 países |
-| 7.7 | Revisión de salario proporcional    | 11 países |
-| 7.8 | Revisión de ISR/IR                  | 9 países  |
-| 7.9 | Revisión de preaviso                | TBD       |
+**Problema:** Ninguna tool muestra el costo total empleador. Tasas documentadas en corpus no implementadas.
+
+**Solución:** `packages/core/src/employer-cost/` con `calculateEmployerCost(salary, countryCode)`. Integrado como sección "Costo patronal" dentro de cada tool existente.
+
+| País | Tasas documentadas |
+|------|-------------------|
+| PE | EsSalud 9% |
+| MX | INFONAVIT 5% |
+| CL | AFC empleador 2.4% |
+| CO | Parafiscales (SENA, ICBF) — pendiente tasas definitivas |
+| General | SS patronal de cada país |
+
+---
+
+### Fase 7 — Tipos de contrato completos
+
+**Problema:** `ContractType` en contrato tiene 3 valores; `jurisdiction-types.ts` tiene 5.
+
+| # | Cambio | Archivos |
+|---|--------|----------|
+| 7.1 | Agregar `temporada` y `periodo_prueba` a ContractInput | `contract/schema.ts`, `contract/types.ts` |
+| 7.2 | Actualizar UI de contrato | `contract/index.tsx` |
+
+---
+
+### Tabla Resumen por Herramienta y País
+
+| Herramienta | NI | SV | GT | HN | CR | PA | MX | CO | PE | AR | CL |
+|-------------|:--:|:--:|:--:|:--:|:--:|:--:|:--:|:--:|:--:|:--:|:--:|
+| **Liquidación** | ✅ | 🟡1 | ✅ | ✅ | ✅ | ✅ | 🟡1 | 🟡1 | 🟡3 | 🟡4 | ✅ |
+| **Terminación** | ✅ | 🟡1 | ✅ | ✅ | ✅ | ✅ | 🟡1 | 🟡1 | 🟡3 | 🟡4 | ✅ |
+| **Vacaciones** | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | 🟡4 | ✅ |
+| **Salario Neto** | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | 🟡2 | 🟡2 |
+| **Aguinaldo/Bono** | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | 🟡3 | ✅ | ✅(fallback) |
+| **Contrato** | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | 🟡7 | ✅ | ✅ | ✅ | ✅ |
+| **Preaviso** | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ |
+| **Employer Cost** | ⬜6 | ⬜6 | ⬜6 | ⬜6 | ⬜6 | ⬜6 | ⬜6 | ⬜6 | ⬜6 | ⬜6 | ⬜6 |
+
+**✅** = Implementado · **🟡N** = Gap (fase N) · **⬜N** = No implementado
 
 ---
 
 ## 📅 Later
 
-- [ ] `CHANGELOG.md`, `SECURITY.md`, `CODE_OF_CONDUCT.md`.
-- [ ] Nuevos países y actualizaciones de corpus legal según demanda.
-- [ ] Mejores fixtures públicos para validar cálculos por jurisdicción.
+- [ ] `CHANGELOG.md`, `SECURITY.md`, `CODE_OF_CONDUCT.md`
+- [ ] Layout + Polish UI (animaciones, responsive, touch targets)
+- [ ] Accesibilidad WCAG (contraste, teclado, ARIA, screen reader)
+- [ ] Telegram bot EN
+- [ ] Documentación corpus legal
+- [ ] Auditoría legal/contable profesional (11 países × 7 herramientas)
+- [ ] Horas extra, checklist laboral, asistente contratación
+- [ ] Tool flow framework unificado
+- [ ] Nuevos países según demanda
 
 ---
 
 ## Relación con Justo Pro
 
-`justo-pro` vive en un repo privado separado. Este repo OSS sigue siendo la fuente de verdad para fórmulas legales, registry de herramientas, PDFs base, corpus legal y experiencia pública self-hosted.
-
----
-
-## Tabla resumen
-
-| Area                               | Estado                                                                            |
-| ---------------------------------- | --------------------------------------------------------------------------------- |
-| `@justo/core`                      | ✅ 6 cálculos × 11 países                                                         |
-| `@justo/tools`                     | ✅ 10 herramientas (6 available, 4 coming soon)                                   |
-| `@justo/pdf`                       | ✅ 6 PDFs + sanitización WinAnsi                                                  |
-| Tool SEO pages                     | ✅ ES + EN, hreflang, JSON-LD                                                     |
-| Chat tool modes                    | ✅ 6 modos                                                                        |
-| Sidebar & Header                   | ✅ ES/EN locale-aware                                                             |
-| RAG                                | ✅ V2                                                                             |
-| i18n EN (web)                      | ✅ tools, tools/[slug], guia-laboral, sidebar, LanguageToggle                     |
-| Chat assistant messages            | ✅ redesigned minimal + per-topic doc links                                       |
-| GridLoader typing labels           | ✅ 20 rotating humorous messages (ES/EN)                                          |
-| Chat container                     | ✅ prompt-kit (use-stick-to-bottom wrapper)                                       |
-| Proxy content routes               | ✅ fix EN routes                                                                  |
-| Corpus: ISR/IR                     | ✅ 9 países — brackets salary-net + flat rate settlement + corpus source.tsx      |
-| Corpus: salario-proporcional       | ✅ 11 países — formulas verificadas + tests                                       |
-| Node.js                            | ✅ v22.22.3 (NVM)                                                                 |
-| RAG corpus ingestion               | ✅ 11 países re-ingeridos (~5,200 chunks)                                         |
-| Preaviso tool                      | ✅ Core + tools + API + UI + corpus (11 países)                                   |
-| UI estandarización                 | ✅ Preaviso rewrite, Settlement inline progress, Contract inputs unificados       |
-| Validación hardening               | ✅ Schemas, preaviso/terminación types, edit-dates bug fix, countrySupport routes |
-| Precisión jurisdiccional           | 🟡 Preaviso + Terminación + Liquidación avanzada base; faltan bono/neto           |
-| Layout + Clarify + Polish UI       | ⬜ (🔜 #3)                                                                        |
-| **Horas extra, checklist, hiring** | ⬜ (🔜 #1)                                                                        |
-| **Tool flow framework**            | ⬜ (🔜 #4)                                                                        |
-| **Accesibilidad WCAG**             | ⬜ (🔜 #5)                                                                        |
-| **Telegram bot EN**                | ⬜ (🔜 #6)                                                                        |
-| **Documentación corpus**           | ⬜ (🔜 #7)                                                                        |
-| **Auditoría legal**                | ⬜ (🔜 #8)                                                                        |
-| Tests                              | ✅ 160+                                                                           |
-| CI / Docker                        | ✅                                                                                |
-| `justo-pro`                        | Repo privado separado                                                             |
+`justo-pro` vive en repo privado separado. Este repo OSS es fuente de verdad para fórmulas, registry, PDFs base, corpus legal y experiencia pública self-hosted.

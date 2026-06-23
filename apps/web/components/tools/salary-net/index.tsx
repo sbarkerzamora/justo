@@ -24,6 +24,7 @@ import type { Locale } from "@/lib/i18n"
 import { homeCopy } from "@/lib/home-copy"
 import {
   formatCurrencyInput,
+  getCurrencySymbol,
   parseCurrencyInput,
 } from "@/components/tools/input-formatters"
 import { StepNavigation } from "@/components/tools/step-navigation"
@@ -272,7 +273,7 @@ export function SalaryNetTool({
       dispatch({
         type: "setEditField",
         field: "editSalary",
-        value: String(grossSalary || ""),
+        value: formatCurrencyInput(String(grossSalary || "")),
       })
     if (action === "frequency")
       dispatch({
@@ -425,6 +426,7 @@ export function SalaryNetTool({
               editMode={editMode}
               editSalary={state.editSalary}
               editFrequency={state.editFrequency}
+              currencySymbol={getCurrencySymbol(countryCode)}
               onSetEditField={(field, value) =>
                 dispatch({
                   type: "setEditField",
@@ -493,16 +495,21 @@ export function SalaryNetTool({
               </p>
             </div>
             <div className="w-full max-w-xl">
-              <input
-                ref={inputRef}
-                value={inputValue}
-                onChange={(e) =>
-                  setInputValue(formatCurrencyInput(e.target.value))
-                }
-                inputMode="decimal"
-                placeholder={copy.askPlaceholder}
-                className="h-12 w-full rounded-2xl border border-border bg-card pl-4 pr-4 text-sm text-foreground transition-colors outline-none placeholder:text-muted-foreground focus:border-foreground/30"
-              />
+              <div className="relative">
+                <span className="pointer-events-none absolute left-4 top-1/2 -translate-y-1/2 text-sm text-muted-foreground">
+                  {getCurrencySymbol(countryCode)}
+                </span>
+                <input
+                  ref={inputRef}
+                  value={inputValue}
+                  onChange={(e) =>
+                    setInputValue(formatCurrencyInput(e.target.value))
+                  }
+                  inputMode="decimal"
+                  placeholder={copy.askPlaceholder}
+                  className="h-12 w-full rounded-2xl border border-border bg-card pl-10 pr-4 text-sm text-foreground transition-colors outline-none placeholder:text-muted-foreground focus:border-foreground/30"
+                />
+              </div>
             </div>
           </div>
         )}
@@ -759,6 +766,7 @@ function EditPanel({
   editMode,
   editSalary,
   editFrequency,
+  currencySymbol,
   onSetEditField,
   onSetEditMode,
   saveEdit,
@@ -767,6 +775,7 @@ function EditPanel({
   editMode: SalaryNetEditMode
   editSalary: string
   editFrequency: string
+  currencySymbol: string
   onSetEditField: (field: string, value: string) => void
   onSetEditMode: (mode: SalaryNetEditMode) => void
   saveEdit: () => void
@@ -777,14 +786,19 @@ function EditPanel({
       {editMode === "salary" ? (
         <label className="grid gap-2 text-sm">
           <span className="text-foreground">{copy.newMonthlySalary}</span>
-          <input
-            inputMode="decimal"
-            value={editSalary}
-            onChange={(e) =>
-              onSetEditField("editSalary", formatCurrencyInput(e.target.value))
-            }
-            className="h-11 rounded-xl border border-border bg-background px-3 text-foreground outline-none focus:border-foreground/30"
-          />
+          <div className="relative">
+            <span className="pointer-events-none absolute left-3 top-1/2 -translate-y-1/2 text-sm text-muted-foreground">
+              {currencySymbol}
+            </span>
+            <input
+              inputMode="decimal"
+              value={editSalary}
+              onChange={(e) =>
+                onSetEditField("editSalary", formatCurrencyInput(e.target.value))
+              }
+              className="h-11 w-full rounded-xl border border-border bg-background pl-8 pr-3 text-foreground outline-none focus:border-foreground/30"
+            />
+          </div>
         </label>
       ) : editMode === "frequency" ? (
         <label className="grid gap-2 text-sm">

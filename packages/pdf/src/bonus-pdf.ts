@@ -1,17 +1,9 @@
 import { PDFDocument } from "pdf-lib"
 import type { BonusInput, BonusResult } from "@justo/core"
 import {
-  loadFonts,
-  drawText,
-  drawLine,
-  drawBox,
-  drawSectionTitle,
-  drawIcon,
-  drawKeyValue,
-  drawSignatureBoxes,
-  drawFooter,
-  money,
-  COLORS,
+  loadFonts, drawText, drawLine, drawBox, drawSectionTitle,
+  drawHeader, drawKeyValue, drawSignatureBoxes, drawFooter,
+  money, COLORS,
 } from "./pdf-helpers"
 
 export const buildBonusPdf = async (input: BonusInput, result: BonusResult) => {
@@ -21,61 +13,53 @@ export const buildBonusPdf = async (input: BonusInput, result: BonusResult) => {
 
   const W = 595.28
   const H = 841.89
-  const left = 48
-  const right = W - 48
-  let y = H - 48
+  const left = 40
+  const right = W - 40
+  let y = H - 36
 
-  drawIcon(page, "◆", "AGUINALDO", left, y, fontSet)
-  y -= 24
-  drawText(page, `${result.currency} · ${new Date(result.generatedAt).toLocaleString()}`, left, y, {
-    size: 9, color: COLORS.muted, fontSet,
-  })
-  drawText(page, `Corpus: ${result.legalCorpusVersion}`, right, y, {
-    size: 9, color: COLORS.muted, align: "right", fontSet,
-  })
-  y -= 10
-  drawLine(page, left, y, right, y, { color: COLORS.border, width: 0.5 })
+  y = drawHeader(page, "Aguinaldo",
+    `${result.currency} · ${new Date(result.generatedAt).toLocaleString()} · Corpus: ${result.legalCorpusVersion}`,
+    left, y, fontSet)
 
-  y = drawSectionTitle(page, "Datos del caso", left, y - 8, fontSet, { compact: true })
-  drawBox(page, left, y - 56, right - left, 54, { fillColor: COLORS.bg })
-  y -= 4
-  y = drawKeyValue(page, "Salario mensual:", money(input.monthlySalary, result.currency), left, y, fontSet)
-  y = drawKeyValue(page, "Periodo:", `${input.startDate} → ${input.endDate}`, left, y, fontSet)
-  y = drawKeyValue(page, "Dias del periodo:", `${result.periodDays} dias`, left, y, fontSet)
+  y = drawSectionTitle(page, "Datos del caso", left, y, fontSet)
+  y = drawKeyValue(page, "Salario mensual", money(input.monthlySalary, result.currency), left, y, fontSet)
+  y = drawKeyValue(page, "Periodo", `${input.startDate} → ${input.endDate}`, left, y, fontSet)
+  y = drawKeyValue(page, "Dias del periodo", `${result.periodDays} dias`, left, y, fontSet)
 
-  y = drawSectionTitle(page, "Resultado", left, y - 4, fontSet, { compact: true })
-  const rH = result.supported ? 48 : 64
+  y = drawSectionTitle(page, "Resultado", left, y - 2, fontSet)
+  const rH = result.supported ? 36 : 50
   drawBox(page, left, y - rH, right - left, rH, { borderColor: COLORS.border, borderWidth: 1, fillColor: COLORS.white })
-  drawText(page, result.supported ? "MONTO ESTIMADO" : "FALLBACK", left + 16, y - rH + 18, {
-    size: 10, bold: true, fontSet,
+  drawText(page, result.supported ? "Monto estimado" : "Monto (fallback)", left + 12, y - rH + rH - 14, {
+    size: 9, bold: true, fontSet,
   })
-  drawText(page, money(result.total, result.currency), right - 16, y - rH + 12, {
-    size: 18, bold: true, color: [0.2, 0.4, 0.8], align: "right", fontSet,
+  drawText(page, money(result.total, result.currency), right - 12, y - rH + rH - 20, {
+    size: 16, bold: true, align: "right", fontSet,
   })
   if (result.fallbackReason) {
-    drawText(page, result.fallbackReason, left + 16, y - rH + rH - 12, {
-      size: 8, color: COLORS.muted, fontSet,
+    drawText(page, result.fallbackReason, left + 12, y - rH + 6, {
+      size: 7, color: COLORS.muted, fontSet,
     })
   }
-  y = y - rH - 6
+  y = y - rH - 4
 
-  y = drawSectionTitle(page, "Detalle", left, y - 4, fontSet, { compact: true })
+  y = drawSectionTitle(page, "Detalle", left, y, fontSet)
   if (result.lines.length === 0) {
-    drawText(page, "No hay lineas de calculo disponibles.", left, y - 4, { size: 9, color: COLORS.muted, fontSet })
+    drawText(page, "No hay lineas de calculo disponibles.", left, y - 2, { size: 8, color: COLORS.muted, fontSet })
+    y -= 14
   } else {
     for (const line of result.lines) {
-      drawBox(page, left, y - 44, right - left, 42, { fillColor: y % 2 === 0 ? COLORS.bg : COLORS.white })
-      drawText(page, line.label, left + 4, y - 10, { size: 9, bold: true, fontSet })
-      drawText(page, money(line.amount, result.currency), right - 4, y - 10, {
-        size: 9, bold: true, align: "right", fontSet,
+      drawBox(page, left, y - 34, right - left, 32, { fillColor: COLORS.bg })
+      drawText(page, line.label, left + 4, y - 8, { size: 8, bold: true, fontSet })
+      drawText(page, money(line.amount, result.currency), right - 4, y - 8, {
+        size: 8, bold: true, align: "right", fontSet,
       })
-      drawText(page, line.formula, left + 4, y - 24, { size: 7, color: COLORS.muted, fontSet })
-      drawText(page, line.legalReference, left + 4, y - 36, { size: 7, color: COLORS.muted, fontSet })
-      y -= 46
+      drawText(page, line.formula, left + 4, y - 18, { size: 7, color: COLORS.muted, fontSet })
+      drawText(page, line.legalReference, left + 4, y - 28, { size: 7, color: COLORS.muted, fontSet })
+      y -= 36
     }
   }
 
-  y = drawSectionTitle(page, "Firmas", left, y - 4, fontSet, { compact: true })
+  y = drawSectionTitle(page, "Firmas", left, y - 2, fontSet)
   y = drawSignatureBoxes(page, y, left, fontSet)
   drawFooter(page, y, left, right, fontSet)
 

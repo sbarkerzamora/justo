@@ -6,6 +6,8 @@ interface SsDeductionSpec {
   label: string
   rate: number
   legalReference: string
+  /** Optional maximum monthly base for the deduction (e.g., UF cap in Chile, ANSES tope in AR) */
+  maxBase?: number
 }
 
 export interface IrBracket {
@@ -19,6 +21,8 @@ export interface IrDeductionSpec {
   source: "corpus" | "estimated"
   rate?: number
   brackets?: IrBracket[]
+  /** Annual allowance subtracted from taxable base before brackets are applied (e.g., 5 UIT in PE) */
+  annualAllowance?: number
 }
 
 function calculateAnnualProgressiveIr(annualBase: number, brackets: IrBracket[]): number {
@@ -56,12 +60,15 @@ export function buildNetSalary(
   let totalSs = 0
 
   for (const d of ssDeductions) {
-    const amount = round2(gross * d.rate)
+    const base = d.maxBase !== undefined ? Math.min(gross, d.maxBase) : gross
+    const amount = round2(base * d.rate)
     totalSs += amount
     lines.push({
       label: d.label,
       amount,
-      formula: `(${gross} x ${d.rate * 100}%)`,
+      formula: d.maxBase !== undefined
+        ? `(min(${gross}, ${d.maxBase}) x ${d.rate * 100}%)`
+        : `(${gross} x ${d.rate * 100}%)`,
       legalReference: d.legalReference,
     })
   }
@@ -72,7 +79,7 @@ export function buildNetSalary(
     const irBase = round2(gross - totalSs)
 
     if (ir.brackets && ir.brackets.length > 0) {
-      const annualBase = round2(irBase * 12)
+      const annualBase = round2(Math.max(0, irBase * 12 - (ir.annualAllowance ?? 0)))
       const annualIr = calculateAnnualProgressiveIr(annualBase, ir.brackets)
       const irAmount = round2(annualIr / 12)
 

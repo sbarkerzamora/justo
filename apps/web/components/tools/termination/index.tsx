@@ -28,6 +28,7 @@ import type { TerminationScenario } from "@justo/core"
 import {
   formatCurrencyInput,
   formatDateInput,
+  getCurrencySymbol,
   parseCurrencyInput,
 } from "@/components/tools/input-formatters"
 import { StepNavigation } from "@/components/tools/step-navigation"
@@ -39,6 +40,7 @@ export type TerminationStep =
   | "endDate"
   | "terminationCause"
   | "contractType"
+  | "writtenNotice"
   | "confirm"
   | "done"
 
@@ -142,6 +144,7 @@ const terminationSteps: TerminationStep[] = [
   "endDate",
   "terminationCause",
   "contractType",
+  "writtenNotice",
   "confirm",
   "done",
 ]
@@ -149,11 +152,11 @@ const terminationSteps: TerminationStep[] = [
 const stepIndex = (step: TerminationStep) => {
   if (step === "welcome") return 0
   const idx = terminationSteps.indexOf(step)
-  if (idx === -1) return 5
+  if (idx === -1) return 6
   return idx + 1
 }
 
-const totalSteps = 6
+const totalSteps = terminationSteps.length
 
 const terminationCauseOptions = [
   { value: "renuncia", es: "Renuncia", en: "Resignation" },
@@ -295,6 +298,10 @@ export function TerminationTool({
           locale === "en"
             ? "What type of contract is it?"
             : "¿Qué tipo de contrato es?",
+        writtenNotice:
+          locale === "en"
+            ? "Did you give written notice of your resignation?"
+            : "¿Diste aviso por escrito de tu renuncia?",
       }
       return map[s] ?? ""
     },
@@ -303,14 +310,22 @@ export function TerminationTool({
 
   const nextStep = (s: TerminationStep): TerminationStep => {
     const idx = terminationSteps.indexOf(s)
-    return terminationSteps[idx + 1] ?? "confirm"
+    const candidate = terminationSteps[idx + 1]
+    if (candidate === "writtenNotice" && (countryCode !== "ni" || form.terminationCause !== "renuncia")) {
+      return terminationSteps[idx + 2] ?? "confirm"
+    }
+    return candidate ?? "confirm"
   }
 
   const prevStep = (s: TerminationStep): TerminationStep | null => {
     if (s === "welcome" || s === "done") return null
     const idx = terminationSteps.indexOf(s)
     if (idx <= 0) return "welcome"
-    return terminationSteps[idx - 1]
+    const prev = terminationSteps[idx - 1]
+    if (prev === "writtenNotice" && (countryCode !== "ni" || form.terminationCause !== "renuncia")) {
+      return idx - 2 >= 0 ? terminationSteps[idx - 2] : "welcome"
+    }
+    return prev
   }
 
   const advance = () => {
@@ -377,6 +392,7 @@ export function TerminationTool({
         endDate: form.endDate,
         terminationCause: form.terminationCause,
         contractType: form.contractType,
+        noticeGivenInWriting: form.noticeGivenInWriting,
       })
       dispatch({ type: "setResult", result })
       dispatch({ type: "setStep", step: "done" })
@@ -399,7 +415,7 @@ export function TerminationTool({
       dispatch({
         type: "setEditField",
         field: "editSalary",
-        value: String(form.monthlySalary || ""),
+        value: formatCurrencyInput(String(form.monthlySalary || "")),
       })
     if (action === "dates") {
       dispatch({
@@ -455,6 +471,7 @@ export function TerminationTool({
         endDate: form.endDate,
         terminationCause: form.terminationCause,
         contractType: form.contractType,
+        noticeGivenInWriting: form.noticeGivenInWriting,
       }),
     })
     if (!response.ok) return
@@ -577,6 +594,7 @@ export function TerminationTool({
               { label: copy.endDate },
               { label: locale === "en" ? "Cause" : "Causa" },
               { label: locale === "en" ? "Contract" : "Contrato" },
+              { label: locale === "en" ? "Notice" : "Aviso" },
             ]}
             startLabel={copy.startButton}
             onStart={() => dispatch({ type: "setStep", step: "monthlySalary" })}
@@ -594,6 +612,7 @@ export function TerminationTool({
               editSalary={state.editSalary}
               editStartDate={state.editStartDate}
               editEndDate={state.editEndDate}
+              currencySymbol={getCurrencySymbol(countryCode)}
               onSetEditField={(field, value) =>
                 dispatch({
                   type: "setEditField",
@@ -611,25 +630,65 @@ export function TerminationTool({
               copy={copy}
             />
           </div>
-        ) : step === "confirm" ? (
-          <div className="space-y-4 overflow-y-auto">
-            {error ? (
-              <div className="flex items-center gap-2 rounded-xl border border-rose-200 bg-rose-50 px-4 py-3 text-sm text-rose-700">
-                <IconAlertCircle className="size-4 shrink-0" />
-                {error}
+        ) : step === "writtenNotice" && form.terminationCause === "renuncia" && countryCode === "ni" ? (
+          <div className="flex h-full w-full flex-col items-center justify-center overflow-y-auto px-2">
+            <div className="w-full max-w-xl rounded-2xl border border-border bg-card p-6 shadow-sm motion-safe:animate-in motion-safe:duration-200 motion-safe:fade-in motion-safe:slide-in-from-bottom-1">
+              <p className="text-base font-medium text-foreground">
+                {locale === "en"
+                  ? "Did you give written notice to your employer?"
+                  : "¿Diste aviso por escrito a tu empleador?"}
+              </p>
+              <p className="mt-2 text-xs leading-relaxed text-muted-foreground">
+                {locale === "en"
+                  ? "In Nicaragua (Art. 44 Ley 185), you must give 15 days written notice when resigning to preserve your right to Art. 45 seniority indemnity."
+                  : "En Nicaragua (Art. 44 Ley 185), debes dar 15 días de aviso por escrito al renunciar para conservar tu derecho a la indemnización por antigüedad Art. 45."}
+              </p>
+              <div className="mt-4 flex gap-3">
+                <button
+                  type="button"
+                  onClick={() => {
+                    dispatch({ type: "patchForm", patch: { noticeGivenInWriting: true } })
+                    dispatch({ type: "setStep", step: "confirm" })
+                  }}
+                  className={`flex-1 rounded-xl border px-4 py-3 text-sm font-medium transition-all ${form.noticeGivenInWriting === true ? "border-primary bg-primary text-primary-foreground" : "border-border bg-card text-foreground hover:bg-accent"}`}
+                >
+                  {locale === "en" ? "Yes, I gave written notice" : "Sí, di aviso por escrito"}
+                </button>
+                <button
+                  type="button"
+                  onClick={() => {
+                    dispatch({ type: "patchForm", patch: { noticeGivenInWriting: false } })
+                    dispatch({ type: "setStep", step: "confirm" })
+                  }}
+                  className={`flex-1 rounded-xl border px-4 py-3 text-sm font-medium transition-all ${form.noticeGivenInWriting === false ? "border-primary bg-primary text-primary-foreground" : "border-border bg-card text-foreground hover:bg-accent"}`}
+                >
+                  {locale === "en" ? "No, I did not" : "No, no di aviso"}
+                </button>
               </div>
-            ) : null}
-            <ConfirmPanel
-              monthlySalary={form.monthlySalary}
-              startDate={form.startDate}
-              endDate={form.endDate}
-              terminationCause={form.terminationCause}
-              contractType={form.contractType}
-              fmt={fmt}
-              locale={locale}
-              copy={copy}
-              onConfirmAction={onConfirmAction}
-            />
+            </div>
+          </div>
+        ) : step === "confirm" ? (
+          <div className="flex h-full w-full flex-col items-center justify-center overflow-y-auto px-2">
+            <div className="w-full max-w-xl space-y-4">
+              {error ? (
+                <div className="flex items-center gap-2 rounded-xl border border-rose-200 bg-rose-50 px-4 py-3 text-sm text-rose-700">
+                  <IconAlertCircle className="size-4 shrink-0" />
+                  {error}
+                </div>
+              ) : null}
+              <ConfirmPanel
+                monthlySalary={form.monthlySalary}
+                startDate={form.startDate}
+                endDate={form.endDate}
+                terminationCause={form.terminationCause}
+                contractType={form.contractType}
+                noticeGivenInWriting={form.noticeGivenInWriting}
+                fmt={fmt}
+                locale={locale}
+                copy={copy}
+                onConfirmAction={onConfirmAction}
+              />
+            </div>
           </div>
         ) : step === "terminationCause" || step === "contractType" ? (
           <ChoicePanel
@@ -658,27 +717,34 @@ export function TerminationTool({
               </p>
             </div>
             <div className="w-full max-w-xl">
-              <input
-                ref={inputRef}
-                value={inputValue}
-                onChange={(e) =>
-                  setInputValue(
-                    step === "monthlySalary"
-                      ? formatCurrencyInput(e.target.value)
-                      : formatDateInput(e.target.value)
-                  )
-                }
-                inputMode={step === "monthlySalary" ? "decimal" : "text"}
-                placeholder={
-                  step === "monthlySalary" ? copy.askPlaceholder : copy.endDate
-                }
-                className="h-12 w-full rounded-2xl border border-border bg-card pr-4 pl-4 text-sm text-foreground transition-colors outline-none placeholder:text-muted-foreground focus:border-foreground/30"
-              />
+              <div className={step === "monthlySalary" ? "relative" : ""}>
+                {step === "monthlySalary" && (
+                  <span className="pointer-events-none absolute left-4 top-1/2 -translate-y-1/2 text-sm text-muted-foreground">
+                    {getCurrencySymbol(countryCode)}
+                  </span>
+                )}
+                <input
+                  ref={inputRef}
+                  value={inputValue}
+                  onChange={(e) =>
+                    setInputValue(
+                      step === "monthlySalary"
+                        ? formatCurrencyInput(e.target.value)
+                        : formatDateInput(e.target.value)
+                    )
+                  }
+                  inputMode={step === "monthlySalary" ? "decimal" : "numeric"}
+                  placeholder={
+                    step === "monthlySalary" ? copy.askPlaceholder : copy.endDate
+                  }
+                  className={`h-12 w-full rounded-2xl border border-border bg-card text-sm text-foreground transition-colors outline-none placeholder:text-muted-foreground focus:border-foreground/30 ${step === "monthlySalary" ? "pl-10 pr-4" : "pl-4 pr-4"}`}
+                />
+              </div>
             </div>
           </div>
         )}
 
-        {step !== "welcome" && step !== "confirm" && step !== "done" && (
+        {step !== "welcome" && step !== "confirm" && step !== "done" && step !== "writtenNotice" && (
           <StepNavigation
             onBack={handleBack}
             onContinue={handleSubmit}
@@ -852,6 +918,7 @@ function ConfirmPanel({
   endDate,
   terminationCause,
   contractType,
+  noticeGivenInWriting,
   fmt,
   locale,
   copy,
@@ -862,6 +929,7 @@ function ConfirmPanel({
   endDate: string
   terminationCause: string
   contractType: string
+  noticeGivenInWriting?: boolean
   fmt: (v: number) => string
   locale: Locale
   copy: (typeof homeCopy)[Locale]
@@ -899,6 +967,15 @@ function ConfirmPanel({
           label={locale === "en" ? "Contract type" : "Tipo de contrato"}
           value={contractTypeLabel(contractType, locale)}
         />
+        {noticeGivenInWriting !== undefined && (
+          <SummaryRow
+            icon={<IconReceipt className="size-4 text-muted-foreground" />}
+            label={locale === "en" ? "Written notice given" : "Aviso escrito dado"}
+            value={noticeGivenInWriting
+              ? (locale === "en" ? "Yes" : "Sí")
+              : (locale === "en" ? "No" : "No")}
+          />
+        )}
       </div>
       <div className="mt-5 flex flex-wrap gap-2">
         <button
@@ -935,6 +1012,7 @@ function EditPanel({
   editSalary,
   editStartDate,
   editEndDate,
+  currencySymbol,
   onSetEditField,
   onSetEditMode,
   saveEdit,
@@ -944,6 +1022,7 @@ function EditPanel({
   editSalary: string
   editStartDate: string
   editEndDate: string
+  currencySymbol: string
   onSetEditField: (field: string, value: string) => void
   onSetEditMode: (mode: TerminationEditMode) => void
   saveEdit: () => void
@@ -954,14 +1033,19 @@ function EditPanel({
       {editMode === "salary" ? (
         <label className="grid gap-2 text-sm">
           <span className="text-foreground">{copy.newMonthlySalary}</span>
-          <input
-            inputMode="decimal"
-            value={editSalary}
-            onChange={(e) =>
-              onSetEditField("editSalary", formatCurrencyInput(e.target.value))
-            }
-            className="h-11 rounded-xl border border-border bg-background px-3 text-foreground outline-none focus:border-foreground/30"
-          />
+          <div className="relative">
+            <span className="pointer-events-none absolute left-3 top-1/2 -translate-y-1/2 text-sm text-muted-foreground">
+              {currencySymbol}
+            </span>
+            <input
+              inputMode="decimal"
+              value={editSalary}
+              onChange={(e) =>
+                onSetEditField("editSalary", formatCurrencyInput(e.target.value))
+              }
+              className="h-11 w-full rounded-xl border border-border bg-background pl-8 pr-3 text-foreground outline-none focus:border-foreground/30"
+            />
+          </div>
         </label>
       ) : editMode === "dates" ? (
         <div className="space-y-3">

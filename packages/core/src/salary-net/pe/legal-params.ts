@@ -1,7 +1,7 @@
 export const getPeruSalaryNetLegalRates = () => {
   return {
     onpRate: 0.13,
-    afpRate: 0.112,
+    afpRate: 0.1137,
     irBrackets: [
       { from: 0, rate: 0 },
       { from: 37450, rate: 0.08 },

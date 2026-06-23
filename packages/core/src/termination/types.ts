@@ -10,6 +10,7 @@ export interface TerminationInput {
   endDate: string
   terminationCause: TerminationCause
   contractType: JurisdictionContractType
+  noticeGivenInWriting?: boolean
 }
 
 export interface TerminationLine {

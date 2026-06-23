@@ -1,7 +1,7 @@
 ---
 country: mx
 topic: indemnizacion
-version: mx-v0.2.0
+version: mx-v0.3.0
 status: proposed
 source: "Ley Federal del Trabajo de Mexico"
 last_reviewed: "2026-05-11"
@@ -47,20 +47,21 @@ VI. La prima de antigüedad a que se refiere este artículo se cubrirá a los tr
 
 - Indemnizacion constitucional: 3 meses de salario (90 dias).
 - Indemnizacion por anos: 12 dias de salario por cada ano trabajado.
-- Prima de antiguedad: 12 dias de salario por ano, con tope de 2 salarios minimos.
-- En el MVP se usa el salario mensual sin aplicar el tope del salario minimo (pendiente integracion de UMA/salario minimo regional).
+- Prima de antiguedad: 12 dias de salario por ano, con tope de 2 salarios minimos diarios generales CONASAMI vigentes a la fecha de salida.
+- La CONASAMI publica salario minimo diario, no mensual. El motor usa la zona general ZSMG por defecto y deriva el equivalente mensual multiplicando por 30.
 
 ## formula
 
 - `salario_diario = salario_mensual / 30`
 - `indemnizacion_constitucional = salario_diario * 90`
 - `indemnizacion_anual = salario_diario * anos_antiguedad * 12`
-- `prima_antiguedad = salario_diario * anos_antiguedad * 12`
+- `prima_antiguedad = min(salario_diario, salario_minimo_diario_vigente * 2) * anos_antiguedad * 12`
 - `total_indemnizacion = indemnizacion_constitucional + indemnizacion_anual + prima_antiguedad`
 
 ## vigencia_fuente
 
 - Ley Federal del Trabajo de Mexico, Arts. 48, 50, 162.
+- CONASAMI, tablas de salarios minimos generales y profesionales por areas geograficas: https://www.gob.mx/conasami/documentos/tabla-de-salarios-minimos-generales-y-profesionales-por-areas-geograficas
 
 ## alcance_documental
 
@@ -111,7 +112,7 @@ La fórmula operativa existente en este archivo es:
 - `salario_diario = salario_mensual / 30`
 - `indemnizacion_constitucional = salario_diario * 90`
 - `indemnizacion_anual = salario_diario * anos_antiguedad * 12`
-- `prima_antiguedad = salario_diario * anos_antiguedad * 12`
+- `prima_antiguedad = min(salario_diario, salario_minimo_diario_vigente * 2) * anos_antiguedad * 12`
 - `total_indemnizacion = indemnizacion_constitucional + indemnizacion_anual + prima_antiguedad`
 
 ## preguntas_sugeridas

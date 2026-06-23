@@ -49,6 +49,7 @@ export const settlementInputSchema = z.object({
   pendingBonusAmount: z.number().min(0).finite().optional().default(0),
   benefitsAlreadyPaidAmount: z.number().min(0).finite().optional().default(0),
   otherDeductionsAmount: z.number().min(0).finite().optional().default(0),
+  pensionSystem: z.enum(["afp", "onp"]).optional(),
 })
 
 export type SettlementInputPayload = z.infer<typeof settlementInputSchema>

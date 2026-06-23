@@ -12,10 +12,10 @@ describe("calculateElSalvadorSettlement", () => {
       frequency: "mensual",
       unusedVacationDays: 10,
       startDate: "2019-01-01",
-      endDate: "2026-05-11",
+      endDate: "2025-05-11",
     })
 
-    expect(result.legalCorpusVersion).toBe("sv-v0.2.0")
+    expect(result.legalCorpusVersion).toBe("sv-v0.3.0")
     expect(result.incomes.length).toBe(4)
     expect(result.incomes[0]?.label).toBe("Indemnizacion")
     expect(result.incomes[1]?.label).toBe("Aguinaldo proporcional")
@@ -32,7 +32,7 @@ describe("calculateElSalvadorSettlement", () => {
       frequency: "mensual",
       unusedVacationDays: 5,
       startDate: "2022-06-01",
-      endDate: "2026-05-11",
+      endDate: "2025-05-11",
     })
 
     expect(result.deductions.length).toBe(3)
@@ -54,7 +54,7 @@ describe("calculateElSalvadorSettlement", () => {
       frequency: "mensual",
       unusedVacationDays: 0,
       startDate: "2010-01-01",
-      endDate: "2026-05-11",
+      endDate: "2025-05-11",
     })
 
     const aguinaldo = result.incomes.find((line) => line.label === "Aguinaldo proporcional")
@@ -71,12 +71,29 @@ describe("calculateElSalvadorSettlement", () => {
       frequency: "mensual",
       unusedVacationDays: 0,
       startDate: "2025-01-01",
-      endDate: "2026-05-18",
+      endDate: "2025-05-18",
     })
 
     const sp = result.incomes.find((line) => line.label === "Salario proporcional")
     expect(sp).toBeDefined()
     expect(sp?.amount).toBe(1800)
     expect(sp?.formula).toContain("18 dias")
+  })
+
+  test("usa salario minimo actualizado desde junio 2025", () => {
+    const result = calculateElSalvadorSettlement({
+      countryCode: "sv",
+      employeeName: "Marta",
+      employerName: "Test SV",
+      monthlySalary: 3000,
+      frequency: "mensual",
+      unusedVacationDays: 0,
+      startDate: "2025-01-01",
+      endDate: "2025-06-18",
+    })
+
+    const indemnizacion = result.incomes.find((line) => line.label === "Indemnizacion")
+    expect(indemnizacion?.legalReference).toContain("MTPS 2025")
+    expect(indemnizacion?.formula).toContain("54.52")
   })
 })

@@ -24,7 +24,7 @@ const baseInput = {
 }
 
 describe("termination calculators", () => {
-  test("Nicaragua: unjustified dismissal generates indemnity", () => {
+  test("Nicaragua: unjustified dismissal generates indemnity + preaviso", () => {
     const result = calculateNicaraguaTermination({
       ...baseInput,
       countryCode: "ni",
@@ -35,10 +35,49 @@ describe("termination calculators", () => {
       (s) => s.type === "despido_injustificado"
     )
     expect(injust?.applicable).toBe(true)
-    expect(injust?.total).toBe(30000)
+    expect(injust?.lines).toHaveLength(2)
+    expect(injust?.total).toBe(44000) // 30000 indemnity + 14000 preaviso
     const renuncia = result.scenarios.find((s) => s.type === "renuncia")
     expect(renuncia?.applicable).toBe(true)
+    expect(renuncia?.total).toBe(0) // sin aviso escrito = $0
+  })
+
+  test("Nicaragua: renuncia with written notice gets Art.45 + preaviso", () => {
+    const result = calculateNicaraguaTermination({
+      ...baseInput,
+      countryCode: "ni",
+      terminationCause: "renuncia",
+      noticeGivenInWriting: true,
+    })
+    const renuncia = result.scenarios.find((s) => s.type === "renuncia")
+    expect(renuncia?.applicable).toBe(true)
+    expect(renuncia?.lines).toHaveLength(2)
+    expect(renuncia?.total).toBe(44000)
+  })
+
+  test("Nicaragua: renuncia without written notice gets $0", () => {
+    const result = calculateNicaraguaTermination({
+      ...baseInput,
+      countryCode: "ni",
+      terminationCause: "renuncia",
+      noticeGivenInWriting: false,
+    })
+    const renuncia = result.scenarios.find((s) => s.type === "renuncia")
+    expect(renuncia?.applicable).toBe(true)
+    expect(renuncia?.lines).toHaveLength(0)
     expect(renuncia?.total).toBe(0)
+  })
+
+  test("Nicaragua: mutuo acuerdo preserves Art.45 + preaviso", () => {
+    const result = calculateNicaraguaTermination({
+      ...baseInput,
+      countryCode: "ni",
+      terminationCause: "mutuo_acuerdo",
+    })
+    const mutuo = result.scenarios.find((s) => s.type === "mutuo_acuerdo")
+    expect(mutuo?.applicable).toBe(true)
+    expect(mutuo?.lines).toHaveLength(2)
+    expect(mutuo?.total).toBe(44000)
   })
 
   test("El Salvador: 30 days/year for unjustified dismissal", () => {
@@ -51,8 +90,8 @@ describe("termination calculators", () => {
       (s) => s.type === "despido_injustificado"
     )
     expect(injust?.applicable).toBe(true)
-    expect(injust?.total).toBe(30000)
-    expect(injust?.lines[0]?.formula).toContain("30 días")
+    expect(injust?.total).toBe(1460.4)
+    expect(injust?.lines[0]?.legalReference).toContain("4x SM")
   })
 
   test("Guatemala: indemnity applies to all scenarios including renuncia", () => {
@@ -126,7 +165,7 @@ describe("termination calculators", () => {
     )
     expect(injust?.applicable).toBe(true)
     expect(injust?.lines).toHaveLength(3)
-    expect(injust?.total).toBe(114000)
+    expect(injust?.total).toBe(107974.32)
   })
 
   test("Colombia: 30 base + 20d/year for unjustified dismissal", () => {

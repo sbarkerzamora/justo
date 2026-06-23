@@ -29,6 +29,7 @@ export const scenarioLabels: Record<TerminationScenarioType, string> = {
 export interface TerminationContext {
   dailySalary: number
   monthlySalary: number
+  endDate: string
   tenureYears: number
   fullYears: number
   seniorityDays: number
@@ -86,6 +87,7 @@ export function buildTermination(
   const ctx: TerminationContext = {
     dailySalary,
     monthlySalary: input.monthlySalary,
+    endDate: input.endDate,
     tenureYears,
     fullYears,
     seniorityDays,

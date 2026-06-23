@@ -4,7 +4,14 @@ import {
   isSpecialTerminationClosure,
   makeIndemnityLine,
 } from "../shared"
+import { getMinimumWage } from "../../shared"
 import type { TerminationInput } from "../types"
+
+const cappedDailySalary = (dailySalary: number, endDate: string): number => {
+  const svMinWage = getMinimumWage("sv", endDate)
+  if (!svMinWage) throw new Error("No hay salario mínimo SV para la fecha indicada")
+  return Math.min(dailySalary, svMinWage.daily * 4)
+}
 
 export const getElSalvadorTerminationParams = (
   input: TerminationInput
@@ -14,7 +21,7 @@ export const getElSalvadorTerminationParams = (
 
   return {
     currency: "USD",
-    corpusVersion: "sv-v0.2.0",
+    corpusVersion: "sv-v0.3.0",
     scenarios: [
       {
         type: "renuncia",
@@ -40,9 +47,9 @@ export const getElSalvadorTerminationParams = (
           return [
             makeIndemnityLine(
               "Indemnización Art. 58 (30 días por año, mínimo 15 días)",
-              ctx.dailySalary,
+              cappedDailySalary(ctx.dailySalary, ctx.endDate),
               days,
-              "Código de Trabajo Art. 58"
+              "Código de Trabajo Art. 58 (tope 4x SM)"
             ),
           ]
         },

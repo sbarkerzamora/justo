@@ -12,10 +12,10 @@ describe("calculateColombiaSettlement", () => {
       frequency: "mensual",
       unusedVacationDays: 10,
       startDate: "2019-01-01",
-      endDate: "2026-05-11",
+      endDate: "2025-05-11",
     })
 
-    expect(result.legalCorpusVersion).toBe("co-v0.2.0")
+    expect(result.legalCorpusVersion).toBe("co-v0.3.0")
     expect(result.incomes.length).toBe(6)
     expect(result.incomes[0]?.label).toBe("Cesantia")
     expect(result.incomes[1]?.label).toBe("Intereses a las cesantias")
@@ -33,7 +33,7 @@ describe("calculateColombiaSettlement", () => {
       frequency: "mensual",
       unusedVacationDays: 5,
       startDate: "2022-06-01",
-      endDate: "2026-05-11",
+      endDate: "2025-05-11",
     })
 
     expect(result.deductions.length).toBe(3)
@@ -55,7 +55,7 @@ describe("calculateColombiaSettlement", () => {
       frequency: "mensual",
       unusedVacationDays: 0,
       startDate: "2020-01-01",
-      endDate: "2026-05-11",
+      endDate: "2025-05-11",
     })
 
     const intereses = result.incomes.find((line) => line.label === "Intereses a las cesantias")

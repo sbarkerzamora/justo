@@ -15,7 +15,7 @@ describe("calculatePeruSettlement", () => {
       endDate: "2026-05-11",
     })
 
-    expect(result.legalCorpusVersion).toBe("pe-v0.2.0")
+    expect(result.legalCorpusVersion).toBe("pe-v0.3.0")
     expect(result.incomes.length).toBe(5)
     expect(result.incomes[0]?.label).toBe("Indemnizacion por despido")
     expect(result.incomes[1]?.label).toBe("CTS")
@@ -56,5 +56,24 @@ describe("calculatePeruSettlement", () => {
     })
 
     expect(result.incomes[0]?.legalReference).toContain("Art. 167")
+  })
+
+  test("calcula AFP mixta con prima de seguro topada por RMA", () => {
+    const result = calculatePeruSettlement({
+      countryCode: "pe",
+      employeeName: "Ana",
+      employerName: "Empresa PE",
+      monthlySalary: 15000,
+      frequency: "mensual",
+      unusedVacationDays: 30,
+      startDate: "2025-01-01",
+      endDate: "2025-06-30",
+      pensionSystem: "afp",
+    })
+
+    const afp = result.deductions[0]
+    expect(afp.label).toBe("AFP")
+    expect(afp.formula).toContain("min(")
+    expect(afp.legalReference).toContain("SBS SPP")
   })
 })

@@ -18,20 +18,12 @@ export const COLORS = {
   tableHeaderBg: rgb(0.94, 0.94, 0.94),
   white: rgb(1, 1, 1),
   black: rgb(0, 0, 0),
-  accent: rgb(0.2, 0.4, 0.8),
 }
 
 export const currencyLocaleMap: Record<string, string> = {
-  NIO: "es-NI",
-  USD: "es-SV",
-  GTQ: "es-GT",
-  HNL: "es-HN",
-  CRC: "es-CR",
-  MXN: "es-MX",
-  COP: "es-CO",
-  PEN: "es-PE",
-  ARS: "es-AR",
-  CLP: "es-CL",
+  NIO: "es-NI", USD: "es-SV", GTQ: "es-GT",
+  HNL: "es-HN", CRC: "es-CR", MXN: "es-MX",
+  COP: "es-CO", PEN: "es-PE", ARS: "es-AR", CLP: "es-CL",
 }
 
 export const currencyFormatters: Record<string, Intl.NumberFormat> =
@@ -105,48 +97,33 @@ export function drawBox(
   y: number,
   w: number,
   h: number,
-  opts?: {
-    borderColor?: ColorInput
-    borderWidth?: number
-    fillColor?: ColorInput
-  }
+  opts?: { borderColor?: ColorInput; borderWidth?: number; fillColor?: ColorInput }
 ) {
   if (opts?.fillColor) {
-    page.drawRectangle({
-      x,
-      y,
-      width: w,
-      height: h,
-      color: toRgb(opts.fillColor),
-    })
+    page.drawRectangle({ x, y, width: w, height: h, color: toRgb(opts.fillColor) })
   }
   if (opts?.borderColor && (opts.borderWidth ?? 0) > 0) {
     page.drawRectangle({
-      x,
-      y,
-      width: w,
-      height: h,
+      x, y, width: w, height: h,
       borderColor: toRgb(opts.borderColor),
       borderWidth: opts.borderWidth,
     })
   }
 }
 
-export function drawIcon(
+export function drawHeader(
   page: PDFPage,
-  symbol: string,
-  label: string,
+  title: string,
+  subtitle: string,
   x: number,
   y: number,
   fontSet: FontSet
-): void {
-  drawText(page, symbol, x, y, {
-    size: 14,
-    bold: true,
-    color: [0.2, 0.4, 0.8],
-    fontSet,
-  })
-  drawText(page, label, x + 16, y + 3, { size: 20, bold: true, fontSet })
+): number {
+  drawText(page, title, x, y, { size: 13, bold: true, fontSet })
+  drawText(page, subtitle, x, y - 14, { size: 7, color: COLORS.muted, fontSet })
+  const lineY = y - 20
+  drawLine(page, x, lineY, x + 499, lineY, { color: COLORS.border, width: 0.3 })
+  return lineY - 6
 }
 
 export function drawSectionTitle(
@@ -154,21 +131,11 @@ export function drawSectionTitle(
   title: string,
   x: number,
   y: number,
-  fontSet: FontSet,
-  opts?: { compact?: boolean }
+  fontSet: FontSet
 ): number {
-  drawText(page, title, x, y, {
-    size: 12,
-    bold: true,
-    color: [0.2, 0.4, 0.8],
-    fontSet,
-  })
-  const spacing = opts?.compact ? 10 : 14
-  const newY = y - spacing
-  drawLine(page, x, newY, x + 499, newY, {
-    color: [0.85, 0.85, 0.85],
-    width: 0.3,
-  })
+  drawText(page, title, x, y, { size: 9, bold: true, fontSet })
+  const newY = y - 8
+  drawLine(page, x, newY, x + 200, newY, { color: COLORS.border, width: 0.2 })
   return newY - 4
 }
 
@@ -181,9 +148,9 @@ export function drawKeyValue(
   fontSet: FontSet,
   valueX?: number
 ): number {
-  drawText(page, label, x, y, { size: 10, color: [0.45, 0.45, 0.45], fontSet })
-  drawText(page, value, valueX ?? x + 140, y, { size: 11, bold: true, fontSet })
-  return y - 18
+  drawText(page, label, x, y, { size: 8, color: COLORS.muted, fontSet })
+  drawText(page, value, valueX ?? x + 130, y, { size: 8, bold: true, fontSet })
+  return y - 13
 }
 
 export function drawSignatureBoxes(
@@ -192,36 +159,30 @@ export function drawSignatureBoxes(
   left: number,
   fontSet: FontSet
 ): number {
-  const boxW = 220
-  const boxH = 60
-  const gap = 50
+  const boxW = 160
+  const boxH = 40
+  const gap = 30
   const sigY = y - boxH
 
   const drawOne = (label: string, xPos: number) => {
     drawBox(page, xPos, sigY, boxW, boxH, {
-      borderColor: [0.75, 0.75, 0.75],
-      borderWidth: 1,
+      borderColor: COLORS.border, borderWidth: 1,
     })
-    drawLine(page, xPos + 10, sigY + 20, xPos + boxW - 10, sigY + 20, {
-      color: [0.1, 0.1, 0.1],
-      width: 1,
+    drawLine(page, xPos + 8, sigY + 14, xPos + boxW - 8, sigY + 14, {
+      color: COLORS.text, width: 0.5,
     })
-    drawText(page, label, xPos + 10, sigY + 4, {
-      size: 10,
-      color: [0.45, 0.45, 0.45],
-      fontSet,
+    drawText(page, label, xPos + 8, sigY + 2, {
+      size: 7, color: COLORS.muted, fontSet,
     })
-    drawText(page, "Firma", xPos + 10, sigY + 24, {
-      size: 9,
-      color: [0.45, 0.45, 0.45],
-      fontSet,
+    drawText(page, "Firma", xPos + 8, sigY + 17, {
+      size: 7, color: COLORS.muted, fontSet,
     })
   }
 
   drawOne("Trabajador", left)
   drawOne("Empleador", left + boxW + gap)
 
-  return sigY - 16
+  return sigY - 10
 }
 
 export function drawTableHeader(
@@ -232,12 +193,12 @@ export function drawTableHeader(
   right: number,
   fontSet: FontSet
 ): number {
-  const hdrH = 20
+  const hdrH = 16
   drawBox(page, left - 4, y - hdrH + 4, right - left + 8, hdrH, {
-    fillColor: [0.94, 0.94, 0.94],
+    fillColor: COLORS.tableHeaderBg,
   })
   for (const col of columns) {
-    drawText(page, col.label, col.x, y - 2, { size: 9, bold: true, fontSet })
+    drawText(page, col.label, col.x, y - 1, { size: 7, bold: true, fontSet })
   }
   return y - hdrH
 }
@@ -250,17 +211,14 @@ export function drawTableRow(
   right: number,
   fontSet: FontSet
 ): number {
-  const rowH = 20
+  const rowH = 16
   for (const cell of cells) {
-    drawText(page, cell.text, cell.x, y - 2, {
-      size: cell.size ?? 9,
-      bold: cell.bold,
-      fontSet,
+    drawText(page, cell.text, cell.x, y - 1, {
+      size: cell.size ?? 7, bold: cell.bold, fontSet,
     })
   }
   drawLine(page, left, y - rowH + 4, right, y - rowH + 4, {
-    color: [0.9, 0.9, 0.9],
-    width: 0.3,
+    color: COLORS.border, width: 0.2,
   })
   return y - rowH
 }
@@ -272,11 +230,8 @@ export function drawWrappedText(
   y: number,
   maxWidth: number,
   opts: {
-    size?: number
-    bold?: boolean
-    color?: ColorInput
-    fontSet: FontSet
-    lineHeight?: number
+    size?: number; bold?: boolean; color?: ColorInput
+    fontSet: FontSet; lineHeight?: number
   }
 ): { y: number; lines: number } {
   const safeText = sanitizePdfText(text)
@@ -317,22 +272,10 @@ export function drawFooter(
   right: number,
   fontSet: FontSet
 ): number {
-  drawLine(page, left, y, right, y, { color: [0.85, 0.85, 0.85], width: 0.5 })
-  let cy = y - 14
-  drawText(
-    page,
-    "Aviso: Este reporte es una estimacion asistida generada por Justo. Debe validarse con normativa vigente y asesoria profesional.",
-    left,
-    cy,
-    { size: 8, color: [0.55, 0.55, 0.55], fontSet }
-  )
-  cy -= 14
-  drawText(
-    page,
-    "Justo · github.com/sbarkerzamora/justo · Codigo abierto (MIT)",
-    left,
-    cy,
-    { size: 8, color: [0.55, 0.55, 0.55], fontSet }
-  )
+  drawLine(page, left, y, right, y, { color: COLORS.border, width: 0.3 })
+  const cy = y - 10
+  drawText(page, "Generado por Justo (github.com/sbarkerzamora/justo) · Estimacion referencial, validar con profesional", left, cy, {
+    size: 6, color: COLORS.light, fontSet,
+  })
   return cy
 }

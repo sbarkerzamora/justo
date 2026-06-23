@@ -1,7 +1,7 @@
 ---
 country: sv
 topic: indemnizacion
-version: sv-v0.2.0
+version: sv-v0.3.0
 status: proposed
 source: "Codigo de Trabajo de El Salvador"
 last_reviewed: "2026-05-11"
@@ -27,12 +27,13 @@ Para los efectos del cálculo de la indemnización a que se refiere el inciso an
 - 30 dias de salario por cada ano de servicio.
 - Fracciones de ano se pagan proporcionalmente.
 - Minimo: 15 dias de salario.
+- Tope: ningun salario base puede exceder cuatro veces el salario minimo diario legal vigente del sector aplicable. El motor usa Comercio y Servicios por defecto.
 
 ## formula
 
 - `salario_diario = salario_mensual / 30`
 - `dias_indemnizacion = max(anos_antiguedad * 30, 15)`
-- `monto_indemnizacion = salario_diario * dias_indemnizacion`
+- `monto_indemnizacion = min(salario_diario, salario_minimo_diario_vigente * 4) * dias_indemnizacion`
 
 ## variables
 
@@ -43,6 +44,8 @@ Para los efectos del cálculo de la indemnización a que se refiere el inciso an
 ## vigencia_fuente
 
 - Codigo de Trabajo de El Salvador, Arts. 58 y 59.
+- Ministerio de Trabajo y Prevision Social, tablas/decretos de salario minimo: https://www.mtps.gob.sv/descargas/
+- Decreto Ejecutivo No. 11, vigente desde el 1 de junio de 2025, actualiza Comercio y Servicios a USD 408.80 mensuales.
 
 ## alcance_documental
 
@@ -91,7 +94,7 @@ La fórmula operativa existente en este archivo es:
 
 - `salario_diario = salario_mensual / 30`
 - `dias_indemnizacion = max(anos_antiguedad * 30, 15)`
-- `monto_indemnizacion = salario_diario * dias_indemnizacion`
+- `monto_indemnizacion = min(salario_diario, salario_minimo_diario_vigente * 4) * dias_indemnizacion`
 
 ## variables_documentadas
 

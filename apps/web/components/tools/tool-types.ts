@@ -10,6 +10,7 @@ export const stepOrder: FlowStep[] = [
   "frequency",
   "terminationCause",
   "contractType",
+  "pensionSystem",
   "adjustments",
   "confirm",
 ]
@@ -25,6 +26,7 @@ export type FlowStep =
   | "frequency"
   | "terminationCause"
   | "contractType"
+  | "pensionSystem"
   | "adjustments"
   | "confirm"
   | "done"
@@ -60,6 +62,7 @@ export type SettlementForm = {
   pendingBonusAmount?: number
   benefitsAlreadyPaidAmount?: number
   otherDeductionsAmount?: number
+  pensionSystem?: "afp" | "onp"
 }
 
 export type VacationFormData = {
@@ -113,6 +116,7 @@ export type TerminationFormData = {
     | "obra_determinada"
     | "temporada"
     | "periodo_prueba"
+  noticeGivenInWriting?: boolean
 }
 
 export type ContractFormData = {

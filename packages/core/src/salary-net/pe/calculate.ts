@@ -3,12 +3,12 @@ import type { SalaryNetInput, SalaryNetResult } from "../types"
 import { getPeruSalaryNetLegalRates } from "./legal-params"
 
 const CURRENCY = "PEN"
-const LEGAL_CORPUS_VERSION = "pe-v0.2.0"
+const LEGAL_CORPUS_VERSION = "pe-v0.3.0"
 
 export const calculatePeruSalaryNet = (
   input: SalaryNetInput,
 ): SalaryNetResult => {
-  const { onpRate, irBrackets } = getPeruSalaryNetLegalRates()
+  const { onpRate, afpRate, irBrackets } = getPeruSalaryNetLegalRates()
 
   const isAfp = input.pensionSystem === "afp"
 
@@ -17,7 +17,7 @@ export const calculatePeruSalaryNet = (
     CURRENCY,
     LEGAL_CORPUS_VERSION,
     [
-      { label: isAfp ? "AFP" : "ONP", rate: isAfp ? 0.112 : onpRate, legalReference: isAfp ? "Ley del Sistema Privado de Pensiones" : "D.L. 19990" },
+      { label: isAfp ? "AFP" : "ONP", rate: isAfp ? afpRate : onpRate, legalReference: isAfp ? "SBS SPP: aporte 10% + prima seguro 1.37% (comisión mixta)" : "D.L. 19990" },
     ],
     {
       label: "IR",
