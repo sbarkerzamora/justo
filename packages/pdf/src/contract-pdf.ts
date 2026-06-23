@@ -13,17 +13,17 @@ const currencyLocaleMap: Record<string, string> = {
 }
 
 const countryLaw: Record<string, { law: string; articles: string }> = {
-  ni: { law: "Ley No. 185, Codigo del Trabajo", articles: "Arts. 19-29" },
-  sv: { law: "Codigo de Trabajo", articles: "Art. 23" },
-  gt: { law: "Codigo de Trabajo, Decreto 1441", articles: "Art. 29" },
-  hn: { law: "Codigo de Trabajo, Decreto 189-59", articles: "Art. 37" },
-  cr: { law: "Codigo de Trabajo", articles: "Art. 24" },
-  pa: { law: "Codigo de Trabajo", articles: "Art. 68" },
+  ni: { law: "Ley No. 185, Código del Trabajo", articles: "Arts. 19-29" },
+  sv: { law: "Código de Trabajo", articles: "Art. 23" },
+  gt: { law: "Código de Trabajo, Decreto 1441", articles: "Art. 29" },
+  hn: { law: "Código de Trabajo, Decreto 189-59", articles: "Art. 37" },
+  cr: { law: "Código de Trabajo", articles: "Art. 24" },
+  pa: { law: "Código de Trabajo", articles: "Art. 68" },
   mx: { law: "Ley Federal del Trabajo", articles: "Art. 25" },
-  co: { law: "Codigo Sustantivo del Trabajo", articles: "Art. 39" },
+  co: { law: "Código Sustantivo del Trabajo", articles: "Art. 39" },
   pe: { law: "Ley General de Trabajo", articles: "Art. 14" },
   ar: { law: "Ley 20.744 de Contrato de Trabajo", articles: "Arts. 48-55" },
-  cl: { law: "Codigo del Trabajo", articles: "Art. 10" },
+  cl: { law: "Código del Trabajo", articles: "Art. 10" },
 }
 
 const W = 595.28
@@ -50,7 +50,7 @@ export const buildContractPdf = async (
   result: ContractResult,
 ) => {
   const pdf = await PDFDocument.create()
-  const page = pdf.addPage([W, H])
+  let page = pdf.addPage([W, H])
   const fontSet = await loadFonts(pdf)
   const locale = currencyLocaleMap[result.currency] ?? "es-NI"
   const info = countryLaw[result.countryCode] ?? countryLaw.ni
@@ -140,7 +140,19 @@ export const buildContractPdf = async (
       }
       y -= 2
     }
+    if (y < 100) {
+      page = pdf.addPage([W, H])
+      drawPageHeader(page, result, fontSet)
+      y = H - 62
+    }
+
     y -= 4
+  }
+
+  if (y < 100) {
+    page = pdf.addPage([W, H])
+    drawPageHeader(page, result, fontSet)
+    y = H - 62
   }
 
   y -= 2

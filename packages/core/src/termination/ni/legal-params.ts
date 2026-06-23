@@ -1,25 +1,6 @@
 import type { TerminationParams } from "../shared"
-import { makeIndemnityLine } from "../shared"
+import { makeIndemnityLine, isSpecialTerminationClosure, getSpecialTerminationClosureNote } from "../shared"
 import type { TerminationInput } from "../types"
-
-const baseScenarioTypes = new Set([
-  "renuncia",
-  "despido_justificado",
-  "despido_injustificado",
-  "mutuo_acuerdo",
-])
-
-const isSpecialClosure = (input: TerminationInput) =>
-  !baseScenarioTypes.has(input.terminationCause) ||
-  input.contractType === "periodo_prueba"
-
-const specialClosureNote = (input: TerminationInput) => {
-  if (input.contractType === "periodo_prueba") {
-    return "Periodo de prueba: no se calcula indemnización automática sin validar reglas específicas del caso en el corpus legal."
-  }
-
-  return "Causa especial de cierre: se requiere regla específica por causa y contrato; no se agrega indemnización sin respaldo del corpus."
-}
 
 function buildArt45Lines(ctx: { dailySalary: number; tenureYears: number; fullYears: number }) {
   const fraction = ctx.tenureYears - ctx.fullYears
@@ -62,8 +43,8 @@ function buildPreavisoLine(ctx: { dailySalary: number; seniorityMonths: number }
 export const getNicaraguaTerminationParams = (
   input: TerminationInput
 ): TerminationParams => {
-  const specialClosure = isSpecialClosure(input)
-  const closureNote = specialClosureNote(input)
+  const specialClosure = isSpecialTerminationClosure(input)
+  const closureNote = getSpecialTerminationClosureNote(input)
   const gaveNotice = input.noticeGivenInWriting === true
 
   return {

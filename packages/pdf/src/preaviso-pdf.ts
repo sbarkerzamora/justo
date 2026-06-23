@@ -11,7 +11,7 @@ export const buildPreavisoPdf = async (
   result: PreavisoResult,
 ) => {
   const pdf = await PDFDocument.create()
-  const page = pdf.addPage([595.28, 841.89])
+  let page = pdf.addPage([595.28, 841.89])
   const fontSet = await loadFonts(pdf)
 
   const W = 595.28
@@ -20,9 +20,9 @@ export const buildPreavisoPdf = async (
   const right = W - 40
   let y = H - 36
 
-  y = drawHeader(page, "Preaviso",
-    `${result.currency} · ${new Date(result.generatedAt).toLocaleString()} · Corpus: ${result.legalCorpusVersion}`,
-    left, y, fontSet)
+  const headerSub = `${result.currency} · ${new Date(result.generatedAt).toLocaleString()} · Corpus: ${result.legalCorpusVersion}`
+
+  y = drawHeader(page, "Preaviso", headerSub, left, y, fontSet)
 
   y = drawSectionTitle(page, "Datos del caso", left, y, fontSet)
   y = drawKeyValue(page, "Salario mensual", money(input.monthlySalary, result.currency), left, y, fontSet)
@@ -54,6 +54,11 @@ export const buildPreavisoPdf = async (
     drawText(page, `Nota: ${result.calculationNote}`, left, y - 2, { size: 7, color: COLORS.muted, fontSet })
   }
 
+  if (y < 100) {
+    page = pdf.addPage([W, H])
+    drawHeader(page, "Preaviso", headerSub, left, H - 36, fontSet)
+    y = H - 60
+  }
   y = drawSectionTitle(page, "Firmas", left, y - 4, fontSet)
   y = drawSignatureBoxes(page, y, left, fontSet)
   drawFooter(page, y, left, right, fontSet)

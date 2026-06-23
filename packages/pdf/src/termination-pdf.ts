@@ -21,7 +21,7 @@ export const buildTerminationPdf = async (
   result: TerminationResult,
 ) => {
   const pdf = await PDFDocument.create()
-  const page = pdf.addPage([595.28, 841.89])
+  let page = pdf.addPage([595.28, 841.89])
   const fontSet = await loadFonts(pdf)
 
   const W = 595.28
@@ -30,9 +30,9 @@ export const buildTerminationPdf = async (
   const right = W - 40
   let y = H - 36
 
-  y = drawHeader(page, "Terminacion",
-    `${result.currency} · ${new Date(result.generatedAt).toLocaleString()} · Corpus: ${result.legalCorpusVersion}`,
-    left, y, fontSet)
+  const headerSub = `${result.currency} · ${new Date(result.generatedAt).toLocaleString()} · Corpus: ${result.legalCorpusVersion}`
+
+  y = drawHeader(page, "Terminacion", headerSub, left, y, fontSet)
 
   y = drawSectionTitle(page, "Datos del caso", left, y, fontSet)
   y = drawKeyValue(page, "Salario mensual", money(input.monthlySalary, result.currency), left, y, fontSet)
@@ -42,6 +42,11 @@ export const buildTerminationPdf = async (
 
   const applicableScenarios = result.scenarios.filter((s) => s.applicable)
   for (const scenario of applicableScenarios) {
+    if (y < 100) {
+      page = pdf.addPage([W, H])
+      drawHeader(page, "Terminacion", headerSub, left, H - 36, fontSet)
+      y = H - 60
+    }
     y = drawSectionTitle(page, scenarioLabel(scenario.type), left, y - 2, fontSet)
     drawBox(page, left, y - 32, right - left, 30, { borderColor: COLORS.border, borderWidth: 1, fillColor: COLORS.white })
     drawText(page, "Monto estimado", left + 12, y - 12, { size: 9, bold: true, fontSet })
@@ -70,6 +75,11 @@ export const buildTerminationPdf = async (
     }
   }
 
+  if (y < 100) {
+    page = pdf.addPage([W, H])
+    drawHeader(page, "Terminacion", headerSub, left, H - 36, fontSet)
+    y = H - 60
+  }
   y = drawSectionTitle(page, "Firmas", left, y - 2, fontSet)
   y = drawSignatureBoxes(page, y, left, fontSet)
   drawFooter(page, y, left, right, fontSet)
