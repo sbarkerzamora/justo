@@ -13,6 +13,7 @@ import { useTheme } from "next-themes"
 import Image from "next/image"
 import { AnimatePresence, motion } from "framer-motion"
 import { BuyMeABeerButton } from "@/components/buy-me-a-beer-button"
+import { TextLoop } from "@/components/core/text-loop"
 import { cn } from "@/lib/utils"
 import { countryList, isValidCountry } from "@/lib/countries"
 import { localizedCountryPath, isValidLocale, type Locale } from "@/lib/i18n"
@@ -46,11 +47,12 @@ import {
   IconFile,
   IconClipboardCheck,
   IconUserPlus,
-  IconMenu2,
+  IconLayoutSidebar,
   IconBuilding,
   IconBeer,
   IconBell,
   IconChevronDown,
+  IconSparkles,
 } from "@tabler/icons-react"
 
 type SidebarCtx = { open: boolean; setOpen: (v: boolean) => void }
@@ -135,6 +137,7 @@ export function AppShell({
   const isDocs = pathname.startsWith("/docs")
   const [open, setOpen] = useState(true)
   const [mobileOpen, setMobileOpen] = useState(false)
+  const [showMobileHrBanner, setShowMobileHrBanner] = useState(false)
   const searchParams = useSearchParams()
   const [toolsOpen, setToolsOpen] = useState(searchParams?.has("tool") ?? false)
   const { country, locale } = useStoredCountry(
@@ -152,12 +155,44 @@ export function AppShell({
     } catch {}
   }, [country])
 
+  useEffect(() => {
+    const timer = window.setTimeout(() => setShowMobileHrBanner(true), 2000)
+
+    return () => window.clearTimeout(timer)
+  }, [])
+
   if (isDocs) return <>{children}</>
 
   const homePath = `/${locale}/${country}`
   const legalLinks = getLegalLinks(locale)
 
   const t = (es: string, en: string) => (locale === "en" ? en : es)
+  const hrLoopTransition = {
+    type: "spring" as const,
+    stiffness: 520,
+    damping: 56,
+    mass: 1.2,
+  }
+  const hrLoopVariants = {
+    initial: {
+      y: 20,
+      rotateX: 90,
+      opacity: 0,
+      filter: "blur(4px)",
+    },
+    animate: {
+      y: 0,
+      rotateX: 0,
+      opacity: 1,
+      filter: "blur(0px)",
+    },
+    exit: {
+      y: -20,
+      rotateX: -90,
+      opacity: 0,
+      filter: "blur(4px)",
+    },
+  }
 
   const localePrefix = locale === "en" ? "/en" : ""
   const headerLinks = [
@@ -513,29 +548,52 @@ export function AppShell({
 
         {/* Main area: header + content */}
         <div className="flex min-h-0 min-w-0 flex-1 flex-col overflow-y-auto">
+          <AnimatePresence initial={false}>
+            {showMobileHrBanner ? (
+              <motion.div
+                initial={{ height: 0, opacity: 0 }}
+                animate={{ height: "auto", opacity: 1 }}
+                exit={{ height: 0, opacity: 0 }}
+                transition={{ duration: 0.3, ease: [0.22, 1, 0.36, 1] }}
+                className="overflow-hidden border-b border-primary/15 bg-primary/10 md:hidden"
+              >
+                <div className="mx-auto flex h-9 max-w-7xl items-center justify-center gap-2 px-4 text-[11px] font-medium text-primary">
+                  <IconSparkles className="size-3.5 shrink-0" />
+                  <div className="inline-flex min-w-0 whitespace-pre-wrap">
+                    {t("Próximamente Justo para ", "Coming soon Justo for ")}
+                    <TextLoop
+                      className="overflow-y-clip"
+                      interval={4}
+                      transition={hrLoopTransition}
+                      variants={hrLoopVariants}
+                    >
+                      <span>{t("Recursos Humanos", "Human Resources")}</span>
+                      <span>
+                        {t(
+                          "Profesionales Independientes",
+                          "Independent Professionals"
+                        )}
+                      </span>
+                      <span>{t("Empresas", "Companies")}</span>
+                    </TextLoop>
+                  </div>
+                </div>
+              </motion.div>
+            ) : null}
+          </AnimatePresence>
+
           {/* Global header */}
           <header className="sticky top-0 z-30 border-b border-border bg-background/90 backdrop-blur-sm">
             <div className="mx-auto flex h-12 max-w-7xl items-center justify-between px-4 md:px-6">
-              <div className="flex items-center gap-3">
+              <div className="flex items-center gap-2">
                 <button
                   type="button"
                   onClick={toggleMobile}
                   className="inline-flex size-8 items-center justify-center rounded-lg text-foreground transition-colors hover:bg-accent md:hidden"
                   aria-label="Abrir menu"
                 >
-                  <IconMenu2 className="size-4" />
+                  <IconLayoutSidebar className="size-4" />
                 </button>
-                <Link href="/" className="flex items-center gap-2">
-                  <div
-                    className="flex h-6 w-6 shrink-0 items-center justify-center rounded-lg"
-                    style={{ background: getCountryAccent(country) }}
-                  >
-                    <IconBrain className="h-4 w-4 text-white" />
-                  </div>
-                  <span className="text-sm font-semibold tracking-tight text-foreground">
-                    Justo
-                  </span>
-                </Link>
                 <Select
                   value={country}
                   onValueChange={(nextCc) =>
@@ -550,7 +608,7 @@ export function AppShell({
                       height={10}
                       className="h-2.5 w-3.5 shrink-0 rounded-[1px] border border-border object-cover"
                     />
-                    <span className="hidden max-w-[100px] truncate sm:inline">
+                    <span className="max-w-[100px] truncate text-xs">
                       {info?.name ?? country}
                     </span>
                   </SelectTrigger>
@@ -579,6 +637,45 @@ export function AppShell({
                     ))}
                   </SelectContent>
                 </Select>
+              </div>
+
+              <Link href="/" className="flex items-center md:hidden">
+                <div
+                  className="flex h-8 w-8 items-center justify-center rounded-lg"
+                  style={{ background: getCountryAccent(country) }}
+                >
+                  <IconBrain className="h-5 w-5 text-white" />
+                </div>
+              </Link>
+
+              <div className="flex items-center gap-3 max-md:hidden">
+                <motion.div
+                  layout
+                  transition={{
+                    layout: { duration: 0.45, ease: [0.22, 1, 0.36, 1] },
+                  }}
+                  className="inline-flex h-7 items-center gap-1.5 rounded-full border border-primary/15 bg-primary/10 px-3 text-[11px] font-medium text-primary"
+                >
+                  <IconSparkles className="size-3 shrink-0" />
+                  <div className="inline-flex whitespace-pre-wrap">
+                    {t("Próximamente Justo para ", "Coming soon Justo for ")}
+                    <TextLoop
+                      className="overflow-y-clip"
+                      interval={4}
+                      transition={hrLoopTransition}
+                      variants={hrLoopVariants}
+                    >
+                      <span>{t("Recursos Humanos", "Human Resources")}</span>
+                      <span>
+                        {t(
+                          "Profesionales Independientes",
+                          "Independent Professionals"
+                        )}
+                      </span>
+                      <span>{t("Empresas", "Companies")}</span>
+                    </TextLoop>
+                  </div>
+                </motion.div>
               </div>
 
               <div className="flex items-center gap-1.5">
