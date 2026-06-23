@@ -45,6 +45,7 @@ export const buildBonusPdf = async (input: BonusInput, result: BonusResult) => {
   y = drawSectionTitle(page, "Detalle", left, y, fontSet)
   if (result.lines.length === 0) {
     drawText(page, "No hay lineas de calculo disponibles.", left, y - 2, { size: 8, color: COLORS.muted, fontSet })
+    y -= 14
   } else {
     for (const line of result.lines) {
       drawBox(page, left, y - 34, right - left, 32, { fillColor: COLORS.bg })

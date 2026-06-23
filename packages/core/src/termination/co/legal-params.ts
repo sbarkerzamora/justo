@@ -7,9 +7,10 @@ import {
 import { getMinimumWage } from "../../shared"
 import type { TerminationInput } from "../types"
 
-const indemnizacionColombia = (ctx: { dailySalary: number; fullYears: number; monthlySalary: number }) => {
-  const coMinWage = getMinimumWage("co")
-  const tenSmmlv = coMinWage ? coMinWage.monthly * 10 : Infinity
+const indemnizacionColombia = (ctx: { dailySalary: number; fullYears: number; monthlySalary: number; endDate: string }) => {
+  const coMinWage = getMinimumWage("co", ctx.endDate)
+  if (!coMinWage) throw new Error("No hay SMMLV CO para la fecha indicada")
+  const tenSmmlv = coMinWage.monthly * 10
   const isHighSalary = ctx.monthlySalary >= tenSmmlv
 
   const baseDays = isHighSalary ? 20 : 30
@@ -33,7 +34,7 @@ export const getColombiaTerminationParams = (
 
   return {
     currency: "COP",
-    corpusVersion: "co-v0.2.0",
+    corpusVersion: "co-v0.3.0",
     scenarios: [
       {
         type: "renuncia",

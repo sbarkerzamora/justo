@@ -156,7 +156,7 @@ const stepIndex = (step: TerminationStep) => {
   return idx + 1
 }
 
-const totalSteps = 7
+const totalSteps = terminationSteps.length
 
 const terminationCauseOptions = [
   { value: "renuncia", es: "Renuncia", en: "Resignation" },
@@ -471,6 +471,7 @@ export function TerminationTool({
         endDate: form.endDate,
         terminationCause: form.terminationCause,
         contractType: form.contractType,
+        noticeGivenInWriting: form.noticeGivenInWriting,
       }),
     })
     if (!response.ok) return

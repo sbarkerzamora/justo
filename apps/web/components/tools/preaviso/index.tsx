@@ -25,6 +25,7 @@ import {
   formatCurrencyInput,
   formatNumberInput,
   getCurrencySymbol,
+  parseCurrencyInput,
 } from "@/components/tools/input-formatters"
 
 export type PreavisoStep =
@@ -668,12 +669,12 @@ export function PreavisoTool({
             onBack={goBack}
             onContinue={() => {
               if (step === "salary") {
-                const s = Number.parseFloat(salaryDisplay)
+                const s = parseCurrencyInput(salaryDisplay)
                 if (!s || s <= 0) return
                 dispatch({ type: "patchForm", patch: { monthlySalary: s } })
                 advance()
               } else if (step === "tenure") {
-                const t = Number.parseFloat(tenureDisplay)
+                const t = Number.parseFloat(tenureDisplay.replace(/[,\s]/g, ""))
                 if (!t || t <= 0) return
                 dispatch({ type: "patchForm", patch: { tenureYears: t } })
                 advance()
@@ -685,9 +686,9 @@ export function PreavisoTool({
             }}
             canContinue={
               step === "salary"
-                ? !!salaryDisplay && Number.parseFloat(salaryDisplay) > 0
+                ? !!salaryDisplay && parseCurrencyInput(salaryDisplay) > 0
                 : step === "tenure"
-                  ? !!tenureDisplay && Number.parseFloat(tenureDisplay) > 0
+                  ? !!tenureDisplay && Number.parseFloat(tenureDisplay.replace(/[,\s]/g, "")) > 0
                   : step === "notice" && form.noticeGivenInWriting
                     ? !!noticeDaysDisplay &&
                       Number.parseInt(noticeDaysDisplay, 10) >= 0

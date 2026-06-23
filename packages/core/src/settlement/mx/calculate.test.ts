@@ -12,10 +12,10 @@ describe("calculateMexicoSettlement", () => {
       frequency: "mensual",
       unusedVacationDays: 10,
       startDate: "2019-01-01",
-      endDate: "2026-05-11",
+      endDate: "2025-05-11",
     })
 
-    expect(result.legalCorpusVersion).toBe("mx-v0.2.0")
+    expect(result.legalCorpusVersion).toBe("mx-v0.3.0")
     expect(result.incomes.length).toBe(6)
     expect(result.incomes[0]?.label).toBe("Indemnizacion constitucional (3 meses)")
     expect(result.incomes[1]?.label).toBe("Indemnizacion por anos")
@@ -33,7 +33,7 @@ describe("calculateMexicoSettlement", () => {
       frequency: "mensual",
       unusedVacationDays: 5,
       startDate: "2022-06-01",
-      endDate: "2026-05-11",
+      endDate: "2025-05-11",
     })
 
     expect(result.deductions.length).toBe(2)
@@ -53,7 +53,7 @@ describe("calculateMexicoSettlement", () => {
       frequency: "mensual",
       unusedVacationDays: 10,
       startDate: "2020-01-01",
-      endDate: "2026-05-11",
+      endDate: "2025-05-11",
     })
 
     const vacaciones = result.incomes.find((line) => line.label === "Vacaciones pendientes")
@@ -70,7 +70,7 @@ describe("calculateMexicoSettlement", () => {
       frequency: "mensual",
       unusedVacationDays: 0,
       startDate: "2025-01-01",
-      endDate: "2026-05-25",
+      endDate: "2025-05-25",
     })
 
     const sp = result.incomes.find((line) => line.label === "Salario proporcional")

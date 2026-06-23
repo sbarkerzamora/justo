@@ -7,9 +7,10 @@ import {
 import { getMinimumWage } from "../../shared"
 import type { TerminationInput } from "../types"
 
-const cappedDailySalary = (dailySalary: number): number => {
-  const mxMinWage = getMinimumWage("mx")
-  return mxMinWage ? Math.min(dailySalary, mxMinWage.daily * 2) : dailySalary
+const cappedDailySalary = (dailySalary: number, endDate: string): number => {
+  const mxMinWage = getMinimumWage("mx", endDate)
+  if (!mxMinWage) throw new Error("No hay salario mínimo MX para la fecha indicada")
+  return Math.min(dailySalary, mxMinWage.daily * 2)
 }
 
 export const getMexicoTerminationParams = (
@@ -20,7 +21,7 @@ export const getMexicoTerminationParams = (
 
   return {
     currency: "MXN",
-    corpusVersion: "mx-v0.2.0",
+    corpusVersion: "mx-v0.3.0",
     scenarios: [
       {
         type: "renuncia",
@@ -31,7 +32,7 @@ export const getMexicoTerminationParams = (
           return [
             makeIndemnityLine(
               "Prima de antigüedad Art. 162 (12 días por año, solo si ≥15 años)",
-              cappedDailySalary(ctx.dailySalary),
+              cappedDailySalary(ctx.dailySalary, ctx.endDate),
               primaDays,
               "LFT Art. 162 (tope 2x SM)"
             ),
@@ -72,8 +73,8 @@ export const getMexicoTerminationParams = (
             },
             {
               label: "Prima de antigüedad Art. 162 (12 días por año)",
-              amount: cappedDailySalary(ctx.dailySalary) * prima,
-              formula: `${cappedDailySalary(ctx.dailySalary)} x ${ctx.fullYears} x 12 días (tope 2x SM)`,
+              amount: cappedDailySalary(ctx.dailySalary, ctx.endDate) * prima,
+              formula: `${cappedDailySalary(ctx.dailySalary, ctx.endDate)} x ${ctx.fullYears} x 12 días (tope 2x SM)`,
               legalReference: "LFT Art. 162 (tope 2x SM)",
             },
           ]
@@ -88,7 +89,7 @@ export const getMexicoTerminationParams = (
           return [
             makeIndemnityLine(
               "Prima de antigüedad Art. 162 (12 días por año, solo si ≥15 años)",
-              cappedDailySalary(ctx.dailySalary),
+              cappedDailySalary(ctx.dailySalary, ctx.endDate),
               primaDays,
               "LFT Art. 162 (tope 2x SM)"
             ),

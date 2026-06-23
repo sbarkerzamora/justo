@@ -3,7 +3,7 @@ import { SettlementInput, SettlementLine, SettlementResult } from "../types"
 import { getPeruLegalRates } from "./legal-params"
 
 const CURRENCY = "PEN" as const
-const LEGAL_CORPUS_VERSION = "pe-v0.2.0"
+const LEGAL_CORPUS_VERSION = "pe-v0.3.0"
 
 export const calculatePeruSettlement = (
   input: SettlementInput,
@@ -81,22 +81,25 @@ export const calculatePeruSettlement = (
   const grossIncome = round2(incomes.reduce((sum, line) => sum + line.amount, 0))
 
   // Deducciones ONP / AFP
-  const { onpRate, afpRate, irFlatRate } = getPeruLegalRates()
+  const { onpRate, afpMandatoryRate, afpInsuranceRate, afpInsuranceMaxBase, irFlatRate } = getPeruLegalRates()
   const isAfp = input.pensionSystem === "afp"
-  const pensionRate = isAfp ? afpRate : onpRate
   const pensionLabel = isAfp ? "AFP" : "ONP"
   const pensionRef = isAfp
-    ? "Ley del Sistema Privado de Pensiones (AFP 11.2%)"
+    ? "SBS SPP: aporte obligatorio 10% + prima seguro 1.37% (comisión mixta, prima con tope RMA)"
     : "D.L. 19990 (Sistema Nacional de Pensiones ONP 13%)"
   const deductionBase = round2(proportionalSalary + vacationPay)
-  const pensionDeduction = round2(deductionBase * pensionRate)
+  const pensionDeduction = isAfp
+    ? round2(deductionBase * afpMandatoryRate + Math.min(deductionBase, afpInsuranceMaxBase) * afpInsuranceRate)
+    : round2(deductionBase * onpRate)
   const ir = round2(Math.max(0, grossIncome - pensionDeduction) * irFlatRate)
 
   const deductions: SettlementLine[] = [
     {
       label: pensionLabel,
       amount: pensionDeduction,
-      formula: `(${deductionBase} x ${(pensionRate * 100).toFixed(1)}%)`,
+      formula: isAfp
+        ? `(${deductionBase} x 10%) + (min(${deductionBase}, ${afpInsuranceMaxBase}) x 1.37%)`
+        : `(${deductionBase} x ${(onpRate * 100).toFixed(1)}%)`,
       legalReference: pensionRef,
     },
     {

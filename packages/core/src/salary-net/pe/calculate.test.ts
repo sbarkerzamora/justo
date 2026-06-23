@@ -41,17 +41,17 @@ describe("calculatePeruSalaryNet", () => {
 
     const afp = result.deductions[0]
     expect(afp.label).toBe("AFP")
-    expect(afp.amount).toBe(3360)
+    expect(afp.amount).toBe(3411)
 
     const ir = result.deductions[1]
     expect(ir.label).toBe("IR")
-    expect(ir.amount).toBe(4679.46)
+    expect(ir.amount).toBe(4664.16)
 
-    expect(result.totalDeductions).toBe(8039.46)
-    expect(result.netSalary).toBe(21960.54)
-    expect(result.netSalaryPerPeriod.mensual).toBe(21960.54)
-    expect(result.netSalaryPerPeriod.quincenal).toBe(10980.27)
-    expect(result.netSalaryPerPeriod.semanal).toBe(5067.82)
+    expect(result.totalDeductions).toBe(8075.16)
+    expect(result.netSalary).toBe(21924.84)
+    expect(result.netSalaryPerPeriod.mensual).toBe(21924.84)
+    expect(result.netSalaryPerPeriod.quincenal).toBe(10962.42)
+    expect(result.netSalaryPerPeriod.semanal).toBe(5059.58)
   })
 
   test("throws on non-positive salary", () => {

@@ -1,4 +1,4 @@
-import { PDFDocument } from "pdf-lib"
+import { PDFDocument, type PDFPage } from "pdf-lib"
 import type { ContractInput, ContractResult } from "@justo/core"
 import {
   loadFonts, drawText, drawLine, drawBox, drawHeader,
@@ -34,7 +34,7 @@ const maxW = right - left
 const bodySize = 7.5
 const bodyLH = 11
 
-function drawPageHeader(page: any, result: ContractResult, fontSet: FontSet) {
+function drawPageHeader(page: PDFPage, result: ContractResult, fontSet: FontSet) {
   const info = countryLaw[result.countryCode] ?? countryLaw.ni
   drawText(page, "CONTRATO INDIVIDUAL DE TRABAJO", left, H - 30, {
     size: 14, bold: true, fontSet,

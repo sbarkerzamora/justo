@@ -4,7 +4,7 @@ import { SettlementInput, SettlementLine, SettlementResult } from "../types"
 import { getMexicoLegalRates } from "./legal-params"
 
 const CURRENCY = "MXN" as const
-const LEGAL_CORPUS_VERSION = "mx-v0.2.0"
+const LEGAL_CORPUS_VERSION = "mx-v0.3.0"
 
 const vacationDaysByYear = (years: number): number => {
   if (years < 1) return Math.round(years * 6)
@@ -39,8 +39,9 @@ export const calculateMexicoSettlement = (
   const indemnizacionAnual = round2(dailySalary * tenureYears * 12)
 
   // Prima de antiguedad: Art. 162 - 12 dias/ano, tope 2x salario minimo
-  const mxMinWage = getMinimumWage("mx")
-  const cappedDailySalary = mxMinWage ? Math.min(dailySalary, mxMinWage.daily * 2) : dailySalary
+  const mxMinWage = getMinimumWage("mx", input.endDate)
+  if (!mxMinWage) throw new Error("No hay salario mínimo MX para la fecha indicada")
+  const cappedDailySalary = Math.min(dailySalary, mxMinWage.daily * 2)
   const primaAntiguedad = round2(cappedDailySalary * tenureYears * 12)
 
   // Aguinaldo: Art. 87 - 15 dias, proporcional
@@ -73,7 +74,7 @@ export const calculateMexicoSettlement = (
       label: "Prima de antiguedad",
       amount: primaAntiguedad,
       formula: `(${round2(cappedDailySalary)} x ${round2(tenureYears)} anos x 12 dias, tope 2x SM)`,
-      legalReference: "LFT Art. 162 (12 dias/ano, tope 2x SM)",
+      legalReference: `LFT Art. 162 (12 dias/ano, tope 2x SM CONASAMI ${mxMinWage.year})`,
     },
     {
       label: "Aguinaldo proporcional",

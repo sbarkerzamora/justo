@@ -273,7 +273,7 @@ export function drawFooter(
   fontSet: FontSet
 ): number {
   drawLine(page, left, y, right, y, { color: COLORS.border, width: 0.3 })
-  let cy = y - 10
+  const cy = y - 10
   drawText(page, "Generado por Justo (github.com/sbarkerzamora/justo) · Estimacion referencial, validar con profesional", left, cy, {
     size: 6, color: COLORS.light, fontSet,
   })

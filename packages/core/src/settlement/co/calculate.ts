@@ -4,7 +4,7 @@ import { SettlementInput, SettlementLine, SettlementResult } from "../types"
 import { getColombiaLegalRates } from "./legal-params"
 
 const CURRENCY = "COP" as const
-const LEGAL_CORPUS_VERSION = "co-v0.2.0"
+const LEGAL_CORPUS_VERSION = "co-v0.3.0"
 
 export const calculateColombiaSettlement = (
   input: SettlementInput,
@@ -31,8 +31,9 @@ export const calculateColombiaSettlement = (
   const interesesCesantia = round2(cesantia * 0.12 * Math.min(tenureYears, 1))
 
   // Indemnizacion: Art. 64 - escala dual segun SMMLV
-  const coMinWage = getMinimumWage("co")
-  const tenSmmlv = coMinWage ? coMinWage.monthly * 10 : Infinity
+  const coMinWage = getMinimumWage("co", input.endDate)
+  if (!coMinWage) throw new Error("No hay SMMLV CO para la fecha indicada")
+  const tenSmmlv = coMinWage.monthly * 10
   const isHighSalary = input.monthlySalary >= tenSmmlv
   const indemnizacionDias = isHighSalary
     ? 20 + Math.max(0, tenureYears - 1) * 15
@@ -68,7 +69,7 @@ export const calculateColombiaSettlement = (
       label: "Indemnizacion por despido",
       amount: indemnizacion,
       formula: `(${round2(dailySalary)} x ${indemnizacionDias} dias, escala ${isHighSalary ? "≥10 SMMLV" : "<10 SMMLV"})`,
-      legalReference: `CST Art. 64 (${isHighSalary ? "20d + 15d/adicional, salario ≥10 SMMLV" : "30d + 20d/adicional, salario <10 SMMLV"})`,
+      legalReference: `CST Art. 64 (${isHighSalary ? "20d + 15d/adicional, salario ≥10 SMMLV" : "30d + 20d/adicional, salario <10 SMMLV"}; SMMLV ${coMinWage.year})`,
     },
     {
       label: "Prima de servicios",

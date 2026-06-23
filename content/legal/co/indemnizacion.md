@@ -1,7 +1,7 @@
 ---
 country: co
 topic: indemnizacion
-version: co-v0.2.0
+version: co-v0.3.0
 status: proposed
 source: "Codigo Sustantivo del Trabajo de Colombia"
 last_reviewed: "2026-05-11"
@@ -41,16 +41,18 @@ b) Para trabajadores que devenguen un salario igual o superior a diez (10) salar
 - Salario mayor o igual a 10 SMMLV:
   - Primer ano: 20 dias de salario.
   - Anos adicionales: 15 dias por cada ano.
-- En el MVP se usa el tramo de menor salario (<10 SMMLV).
+- El motor compara contra 10 SMMLV vigentes segun la fecha de salida.
 
 ## formula
 
 - `salario_diario = salario_mensual / 30`
-- `indemnizacion = salario_diario * (30 + max(anos_antiguedad - 1, 0) * 20)`
+- `dias_indemnizacion = salario_mensual >= 10 * smmlv_vigente ? 20 + max(anos_antiguedad - 1, 0) * 15 : 30 + max(anos_antiguedad - 1, 0) * 20`
+- `indemnizacion = salario_diario * dias_indemnizacion`
 
 ## vigencia_fuente
 
 - Codigo Sustantivo del Trabajo de Colombia, Art. 64.
+- Gestor Normativo de Funcion Publica, decretos anuales de SMMLV y auxilio de transporte: https://www.funcionpublica.gov.co/eva/gestornormativo/
 
 ## alcance_documental
 
@@ -97,7 +99,8 @@ Antes de calcular o dar una conclusión personalizada, el asistente debe verific
 La fórmula operativa existente en este archivo es:
 
 - `salario_diario = salario_mensual / 30`
-- `indemnizacion = salario_diario * (30 + max(anos_antiguedad - 1, 0) * 20)`
+- `dias_indemnizacion = salario_mensual >= 10 * smmlv_vigente ? 20 + max(anos_antiguedad - 1, 0) * 15 : 30 + max(anos_antiguedad - 1, 0) * 20`
+- `indemnizacion = salario_diario * dias_indemnizacion`
 
 ## preguntas_sugeridas
 

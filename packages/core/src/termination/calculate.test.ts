@@ -165,7 +165,7 @@ describe("termination calculators", () => {
     )
     expect(injust?.applicable).toBe(true)
     expect(injust?.lines).toHaveLength(3)
-    expect(injust?.total).toBe(108691.2)
+    expect(injust?.total).toBe(107974.32)
   })
 
   test("Colombia: 30 base + 20d/year for unjustified dismissal", () => {

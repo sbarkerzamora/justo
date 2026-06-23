@@ -4,7 +4,7 @@ import { SettlementInput, SettlementLine, SettlementResult } from "../types"
 import { getElSalvadorLegalRates } from "./legal-params"
 
 const CURRENCY = "USD" as const
-const LEGAL_CORPUS_VERSION = "sv-v0.2.0"
+const LEGAL_CORPUS_VERSION = "sv-v0.3.0"
 
 export const calculateElSalvadorSettlement = (
   input: SettlementInput,
@@ -25,8 +25,9 @@ export const calculateElSalvadorSettlement = (
   const tenureYears = tenureDays / 365
 
   // Indemnizacion (Cesantia): Art. 58 - 30 dias por ano, min 15 dias, tope 4x SM diario
-  const svMinWage = getMinimumWage("sv")
-  const cappedDailySalary = svMinWage ? Math.min(dailySalary, svMinWage.daily * 4) : dailySalary
+  const svMinWage = getMinimumWage("sv", input.endDate)
+  if (!svMinWage) throw new Error("No hay salario mínimo SV para la fecha indicada")
+  const cappedDailySalary = Math.min(dailySalary, svMinWage.daily * 4)
   const baseIndemnizacionDays = tenureYears * 30
   const indemnizacionDays = round2(Math.max(baseIndemnizacionDays, 15))
   const indemnizacion = round2(cappedDailySalary * indemnizacionDays)
@@ -61,7 +62,7 @@ export const calculateElSalvadorSettlement = (
       label: "Indemnizacion",
       amount: indemnizacion,
       formula: `(${round2(cappedDailySalary)} x ${indemnizacionDays} dias, tope 4x SM)`,
-      legalReference: "Codigo de Trabajo Arts. 58 y 59 (30 dias/ano, min 15 dias, tope 4x SM)",
+      legalReference: `Codigo de Trabajo Arts. 58 y 59 (30 dias/ano, min 15 dias, tope 4x SM MTPS ${svMinWage.year})`,
     },
     {
       label: "Aguinaldo proporcional",

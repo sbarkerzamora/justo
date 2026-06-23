@@ -35,6 +35,17 @@ export function TextLoop({
   const [currentIndex, setCurrentIndex] = useState(0)
   const shouldReduceMotion = useReducedMotion()
   const items = Children.toArray(children)
+  const safeIndex = Math.min(currentIndex, Math.max(0, items.length - 1))
+
+  useEffect(() => {
+    const timer = window.setTimeout(() => {
+      setCurrentIndex((current) =>
+        current >= items.length ? Math.max(0, items.length - 1) : current
+      )
+    }, 0)
+
+    return () => window.clearTimeout(timer)
+  }, [items.length])
 
   useEffect(() => {
     if (!trigger || shouldReduceMotion || items.length <= 1) return
@@ -60,18 +71,18 @@ export function TextLoop({
   return (
     <div className={cn("relative inline-block whitespace-nowrap", className)}>
       {shouldReduceMotion ? (
-        items[currentIndex]
+        items[safeIndex]
       ) : (
         <AnimatePresence mode={mode} initial={false}>
           <motion.div
-            key={currentIndex}
+            key={safeIndex}
             initial="initial"
             animate="animate"
             exit="exit"
             transition={transition}
             variants={variants || motionVariants}
           >
-            {items[currentIndex]}
+            {items[safeIndex]}
           </motion.div>
         </AnimatePresence>
       )}

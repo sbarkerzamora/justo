@@ -1,7 +1,7 @@
 ---
 country: pe
 topic: onp-afp
-version: pe-v0.2.0
+version: pe-v0.3.0
 status: proposed
 source: "Ley 26790 y D.L. 19990 (Sistema de Pensiones Peruano)"
 last_reviewed: "2026-05-11"
@@ -18,21 +18,27 @@ last_reviewed: "2026-05-11"
 ## regla_operativa
 
 - ONP (Sistema Nacional): 13% del salario del trabajador.
-- AFP (Sistema Privado): ~12.5% (incluye comision y prima de seguro).
+- AFP (Sistema Privado, comision mixta): 11.37% directo en nomina, compuesto por aporte obligatorio 10.00% y prima de seguro 1.37%.
+- En comision por flujo, la comision sobre sueldo varia por AFP. El motor usa comision mixta por defecto.
+- La prima de seguro AFP se calcula sobre la Remuneracion Maxima Asegurable (RMA) vigente.
 - EsSalud: 9% empleador (no descontado al trabajador).
 - En el MVP se usa la tasa ONP del 13%.
 
 ## formula
 
 - `onp_laboral = base_onp * 0.13`
+- `afp_mixta = base_afp * 0.10 + min(base_afp, rma_vigente) * 0.0137`
 
 ## supuestos
 
-- `tasa_onp = 0.13` (13% para ONP, pendiente confirmacion).
+- `tasa_onp = 0.13` (13% para ONP).
+- `tasa_afp_aporte_obligatorio = 0.10`.
+- `tasa_afp_prima_seguro = 0.0137`.
 
 ## vigencia_fuente
 
 - D.L. 19990, Ley 25897, Ley 26790.
+- SBS, comisiones y primas del Sistema Privado de Pensiones: https://www.sbs.gob.pe/app/spp/empleadores/comisiones_spp/paginas/comision_prima.aspx
 
 ## alcance_documental
 
@@ -50,6 +56,7 @@ La respuesta del asistente debe partir de estas referencias ya capturadas en el 
 - D.L. 19990 - Sistema Nacional de Pensiones (ONP).
 - Ley 25897 - Sistema Privado de Pensiones (AFP).
 - Ley 26790 - Seguro Social de Salud (EsSalud).
+- SBS: reporte de comisiones y prima de seguro del SPP.
 
 ## datos_minimos_para_responder
 
@@ -81,6 +88,7 @@ Antes de calcular o dar una conclusión personalizada, el asistente debe verific
 La fórmula operativa existente en este archivo es:
 
 - `onp_laboral = base_onp * 0.13`
+- `afp_mixta = base_afp * 0.10 + min(base_afp, rma_vigente) * 0.0137`
 
 ## preguntas_sugeridas
 

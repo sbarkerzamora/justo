@@ -226,6 +226,14 @@ function buildDurationContent(
     base.push(
       `El presente contrato se celebra por **plazo fijo**, dando inicio el ${startFormatted} y finalizando el ${endFormatted ?? "la fecha que se acuerde posteriormente"}.`,
     )
+  } else if (contractType === "temporada") {
+    base.push(
+      `El presente contrato se celebra por **temporada**, dando inicio el ${startFormatted} y finalizando al concluir la temporada o actividad pactada${endFormatted ? `, estimada para el ${endFormatted}` : ""}.`,
+    )
+  } else if (contractType === "periodo_prueba") {
+    base.push(
+      `El presente contrato se celebra por **período de prueba**, dando inicio el ${startFormatted}${trialDays && trialDays > 0 ? ` y con una duración pactada de ${trialDays} días` : ""}. Finalizado dicho período, las partes confirmarán por escrito la continuidad de la relación laboral conforme a ${params.lawName}.`,
+    )
   } else {
     base.push(
       `El presente contrato se celebra para la realización de **obra o servicio determinado**, dando inicio el ${startFormatted} y finalizando al concluir la obra o servicio contratado.`,

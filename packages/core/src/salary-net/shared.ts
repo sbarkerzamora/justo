@@ -60,13 +60,13 @@ export function buildNetSalary(
   let totalSs = 0
 
   for (const d of ssDeductions) {
-    const base = d.maxBase ? Math.min(gross, d.maxBase) : gross
+    const base = d.maxBase !== undefined ? Math.min(gross, d.maxBase) : gross
     const amount = round2(base * d.rate)
     totalSs += amount
     lines.push({
       label: d.label,
       amount,
-      formula: d.maxBase
+      formula: d.maxBase !== undefined
         ? `(min(${gross}, ${d.maxBase}) x ${d.rate * 100}%)`
         : `(${gross} x ${d.rate * 100}%)`,
       legalReference: d.legalReference,
