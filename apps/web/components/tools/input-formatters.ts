@@ -33,3 +33,20 @@ export function isValidDateInput(value: string): boolean {
 export function formatNumberInput(value: string): string {
   return value.replace(/\D/g, "")
 }
+
+export function getCurrencySymbol(countryCode: string): string {
+  const symbols: Record<string, string> = {
+    ni: "C$",
+    sv: "$",
+    gt: "Q",
+    hn: "L",
+    cr: "₡",
+    pa: "$",
+    mx: "$",
+    co: "$",
+    pe: "S/",
+    ar: "$",
+    cl: "$",
+  }
+  return symbols[countryCode] ?? "$"
+}

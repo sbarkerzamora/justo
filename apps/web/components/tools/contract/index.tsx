@@ -29,6 +29,7 @@ import type { ContractFormData } from "@/components/tools/tool-types"
 import {
   formatCurrencyInput,
   formatDateInput,
+  getCurrencySymbol,
   parseCurrencyInput,
 } from "@/components/tools/input-formatters"
 
@@ -437,6 +438,7 @@ export function ContractTool({
             onNext={advance}
             onBack={goBack}
             currencyLabel={currencyLabel}
+            currencySymbol={getCurrencySymbol(countryCode)}
             dispatch={dispatch}
             c={c}
           />
@@ -1049,6 +1051,7 @@ function SalaryStep({
   onNext,
   onBack,
   currencyLabel,
+  currencySymbol,
   dispatch,
   c,
 }: {
@@ -1057,6 +1060,7 @@ function SalaryStep({
   onNext: () => void
   onBack: () => void
   currencyLabel: string
+  currencySymbol: string
   dispatch: Dispatch
   c: typeof contractCopy["es"]
 }) {
@@ -1098,20 +1102,25 @@ function SalaryStep({
             <label className="mb-1.5 block text-xs font-medium text-muted-foreground">
               {c.field.monthlySalaryCurrency(currencyLabel)}
             </label>
-            <input
-              type="text"
-              inputMode="decimal"
-              value={salaryDisplay}
-              onChange={(e) => setSalaryDisplay(formatCurrencyInput(e.target.value))}
-              onKeyDown={(e) => {
-                if (e.key === "Enter") {
-                  e.preventDefault()
-                  commitAndNext()
-                }
-              }}
-              placeholder={c.placeholder.monthlySalary}
-        className="h-12 w-full rounded-2xl border border-border bg-card pl-4 pr-4 text-sm text-foreground outline-none transition-colors placeholder:text-muted-foreground focus:border-foreground/30"
-            />
+            <div className="relative">
+              <span className="pointer-events-none absolute left-4 top-1/2 -translate-y-1/2 text-sm text-muted-foreground">
+                {currencySymbol}
+              </span>
+              <input
+                type="text"
+                inputMode="decimal"
+                value={salaryDisplay}
+                onChange={(e) => setSalaryDisplay(formatCurrencyInput(e.target.value))}
+                onKeyDown={(e) => {
+                  if (e.key === "Enter") {
+                    e.preventDefault()
+                    commitAndNext()
+                  }
+                }}
+                placeholder={c.placeholder.monthlySalary}
+                className="h-12 w-full rounded-2xl border border-border bg-card pl-10 pr-4 text-sm text-foreground outline-none transition-colors placeholder:text-muted-foreground focus:border-foreground/30"
+              />
+            </div>
           </div>
           <ChipGroup
             label={c.field.paymentFrequency}

@@ -21,6 +21,11 @@ import type { PreavisoFormData } from "@/components/tools/tool-types"
 import type { Locale } from "@/lib/i18n"
 import { homeCopy } from "@/lib/home-copy"
 import { StepNavigation } from "@/components/tools/step-navigation"
+import {
+  formatCurrencyInput,
+  formatNumberInput,
+  getCurrencySymbol,
+} from "@/components/tools/input-formatters"
 
 export type PreavisoStep =
   | "welcome"
@@ -457,24 +462,33 @@ export function PreavisoTool({
                   ? copy.preavisoStepSalary
                   : copy.preavisoStepTenure}
               </p>
-              <input
-                type="text"
-                inputMode="decimal"
-                value={step === "salary" ? salaryDisplay : tenureDisplay}
-                onChange={(e) => {
-                  const v = e.target.value.replace(/[^0-9.]/g, "")
-                  if (step === "salary") setSalaryDisplay(v)
-                  else setTenureDisplay(v)
-                }}
-                placeholder={
-                  step === "salary"
-                    ? copy.askPlaceholder
-                    : locale === "en"
-                      ? "E.g. 5"
-                      : "Ej. 5"
-                }
-                className="mt-3 h-12 w-full rounded-2xl border border-border bg-card pr-4 pl-4 text-sm text-foreground transition-colors outline-none placeholder:text-muted-foreground focus:border-foreground/30 focus-visible:ring-2 focus-visible:ring-primary/30 focus-visible:ring-offset-1"
-              />
+              <div className={step === "salary" ? "relative mt-3" : "mt-3"}>
+                {step === "salary" && (
+                  <span className="pointer-events-none absolute left-4 top-1/2 -translate-y-1/2 text-sm text-muted-foreground">
+                    {getCurrencySymbol(countryCode)}
+                  </span>
+                )}
+                <input
+                  type="text"
+                  inputMode="decimal"
+                  value={step === "salary" ? salaryDisplay : tenureDisplay}
+                  onChange={(e) => {
+                    const v = step === "salary"
+                      ? formatCurrencyInput(e.target.value)
+                      : formatNumberInput(e.target.value)
+                    if (step === "salary") setSalaryDisplay(v)
+                    else setTenureDisplay(v)
+                  }}
+                  placeholder={
+                    step === "salary"
+                      ? copy.askPlaceholder
+                      : locale === "en"
+                        ? "E.g. 5"
+                        : "Ej. 5"
+                  }
+                  className={`h-12 w-full rounded-2xl border border-border bg-card text-sm text-foreground transition-colors outline-none placeholder:text-muted-foreground focus:border-foreground/30 focus-visible:ring-2 focus-visible:ring-primary/30 focus-visible:ring-offset-1 ${step === "salary" ? "pl-10 pr-4" : "pl-4 pr-4"}`}
+                />
+              </div>
               {step === "tenure" && (
                 <p className="mt-2 text-xs text-muted-foreground">
                   {copy.preavisoTenureHint}
@@ -569,7 +583,7 @@ export function PreavisoTool({
                       inputMode="numeric"
                       value={noticeDaysDisplay}
                       onChange={(e) => {
-                        const v = e.target.value.replace(/[^0-9]/g, "")
+                        const v = formatNumberInput(e.target.value)
                         setNoticeDaysDisplay(v)
                         dispatch({
                           type: "patchForm",

@@ -113,6 +113,7 @@ export type TerminationFormData = {
     | "obra_determinada"
     | "temporada"
     | "periodo_prueba"
+  noticeGivenInWriting?: boolean
 }
 
 export type ContractFormData = {

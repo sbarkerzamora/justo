@@ -119,7 +119,7 @@ export default function CountryLayout({
 }) {
   return (
     <>
-      <style>{`html{overflow:hidden;scrollbar-width:none!important}html::-webkit-scrollbar{display:none!important}`}</style>
+      <style>{`@media (min-width:768px){html{overflow:hidden}}html{scrollbar-width:none!important}html::-webkit-scrollbar{display:none!important}`}</style>
       {children}
     </>
   )

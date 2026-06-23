@@ -21,11 +21,50 @@ const specialClosureNote = (input: TerminationInput) => {
   return "Causa especial de cierre: se requiere regla específica por causa y contrato; no se agrega indemnización sin respaldo del corpus."
 }
 
+function buildArt45Lines(ctx: { dailySalary: number; tenureYears: number; fullYears: number }) {
+  const fraction = ctx.tenureYears - ctx.fullYears
+
+  const baseDays =
+    Math.min(ctx.fullYears, 3) * 30 + Math.max(ctx.fullYears - 3, 0) * 20
+
+  const fracDays =
+    fraction > 0 ? (ctx.fullYears < 3 ? fraction * 30 : fraction * 20) : 0
+
+  const totalDays = Math.min(150, Math.max(30, baseDays + fracDays))
+
+  return [
+    makeIndemnityLine(
+      "Indemnización Art. 45 (30/20 días por año)",
+      ctx.dailySalary,
+      totalDays,
+      "Ley 185 Arts. 42, 43 y 45"
+    ),
+  ]
+}
+
+function buildPreavisoLine(ctx: { dailySalary: number; seniorityMonths: number }) {
+  const months = ctx.seniorityMonths
+  let preavisoDays: number
+
+  if (months <= 6) preavisoDays = 7
+  else if (months <= 12) preavisoDays = 14
+  else if (months <= 60) preavisoDays = 30
+  else preavisoDays = 60
+
+  return makeIndemnityLine(
+    "Preaviso sustitutivo Art. 44",
+    ctx.dailySalary,
+    preavisoDays,
+    "Ley 185 Art. 44"
+  )
+}
+
 export const getNicaraguaTerminationParams = (
   input: TerminationInput
 ): TerminationParams => {
   const specialClosure = isSpecialClosure(input)
   const closureNote = specialClosureNote(input)
+  const gaveNotice = input.noticeGivenInWriting === true
 
   return {
     currency: "NIO",
@@ -34,51 +73,46 @@ export const getNicaraguaTerminationParams = (
       {
         type: "renuncia",
         applicable: !specialClosure,
-        buildLines: () => [],
+        buildLines: (ctx) => {
+          const lines = []
+          if (gaveNotice) {
+            lines.push(...buildArt45Lines(ctx))
+            lines.push(buildPreavisoLine(ctx))
+          }
+          return lines
+        },
         note: specialClosure
           ? closureNote
-          : "No genera indemnización Art. 45. Conserva derecho a prestaciones proporcionales (Art. 43).",
+          : gaveNotice
+            ? "Renuncia con aviso escrito (15 días Art. 44): conserva derecho a indemnización Art. 45."
+            : "Renuncia sin aviso escrito: pierde derecho a indemnización Art. 45. Solo prestaciones proporcionales.",
       },
       {
         type: "despido_justificado",
         applicable: false,
         note: specialClosure
           ? closureNote
-          : "No aplica indemnización (Art. 45: rescindir sin causa justificada).",
+          : "No aplica indemnización Art. 45 (despido con causa justificada Art. 48).",
       },
       {
         type: "despido_injustificado",
         applicable: !specialClosure,
         note: specialClosure ? closureNote : undefined,
-        buildLines: (ctx) => {
-          const fullYears = ctx.fullYears
-          const fraction = ctx.tenureYears - fullYears
-
-          const baseDays =
-            Math.min(fullYears, 3) * 30 + Math.max(fullYears - 3, 0) * 20
-
-          const fracDays =
-            fraction > 0 ? (fullYears < 3 ? fraction * 30 : fraction * 20) : 0
-
-          const totalDays = Math.min(150, Math.max(30, baseDays + fracDays))
-
-          return [
-            makeIndemnityLine(
-              "Indemnización Art. 45 (30/20 días por año)",
-              ctx.dailySalary,
-              totalDays,
-              "Ley 185 Arts. 42, 43 y 45"
-            ),
-          ]
-        },
+        buildLines: (ctx) => [
+          ...buildArt45Lines(ctx),
+          buildPreavisoLine(ctx),
+        ],
       },
       {
         type: "mutuo_acuerdo",
         applicable: !specialClosure,
-        buildLines: () => [],
+        buildLines: (ctx) => [
+          ...buildArt45Lines(ctx),
+          buildPreavisoLine(ctx),
+        ],
         note: specialClosure
           ? closureNote
-          : "No genera indemnización Art. 45. Conserva derecho a prestaciones proporcionales (Art. 43).",
+          : "Mutuo acuerdo: conserva derecho a indemnización Art. 45 (Art. 43).",
       },
     ],
   }

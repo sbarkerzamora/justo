@@ -1,0 +1,150 @@
+"use client"
+
+import {
+  IconArrowUp,
+  IconMessageCircle,
+  IconSquare,
+  IconTools,
+} from "@tabler/icons-react"
+import type { AppMode, ChatAction } from "@/components/chat/types"
+import { ChatSuggestions } from "@/components/chat/chat-suggestions"
+import {
+  PromptInput,
+  PromptInputAction,
+  PromptInputActions,
+  PromptInputTextarea,
+} from "@/components/ui/prompt-input"
+import { Button } from "@/components/ui/button"
+import { cn } from "@/lib/utils"
+import {
+  DropdownMenu,
+  DropdownMenuTrigger,
+  DropdownMenuContent,
+  DropdownMenuItem,
+} from "@/components/ui/dropdown-menu"
+import type { Locale } from "@/lib/i18n"
+
+export function ChatInputPanel({
+  chatActions,
+  locale,
+  setMode,
+  input,
+  setInput,
+  onSend,
+  isLoading,
+  onStop,
+  variant = "welcome",
+  onNewChat,
+}: {
+  chatActions: ChatAction[]
+  locale: Locale
+  setMode: (mode: AppMode) => void
+  input: string
+  setInput: (value: string) => void
+  onSend: () => Promise<void>
+  isLoading: boolean
+  onStop: () => void
+  variant?: "welcome" | "compact"
+  onNewChat?: () => void
+}) {
+  const toolActions = chatActions.filter((a): a is ChatAction & { mode: AppMode } => !!a.mode)
+
+  return (
+    <div className="pointer-events-auto mx-auto flex w-full max-w-5xl min-w-0 flex-col gap-2">
+      {variant === "welcome" ? (
+        <ChatSuggestions
+          actions={chatActions}
+          locale={locale}
+          setMode={setMode}
+        />
+      ) : (
+        <button
+          type="button"
+          onClick={onNewChat}
+          className="flex items-center gap-1.5 self-start py-1 text-xs text-muted-foreground/60 transition-colors hover:text-muted-foreground"
+        >
+          <IconMessageCircle className="size-3" />
+          {locale === "en" ? "New chat" : "Nuevo chat"}
+        </button>
+      )}
+      <PromptInput
+        value={input}
+        onValueChange={setInput}
+        onSubmit={() => void onSend()}
+        isLoading={isLoading}
+        className="min-w-0 border-border bg-card/95 shadow-xl backdrop-blur supports-[backdrop-filter]:bg-card/85"
+      >
+        <PromptInputTextarea
+          placeholder={
+            locale === "en"
+              ? "Ask a labor question..."
+              : "Escribe tu consulta laboral..."
+          }
+          disabled={isLoading}
+          className="min-h-[48px] text-sm text-foreground placeholder:text-muted-foreground sm:min-h-[56px]"
+        />
+        <PromptInputActions className={cn("pt-1", variant === "compact" ? "justify-between" : "justify-end")}>
+          {variant === "compact" ? (
+            <DropdownMenu>
+              <DropdownMenuTrigger asChild>
+                <Button
+                  type="button"
+                  size="icon"
+                  variant="ghost"
+                  className="rounded-full"
+                  aria-label={locale === "en" ? "Tools" : "Herramientas"}
+                >
+                  <IconTools className="size-4" />
+                </Button>
+              </DropdownMenuTrigger>
+              <DropdownMenuContent side="top" align="start">
+                {toolActions.map((action) => {
+                  const Icon = action.icon
+                  const label = locale === "en" ? action.labelEn : action.labelEs
+                  return (
+                    <DropdownMenuItem
+                      key={label}
+                      onSelect={() => setMode(action.mode)}
+                    >
+                      <Icon className="size-4" />
+                      {label}
+                    </DropdownMenuItem>
+                  )
+                })}
+              </DropdownMenuContent>
+            </DropdownMenu>
+          ) : null}
+          {isLoading ? (
+            <PromptInputAction tooltip={locale === "en" ? "Stop" : "Detener"}>
+              <Button
+                type="button"
+                size="icon"
+                variant="destructive"
+                className="rounded-full"
+                onClick={onStop}
+                aria-label={
+                  locale === "en" ? "Stop response" : "Detener respuesta"
+                }
+              >
+                <IconSquare data-icon="inline-start" />
+              </Button>
+            </PromptInputAction>
+          ) : (
+            <PromptInputAction tooltip={locale === "en" ? "Send" : "Enviar"}>
+              <Button
+                type="button"
+                size="icon"
+                className="rounded-full"
+                onClick={() => void onSend()}
+                disabled={!input.trim()}
+                aria-label={locale === "en" ? "Send message" : "Enviar mensaje"}
+              >
+                <IconArrowUp data-icon="inline-start" />
+              </Button>
+            </PromptInputAction>
+          )}
+        </PromptInputActions>
+      </PromptInput>
+    </div>
+  )
+}

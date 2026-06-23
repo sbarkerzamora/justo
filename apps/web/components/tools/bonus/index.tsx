@@ -26,6 +26,7 @@ import type { BonusFormData } from "@/components/tools/tool-types"
 import {
   formatCurrencyInput,
   formatDateInput,
+  getCurrencySymbol,
   parseCurrencyInput,
 } from "@/components/tools/input-formatters"
 import { StepNavigation } from "@/components/tools/step-navigation"
@@ -269,7 +270,7 @@ export function BonusTool({
       dispatch({
         type: "setEditField",
         field: "editSalary",
-        value: String(form.monthlySalary || ""),
+        value: formatCurrencyInput(String(form.monthlySalary || "")),
       })
     if (action === "dates") {
       dispatch({
@@ -446,6 +447,7 @@ export function BonusTool({
               editSalary={state.editSalary}
               editStartDate={state.editStartDate}
               editEndDate={state.editEndDate}
+              currencySymbol={getCurrencySymbol(countryCode)}
               onSetEditField={(field, value) =>
                 dispatch({
                   type: "setEditField",
@@ -499,22 +501,29 @@ export function BonusTool({
               </p>
             </div>
             <div className="w-full max-w-xl">
-              <input
-                ref={inputRef}
-                value={inputValue}
-                onChange={(e) =>
-                  setInputValue(
-                    step === "monthlySalary"
-                      ? formatCurrencyInput(e.target.value)
-                      : formatDateInput(e.target.value)
-                  )
-                }
-                inputMode={step === "monthlySalary" ? "decimal" : "text"}
-                placeholder={
-                  step === "monthlySalary" ? copy.askPlaceholder : copy.endDate
-                }
-                className="h-12 w-full rounded-2xl border border-border bg-card pr-4 pl-4 text-sm text-foreground transition-colors outline-none placeholder:text-muted-foreground focus:border-foreground/30"
-              />
+              <div className={step === "monthlySalary" ? "relative" : ""}>
+                {step === "monthlySalary" && (
+                  <span className="pointer-events-none absolute left-4 top-1/2 -translate-y-1/2 text-sm text-muted-foreground">
+                    {getCurrencySymbol(countryCode)}
+                  </span>
+                )}
+                <input
+                  ref={inputRef}
+                  value={inputValue}
+                  onChange={(e) =>
+                    setInputValue(
+                      step === "monthlySalary"
+                        ? formatCurrencyInput(e.target.value)
+                        : formatDateInput(e.target.value)
+                    )
+                  }
+                  inputMode={step === "monthlySalary" ? "decimal" : "numeric"}
+                  placeholder={
+                    step === "monthlySalary" ? copy.askPlaceholder : copy.endDate
+                  }
+                  className={`h-12 w-full rounded-2xl border border-border bg-card text-sm text-foreground transition-colors outline-none placeholder:text-muted-foreground focus:border-foreground/30 ${step === "monthlySalary" ? "pl-10 pr-4" : "pl-4 pr-4"}`}
+                />
+              </div>
             </div>
           </div>
         )}
@@ -680,6 +689,7 @@ function EditPanel({
   editSalary,
   editStartDate,
   editEndDate,
+  currencySymbol,
   onSetEditField,
   onSetEditMode,
   saveEdit,
@@ -689,6 +699,7 @@ function EditPanel({
   editSalary: string
   editStartDate: string
   editEndDate: string
+  currencySymbol: string
   onSetEditField: (field: string, value: string) => void
   onSetEditMode: (mode: BonusEditMode) => void
   saveEdit: () => void
@@ -699,14 +710,19 @@ function EditPanel({
       {editMode === "salary" ? (
         <label className="grid gap-2 text-sm">
           <span className="text-foreground">{copy.newMonthlySalary}</span>
-          <input
-            inputMode="decimal"
-            value={editSalary}
-            onChange={(e) =>
-              onSetEditField("editSalary", formatCurrencyInput(e.target.value))
-            }
-            className="h-11 rounded-xl border border-border bg-background px-3 text-foreground outline-none focus:border-foreground/30"
-          />
+          <div className="relative">
+            <span className="pointer-events-none absolute left-3 top-1/2 -translate-y-1/2 text-sm text-muted-foreground">
+              {currencySymbol}
+            </span>
+            <input
+              inputMode="decimal"
+              value={editSalary}
+              onChange={(e) =>
+                onSetEditField("editSalary", formatCurrencyInput(e.target.value))
+              }
+              className="h-11 w-full rounded-xl border border-border bg-background pl-8 pr-3 text-foreground outline-none focus:border-foreground/30"
+            />
+          </div>
         </label>
       ) : editMode === "dates" ? (
         <div className="space-y-3">

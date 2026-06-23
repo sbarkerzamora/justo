@@ -55,6 +55,10 @@
 - [x] Liquidación: ajustes finales explícitos en los 11 países para salario pendiente, horas extra/comisiones, prestaciones pendientes, prestaciones ya pagadas y deducciones autorizadas.
 - [x] Typecheck global reparado en `@justo/pdf` aceptando colores `RGB` y tuplas en `pdf-helpers`.
 - [x] PDF de Terminación corregido: sanitización de caracteres no soportados por Helvetica estándar en `pdf-lib`.
+- [x] Chat refactorizado: 7 componentes inline extraídos a archivos individuales, `<section>` redundante eliminado, DOM nesting reducido de 9 a 6 niveles.
+- [x] Chat: contenido inicial centrado horizontalmente (fix `w-full` → `mx-auto` en `<motion.div>` del empty state).
+- [x] Settlement: persistencia anónima en Upstash conectada desde el componente vía `POST /api/liquidation/calculate` fire-and-forget.
+- [x] Stats: error logging agregado a `persistAnonymousRecord()` para debug de fallos Redis.
 
 ---
 

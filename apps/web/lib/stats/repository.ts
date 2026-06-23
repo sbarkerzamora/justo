@@ -71,8 +71,8 @@ export async function persistAnonymousRecord(
       redis.expire(nKey, TTL_SECONDS),
       redis.expire(cntKey, TTL_SECONDS),
     ])
-  } catch {
-    /* telemetría no crítica */
+  } catch (e) {
+    console.error("persistAnonymousRecord failed:", e)
   }
 }
 

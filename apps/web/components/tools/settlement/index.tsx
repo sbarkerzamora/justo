@@ -38,6 +38,7 @@ import {
   formatCurrencyInput,
   formatDateInput,
   formatNumberInput,
+  getCurrencySymbol,
   parseCurrencyInput,
 } from "@/components/tools/input-formatters"
 import { StepNavigation } from "@/components/tools/step-navigation"
@@ -373,6 +374,11 @@ export function SettlementTool({
       dispatch({ type: "setResult", result })
       dispatch({ type: "setStep", step: "done" })
       dispatch({ type: "setError", error: null })
+      fetch("/api/liquidation/calculate", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(payload),
+      }).catch(() => {})
     } catch (err) {
       dispatch({
         type: "setError",
@@ -393,7 +399,7 @@ export function SettlementTool({
       dispatch({
         type: "setEditField",
         field: "editSalary",
-        value: String(form.monthlySalary || ""),
+        value: formatCurrencyInput(String(form.monthlySalary || "")),
       })
     if (action === "dates") {
       dispatch({
@@ -562,6 +568,7 @@ export function SettlementTool({
               editVacations={state.editVacations}
               editStartDate={state.editStartDate}
               editEndDate={state.editEndDate}
+              currencySymbol={getCurrencySymbol(countryCode)}
               onSetEditField={(field, value) =>
                 dispatch({
                   type: "setEditField",
@@ -581,23 +588,25 @@ export function SettlementTool({
             />
           </div>
         ) : step === "confirm" ? (
-          <div className="space-y-4 overflow-y-auto">
-            {error ? (
-              <div className="flex items-center gap-2 rounded-xl border border-rose-200 bg-rose-50 px-4 py-3 text-sm text-rose-700">
-                <IconAlertCircle className="size-4 shrink-0" />
-                {error}
-              </div>
-            ) : null}
-            <ConfirmPanelTool
-              form={form}
-              fmt={fmt}
-              locale={locale}
-              copy={copy}
-              onConfirmAction={onConfirmAction}
-            />
+          <div className="flex h-full w-full flex-col items-center justify-center overflow-y-auto px-2">
+            <div className="w-full max-w-xl space-y-4">
+              {error ? (
+                <div className="flex items-center gap-2 rounded-xl border border-rose-200 bg-rose-50 px-4 py-3 text-sm text-rose-700">
+                  <IconAlertCircle className="size-4 shrink-0" />
+                  {error}
+                </div>
+              ) : null}
+              <ConfirmPanelTool
+                form={form}
+                fmt={fmt}
+                locale={locale}
+                copy={copy}
+                onConfirmAction={onConfirmAction}
+              />
+            </div>
           </div>
         ) : step === "frequency" ? (
-          <div className="space-y-4 overflow-y-auto">
+          <div className="flex h-full w-full flex-col items-center justify-center overflow-y-auto px-2">
             <FrequencyPicker onSelect={onFrequencySelect} copy={copy} />
           </div>
         ) : step === "terminationCause" || step === "contractType" ? (
@@ -609,20 +618,23 @@ export function SettlementTool({
           />
         ) : step === "adjustments" ? (
           <SettlementAdjustmentsPanel
+            cc={countryCode}
             form={form}
             locale={locale}
             onPatch={(patch) => dispatch({ type: "patchForm", patch })}
           />
         ) : result && step === "done" ? (
-          <div className="space-y-4 overflow-y-auto">
-            <ResultPanelTool
-              result={result}
-              fmt={fmt}
-              copy={copy}
-              onExportPdf={onExportPdf}
-              onRestart={() => dispatch({ type: "reset", countryCode })}
-              onComplete={handleComplete}
-            />
+          <div className="flex h-full w-full flex-col items-center justify-center overflow-y-auto px-2">
+            <div className="w-full max-w-xl space-y-4">
+              <ResultPanelTool
+                result={result}
+                fmt={fmt}
+                copy={copy}
+                onExportPdf={onExportPdf}
+                onRestart={() => dispatch({ type: "reset", countryCode })}
+                onComplete={handleComplete}
+              />
+            </div>
           </div>
         ) : (
           <div className="flex h-full flex-col items-center justify-center gap-6 px-2">
@@ -632,24 +644,31 @@ export function SettlementTool({
               </p>
             </div>
             <div className="w-full max-w-xl">
-              <input
-                ref={inputRef}
-                value={inputValue}
-                onChange={(e) =>
-                  setInputValue(getFormattedInputValue(step, e.target.value))
-                }
-                inputMode={
-                  step === "monthlySalary"
-                    ? "decimal"
-                    : step === "startDate" || step === "endDate"
-                      ? "numeric"
-                      : step === "unusedVacationDays"
+              <div className={step === "monthlySalary" ? "relative" : ""}>
+                {step === "monthlySalary" && (
+                  <span className="pointer-events-none absolute left-4 top-1/2 -translate-y-1/2 text-sm text-muted-foreground">
+                    {getCurrencySymbol(countryCode)}
+                  </span>
+                )}
+                <input
+                  ref={inputRef}
+                  value={inputValue}
+                  onChange={(e) =>
+                    setInputValue(getFormattedInputValue(step, e.target.value))
+                  }
+                  inputMode={
+                    step === "monthlySalary"
+                      ? "decimal"
+                      : step === "startDate" || step === "endDate"
                         ? "numeric"
-                        : "text"
-                }
-                placeholder={copy.askPlaceholder}
-                className="h-12 w-full rounded-2xl border border-border bg-card pr-4 pl-4 text-sm text-foreground transition-colors outline-none placeholder:text-muted-foreground focus:border-foreground/30"
-              />
+                        : step === "unusedVacationDays"
+                          ? "numeric"
+                          : "text"
+                  }
+                  placeholder={copy.askPlaceholder}
+                  className={`h-12 w-full rounded-2xl border border-border bg-card text-sm text-foreground transition-colors outline-none placeholder:text-muted-foreground focus:border-foreground/30 ${step === "monthlySalary" ? "pl-10 pr-4" : "pl-4 pr-4"}`}
+                />
+              </div>
             </div>
           </div>
         )}
@@ -826,10 +845,12 @@ function ChoicePanel({
 }
 
 function SettlementAdjustmentsPanel({
+  cc,
   form,
   locale,
   onPatch,
 }: {
+  cc: string
   form: SettlementForm
   locale: Locale
   onPatch: (patch: Partial<SettlementForm>) => void
@@ -893,7 +914,7 @@ function SettlementAdjustmentsPanel({
   ]
 
   return (
-    <div className="flex h-full flex-col items-center px-2 pb-24 sm:justify-center sm:pb-2">
+    <div className="flex h-full flex-col items-center justify-center overflow-y-auto px-2 pb-4 sm:pb-2">
       <div className="w-full max-w-xl rounded-2xl border border-border bg-card p-4 shadow-sm motion-safe:animate-in motion-safe:duration-200 motion-safe:fade-in motion-safe:slide-in-from-bottom-1 sm:p-6">
         <div className="flex items-start gap-2.5">
           <div className="rounded-lg bg-primary/10 p-1.5 sm:rounded-xl sm:p-2">
@@ -903,7 +924,7 @@ function SettlementAdjustmentsPanel({
             <p className="text-sm font-semibold text-foreground sm:text-base">
               {locale === "en" ? "Final adjustments" : "Ajustes finales"}
             </p>
-            <p className="mt-0.5 text-xs leading-snug text-muted-foreground sm:text-sm">
+            <p className="mt-0.5 text-xs leading-snug text-muted-foreground/80 sm:text-sm">
               {locale === "en"
                 ? "Optional payroll-backed amounts. Leave zero if they do not apply."
                 : "Montos opcionales con soporte de planilla. Deja cero si no aplican."}
@@ -920,11 +941,11 @@ function SettlementAdjustmentsPanel({
                 <span className="block truncate font-medium text-foreground sm:hidden">
                   {field.shortLabel}
                 </span>
-                <span className="hidden font-medium text-foreground sm:block">
+                <span className="max-sm:hidden font-medium text-foreground sm:block">
                   {field.label}
                 </span>
                 <span
-                  className={`mt-0.5 inline-flex rounded-full px-1.5 py-0.5 text-[10px] font-medium sm:hidden ${field.kind === "income" ? "bg-emerald-500/10 text-emerald-700" : "bg-rose-500/10 text-rose-700"}`}
+                  className={`mt-0.5 inline-flex rounded-full px-1.5 py-0.5 text-[10px] font-medium ${field.kind === "income" ? "bg-emerald-500/10 text-emerald-700" : "bg-rose-500/10 text-rose-700"}`}
                 >
                   {field.kind === "income"
                     ? locale === "en"
@@ -935,18 +956,23 @@ function SettlementAdjustmentsPanel({
                       : "resta"}
                 </span>
               </span>
-              <input
-                inputMode="decimal"
-                value={formatCurrencyInput(String(form[field.key] ?? 0))}
-                onChange={(event) => {
-                  const amount = parseCurrencyInput(event.target.value)
-                  onPatch({
-                    [field.key]: Number.isNaN(amount) ? 0 : amount,
-                  } as Partial<SettlementForm>)
-                }}
-                aria-label={field.label}
-                className="h-10 w-28 shrink-0 rounded-xl border border-border bg-card px-3 text-right text-sm text-foreground outline-none focus:border-foreground/30 sm:w-40 sm:text-left"
-              />
+              <div className="relative">
+                <span className="pointer-events-none absolute left-3 top-1/2 -translate-y-1/2 text-xs text-muted-foreground">
+                  {getCurrencySymbol(cc)}
+                </span>
+                <input
+                  inputMode="decimal"
+                  value={formatCurrencyInput(String(form[field.key] ?? 0))}
+                  onChange={(event) => {
+                    const amount = parseCurrencyInput(event.target.value)
+                    onPatch({
+                      [field.key]: Number.isNaN(amount) ? 0 : amount,
+                    } as Partial<SettlementForm>)
+                  }}
+                  aria-label={field.label}
+                  className="h-10 w-28 shrink-0 rounded-xl border border-border bg-background pl-7 pr-3 text-right text-sm text-foreground outline-none focus:border-foreground/30 sm:w-40 sm:text-left"
+                />
+              </div>
             </label>
           ))}
         </div>
@@ -1074,6 +1100,7 @@ function EditPanelTool({
   editVacations,
   editStartDate,
   editEndDate,
+  currencySymbol,
   onSetEditField,
   onSetEditMode,
   saveEdit,
@@ -1084,6 +1111,7 @@ function EditPanelTool({
   editVacations: string
   editStartDate: string
   editEndDate: string
+  currencySymbol: string
   onSetEditField: (field: string, value: string) => void
   onSetEditMode: (mode: EditMode) => void
   saveEdit: () => void
@@ -1094,14 +1122,19 @@ function EditPanelTool({
       {editMode === "salary" ? (
         <label className="grid gap-2 text-sm">
           <span className="text-foreground">{copy.newMonthlySalary}</span>
-          <input
-            inputMode="decimal"
-            value={editSalary}
-            onChange={(e) =>
-              onSetEditField("editSalary", formatCurrencyInput(e.target.value))
-            }
-            className="h-11 rounded-xl border border-border bg-background px-3 text-foreground outline-none focus:border-foreground/30"
-          />
+          <div className="relative">
+            <span className="pointer-events-none absolute left-3 top-1/2 -translate-y-1/2 text-sm text-muted-foreground">
+              {currencySymbol}
+            </span>
+            <input
+              inputMode="decimal"
+              value={editSalary}
+              onChange={(e) =>
+                onSetEditField("editSalary", formatCurrencyInput(e.target.value))
+              }
+              className="h-11 w-full rounded-xl border border-border bg-background pl-8 pr-3 text-foreground outline-none focus:border-foreground/30"
+            />
+          </div>
         </label>
       ) : editMode === "vacations" ? (
         <label className="grid gap-2 text-sm">
