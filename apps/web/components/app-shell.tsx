@@ -16,9 +16,8 @@ import { BuyMeABeerButton } from "@/components/buy-me-a-beer-button"
 import { TextLoop } from "@/components/core/text-loop"
 import { cn } from "@/lib/utils"
 import { countryList, isValidCountry } from "@/lib/countries"
-import { localizedCountryPath, isValidLocale, type Locale } from "@/lib/i18n"
+import { localizedCountryPath, isValidLocale } from "@/lib/i18n"
 import { getCountryAccent } from "@/lib/country-accent"
-import { homeCopy } from "@/lib/home-copy"
 import { getLegalLinks } from "@/lib/legal-pages"
 import {
   Select,
@@ -48,7 +47,6 @@ import {
   IconClipboardCheck,
   IconUserPlus,
   IconLayoutSidebar,
-  IconBuilding,
   IconBeer,
   IconBell,
   IconChevronDown,
@@ -134,7 +132,12 @@ export function AppShell({
   initialCountry?: string
 }) {
   const pathname = usePathname()
+  const routeSegments = pathname.split("/").filter(Boolean)
   const isDocs = pathname.startsWith("/docs")
+  const isChatSurface =
+    routeSegments.length >= 2 &&
+    isValidLocale(routeSegments[0]) &&
+    isValidCountry(routeSegments[1])
   const [open, setOpen] = useState(true)
   const [mobileOpen, setMobileOpen] = useState(false)
   const [showMobileHrBanner, setShowMobileHrBanner] = useState(false)
@@ -154,6 +157,16 @@ export function AppShell({
       document.cookie = `justo-country=${country};path=/;max-age=31536000;SameSite=Lax`
     } catch {}
   }, [country])
+
+  useEffect(() => {
+    document.documentElement.classList.toggle("justo-chat-viewport", isChatSurface)
+    document.body.classList.toggle("justo-chat-viewport", isChatSurface)
+
+    return () => {
+      document.documentElement.classList.remove("justo-chat-viewport")
+      document.body.classList.remove("justo-chat-viewport")
+    }
+  }, [isChatSurface])
 
   useEffect(() => {
     const timer = window.setTimeout(() => setShowMobileHrBanner(true), 2000)
@@ -277,18 +290,6 @@ export function AppShell({
           ) : null}
         </Link>
       </div>
-
-      {expanded ? (
-        <div className="group mb-2 flex items-center gap-2 rounded-lg border border-sidebar-border bg-sidebar-accent/40 px-2.5 py-1.5 transition-colors hover:border-sidebar-foreground/15 hover:bg-sidebar-accent/60">
-          <IconBuilding className="size-3.5 shrink-0 text-primary" />
-          <span className="truncate text-[11px] font-medium text-sidebar-foreground">
-            {homeCopy[locale as Locale].hrCtaTitle}
-          </span>
-          <span className="ml-auto inline-flex shrink-0 items-center rounded bg-primary/10 px-1 py-0.5 text-[8px] font-semibold tracking-wider text-primary uppercase">
-            {homeCopy[locale as Locale].hrCtaBadge}
-          </span>
-        </div>
-      ) : null}
 
       <div className="mb-4 flex flex-col gap-1.5">
         <div
@@ -496,7 +497,14 @@ export function AppShell({
 
   return (
     <SidebarCtx.Provider value={{ open: mobileOpen, setOpen: setMobileOpen }}>
-      <div className="flex h-svh w-full bg-background">
+      <div
+        className={cn(
+          "flex w-full bg-background",
+          isChatSurface
+            ? "fixed inset-0 h-dvh max-h-dvh overflow-hidden"
+            : "min-h-svh"
+        )}
+      >
         {/* Desktop sidebar */}
         <aside
           className={cn(
@@ -552,7 +560,12 @@ export function AppShell({
         </AnimatePresence>
 
         {/* Main area: header + content */}
-        <div className="flex min-h-0 min-w-0 flex-1 flex-col overflow-y-auto">
+        <div
+          className={cn(
+            "flex min-w-0 flex-1 flex-col",
+            isChatSurface ? "min-h-0 overflow-hidden" : "min-h-svh"
+          )}
+        >
           <AnimatePresence initial={false}>
             {showMobileHrBanner ? (
               <motion.div
@@ -711,7 +724,14 @@ export function AppShell({
             </div>
           </header>
 
-          <main className="min-h-0 w-full min-w-0 flex-1 flex flex-col overflow-y-auto">
+          <main
+            className={cn(
+              "w-full min-w-0 flex-1",
+              isChatSurface
+                ? "flex min-h-0 flex-col overflow-hidden"
+                : "min-h-0 overflow-y-auto"
+            )}
+          >
             {children}
           </main>
         </div>

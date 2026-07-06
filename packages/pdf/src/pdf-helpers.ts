@@ -9,6 +9,30 @@ const toRgb = (color: ColorInput): RGB =>
 const sanitizePdfText = (content: string) =>
   content.replaceAll("◆", "*").replaceAll("→", "->")
 
+const wrapTextLines = (
+  text: string,
+  font: { widthOfTextAtSize: (content: string, size: number) => number },
+  size: number,
+  maxWidth: number
+) => {
+  const words = sanitizePdfText(text).split(/\s+/).filter(Boolean)
+  const lines: string[] = []
+  let line = ""
+
+  for (const word of words) {
+    const testLine = line ? `${line} ${word}` : word
+    if (font.widthOfTextAtSize(testLine, size) > maxWidth && line) {
+      lines.push(line)
+      line = word
+    } else {
+      line = testLine
+    }
+  }
+
+  if (line) lines.push(line)
+  return lines.length > 0 ? lines : [""]
+}
+
 export const COLORS = {
   text: rgb(0.1, 0.1, 0.1),
   muted: rgb(0.45, 0.45, 0.45),
@@ -157,30 +181,62 @@ export function drawSignatureBoxes(
   page: PDFPage,
   y: number,
   left: number,
-  fontSet: FontSet
+  fontSet: FontSet,
+  right?: number
 ): number {
-  const boxW = 160
-  const boxH = 40
-  const gap = 30
-  const sigY = y - boxH
+  const boxW = right ? right - left : 160
+  const boxH = right ? 52 : 40
 
-  const drawOne = (label: string, xPos: number) => {
-    drawBox(page, xPos, sigY, boxW, boxH, {
+  const drawOne = (label: string, xPos: number, yPos: number) => {
+    drawBox(page, xPos, yPos, boxW, boxH, {
       borderColor: COLORS.border, borderWidth: 1,
     })
-    drawLine(page, xPos + 8, sigY + 14, xPos + boxW - 8, sigY + 14, {
+    drawLine(page, xPos + 10, yPos + 18, xPos + boxW - 10, yPos + 18, {
       color: COLORS.text, width: 0.5,
     })
-    drawText(page, label, xPos + 8, sigY + 2, {
+    drawText(page, label, xPos + 10, yPos + 5, {
       size: 7, color: COLORS.muted, fontSet,
     })
-    drawText(page, "Firma", xPos + 8, sigY + 17, {
+    drawText(page, "Firma", xPos + 10, yPos + 23, {
       size: 7, color: COLORS.muted, fontSet,
     })
   }
 
-  drawOne("Trabajador", left)
-  drawOne("Empleador", left + boxW + gap)
+  if (right) {
+    const workerY = y - boxH
+    drawBox(page, left, workerY, boxW, boxH, {
+      borderColor: COLORS.border, borderWidth: 1,
+    })
+    drawLine(page, left + 10, workerY + 18, left + boxW - 10, workerY + 18, {
+      color: COLORS.text, width: 0.5,
+    })
+    drawText(page, "Firma", left + 10, workerY + 23, {
+      size: 7, color: COLORS.muted, fontSet,
+    })
+    drawText(page, "Trabajador", left + 10, workerY + 5, {
+      size: 7, color: COLORS.muted, fontSet,
+    })
+
+    const employerY = workerY - boxH - 10
+    drawBox(page, left, employerY, boxW, boxH, {
+      borderColor: COLORS.border, borderWidth: 1,
+    })
+    drawLine(page, left + 10, employerY + 18, left + boxW - 10, employerY + 18, {
+      color: COLORS.text, width: 0.5,
+    })
+    drawText(page, "Firma", left + 10, employerY + 23, {
+      size: 7, color: COLORS.muted, fontSet,
+    })
+    drawText(page, "Empleador", left + 10, employerY + 5, {
+      size: 7, color: COLORS.muted, fontSet,
+    })
+    return employerY - 12
+  }
+
+  const gap = 30
+  const sigY = y - boxH
+  drawOne("Trabajador", left, sigY)
+  drawOne("Empleador", left + boxW + gap, sigY)
 
   return sigY - 10
 }
@@ -234,35 +290,136 @@ export function drawWrappedText(
     fontSet: FontSet; lineHeight?: number
   }
 ): { y: number; lines: number } {
-  const safeText = sanitizePdfText(text)
   const f = opts.bold ? opts.fontSet.bold : opts.fontSet.font
   const size = opts.size ?? 11
   const lh = opts.lineHeight ?? size + 4
   const color = opts.color ? toRgb(opts.color) : COLORS.text
-  const words = safeText.split(/\s+/)
-  let line = ""
-  let lines = 0
+  const wrappedLines = wrapTextLines(text, f, size, maxWidth)
   let cy = y
 
-  for (const word of words) {
-    const testLine = line ? `${line} ${word}` : word
-    const w = f.widthOfTextAtSize(testLine, size)
-    if (w > maxWidth && line) {
-      page.drawText(line, { x, y: cy, size, font: f, color })
-      cy -= lh
-      lines++
-      line = word
-    } else {
-      line = testLine
-    }
-  }
-  if (line) {
+  for (const line of wrappedLines) {
     page.drawText(line, { x, y: cy, size, font: f, color })
     cy -= lh
-    lines++
   }
 
-  return { y: cy, lines }
+  return { y: cy, lines: wrappedLines.length }
+}
+
+export function drawStackedKeyValues(
+  page: PDFPage,
+  rows: { label: string; value: string }[],
+  left: number,
+  y: number,
+  fontSet: FontSet,
+  maxWidth = 220
+): number {
+  let cy = y
+  for (const row of rows) {
+    drawText(page, row.label, left, cy, { size: 7, color: COLORS.muted, fontSet })
+    const wrapped = drawWrappedText(page, row.value, left, cy - 10, maxWidth, {
+      size: 8, bold: true, fontSet, lineHeight: 10,
+    })
+    cy = wrapped.y - 3
+  }
+  return cy
+}
+
+export function drawSummaryCard(
+  page: PDFPage,
+  title: string,
+  amount: string,
+  rows: { label: string; value: string }[],
+  left: number,
+  right: number,
+  y: number,
+  fontSet: FontSet
+): number {
+  const h = 76 + rows.length * 13
+  drawBox(page, left, y - h, right - left, h - 4, {
+    borderColor: COLORS.border, borderWidth: 1, fillColor: COLORS.white,
+  })
+  drawText(page, title, left + 12, y - 18, { size: 9, bold: true, fontSet })
+  drawText(page, amount, left + 12, y - 39, { size: 18, bold: true, fontSet })
+  let cy = y - 56
+  for (const row of rows) {
+    drawText(page, row.label, left + 12, cy, { size: 7, color: COLORS.muted, fontSet })
+    drawText(page, row.value, right - 12, cy, { size: 7, bold: true, align: "right", fontSet })
+    cy -= 13
+  }
+  return y - h
+}
+
+export function drawBreakdownItem(
+  page: PDFPage,
+  item: {
+    label: string
+    amount?: string
+    formula?: string
+    legalReference?: string
+    note?: string
+  },
+  left: number,
+  right: number,
+  y: number,
+  fontSet: FontSet
+): number {
+  const width = right - left
+  const bodyWidth = width - 24
+  const formulaLines = item.formula
+    ? wrapTextLines(item.formula, fontSet.font, 7, bodyWidth).length
+    : 0
+  const legalLines = item.legalReference
+    ? wrapTextLines(item.legalReference, fontSet.font, 7, bodyWidth).length
+    : 0
+  const noteLines = item.note
+    ? wrapTextLines(item.note, fontSet.font, 7, bodyWidth).length
+    : 0
+  const h = 32 + formulaLines * 10 + legalLines * 10 + noteLines * 10 +
+    (item.formula ? 10 : 0) + (item.legalReference ? 10 : 0) +
+    (item.note ? 8 : 0)
+
+  drawBox(page, left, y - h, width, h - 4, { fillColor: COLORS.bg })
+  drawText(page, item.label, left + 12, y - 16, { size: 8, bold: true, fontSet })
+  if (item.amount) {
+    drawText(page, item.amount, right - 12, y - 16, {
+      size: 9, bold: true, align: "right", fontSet,
+    })
+  }
+
+  let cy = y - 30
+  if (item.formula) {
+    drawText(page, "Formula", left + 12, cy, { size: 6, color: COLORS.muted, fontSet })
+    cy -= 9
+    cy = drawWrappedText(page, item.formula, left + 12, cy, bodyWidth, {
+      size: 7, color: COLORS.muted, fontSet, lineHeight: 10,
+    }).y
+  }
+  if (item.legalReference) {
+    drawText(page, "Base legal", left + 12, cy, { size: 6, color: COLORS.muted, fontSet })
+    cy -= 9
+    cy = drawWrappedText(page, item.legalReference, left + 12, cy, bodyWidth, {
+      size: 7, color: COLORS.muted, fontSet, lineHeight: 10,
+    }).y
+  }
+  if (item.note) {
+    cy = drawWrappedText(page, item.note, left + 12, cy - 2, bodyWidth, {
+      size: 7, color: COLORS.muted, fontSet, lineHeight: 10,
+    }).y
+  }
+
+  return y - h - 4
+}
+
+export function drawPageBreakIfNeeded(
+  pdf: PDFDocument,
+  page: PDFPage,
+  y: number,
+  minY: number,
+  drawNewPageHeader: (page: PDFPage) => number
+): { page: PDFPage; y: number } {
+  if (y >= minY) return { page, y }
+  const nextPage = pdf.addPage([595.28, 841.89])
+  return { page: nextPage, y: drawNewPageHeader(nextPage) }
 }
 
 export function drawFooter(

@@ -600,7 +600,7 @@ export function TerminationTool({
             onStart={() => dispatch({ type: "setStep", step: "monthlySalary" })}
           />
         ) : editMode ? (
-          <div className="space-y-4 overflow-y-auto">
+          <div className="space-y-4">
             {error ? (
               <div className="flex items-center gap-2 rounded-xl border border-rose-200 bg-rose-50 px-4 py-3 text-sm text-rose-700">
                 <IconAlertCircle className="size-4 shrink-0" />
@@ -631,7 +631,7 @@ export function TerminationTool({
             />
           </div>
         ) : step === "writtenNotice" && form.terminationCause === "renuncia" && countryCode === "ni" ? (
-          <div className="flex h-full w-full flex-col items-center justify-center overflow-y-auto px-2">
+          <div className="flex h-full w-full flex-col items-center justify-center px-2">
             <div className="w-full max-w-xl rounded-2xl border border-border bg-card p-6 shadow-sm motion-safe:animate-in motion-safe:duration-200 motion-safe:fade-in motion-safe:slide-in-from-bottom-1">
               <p className="text-base font-medium text-foreground">
                 {locale === "en"
@@ -668,7 +668,7 @@ export function TerminationTool({
             </div>
           </div>
         ) : step === "confirm" ? (
-          <div className="flex h-full w-full flex-col items-center justify-center overflow-y-auto px-2">
+          <div className="flex h-full w-full flex-col items-center justify-center px-2">
             <div className="w-full max-w-xl space-y-4">
               {error ? (
                 <div className="flex items-center gap-2 rounded-xl border border-rose-200 bg-rose-50 px-4 py-3 text-sm text-rose-700">
@@ -698,7 +698,7 @@ export function TerminationTool({
             onPatch={(patch) => dispatch({ type: "patchForm", patch })}
           />
         ) : result && step === "done" ? (
-          <div className="space-y-4 overflow-y-auto">
+          <div className="space-y-4">
             <ResultPanel
               result={result}
               fmt={fmt}

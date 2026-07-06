@@ -445,7 +445,7 @@ export function ContractTool({
             c={c}
           />
         ) : step === "confirm" ? (
-          <div className="max-w-xl mx-auto space-y-4 overflow-y-auto motion-safe:animate-in motion-safe:duration-200 motion-safe:fade-in motion-safe:slide-in-from-bottom-1">
+          <div className="mx-auto max-w-xl space-y-4 motion-safe:animate-in motion-safe:duration-200 motion-safe:fade-in motion-safe:slide-in-from-bottom-1">
             {error && (
               <div className="flex items-center gap-2 rounded-xl border border-rose-200 bg-rose-50 px-4 py-3 text-sm text-rose-700">
                 <IconAlertCircle className="size-4 shrink-0" />
@@ -729,7 +729,7 @@ function MultiFieldInput({
           ))}
         </div>
       </div>
-      <div className="sticky bottom-0 z-10 flex items-center gap-3 border-t border-border bg-background p-4">
+      <div className="z-10 mt-auto flex shrink-0 items-center gap-3 border-t border-border bg-background p-4 pb-[max(1rem,env(safe-area-inset-bottom))]">
         <button
           type="button"
           onClick={onBack}
@@ -862,7 +862,7 @@ function JobInfoStep({
           />
         </div>
       </div>
-      <div className="sticky bottom-0 z-10 flex items-center gap-3 border-t border-border bg-background p-4">
+      <div className="z-10 mt-auto flex shrink-0 items-center gap-3 border-t border-border bg-background p-4 pb-[max(1rem,env(safe-area-inset-bottom))]">
         <button
           type="button"
           onClick={onBack}
@@ -996,7 +996,7 @@ function ContractTypeStep({
           </div>
         </div>
       </div>
-      <div className="sticky bottom-0 z-10 flex items-center gap-3 border-t border-border bg-background p-4">
+      <div className="z-10 mt-auto flex shrink-0 items-center gap-3 border-t border-border bg-background p-4 pb-[max(1rem,env(safe-area-inset-bottom))]">
         <button
           type="button"
           onClick={onBack}
@@ -1144,7 +1144,7 @@ function SalaryStep({
           />
         </div>
       </div>
-      <div className="sticky bottom-0 z-10 flex items-center gap-3 border-t border-border bg-background p-4">
+      <div className="z-10 mt-auto flex shrink-0 items-center gap-3 border-t border-border bg-background p-4 pb-[max(1rem,env(safe-area-inset-bottom))]">
         <button
           type="button"
           onClick={onBack}

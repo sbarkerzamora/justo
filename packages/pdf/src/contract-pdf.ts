@@ -173,7 +173,7 @@ export const buildContractPdf = async (
   drawText(page, "EL TRABAJADOR", right - 140, y, { size: 8, bold: true, fontSet })
   drawText(page, wkInfo, right - 140, y - 10, { size: 6, color: COLORS.muted, fontSet })
   y -= 28
-  y = drawSignatureBoxes(page, y, left, fontSet)
+  y = drawSignatureBoxes(page, y, left, fontSet, right)
 
   y -= 8
   drawLine(page, left, y, right, y, { color: COLORS.border, width: 0.3 })

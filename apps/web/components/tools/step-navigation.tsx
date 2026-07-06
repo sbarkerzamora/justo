@@ -16,7 +16,7 @@ export function StepNavigation({
   continueLabel: string
 }) {
   return (
-    <div className="sticky bottom-0 z-10 border-t border-border bg-background px-4 py-3">
+    <div className="z-10 mt-auto shrink-0 border-t border-border bg-background px-4 py-3 pb-[max(0.75rem,env(safe-area-inset-bottom))]">
       <div className="mx-auto flex w-full max-w-xl items-center gap-3">
         {showBack ? (
           <button

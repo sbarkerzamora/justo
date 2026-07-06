@@ -1,9 +1,9 @@
 import { PDFDocument } from "pdf-lib"
 import type { TerminationInput, TerminationResult } from "@justo/core"
 import {
-  loadFonts, drawText, drawLine, drawBox, drawSectionTitle,
-  drawHeader, drawKeyValue, drawSignatureBoxes, drawFooter,
-  money, COLORS,
+  loadFonts, drawSectionTitle, drawHeader, drawSignatureBoxes,
+  drawFooter, drawBreakdownItem, drawPageBreakIfNeeded,
+  drawStackedKeyValues, drawSummaryCard, money,
 } from "./pdf-helpers"
 
 const scenarioLabel = (type: string): string => {
@@ -34,54 +34,43 @@ export const buildTerminationPdf = async (
 
   y = drawHeader(page, "Terminacion", headerSub, left, y, fontSet)
 
+  const drawNewPageHeader = (nextPage: typeof page) =>
+    drawHeader(nextPage, "Terminacion", headerSub, left, H - 36, fontSet)
+
   y = drawSectionTitle(page, "Datos del caso", left, y, fontSet)
-  y = drawKeyValue(page, "Salario mensual", money(input.monthlySalary, result.currency), left, y, fontSet)
-  y = drawKeyValue(page, "Periodo", `${input.startDate} → ${input.endDate}`, left, y, fontSet)
-  y = drawKeyValue(page, "Antiguedad", `${result.tenureYears} anos (${result.tenureDays} dias)`, left, y, fontSet)
-  y = drawKeyValue(page, "Causa", scenarioLabel(input.terminationCause), left, y, fontSet)
+  y = drawStackedKeyValues(page, [
+    { label: "Salario mensual", value: money(input.monthlySalary, result.currency) },
+    { label: "Periodo", value: `${input.startDate} -> ${input.endDate}` },
+    { label: "Antiguedad", value: `${result.tenureYears} anos (${result.tenureDays} dias)` },
+    { label: "Causa", value: scenarioLabel(input.terminationCause) },
+  ], left, y, fontSet)
 
   const applicableScenarios = result.scenarios.filter((s) => s.applicable)
   for (const scenario of applicableScenarios) {
-    if (y < 100) {
-      page = pdf.addPage([W, H])
-      drawHeader(page, "Terminacion", headerSub, left, H - 36, fontSet)
-      y = H - 60
-    }
+    ;({ page, y } = drawPageBreakIfNeeded(pdf, page, y, 150, drawNewPageHeader))
     y = drawSectionTitle(page, scenarioLabel(scenario.type), left, y - 2, fontSet)
-    drawBox(page, left, y - 32, right - left, 30, { borderColor: COLORS.border, borderWidth: 1, fillColor: COLORS.white })
-    drawText(page, "Monto estimado", left + 12, y - 12, { size: 9, bold: true, fontSet })
-    drawText(page, money(scenario.total, result.currency), right - 12, y - 18, {
-      size: 16, bold: true, align: "right", fontSet,
-    })
-    y = y - 36
+    y = drawSummaryCard(page, "Monto estimado", money(scenario.total, result.currency), [], left, right, y, fontSet)
 
     if (scenario.lines.length > 0) {
       for (const line of scenario.lines) {
-        drawBox(page, left, y - 30, right - left, 28, { fillColor: COLORS.bg })
-        drawText(page, line.label, left + 4, y - 8, { size: 8, bold: true, fontSet })
-        drawText(page, money(line.amount, result.currency), right - 4, y - 8, {
-          size: 8, bold: true, align: "right", fontSet,
-        })
-        drawText(page, line.formula, left + 4, y - 18, { size: 7, color: COLORS.muted, fontSet })
-        drawText(page, line.legalReference, left + 4, y - 26, { size: 7, color: COLORS.muted, fontSet })
-        y -= 32
+        ;({ page, y } = drawPageBreakIfNeeded(pdf, page, y, 120, drawNewPageHeader))
+        y = drawBreakdownItem(page, {
+          label: line.label,
+          amount: money(line.amount, result.currency),
+          formula: line.formula,
+          legalReference: line.legalReference,
+        }, left, right, y, fontSet)
       }
     }
 
     if (scenario.note) {
-      drawBox(page, left, y - 24, right - left, 22, { fillColor: COLORS.bg })
-      drawText(page, `Nota: ${scenario.note}`, left + 8, y - 10, { size: 7, color: COLORS.muted, fontSet })
-      y -= 28
+      y = drawBreakdownItem(page, { label: "Nota", note: scenario.note }, left, right, y, fontSet)
     }
   }
 
-  if (y < 100) {
-    page = pdf.addPage([W, H])
-    drawHeader(page, "Terminacion", headerSub, left, H - 36, fontSet)
-    y = H - 60
-  }
+  ;({ page, y } = drawPageBreakIfNeeded(pdf, page, y, 150, drawNewPageHeader))
   y = drawSectionTitle(page, "Firmas", left, y - 2, fontSet)
-  y = drawSignatureBoxes(page, y, left, fontSet)
+  y = drawSignatureBoxes(page, y, left, fontSet, right)
   drawFooter(page, y, left, right, fontSet)
 
   return pdf.save()

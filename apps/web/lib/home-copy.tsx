@@ -21,7 +21,7 @@ type HomeCopy = {
   welcome: (countryName: string) => ReactNode
   examplesHeading: string
   startGuided: string
-  progressStep: (step: number) => string
+  progressStep: (step: number, total?: number) => string
   result: string
   calculatingUnder: (countryName: string) => ReactNode
   legalDocs: string
@@ -188,7 +188,7 @@ export const homeCopy: Record<Locale, HomeCopy> = {
     ),
     examplesHeading: "Ejemplos de preguntas:",
     startGuided: "Iniciar calculo guiado",
-    progressStep: (step) => `Paso ${step} de 8`,
+    progressStep: (step, total = 8) => `Paso ${step} de ${total}`,
     result: "Resultado",
     calculatingUnder: (countryName) => (
       <>
@@ -369,7 +369,7 @@ export const homeCopy: Record<Locale, HomeCopy> = {
     ),
     examplesHeading: "Example questions:",
     startGuided: "Start guided calculation",
-    progressStep: (step) => `Step ${step} of 8`,
+    progressStep: (step, total = 8) => `Step ${step} of ${total}`,
     result: "Result",
     calculatingUnder: (countryName) => (
       <>

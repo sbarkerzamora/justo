@@ -117,10 +117,5 @@ export default function CountryLayout({
 }: {
   children: React.ReactNode
 }) {
-  return (
-    <>
-      <style>{`@media (min-width:768px){html{overflow:hidden}}html{scrollbar-width:none!important}html::-webkit-scrollbar{display:none!important}`}</style>
-      {children}
-    </>
-  )
+  return <>{children}</>
 }

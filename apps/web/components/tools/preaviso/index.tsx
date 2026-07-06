@@ -239,7 +239,7 @@ export function PreavisoTool({
         </div>
       )}
 
-      <div className="min-h-0 flex-1 overflow-y-auto">
+      <div className="min-h-0 flex-1">
         {step === "welcome" ? (
           <div className="flex h-full flex-col items-center justify-center gap-8 px-2">
             <div className="flex max-w-md flex-col items-center gap-5 text-center">
