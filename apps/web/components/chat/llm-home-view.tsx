@@ -1,6 +1,7 @@
 "use client"
 
-import { AnimatePresence, motion } from "framer-motion"
+import dynamic from "next/dynamic"
+import { AnimatePresence, motion } from "motion/react"
 import { cn } from "@/lib/utils"
 import type { Locale } from "@/lib/i18n"
 import { getLegalDocsLink } from "@/lib/legal-docs-link"
@@ -38,13 +39,46 @@ import {
   IconMessageCircle,
 } from "@tabler/icons-react"
 
-import { SettlementTool } from "@/components/tools/settlement"
-import { SalaryNetTool } from "@/components/tools/salary-net"
-import { VacationsTool } from "@/components/tools/vacations"
-import { BonusTool } from "@/components/tools/bonus"
-import { TerminationTool } from "@/components/tools/termination"
-import { ContractTool } from "@/components/tools/contract"
-import { PreavisoTool } from "@/components/tools/preaviso"
+function ToolLoading() {
+  return (
+    <div className="flex flex-1 items-center justify-center py-16 text-sm text-muted-foreground">
+      Cargando herramienta...
+    </div>
+  )
+}
+
+const SettlementTool = dynamic(
+  () =>
+    import("@/components/tools/settlement").then((mod) => mod.SettlementTool),
+  { loading: ToolLoading }
+)
+const SalaryNetTool = dynamic(
+  () => import("@/components/tools/salary-net").then((mod) => mod.SalaryNetTool),
+  { loading: ToolLoading }
+)
+const VacationsTool = dynamic(
+  () => import("@/components/tools/vacations").then((mod) => mod.VacationsTool),
+  { loading: ToolLoading }
+)
+const BonusTool = dynamic(
+  () => import("@/components/tools/bonus").then((mod) => mod.BonusTool),
+  { loading: ToolLoading }
+)
+const TerminationTool = dynamic(
+  () =>
+    import("@/components/tools/termination").then(
+      (mod) => mod.TerminationTool
+    ),
+  { loading: ToolLoading }
+)
+const ContractTool = dynamic(
+  () => import("@/components/tools/contract").then((mod) => mod.ContractTool),
+  { loading: ToolLoading }
+)
+const PreavisoTool = dynamic(
+  () => import("@/components/tools/preaviso").then((mod) => mod.PreavisoTool),
+  { loading: ToolLoading }
+)
 
 export function LlmHomeView(props: {
   cc: string

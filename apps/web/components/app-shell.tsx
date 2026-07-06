@@ -11,7 +11,7 @@ import Link from "next/link"
 import { usePathname, useSearchParams, useRouter } from "next/navigation"
 import { useTheme } from "next-themes"
 import Image from "next/image"
-import { AnimatePresence, motion } from "framer-motion"
+import { AnimatePresence, motion } from "motion/react"
 import { BuyMeABeerButton } from "@/components/buy-me-a-beer-button"
 import { TextLoop } from "@/components/core/text-loop"
 import { cn } from "@/lib/utils"
@@ -259,6 +259,7 @@ export function AppShell({
       <div className="py-4">
         <Link
           href="/"
+          prefetch={false}
           onClick={onNavigate}
           className={cn(
             "flex items-center text-sm",
@@ -343,6 +344,7 @@ export function AppShell({
             <Link
               key={link.label}
               href={link.href}
+              prefetch={false}
               className={cn(
                 "flex items-center gap-2 rounded-lg px-2 py-2 text-sm text-sidebar-foreground transition-colors hover:bg-sidebar-accent",
                 expanded ? "" : "justify-center"
@@ -386,6 +388,7 @@ export function AppShell({
                         <Link
                           key={item.label}
                           href={item.href}
+                          prefetch={false}
                           onClick={onNavigate}
                           className="flex items-center gap-2 rounded-lg px-2 py-1.5 text-sm text-sidebar-foreground/80 transition-colors hover:bg-sidebar-accent hover:text-sidebar-foreground"
                         >
@@ -407,6 +410,7 @@ export function AppShell({
             <Link
               key={link.label}
               href={link.href}
+              prefetch={false}
               className={cn(
                 "flex items-center gap-2 rounded-lg px-2 py-2 text-sm text-sidebar-foreground transition-colors hover:bg-sidebar-accent",
                 expanded ? "" : "justify-center"
@@ -464,6 +468,7 @@ export function AppShell({
                 <Link
                   key={link.path}
                   href={link.path}
+                  prefetch={false}
                   onClick={onNavigate}
                   className="text-[10px] text-sidebar-foreground/45 underline-offset-2 transition-colors hover:text-sidebar-foreground hover:underline"
                 >
@@ -639,7 +644,11 @@ export function AppShell({
                 </Select>
               </div>
 
-              <Link href="/" className="flex items-center md:hidden">
+              <Link
+                href="/"
+                prefetch={false}
+                className="flex items-center md:hidden"
+              >
                 <div
                   className="flex h-8 w-8 items-center justify-center rounded-lg"
                   style={{ background: getCountryAccent(country) }}
@@ -683,6 +692,7 @@ export function AppShell({
                   <Link
                     key={link.label}
                     href={link.href}
+                    prefetch={false}
                     className="inline-flex h-8 items-center justify-center gap-1.5 rounded-lg border border-border bg-card px-2 text-xs font-medium text-foreground transition-colors hover:bg-accent sm:px-2.5"
                   >
                     {link.icon}
