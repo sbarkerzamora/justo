@@ -147,8 +147,11 @@ export const getMinimumWageForCalculation = (
   if (exact) return { wage: exact, warnings: [] }
 
   const normalizedCountry = countryCode.toLowerCase()
-  const regionCode = options.regionCode ?? (normalizedCountry === "mx" ? "ZSMG" : "GLOBAL")
-  const sectorCode = options.sectorCode ?? (normalizedCountry === "sv" ? "COMERCIO_SERVICIOS" : "GLOBAL")
+  const regionCode =
+    options.regionCode ?? (normalizedCountry === "mx" ? "ZSMG" : "GLOBAL")
+  const sectorCode =
+    options.sectorCode ??
+    (normalizedCountry === "sv" ? "COMERCIO_SERVICIOS" : "GLOBAL")
   const rules = minimumWageRules
     .filter(
       (rule) =>
@@ -158,9 +161,10 @@ export const getMinimumWageForCalculation = (
     )
     .toSorted((a, b) => b.validFrom.localeCompare(a.validFrom))
 
-  const fallback =
-    rules.find((rule) => rule.validFrom <= date) ?? rules.at(-1) ?? null
-  if (!fallback) return { wage: null, warnings: [] }
+  const fallback = rules[0]
+  if (!fallback || fallback.validTo === null || date <= fallback.validTo) {
+    return { wage: null, warnings: [] }
+  }
 
   return {
     wage: fallback,

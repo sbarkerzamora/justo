@@ -384,6 +384,7 @@ export async function generateLaborResponse(input: {
                   note: s.note,
                 })),
                 legalCorpusVersion: result.legalCorpusVersion,
+                warnings: result.warnings,
               })
             } catch (e) {
               return `Error al comparar escenarios: ${e instanceof Error ? e.message : "error desconocido"}. Usa la calculadora guiada para un calculo mas preciso.`

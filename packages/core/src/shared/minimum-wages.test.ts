@@ -31,4 +31,11 @@ describe("getMinimumWage", () => {
     expect(lookup.wage?.year).toBe(2025)
     expect(lookup.warnings[0]).toContain("base legal documentada")
   })
+
+  test("does not use a future value before the first documented rule", () => {
+    const lookup = getMinimumWageForCalculation("mx", "2020-12-31")
+
+    expect(lookup.wage).toBeNull()
+    expect(lookup.warnings).toEqual([])
+  })
 })
