@@ -1,9 +1,9 @@
 import { PDFDocument } from "pdf-lib"
 import type { VacationInput, VacationResult } from "@justo/core"
 import {
-  loadFonts, drawText, drawLine, drawBox, drawSectionTitle,
-  drawHeader, drawKeyValue, drawSignatureBoxes, drawFooter,
-  money, COLORS,
+  loadFonts, drawSectionTitle, drawHeader, drawSignatureBoxes,
+  drawFooter, drawBreakdownItem, drawStackedKeyValues,
+  drawSummaryCard, money,
 } from "./pdf-helpers"
 
 export const buildVacationsPdf = async (
@@ -25,29 +25,29 @@ export const buildVacationsPdf = async (
     left, y, fontSet)
 
   y = drawSectionTitle(page, "Datos del caso", left, y, fontSet)
-  y = drawKeyValue(page, "Salario mensual", money(input.monthlySalary, result.currency), left, y, fontSet)
-  y = drawKeyValue(page, "Periodo", `${input.startDate} → ${input.endDate}`, left, y, fontSet)
-  y = drawKeyValue(page, "Dias gozados", `${input.usedVacationDays} dias`, left, y, fontSet)
+  y = drawStackedKeyValues(page, [
+    { label: "Salario mensual", value: money(input.monthlySalary, result.currency) },
+    { label: "Periodo", value: `${input.startDate} -> ${input.endDate}` },
+    { label: "Dias gozados", value: `${input.usedVacationDays} dias` },
+  ], left, y, fontSet)
 
   y = drawSectionTitle(page, "Resultado", left, y - 2, fontSet)
-  drawBox(page, left, y - 36, right - left, 34, { borderColor: COLORS.border, borderWidth: 1, fillColor: COLORS.white })
-  drawText(page, "Monto estimado", left + 12, y - 10, { size: 9, bold: true, fontSet })
-  drawText(page, money(result.amount, result.currency), right - 12, y - 16, { size: 16, bold: true, align: "right", fontSet })
-  drawText(page, `Acumulados: ${result.accruedVacationDays} · Pendientes: ${result.pendingVacationDays} · Diario: ${money(result.dailySalary, result.currency)}`, left + 12, y - 24, {
-    size: 7, color: COLORS.muted, fontSet,
-  })
-  y = y - 40
+  y = drawSummaryCard(page, "Monto estimado", money(result.amount, result.currency), [
+    { label: "Dias acumulados", value: String(result.accruedVacationDays) },
+    { label: "Dias pendientes", value: String(result.pendingVacationDays) },
+    { label: "Salario diario", value: money(result.dailySalary, result.currency) },
+  ], left, right, y, fontSet)
 
   y = drawSectionTitle(page, "Detalle", left, y, fontSet)
-  drawBox(page, left, y - 52, right - left, 48, { fillColor: COLORS.bg })
-  drawText(page, "Formula", left + 8, y - 8, { size: 7, color: COLORS.muted, fontSet })
-  drawText(page, result.formula, left + 8, y - 20, { size: 8, bold: true, fontSet })
-  drawText(page, "Referencia legal", left + 8, y - 34, { size: 7, color: COLORS.muted, fontSet })
-  drawText(page, result.legalReference, left + 8, y - 46, { size: 7, fontSet })
-  y = y - 56
+  y = drawBreakdownItem(page, {
+    label: "Vacaciones pendientes",
+    amount: money(result.amount, result.currency),
+    formula: result.formula,
+    legalReference: result.legalReference,
+  }, left, right, y, fontSet)
 
   y = drawSectionTitle(page, "Firmas", left, y, fontSet)
-  y = drawSignatureBoxes(page, y, left, fontSet)
+  y = drawSignatureBoxes(page, y, left, fontSet, right)
   drawFooter(page, y, left, right, fontSet)
 
   return pdf.save()

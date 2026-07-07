@@ -72,4 +72,5 @@ export interface SettlementResult {
   netTotal: number
   generatedAt: string
   legalCorpusVersion: string
+  warnings?: string[]
 }

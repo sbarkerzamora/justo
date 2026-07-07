@@ -27,6 +27,11 @@ export interface MinimumWageLookupOptions {
   sectorCode?: MinimumWageRule["sectorCode"]
 }
 
+export interface MinimumWageCalculationLookup {
+  wage: MinimumWageData | null
+  warnings: string[]
+}
+
 const CONASAMI_SOURCE =
   "https://www.gob.mx/conasami/documentos/tabla-de-salarios-minimos-generales-y-profesionales-por-areas-geograficas"
 const MTPS_SOURCE = "https://www.mtps.gob.sv/descargas/"
@@ -114,8 +119,11 @@ export const getMinimumWage = (
   options: MinimumWageLookupOptions = {},
 ): MinimumWageData | null => {
   const normalizedCountry = countryCode.toLowerCase()
-  const regionCode = options.regionCode ?? (normalizedCountry === "mx" ? "ZSMG" : "GLOBAL")
-  const sectorCode = options.sectorCode ?? (normalizedCountry === "sv" ? "COMERCIO_SERVICIOS" : "GLOBAL")
+  const regionCode =
+    options.regionCode ?? (normalizedCountry === "mx" ? "ZSMG" : "GLOBAL")
+  const sectorCode =
+    options.sectorCode ??
+    (normalizedCountry === "sv" ? "COMERCIO_SERVICIOS" : "GLOBAL")
   const rules = minimumWageRules.filter(
     (rule) =>
       rule.countryCode === normalizedCountry &&
@@ -128,4 +136,40 @@ export const getMinimumWage = (
   }
 
   return rules.toSorted((a, b) => b.validFrom.localeCompare(a.validFrom))[0] ?? null
+}
+
+export const getMinimumWageForCalculation = (
+  countryCode: string,
+  date: string,
+  options: MinimumWageLookupOptions = {},
+): MinimumWageCalculationLookup => {
+  const exact = getMinimumWage(countryCode, date, options)
+  if (exact) return { wage: exact, warnings: [] }
+
+  const normalizedCountry = countryCode.toLowerCase()
+  const regionCode =
+    options.regionCode ?? (normalizedCountry === "mx" ? "ZSMG" : "GLOBAL")
+  const sectorCode =
+    options.sectorCode ??
+    (normalizedCountry === "sv" ? "COMERCIO_SERVICIOS" : "GLOBAL")
+  const rules = minimumWageRules
+    .filter(
+      (rule) =>
+        rule.countryCode === normalizedCountry &&
+        rule.regionCode === regionCode &&
+        rule.sectorCode === sectorCode,
+    )
+    .toSorted((a, b) => b.validFrom.localeCompare(a.validFrom))
+
+  const fallback = rules[0]
+  if (!fallback || fallback.validTo === null || date <= fallback.validTo) {
+    return { wage: null, warnings: [] }
+  }
+
+  return {
+    wage: fallback,
+    warnings: [
+      `Este cálculo usa la base legal documentada disponible en Justo. No hay salario mínimo configurado para ${date}; se usó el valor documentado de ${fallback.year}. Verifica estos datos con un profesional. Estamos actualizando constantemente la base legal.`,
+    ],
+  }
 }

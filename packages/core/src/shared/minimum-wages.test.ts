@@ -1,6 +1,6 @@
 import { describe, expect, test } from "bun:test"
 
-import { getMinimumWage } from "./minimum-wages"
+import { getMinimumWage, getMinimumWageForCalculation } from "./minimum-wages"
 
 describe("getMinimumWage", () => {
   test("returns Mexico daily wage by year and region", () => {
@@ -23,5 +23,19 @@ describe("getMinimumWage", () => {
 
   test("returns null when date has no configured legal value", () => {
     expect(getMinimumWage("co", "2026-01-01")).toBeNull()
+  })
+
+  test("returns latest documented value with a warning for calculations", () => {
+    const lookup = getMinimumWageForCalculation("mx", "2026-01-01")
+
+    expect(lookup.wage?.year).toBe(2025)
+    expect(lookup.warnings[0]).toContain("base legal documentada")
+  })
+
+  test("does not use a future value before the first documented rule", () => {
+    const lookup = getMinimumWageForCalculation("mx", "2020-12-31")
+
+    expect(lookup.wage).toBeNull()
+    expect(lookup.warnings).toEqual([])
   })
 })

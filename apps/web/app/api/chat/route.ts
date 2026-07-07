@@ -58,7 +58,14 @@ const getLatestUserText = (messages: UIMessage[]): string => {
 export async function POST(request: Request) {
   const clientIp = getClientIp(request)
 
-  const { allowed, remaining, reset } = await checkRateLimit("chat", clientIp)
+  const rateLimitPromise = checkRateLimit("chat", clientIp)
+  const bodyPromise = request.json().then(
+    (data) => ({ ok: true as const, data }),
+    () => ({ ok: false as const })
+  )
+
+  const rateLimit = await rateLimitPromise
+  const { allowed, remaining, reset } = rateLimit
   if (!allowed) {
     const retryAfter = Math.max(1, Math.ceil((reset - Date.now()) / 1000))
     return Response.json(
@@ -73,16 +80,16 @@ export async function POST(request: Request) {
     )
   }
 
-  let body: unknown
+  const parsedBody = await bodyPromise
 
-  try {
-    body = await request.json()
-  } catch {
+  if (!parsedBody.ok) {
     return Response.json(
       { error: "JSON invalido en la solicitud" },
       { status: 400 }
     )
   }
+
+  const body: unknown = parsedBody.data
 
   const { messages, countryCode } = body as {
     messages: UIMessage[]

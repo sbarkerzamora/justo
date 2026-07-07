@@ -1,10 +1,9 @@
 import { PDFDocument } from "pdf-lib"
 import type { SettlementInput, SettlementResult } from "@justo/core"
 import {
-  loadFonts, drawText, drawLine, drawBox, drawSectionTitle,
-  drawHeader, drawKeyValue, drawSignatureBoxes,
-  drawTableHeader, drawTableRow, drawFooter,
-  money, COLORS,
+  loadFonts, drawSectionTitle, drawHeader, drawSignatureBoxes,
+  drawFooter, drawBreakdownItem, drawPageBreakIfNeeded,
+  drawStackedKeyValues, drawSummaryCard, money,
 } from "./pdf-helpers"
 
 export const buildSettlementPdf = async (
@@ -12,7 +11,7 @@ export const buildSettlementPdf = async (
   result: SettlementResult,
 ) => {
   const pdf = await PDFDocument.create()
-  const page = pdf.addPage([595.28, 841.89])
+  let page = pdf.addPage([595.28, 841.89])
   const fontSet = await loadFonts(pdf)
 
   const W = 595.28
@@ -21,63 +20,66 @@ export const buildSettlementPdf = async (
   const right = W - 40
   let y = H - 36
 
-  y = drawHeader(page, "Liquidacion Laboral",
-    `${result.currency} · ${new Date(result.generatedAt).toLocaleString("es-NI")} · Corpus: ${result.legalCorpusVersion}`,
-    left, y, fontSet)
+  const headerSub = `${result.currency} · ${new Date(result.generatedAt).toLocaleString("es-NI")} · Corpus: ${result.legalCorpusVersion}`
+  const drawNewPageHeader = (nextPage: typeof page) =>
+    drawHeader(nextPage, "Liquidacion Laboral", headerSub, left, H - 36, fontSet)
+
+  y = drawNewPageHeader(page)
 
   y = drawSectionTitle(page, "Datos del caso", left, y, fontSet)
-  y = drawKeyValue(page, "Trabajador", input.employeeName, left, y, fontSet)
-  y = drawKeyValue(page, "Empleador", input.employerName, left, y, fontSet)
-  y = drawKeyValue(page, "Salario mensual", money(input.monthlySalary, result.currency), left, y, fontSet)
-  y = drawKeyValue(page, "Antiguedad", result.tenureText, left, y, fontSet)
-  y -= 2
+  y = drawStackedKeyValues(page, [
+    { label: "Trabajador", value: input.employeeName },
+    { label: "Empleador", value: input.employerName },
+    { label: "Salario mensual", value: money(input.monthlySalary, result.currency) },
+    { label: "Antiguedad", value: result.tenureText },
+  ], left, y, fontSet)
 
   y = drawSectionTitle(page, "Resultado", left, y, fontSet)
-  drawBox(page, left, y - 36, right - left, 34, { borderColor: COLORS.border, borderWidth: 1, fillColor: COLORS.white })
-  drawText(page, "Neto a recibir", left + 12, y - 10, { size: 9, bold: true, fontSet })
-  drawText(page, money(result.netTotal, result.currency), right - 12, y - 16, { size: 16, bold: true, align: "right", fontSet })
-  drawText(page, `Ingresos: ${money(result.grossIncome, result.currency)}`, left + 12, y - 24, { size: 7, color: COLORS.muted, fontSet })
-  drawText(page, `Deducciones: ${money(result.totalDeductions, result.currency)}`, left + 160, y - 24, { size: 7, color: COLORS.muted, fontSet })
-  y = y - 40
+  y = drawSummaryCard(page, "Neto a recibir", money(result.netTotal, result.currency), [
+    { label: "Ingresos", value: money(result.grossIncome, result.currency) },
+    { label: "Deducciones", value: money(result.totalDeductions, result.currency) },
+  ], left, right, y, fontSet)
+
+  if (result.warnings?.length) {
+    ;({ page, y } = drawPageBreakIfNeeded(pdf, page, y, 120, drawNewPageHeader))
+    y = drawSectionTitle(page, "Aviso de verificacion", left, y, fontSet)
+    for (const warning of result.warnings) {
+      y = drawBreakdownItem(
+        page,
+        { label: "Base legal documentada", note: warning },
+        left,
+        right,
+        y,
+        fontSet,
+      )
+    }
+  }
 
   y = drawSectionTitle(page, "Ingresos", left, y, fontSet)
-  const col1 = left + 4
-  const col2 = left + 140
-  const col3 = left + 290
-  const col4 = right - 4
-  y = drawTableHeader(page, [
-    { label: "Concepto", x: col1 }, { label: "Formula", x: col2 },
-    { label: "Base legal", x: col3 }, { label: "Monto", x: col4 },
-  ], y, left, right, fontSet)
   for (const line of result.incomes) {
-    y = drawTableRow(page, [
-      { text: line.label, x: col1 }, { text: line.formula, x: col2 },
-      { text: line.legalReference, x: col3 }, { text: money(line.amount, result.currency), x: col4, bold: true },
-    ], y, left, right, fontSet)
+    ;({ page, y } = drawPageBreakIfNeeded(pdf, page, y, 120, drawNewPageHeader))
+    y = drawBreakdownItem(page, {
+      label: line.label,
+      amount: money(line.amount, result.currency),
+      formula: line.formula,
+      legalReference: line.legalReference,
+    }, left, right, y, fontSet)
   }
-  drawText(page, `Total ingresos: ${money(result.grossIncome, result.currency)}`, right - 4, y - 2, {
-    size: 8, bold: true, align: "right", fontSet,
-  })
-  y -= 6
 
   y = drawSectionTitle(page, "Deducciones", left, y, fontSet)
-  y = drawTableHeader(page, [
-    { label: "Concepto", x: col1 }, { label: "Formula", x: col2 },
-    { label: "Base legal", x: col3 }, { label: "Monto", x: col4 },
-  ], y, left, right, fontSet)
   for (const line of result.deductions) {
-    y = drawTableRow(page, [
-      { text: line.label, x: col1 }, { text: line.formula, x: col2 },
-      { text: line.legalReference, x: col3 }, { text: money(line.amount, result.currency), x: col4, bold: true },
-    ], y, left, right, fontSet)
+    ;({ page, y } = drawPageBreakIfNeeded(pdf, page, y, 120, drawNewPageHeader))
+    y = drawBreakdownItem(page, {
+      label: line.label,
+      amount: money(line.amount, result.currency),
+      formula: line.formula,
+      legalReference: line.legalReference,
+    }, left, right, y, fontSet)
   }
-  drawText(page, `Total deducciones: ${money(result.totalDeductions, result.currency)}`, right - 4, y - 2, {
-    size: 8, bold: true, align: "right", fontSet,
-  })
-  y -= 6
 
+  ;({ page, y } = drawPageBreakIfNeeded(pdf, page, y, 150, drawNewPageHeader))
   y = drawSectionTitle(page, "Firmas", left, y, fontSet)
-  y = drawSignatureBoxes(page, y, left, fontSet)
+  y = drawSignatureBoxes(page, y, left, fontSet, right)
   drawFooter(page, y, left, right, fontSet)
 
   return pdf.save()

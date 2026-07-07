@@ -1,5 +1,6 @@
 "use client"
 
+import { useState } from "react"
 import {
   IconArrowUp,
   IconMessageCircle,
@@ -23,6 +24,21 @@ import {
   DropdownMenuItem,
 } from "@/components/ui/dropdown-menu"
 import type { Locale } from "@/lib/i18n"
+
+const pickRandomToolModes = (modes: AppMode[]) =>
+  [...modes]
+    .sort(() => Math.random() - 0.5)
+    .slice(0, 4)
+
+const pickInitialToolModes = (modes: AppMode[]) => modes.slice(0, 4)
+
+const pickSeededToolModes = (modes: AppMode[], seed: string) => {
+  let hash = 0
+  for (const char of seed) hash = (hash * 31 + char.charCodeAt(0)) >>> 0
+  return [...modes]
+    .sort((a, b) => ((hash + a.charCodeAt(0)) % 17) - ((hash + b.charCodeAt(0)) % 17))
+    .slice(0, 4)
+}
 
 export function ChatInputPanel({
   chatActions,
@@ -48,7 +64,24 @@ export function ChatInputPanel({
   onNewChat?: () => void
 }) {
   const toolActions = chatActions.filter((a): a is ChatAction & { mode: AppMode } => !!a.mode)
+  const toolModes = toolActions.map((action) => action.mode)
+  const toolModeKey = toolModes.join("|")
+  const [quickToolModes, setQuickToolModes] = useState<AppMode[]>(() =>
+    toolModeKey
+      ? pickSeededToolModes(toolModes, `${toolModeKey}:${new Date().toISOString().slice(0, 10)}`)
+      : pickInitialToolModes(toolModes)
+  )
+  const quickToolActions = quickToolModes
+    .map((mode) => toolActions.find((action) => action.mode === mode))
+    .filter((action): action is ChatAction & { mode: AppMode } => !!action)
+  const remainingToolActions = toolActions.filter(
+    (action) => !quickToolModes.includes(action.mode)
+  )
 
+  const handleNewChat = () => {
+    onNewChat?.()
+    setQuickToolModes(pickRandomToolModes(toolModes))
+  }
   return (
     <div className="pointer-events-auto mx-auto flex w-full max-w-5xl min-w-0 flex-col gap-2">
       {variant === "welcome" ? (
@@ -58,14 +91,31 @@ export function ChatInputPanel({
           setMode={setMode}
         />
       ) : (
-        <button
-          type="button"
-          onClick={onNewChat}
-          className="flex items-center gap-1.5 self-start py-1 text-xs text-muted-foreground/60 transition-colors hover:text-muted-foreground"
-        >
-          <IconMessageCircle className="size-3" />
-          {locale === "en" ? "New chat" : "Nuevo chat"}
-        </button>
+        <div className="flex max-w-full flex-wrap items-center gap-1.5 pb-1">
+          <button
+            type="button"
+            onClick={handleNewChat}
+            className="inline-flex h-8 items-center gap-1.5 rounded-full border border-border/70 bg-background/80 px-2.5 text-xs font-medium text-muted-foreground shadow-none transition-colors hover:border-foreground/20 hover:bg-muted hover:text-foreground sm:px-3"
+          >
+            <IconMessageCircle className="size-3.5" />
+            {locale === "en" ? "New chat" : "Nuevo chat"}
+          </button>
+          {quickToolActions.map((action) => {
+            const Icon = action.icon
+            const label = locale === "en" ? action.labelEn : action.labelEs
+            return (
+              <button
+                key={action.mode}
+                type="button"
+                onClick={() => setMode(action.mode)}
+                className="inline-flex h-8 items-center gap-1.5 rounded-full border border-border/70 bg-background/80 px-2.5 text-xs font-medium text-muted-foreground shadow-none transition-colors hover:border-foreground/20 hover:bg-muted hover:text-foreground sm:px-3"
+              >
+                <Icon className="size-3.5" />
+                <span>{label}</span>
+              </button>
+            )
+          })}
+        </div>
       )}
       <PromptInput
         value={input}
@@ -98,7 +148,7 @@ export function ChatInputPanel({
                 </Button>
               </DropdownMenuTrigger>
               <DropdownMenuContent side="top" align="start">
-                {toolActions.map((action) => {
+                {(remainingToolActions.length > 0 ? remainingToolActions : toolActions).map((action) => {
                   const Icon = action.icon
                   const label = locale === "en" ? action.labelEn : action.labelEs
                   return (

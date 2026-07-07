@@ -154,24 +154,29 @@ const toIsoDate = (displayDate: string) => {
   return `${y.toString().padStart(4, "0")}-${mo.toString().padStart(2, "0")}-${d.toString().padStart(2, "0")}`
 }
 
-const stepIndex = (step: SettlementStep) => {
+const getSettlementStepOrder = (countryCode: string) =>
+  countryCode === "pe"
+    ? stepOrder
+    : stepOrder.filter((step) => step !== "pensionSystem")
+
+const stepIndex = (step: SettlementStep, steps = stepOrder) => {
   if (step === "welcome") return 0
-  const idx = stepOrder.indexOf(step as FlowStep)
-  if (idx === -1) return 8
+  const idx = steps.indexOf(step as FlowStep)
+  if (idx === -1) return steps.length
   return idx + 1
 }
 
-const nextStep = (s: SettlementStep): SettlementStep => {
+const nextStep = (s: SettlementStep, steps = stepOrder): SettlementStep => {
   if (s === "welcome") return "employeeName"
-  const idx = stepOrder.indexOf(s as FlowStep)
-  return (stepOrder[idx + 1] ?? "confirm") as SettlementStep
+  const idx = steps.indexOf(s as FlowStep)
+  return (steps[idx + 1] ?? "confirm") as SettlementStep
 }
 
-const prevStep = (s: SettlementStep): SettlementStep | null => {
+const prevStep = (s: SettlementStep, steps = stepOrder): SettlementStep | null => {
   if (s === "welcome" || s === "done") return null
-  const idx = stepOrder.indexOf(s as FlowStep)
+  const idx = steps.indexOf(s as FlowStep)
   if (idx <= 0) return "welcome"
-  return stepOrder[idx - 1] as SettlementStep
+  return steps[idx - 1] as SettlementStep
 }
 
 const terminationCauseOptions = [
@@ -230,6 +235,7 @@ export function SettlementTool({
   const inputRef = useRef<HTMLInputElement>(null)
 
   const { step, form, result, editMode, error } = state
+  const flowSteps = getSettlementStepOrder(countryCode)
 
   const askText = useCallback(
     (s: SettlementStep) => {
@@ -333,7 +339,7 @@ export function SettlementTool({
     if (step === "contractType" && countryCode === "pe") {
       dispatch({ type: "setStep", step: "pensionSystem" })
     } else {
-      const ns = nextStep(step)
+      const ns = nextStep(step, flowSteps)
       dispatch({ type: "setStep", step: ns })
     }
     setInputValue("")
@@ -361,7 +367,7 @@ export function SettlementTool({
       dispatch({ type: "setStep", step: "pensionSystem" })
       return
     }
-    const prev = prevStep(step)
+    const prev = prevStep(step, flowSteps)
     if (prev) {
       dispatch({ type: "setStep", step: prev })
       setInputValue("")
@@ -370,7 +376,7 @@ export function SettlementTool({
 
   const onFrequencySelect = (f: SettlementForm["frequency"]) => {
     dispatch({ type: "patchForm", patch: { frequency: f } })
-    dispatch({ type: "setStep", step: nextStep("frequency") })
+    dispatch({ type: "setStep", step: nextStep("frequency", flowSteps) })
   }
 
   const runCalculation = () => {
@@ -514,6 +520,13 @@ export function SettlementTool({
     onComplete(messages)
   }
 
+  const progressTotal = flowSteps.length
+  const progressCurrent = Math.max(
+    1,
+    Math.min(stepIndex(step, flowSteps), progressTotal)
+  )
+  const progressText = copy.progressStep(progressCurrent, progressTotal)
+
   return (
     <div className="flex min-h-0 flex-1 flex-col">
       <div className="mb-4 flex w-full items-center justify-between">
@@ -532,12 +545,19 @@ export function SettlementTool({
       </div>
       <div className="mb-3 w-full space-y-2 motion-safe:animate-in motion-safe:duration-200 motion-safe:fade-in motion-safe:slide-in-from-top-1 max-sm:mb-2">
         <div className="mb-1 flex items-center justify-between text-xs text-muted-foreground">
-          <span>{copy.progressStep(stepIndex(step))}</span>
+          <span>{progressText}</span>
         </div>
-        <div className="h-2 rounded-full bg-muted">
+        <div
+          className="h-2 rounded-full bg-muted"
+          role="progressbar"
+          aria-valuemin={1}
+          aria-valuemax={progressTotal}
+          aria-valuenow={progressCurrent}
+          aria-valuetext={progressText}
+        >
           <div
             className="h-2 rounded-full bg-primary transition-all duration-300"
-            style={{ width: `${(stepIndex(step) / stepOrder.length) * 100}%` }}
+            style={{ width: `${(progressCurrent / progressTotal) * 100}%` }}
           />
         </div>
         <div className="flex items-center gap-1.5 text-xs text-muted-foreground">
@@ -559,7 +579,7 @@ export function SettlementTool({
           </Link>
         </div>
       </div>
-      <div className="min-h-0 flex-1 py-2">
+      <div className="flex min-h-0 flex-1 flex-col py-2">
         {step === "welcome" ? (
           <OnboardingPanel
             title={copy.settlementWelcomeTitle}
@@ -574,6 +594,9 @@ export function SettlementTool({
               { label: copy.frequency },
               { label: locale === "en" ? "Cause" : "Causa" },
               { label: locale === "en" ? "Contract" : "Contrato" },
+              ...(countryCode === "pe"
+                ? [{ label: locale === "en" ? "Pension" : "Pensión" }]
+                : []),
               { label: locale === "en" ? "Adjustments" : "Ajustes" },
               { label: copy.result },
             ]}
@@ -581,7 +604,7 @@ export function SettlementTool({
             onStart={() => dispatch({ type: "setStep", step: "employeeName" })}
           />
         ) : editMode ? (
-          <div className="space-y-4 overflow-y-auto">
+          <div className="space-y-4">
             <EditPanelTool
               editMode={editMode}
               editSalary={state.editSalary}
@@ -608,7 +631,7 @@ export function SettlementTool({
             />
           </div>
         ) : step === "confirm" ? (
-          <div className="flex h-full w-full flex-col items-center justify-center overflow-y-auto px-2">
+          <div className="flex h-full w-full flex-col items-center justify-center px-2">
             <div className="w-full max-w-xl space-y-4">
               {error ? (
                 <div className="flex items-center gap-2 rounded-xl border border-rose-200 bg-rose-50 px-4 py-3 text-sm text-rose-700">
@@ -626,7 +649,7 @@ export function SettlementTool({
             </div>
           </div>
         ) : step === "frequency" ? (
-          <div className="flex h-full w-full flex-col items-center justify-center overflow-y-auto px-2">
+          <div className="flex h-full w-full flex-col items-center justify-center px-2">
             <FrequencyPicker onSelect={onFrequencySelect} copy={copy} />
           </div>
         ) : step === "terminationCause" || step === "contractType" ? (
@@ -638,33 +661,49 @@ export function SettlementTool({
           />
         ) : step === "pensionSystem" ? (
           <div className="flex h-full w-full flex-col items-center justify-center gap-6 px-2">
-            <div className="w-full max-w-xl rounded-2xl border border-border bg-card p-6 shadow-sm motion-safe:animate-in motion-safe:duration-200 motion-safe:fade-in motion-safe:slide-in-from-bottom-1">
+            <div className="w-full max-w-xl rounded-2xl border border-border bg-card p-5 shadow-sm motion-safe:animate-in motion-safe:duration-200 motion-safe:fade-in motion-safe:slide-in-from-bottom-1 sm:p-6">
               <p className="text-base font-medium text-foreground">
                 {locale === "en" ? "Pension system" : "Sistema de pensiones"}
               </p>
-              <p className="mt-1 text-sm text-muted-foreground">
+              <p className="mt-1 text-sm leading-relaxed text-muted-foreground">
                 {locale === "en"
-                  ? "Select your pension system"
-                  : "Selecciona tu sistema de pensiones"}
+                  ? "Choose the worker pension system shown on the payslip. This is a worker deduction, not an extra benefit or employer contribution."
+                  : "Elige el sistema de pensiones que aparece en la boleta del trabajador. Es un descuento del trabajador, no un beneficio adicional ni un aporte patronal."}
               </p>
-              <div className="mt-4 flex gap-3">
+              <p className="mt-3 text-xs leading-relaxed text-muted-foreground">
+                {locale === "en"
+                  ? "Use ONP if the payslip says ONP or National Pension System. Use AFP if it names an AFP such as Integra, Prima, Habitat, or Profuturo. If you are not sure, review the payslip or ask payroll before calculating."
+                  : "Usa ONP si la boleta dice ONP o Sistema Nacional de Pensiones. Usa AFP si menciona una AFP como Integra, Prima, Habitat o Profuturo. Si no estás seguro, revisa la boleta o consulta a planilla antes de calcular."}
+              </p>
+              <div className="mt-4 grid gap-3 sm:grid-cols-2">
                 <button
                   type="button"
                   onClick={() => dispatch({ type: "patchForm", patch: { pensionSystem: "onp" } })}
-                  className={`flex-1 rounded-xl border px-4 py-3 text-center text-sm transition-all focus-visible:ring-2 focus-visible:ring-primary/30 focus-visible:outline-none ${form.pensionSystem === "onp" ? "border-primary bg-primary text-primary-foreground" : "border-border bg-card text-foreground hover:bg-accent"}`}
+                  className={`rounded-xl border px-4 py-3 text-center text-sm transition-all focus-visible:ring-2 focus-visible:ring-primary/30 focus-visible:outline-none ${form.pensionSystem === "onp" ? "border-primary bg-primary text-primary-foreground" : "border-border bg-card text-foreground hover:bg-accent"}`}
                 >
                   <div className="font-medium">ONP</div>
                   <div className="mt-0.5 text-xs opacity-70">13%</div>
+                  <div className="mt-1 text-[11px] opacity-70">
+                    {locale === "en" ? "National pension" : "Sistema nacional"}
+                  </div>
                 </button>
                 <button
                   type="button"
                   onClick={() => dispatch({ type: "patchForm", patch: { pensionSystem: "afp" } })}
-                  className={`flex-1 rounded-xl border px-4 py-3 text-center text-sm transition-all focus-visible:ring-2 focus-visible:ring-primary/30 focus-visible:outline-none ${form.pensionSystem === "afp" ? "border-primary bg-primary text-primary-foreground" : "border-border bg-card text-foreground hover:bg-accent"}`}
+                  className={`rounded-xl border px-4 py-3 text-center text-sm transition-all focus-visible:ring-2 focus-visible:ring-primary/30 focus-visible:outline-none ${form.pensionSystem === "afp" ? "border-primary bg-primary text-primary-foreground" : "border-border bg-card text-foreground hover:bg-accent"}`}
                 >
                   <div className="font-medium">AFP</div>
-                  <div className="mt-0.5 text-xs opacity-70">11.2%</div>
+                  <div className="mt-0.5 text-xs opacity-70">10% + 1.37%</div>
+                  <div className="mt-1 text-[11px] opacity-70">
+                    {locale === "en" ? "Mixed commission assumption" : "Supuesto de comisión mixta"}
+                  </div>
                 </button>
               </div>
+              <p className="mt-3 text-[11px] leading-relaxed text-muted-foreground/80">
+                {locale === "en"
+                  ? "Justo uses the documented corpus assumption: ONP 13%, AFP mandatory contribution 10% plus insurance premium 1.37%, subject to the documented cap."
+                  : "Justo usa el supuesto documentado del corpus: ONP 13%, AFP aporte obligatorio 10% más prima de seguro 1.37%, sujeta al tope documentado."}
+              </p>
             </div>
           </div>
         ) : step === "adjustments" ? (
@@ -675,7 +714,7 @@ export function SettlementTool({
             onPatch={(patch) => dispatch({ type: "patchForm", patch })}
           />
         ) : result && step === "done" ? (
-          <div className="flex h-full w-full flex-col items-center justify-center overflow-y-auto px-2">
+          <div className="flex h-full w-full flex-col items-center justify-center px-2">
             <div className="w-full max-w-xl space-y-4">
               <ResultPanelTool
                 result={result}
@@ -688,7 +727,7 @@ export function SettlementTool({
             </div>
           </div>
         ) : (
-          <div className="flex h-full flex-col items-center justify-center gap-6 px-2">
+          <div className="flex min-h-0 flex-1 flex-col items-center justify-center gap-6 px-2">
             <div className="w-full max-w-xl rounded-2xl border border-border bg-card p-6 shadow-sm motion-safe:animate-in motion-safe:duration-200 motion-safe:fade-in motion-safe:slide-in-from-bottom-1">
               <p className="text-base font-medium text-foreground">
                 {askText(step)}
@@ -739,7 +778,7 @@ export function SettlementTool({
               canContinue={!!inputValue.trim()}
               showBack={step !== "employeeName"}
               backLabel={copy.backToPrevious}
-              continueLabel={copy.send}
+              continueLabel={copy.continueStep}
             />
           )}
         {(step === "terminationCause" || step === "contractType") &&
@@ -750,13 +789,13 @@ export function SettlementTool({
                 if (step === "contractType" && countryCode === "pe") {
                   dispatch({ type: "setStep", step: "pensionSystem" })
                 } else {
-                  dispatch({ type: "setStep", step: nextStep(step) })
+                  dispatch({ type: "setStep", step: nextStep(step, flowSteps) })
                 }
               }}
               canContinue
               showBack
               backLabel={copy.backToPrevious}
-              continueLabel={copy.send}
+              continueLabel={copy.continueStep}
             />
           )}
         {step === "pensionSystem" && !editMode && (
@@ -768,19 +807,19 @@ export function SettlementTool({
             canContinue={!!form.pensionSystem}
             showBack
             backLabel={copy.backToPrevious}
-            continueLabel={copy.send}
+            continueLabel={copy.continueStep}
           />
         )}
         {step === "adjustments" && !editMode && (
           <StepNavigation
             onBack={handleBack}
             onContinue={() =>
-              dispatch({ type: "setStep", step: nextStep(step) })
+              dispatch({ type: "setStep", step: nextStep(step, flowSteps) })
             }
             canContinue
             showBack
             backLabel={copy.backToPrevious}
-            continueLabel={copy.send}
+            continueLabel={copy.continueStep}
           />
         )}
       </div>
@@ -873,7 +912,7 @@ function ChoicePanel({
   onPatch: (patch: Partial<SettlementForm>) => void
 }) {
   return (
-    <div className="flex h-full flex-col items-center justify-center gap-6 px-2">
+    <div className="flex min-h-0 flex-1 flex-col items-center justify-center gap-6 px-2">
       <div className="w-full max-w-xl rounded-2xl border border-border bg-card p-6 shadow-sm motion-safe:animate-in motion-safe:duration-200 motion-safe:fade-in motion-safe:slide-in-from-bottom-1">
         <p className="text-base font-medium text-foreground">
           {step === "terminationCause"
@@ -982,7 +1021,7 @@ function SettlementAdjustmentsPanel({
   ]
 
   return (
-    <div className="flex h-full flex-col items-center justify-center overflow-y-auto px-2 pb-4 sm:pb-2">
+    <div className="flex min-h-0 flex-1 flex-col items-center justify-center px-2 pb-4 sm:pb-2">
       <div className="w-full max-w-xl rounded-2xl border border-border bg-card p-4 shadow-sm motion-safe:animate-in motion-safe:duration-200 motion-safe:fade-in motion-safe:slide-in-from-bottom-1 sm:p-6">
         <div className="flex items-start gap-2.5">
           <div className="rounded-lg bg-primary/10 p-1.5 sm:rounded-xl sm:p-2">
@@ -1333,6 +1372,23 @@ function ResultPanelTool({
           </div>
         </div>
       </div>
+
+      {result.warnings?.length ? (
+        <div className="rounded-2xl border border-amber-200 bg-amber-50 px-4 py-3 text-sm text-amber-900">
+          <div className="flex items-start gap-2">
+            <IconAlertCircle className="mt-0.5 size-4 shrink-0" />
+            <div className="space-y-1">
+              <p className="font-medium">{copy.calculationWarningTitle}</p>
+              <p className="leading-relaxed">{copy.calculationWarning}</p>
+              {result.warnings.map((warning) => (
+                <p key={warning} className="text-xs leading-relaxed text-amber-800">
+                  {warning}
+                </p>
+              ))}
+            </div>
+          </div>
+        </div>
+      ) : null}
 
       <div className="overflow-hidden rounded-2xl border border-border bg-card shadow-sm">
         <details className="group">

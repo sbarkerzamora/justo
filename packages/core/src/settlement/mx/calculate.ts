@@ -1,5 +1,5 @@
 import { clamp, round2, daysBetween, startOfYear, formatTenure } from "../shared"
-import { getMinimumWage } from "../../shared"
+import { getMinimumWageForCalculation } from "../../shared"
 import { SettlementInput, SettlementLine, SettlementResult } from "../types"
 import { getMexicoLegalRates } from "./legal-params"
 
@@ -39,7 +39,10 @@ export const calculateMexicoSettlement = (
   const indemnizacionAnual = round2(dailySalary * tenureYears * 12)
 
   // Prima de antiguedad: Art. 162 - 12 dias/ano, tope 2x salario minimo
-  const mxMinWage = getMinimumWage("mx", input.endDate)
+  const { wage: mxMinWage, warnings } = getMinimumWageForCalculation(
+    "mx",
+    input.endDate,
+  )
   if (!mxMinWage) throw new Error("No hay salario mínimo MX para la fecha indicada")
   const cappedDailySalary = Math.min(dailySalary, mxMinWage.daily * 2)
   const primaAntiguedad = round2(cappedDailySalary * tenureYears * 12)
@@ -133,5 +136,6 @@ export const calculateMexicoSettlement = (
     netTotal,
     generatedAt: new Date().toISOString(),
     legalCorpusVersion: LEGAL_CORPUS_VERSION,
+    warnings,
   }
 }

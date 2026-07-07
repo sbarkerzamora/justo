@@ -4,13 +4,14 @@ import {
   isSpecialTerminationClosure,
   makeIndemnityLine,
 } from "../shared"
-import { getMinimumWage } from "../../shared"
+import { getMinimumWageForCalculation } from "../../shared"
 import type { TerminationInput } from "../types"
 
-const indemnizacionColombia = (ctx: { dailySalary: number; fullYears: number; monthlySalary: number; endDate: string }) => {
-  const coMinWage = getMinimumWage("co", ctx.endDate)
-  if (!coMinWage) throw new Error("No hay SMMLV CO para la fecha indicada")
-  const tenSmmlv = coMinWage.monthly * 10
+const indemnizacionColombia = (
+  ctx: { dailySalary: number; fullYears: number; monthlySalary: number },
+  minWageMonthly: number,
+) => {
+  const tenSmmlv = minWageMonthly * 10
   const isHighSalary = ctx.monthlySalary >= tenSmmlv
 
   const baseDays = isHighSalary ? 20 : 30
@@ -31,10 +32,16 @@ export const getColombiaTerminationParams = (
 ): TerminationParams => {
   const specialClosure = isSpecialTerminationClosure(input)
   const closureNote = getSpecialTerminationClosureNote(input)
+  const { wage: coMinWage, warnings } = getMinimumWageForCalculation(
+    "co",
+    input.endDate,
+  )
+  if (!coMinWage) throw new Error("No hay SMMLV CO para la fecha indicada")
 
   return {
     currency: "COP",
     corpusVersion: "co-v0.3.0",
+    warnings,
     scenarios: [
       {
         type: "renuncia",
@@ -56,7 +63,7 @@ export const getColombiaTerminationParams = (
         applicable: !specialClosure,
         note: specialClosure ? closureNote : undefined,
         buildLines: (ctx) => {
-          const info = indemnizacionColombia(ctx)
+          const info = indemnizacionColombia(ctx, coMinWage.monthly)
           return [
             makeIndemnityLine(
               info.label,

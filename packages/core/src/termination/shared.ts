@@ -47,6 +47,7 @@ export interface TerminationParams {
   currency: CurrencyCode
   corpusVersion: string
   scenarios: TerminationScenarioConfig[]
+  warnings?: string[]
 }
 
 export const isSpecialTerminationClosure = (input: TerminationInput) =>
@@ -141,6 +142,7 @@ export function buildTermination(
     contractType: input.contractType,
     generatedAt: new Date().toISOString(),
     legalCorpusVersion: params.corpusVersion,
+    warnings: params.warnings,
   }
 }
 

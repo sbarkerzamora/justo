@@ -228,6 +228,12 @@
   html {
     @apply font-sans;
   }
+  html.justo-chat-viewport,
+  html.justo-chat-viewport body {
+    height: 100dvh;
+    overflow: hidden;
+    overscroll-behavior: none;
+  }
 }
 
 @layer components {
