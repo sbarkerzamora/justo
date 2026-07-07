@@ -64,10 +64,7 @@ export async function POST(request: Request) {
     () => ({ ok: false as const })
   )
 
-  const [rateLimit, parsedBody] = await Promise.all([
-    rateLimitPromise,
-    bodyPromise,
-  ])
+  const rateLimit = await rateLimitPromise
   const { allowed, remaining, reset } = rateLimit
   if (!allowed) {
     const retryAfter = Math.max(1, Math.ceil((reset - Date.now()) / 1000))
@@ -82,6 +79,8 @@ export async function POST(request: Request) {
       }
     )
   }
+
+  const parsedBody = await bodyPromise
 
   if (!parsedBody.ok) {
     return Response.json(

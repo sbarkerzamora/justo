@@ -204,32 +204,9 @@ export function drawSignatureBoxes(
 
   if (right) {
     const workerY = y - boxH
-    drawBox(page, left, workerY, boxW, boxH, {
-      borderColor: COLORS.border, borderWidth: 1,
-    })
-    drawLine(page, left + 10, workerY + 18, left + boxW - 10, workerY + 18, {
-      color: COLORS.text, width: 0.5,
-    })
-    drawText(page, "Firma", left + 10, workerY + 23, {
-      size: 7, color: COLORS.muted, fontSet,
-    })
-    drawText(page, "Trabajador", left + 10, workerY + 5, {
-      size: 7, color: COLORS.muted, fontSet,
-    })
-
     const employerY = workerY - boxH - 10
-    drawBox(page, left, employerY, boxW, boxH, {
-      borderColor: COLORS.border, borderWidth: 1,
-    })
-    drawLine(page, left + 10, employerY + 18, left + boxW - 10, employerY + 18, {
-      color: COLORS.text, width: 0.5,
-    })
-    drawText(page, "Firma", left + 10, employerY + 23, {
-      size: 7, color: COLORS.muted, fontSet,
-    })
-    drawText(page, "Empleador", left + 10, employerY + 5, {
-      size: 7, color: COLORS.muted, fontSet,
-    })
+    drawOne("Trabajador", left, workerY)
+    drawOne("Empleador", left, employerY)
     return employerY - 12
   }
 

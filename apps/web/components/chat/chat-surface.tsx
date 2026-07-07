@@ -30,6 +30,7 @@ export function ChatSurface({
   messages,
   isTyping,
   typingMode,
+  isStreamingReply,
   chatActions,
   setMode,
   resetConversation,
@@ -47,6 +48,7 @@ export function ChatSurface({
   messages: ChatMessage[]
   isTyping: boolean
   typingMode: "idle" | "searching" | "thinking" | "generating"
+  isStreamingReply: boolean
   chatActions: ChatAction[]
   setMode: (mode: AppMode) => void
   resetConversation: () => void
@@ -68,7 +70,10 @@ export function ChatSurface({
     if (!composer) return
 
     const observer = new ResizeObserver(([entry]) => {
-      setComposerHeight(Math.ceil(entry.contentRect.height))
+      const borderBox = entry.borderBoxSize?.[0]
+      const nextHeight =
+        borderBox?.blockSize ?? composer.offsetHeight ?? entry.contentRect.height
+      setComposerHeight(Math.ceil(nextHeight))
     })
     observer.observe(composer)
 
@@ -100,6 +105,12 @@ export function ChatSurface({
     scrollElement.scrollTo({ top: scrollElement.scrollHeight, behavior: "smooth" })
   }
 
+  const handleSend = async () => {
+    shouldStickRef.current = true
+    setIsAtBottom(true)
+    await onSend()
+  }
+
   return (
     <div className="relative h-full min-h-0 w-full overflow-hidden">
       <div
@@ -117,6 +128,7 @@ export function ChatSurface({
           messages={messages}
           isTyping={isTyping}
           typingMode={typingMode}
+          isStreamingReply={isStreamingReply}
           copy={copy}
         />
       </div>
@@ -131,6 +143,8 @@ export function ChatSurface({
         )}
         style={{ ["--composer-height" as string]: `${composerHeight}px` }}
         aria-label={locale === "en" ? "Scroll to bottom" : "Ir al final"}
+        aria-hidden={isAtBottom}
+        tabIndex={isAtBottom ? -1 : 0}
       >
         <IconArrowDown className="size-5" />
       </button>
@@ -144,7 +158,7 @@ export function ChatSurface({
           setMode={setMode}
           input={input}
           setInput={setInput}
-          onSend={onSend}
+          onSend={handleSend}
           isLoading={isLoading}
           onStop={onStop}
           variant="compact"
@@ -163,6 +177,7 @@ function ChatMessageList({
   messages,
   isTyping,
   typingMode,
+  isStreamingReply,
   copy,
 }: {
   cc: string
@@ -172,6 +187,7 @@ function ChatMessageList({
   messages: ChatMessage[]
   isTyping: boolean
   typingMode: "idle" | "searching" | "thinking" | "generating"
+  isStreamingReply: boolean
   copy: (typeof homeCopy)[Locale]
 }) {
   const lastAssistantId = [...messages]
@@ -202,7 +218,7 @@ function ChatMessageList({
               )}
             >
               {message.role === "assistant" && message.reasoning ? (
-                <Reasoning>
+                <Reasoning isStreaming={isStreamingReply && isLastAssistant}>
                   <ReasoningTrigger className="mb-2 text-xs font-medium">
                     {locale === "en" ? "Show reasoning" : "Ver razonamiento"}
                   </ReasoningTrigger>

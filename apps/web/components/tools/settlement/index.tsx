@@ -565,7 +565,7 @@ export function SettlementTool({
           </Link>
         </div>
       </div>
-      <div className="min-h-0 flex-1 py-2">
+      <div className="flex min-h-0 flex-1 flex-col py-2">
         {step === "welcome" ? (
           <OnboardingPanel
             title={copy.settlementWelcomeTitle}
@@ -659,7 +659,7 @@ export function SettlementTool({
               <p className="mt-3 text-xs leading-relaxed text-muted-foreground">
                 {locale === "en"
                   ? "Use ONP if the payslip says ONP or National Pension System. Use AFP if it names an AFP such as Integra, Prima, Habitat, or Profuturo. If you are not sure, review the payslip or ask payroll before calculating."
-                  : "Usa ONP si la boleta dice ONP o Sistema Nacional de Pensiones. Usa AFP si menciona una AFP como Integra, Prima, Habitat o Profuturo. Si no estas seguro, revisa la boleta o consulta a planilla antes de calcular."}
+                  : "Usa ONP si la boleta dice ONP o Sistema Nacional de Pensiones. Usa AFP si menciona una AFP como Integra, Prima, Habitat o Profuturo. Si no estás seguro, revisa la boleta o consulta a planilla antes de calcular."}
               </p>
               <div className="mt-4 grid gap-3 sm:grid-cols-2">
                 <button
@@ -681,14 +681,14 @@ export function SettlementTool({
                   <div className="font-medium">AFP</div>
                   <div className="mt-0.5 text-xs opacity-70">10% + 1.37%</div>
                   <div className="mt-1 text-[11px] opacity-70">
-                    {locale === "en" ? "Mixed commission assumption" : "Supuesto de comision mixta"}
+                    {locale === "en" ? "Mixed commission assumption" : "Supuesto de comisión mixta"}
                   </div>
                 </button>
               </div>
               <p className="mt-3 text-[11px] leading-relaxed text-muted-foreground/80">
                 {locale === "en"
                   ? "Justo uses the documented corpus assumption: ONP 13%, AFP mandatory contribution 10% plus insurance premium 1.37%, subject to the documented cap."
-                  : "Justo usa el supuesto documentado del corpus: ONP 13%, AFP aporte obligatorio 10% mas prima de seguro 1.37%, sujeta al tope documentado."}
+                  : "Justo usa el supuesto documentado del corpus: ONP 13%, AFP aporte obligatorio 10% más prima de seguro 1.37%, sujeta al tope documentado."}
               </p>
             </div>
           </div>

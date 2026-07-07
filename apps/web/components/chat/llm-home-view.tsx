@@ -81,6 +81,7 @@ export function LlmHomeView(props: {
   onToolCancel: () => void
   isTyping: boolean
   typingMode: "idle" | "searching" | "thinking" | "generating"
+  isStreamingReply: boolean
   input: string
   setInput: (value: string) => void
   onSend: () => Promise<void>
@@ -102,6 +103,7 @@ export function LlmHomeView(props: {
     onToolCancel,
     isTyping,
     typingMode,
+    isStreamingReply,
     input,
     setInput,
     onSend,
@@ -164,13 +166,14 @@ export function LlmHomeView(props: {
   ]
 
   return (
-      <section
-        className={cn(
-          "relative z-10 mx-auto flex h-full min-h-0 w-full min-w-0 flex-1 flex-col overflow-hidden px-4 md:px-8",
-          isChatMode && messages.length > 0 ? "max-w-none" : "max-w-5xl",
-          isChatMode && messages.length === 0 ? "pt-0" : "pt-4 md:pt-6"
-        )}
-      >
+    <section
+      className={cn(
+        "relative z-10 mx-auto flex h-full min-h-0 w-full min-w-0 flex-1 flex-col px-4 md:px-8",
+        isChatMode ? "overflow-hidden" : "overflow-y-auto",
+        isChatMode && messages.length > 0 ? "max-w-none" : "max-w-5xl",
+        isChatMode && messages.length === 0 ? "pt-0" : "pt-4 md:pt-6"
+      )}
+    >
       {isChatMode ? (
         messages.length === 0 ? (
           <AnimatePresence mode="wait">
@@ -211,6 +214,7 @@ export function LlmHomeView(props: {
             messages={messages}
             isTyping={isTyping}
             typingMode={typingMode}
+            isStreamingReply={isStreamingReply}
             chatActions={chatActions}
             setMode={setMode}
             resetConversation={resetConversation}

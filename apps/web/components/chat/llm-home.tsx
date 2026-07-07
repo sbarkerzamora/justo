@@ -116,6 +116,7 @@ export function LlmHome({
     isLoading,
     isTyping,
     typingMode,
+    isStreamingReply,
     setLoading,
     setTyping,
     setTypingMode,
@@ -402,6 +403,7 @@ export function LlmHome({
       onToolCancel={handleToolCancel}
       isTyping={isTyping}
       typingMode={typingMode}
+      isStreamingReply={isStreamingReply}
       input={input}
       setInput={setInput}
       onSend={onSend}
