@@ -11,8 +11,10 @@ import {
   buildToolJsonLd,
   getToolAppMode,
   getToolPageMetadata,
+  SEO_YEAR,
 } from "@/lib/tool-seo"
 import { getLegalDocsLink } from "@/lib/legal-docs-link"
+import type { AppMode } from "@/components/chat/types"
 
 const SITE_URL = getSiteUrl()
 
@@ -104,13 +106,183 @@ const countryIntentCopy: Partial<
   },
 }
 
+const englishToolIntro: Record<string, string> = {
+  "liquidacion-laboral":
+    "Estimate labor settlement amounts with an informational calculation that separates income, deductions and net total.",
+  vacaciones:
+    "Estimate accrued, used and pending vacation days from salary, dates and days already taken.",
+  "salario-neto":
+    "Estimate net salary from gross pay and documented labor deductions for the selected country.",
+  "aguinaldo-decimo-bono":
+    "Estimate proportional bonus, 13th salary, service premium, SAC or gratification payments where the corpus supports them.",
+  preaviso:
+    "Estimate notice period days and substitute payment when applicable under the selected country's rules.",
+  "simulador-terminacion":
+    "Compare basic employment termination scenarios with informational amounts and legal references.",
+  "generador-contratos":
+    "Generate an informational employment contract draft with the data, clauses and signatures required by the selected country.",
+}
+
+const englishOutputItems: Record<string, string[]> = {
+  "liquidacion-laboral": [
+    "Income breakdown",
+    "Deductions",
+    "Gross total",
+    "Net total",
+    "Formulas and legal references",
+  ],
+  vacaciones: [
+    "Accrued vacation days",
+    "Used vacation days",
+    "Pending days",
+    "Estimated amount",
+    "Formula and legal reference",
+  ],
+  "salario-neto": [
+    "Gross salary",
+    "Deductions",
+    "Monthly net salary",
+    "Payment frequency estimates",
+    "Legal references",
+  ],
+  "aguinaldo-decimo-bono": [
+    "Proportional amount",
+    "Applicable lines",
+    "Formula",
+    "Legal references",
+  ],
+  preaviso: ["Notice days", "Notice amount", "Legal reference"],
+  "simulador-terminacion": [
+    "Scenario comparison",
+    "Estimated severance",
+    "Notice period",
+    "Legal references",
+  ],
+  "generador-contratos": ["PDF contract", "Legal clauses", "Signature lines"],
+}
+
+const englishInputItems: Record<string, string[]> = {
+  "liquidacion-laboral": [
+    "Country",
+    "Monthly salary",
+    "Start date",
+    "End date",
+    "Pending vacation days",
+    "Termination reason",
+  ],
+  vacaciones: [
+    "Country",
+    "Monthly salary",
+    "Start date",
+    "Cutoff date",
+    "Vacation days already taken",
+  ],
+  "salario-neto": ["Country", "Gross salary", "Payment frequency"],
+  "aguinaldo-decimo-bono": [
+    "Country",
+    "Monthly salary",
+    "Start date",
+    "Cutoff date",
+  ],
+  preaviso: [
+    "Country",
+    "Monthly salary",
+    "Seniority",
+    "Termination reason",
+    "Contract type",
+  ],
+  "simulador-terminacion": [
+    "Country",
+    "Monthly salary",
+    "Start date",
+    "End date",
+    "Termination reason",
+  ],
+  "generador-contratos": [
+    "Country",
+    "Worker details",
+    "Employer details",
+    "Position and duties",
+    "Schedule",
+    "Salary",
+  ],
+}
+
+type LandingPageData = {
+  locale: Locale
+  country: CountryCode
+  slug: string
+  appMode: Exclude<AppMode, "chat">
+  tool: JustoTool
+  countryInfo: NonNullable<ReturnType<typeof getCountryInfo>>
+  title: string
+}
+
 function getLandingTitle(slug: string, locale: Locale, countryName: string) {
   const label = toolTitles[slug]?.[locale] ?? slug
   return locale === "en" ? `${label} in ${countryName}` : `${label} en ${countryName}`
 }
 
-function getLandingIntro(tool: JustoTool, country: CountryCode, slug: string) {
+function getLandingIntro(
+  tool: JustoTool,
+  country: CountryCode,
+  slug: string,
+  locale: Locale,
+  countryName: string
+) {
+  if (locale === "en") {
+    const base = englishToolIntro[slug] ?? "Use this informational labor tool."
+    return `${base} It uses the legal corpus for ${countryName} and shows formulas, references and corpus version.`
+  }
+
   return countryIntentCopy[country]?.[slug] ?? tool.longDescription
+}
+
+function getOutputItems(tool: JustoTool, slug: string, locale: Locale) {
+  return locale === "en"
+    ? (englishOutputItems[slug] ?? ["Informational result", "Legal references"])
+    : tool.outputSummary.slice(0, 5)
+}
+
+function getInputItems(tool: JustoTool, slug: string, locale: Locale) {
+  return locale === "en"
+    ? (englishInputItems[slug] ?? ["Country", "Case data"])
+    : tool.inputRequirements.slice(0, 8)
+}
+
+function serializeJsonLd(data: unknown) {
+  return JSON.stringify(data).replace(/<\//g, "<\\/")
+}
+
+function resolveLandingPageData({
+  locale,
+  country,
+  tool: slug,
+}: {
+  locale: string
+  country: string
+  tool: string
+}): LandingPageData | null {
+  if (!isValidLocale(locale) || !isValidCountry(country)) return null
+
+  const appMode = getToolAppMode(slug)
+  if (!appMode || appMode === "chat") return null
+
+  const tool = getToolForCountry(slug, country)
+  if (!tool || !tool.countrySupport.includes(country)) return null
+
+  const countryInfo = getCountryInfo(country)
+  if (!countryInfo) return null
+
+  return {
+    locale,
+    country,
+    slug,
+    appMode,
+    tool,
+    countryInfo,
+    title: getLandingTitle(slug, locale, countryInfo.name),
+  }
 }
 
 export function generateStaticParams() {
@@ -129,24 +301,15 @@ export async function generateMetadata({
 }: {
   params: Promise<{ locale: string; country: string; tool: string }>
 }): Promise<Metadata> {
-  const { locale, country, tool: slug } = await params
-  if (!isValidLocale(locale) || !isValidCountry(country)) return {}
-
-  const appMode = getToolAppMode(slug)
-  if (!appMode) return {}
-
-  const item = getToolForCountry(slug, country)
-  if (!item || !item.countrySupport.includes(country)) return {}
-
-  const countryInfo = getCountryInfo(country)!
-  const title = getLandingTitle(slug, locale, countryInfo.name)
+  const data = resolveLandingPageData(await params)
+  if (!data) return {}
 
   return getToolPageMetadata({
-    slug,
-    tool: item,
-    country,
-    title,
-    pageLocale: locale,
+    slug: data.slug,
+    tool: data.tool,
+    country: data.country,
+    title: data.title,
+    pageLocale: data.locale,
   })
 }
 
@@ -155,22 +318,17 @@ export default async function CountryToolLandingPage({
 }: {
   params: Promise<{ locale: string; country: string; tool: string }>
 }) {
-  const { locale, country, tool: slug } = await params
-  if (!isValidLocale(locale) || !isValidCountry(country)) notFound()
+  const data = resolveLandingPageData(await params)
+  if (!data) notFound()
 
-  const appMode = getToolAppMode(slug)
-  if (!appMode) notFound()
-
-  const tool = getToolForCountry(slug, country)
-  if (!tool || !tool.countrySupport.includes(country)) notFound()
-
-  const countryInfo = getCountryInfo(country)!
-  const title = getLandingTitle(slug, locale, countryInfo.name)
-  const intro = getLandingIntro(tool, country, slug)
+  const { locale, country, slug, appMode, tool, countryInfo, title } = data
+  const intro = getLandingIntro(tool, country, slug, locale, countryInfo.name)
   const legalHub = getLegalDocsLink(country)
   const appUrl = `/${locale}/${country}?tool=${appMode}`
   const toolsUrl = locale === "en" ? "/en/tools" : "/tools"
   const pageUrl = `${SITE_URL}/${locale}/${country}/${slug}`
+  const outputItems = getOutputItems(tool, slug, locale)
+  const inputItems = getInputItems(tool, slug, locale)
   const faqs = [
     {
       question:
@@ -187,7 +345,7 @@ export default async function CountryToolLandingPage({
         locale === "en"
           ? "What data do I need?"
           : "¿Qué datos necesito para calcular?",
-      answer: tool.inputRequirements.slice(0, 5).join(", "),
+      answer: inputItems.slice(0, 5).join(", "),
     },
   ]
   const jsonLd = buildToolJsonLd({
@@ -210,14 +368,23 @@ export default async function CountryToolLandingPage({
               {locale === "en" ? "← Tools" : "← Herramientas"}
             </Link>
             <p className="mb-4 text-xs font-semibold tracking-[0.22em] text-muted-foreground uppercase">
-              {countryInfo.name} · {tool.availability === "available" ? "Disponible" : "Informativo"}
+              {countryInfo.name} ·{" "}
+              {tool.availability === "available"
+                ? locale === "en"
+                  ? "Available"
+                  : "Disponible"
+                : locale === "en"
+                  ? "Informational"
+                  : "Informativo"}
             </p>
             <h1 className="max-w-3xl text-4xl leading-none font-semibold tracking-[-0.045em] text-foreground sm:text-5xl">
-              {title} 2026
+              {title} {SEO_YEAR}
             </h1>
             <p className="mt-5 max-w-[62ch] text-base leading-7 text-muted-foreground sm:text-lg sm:leading-8">
-              {intro} El resultado es informativo, gratuito y muestra fórmulas,
-              referencias legales y versión del corpus usado.
+              {intro}{" "}
+              {locale === "en"
+                ? "The result is informational, free and shows formulas, legal references and the corpus version used."
+                : "El resultado es informativo, gratuito y muestra fórmulas, referencias legales y versión del corpus usado."}
             </p>
             <div className="mt-8 flex flex-wrap gap-3">
               <Link
@@ -241,7 +408,7 @@ export default async function CountryToolLandingPage({
                 {locale === "en" ? "What it calculates" : "Qué calcula"}
               </h2>
               <ul className="mt-5 space-y-3 text-sm leading-6 text-foreground">
-                {tool.outputSummary.slice(0, 5).map((item) => (
+                {outputItems.map((item) => (
                   <li className="flex gap-3" key={item}>
                     <span className="mt-2 block size-1.5 rounded-full bg-primary" />
                     <span>{item}</span>
@@ -255,7 +422,7 @@ export default async function CountryToolLandingPage({
                 {locale === "en" ? "Data needed" : "Datos necesarios"}
               </h2>
               <ul className="mt-5 grid gap-2 text-sm leading-6 text-muted-foreground sm:grid-cols-2">
-                {tool.inputRequirements.slice(0, 8).map((item) => (
+                {inputItems.map((item) => (
                   <li key={item}>{item}</li>
                 ))}
               </ul>
@@ -269,7 +436,9 @@ export default async function CountryToolLandingPage({
                 {tool.legalReferences.slice(0, 3).join(" · ")}. Corpus {tool.corpusVersion}.
               </p>
               <p className="mt-4 text-xs leading-6 text-muted-foreground">
-                {tool.disclaimer}
+                {locale === "en"
+                  ? "Informational result generated from deterministic rules and Justo's versioned legal corpus. It does not replace professional legal or accounting advice."
+                  : tool.disclaimer}
               </p>
             </section>
 
@@ -295,12 +464,12 @@ export default async function CountryToolLandingPage({
       </main>
       <script
         type="application/ld+json"
-        dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
+        dangerouslySetInnerHTML={{ __html: serializeJsonLd(jsonLd) }}
       />
       <script
         type="application/ld+json"
         dangerouslySetInnerHTML={{
-          __html: JSON.stringify({
+          __html: serializeJsonLd({
             "@context": "https://schema.org",
             "@type": "FAQPage",
             mainEntity: faqs.map((faq) => ({

@@ -105,17 +105,28 @@ export default function sitemap(): MetadataRoute.Sitemap {
       priority: 0.8,
     })
     for (const country of countryList) {
+      const languages = {
+        [country.hreflang]: `${SITE_URL}/es/${country.code}/${slug}`,
+        en: `${SITE_URL}/en/${country.code}/${slug}`,
+        "x-default": `${SITE_URL}/es/${country.code}/${slug}`,
+      }
+
       entries.push({
         url: `${SITE_URL}/es/${country.code}/${slug}`,
         lastModified: LAST_MODIFIED,
         changeFrequency: "weekly",
         priority: 0.85,
         alternates: {
-          languages: {
-            [country.hreflang]: `${SITE_URL}/es/${country.code}/${slug}`,
-            en: `${SITE_URL}/en/${country.code}/${slug}`,
-            "x-default": `${SITE_URL}/es/${country.code}/${slug}`,
-          },
+          languages,
+        },
+      })
+      entries.push({
+        url: `${SITE_URL}/en/${country.code}/${slug}`,
+        lastModified: LAST_MODIFIED,
+        changeFrequency: "weekly",
+        priority: 0.65,
+        alternates: {
+          languages,
         },
       })
     }

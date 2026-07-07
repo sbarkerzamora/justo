@@ -4,7 +4,7 @@ import { CountryShell } from "@/components/country-shell"
 import { type Locale, isValidLocale } from "@/lib/i18n"
 import { getSiteUrl } from "@/lib/site-url"
 import { getSeoData, type SeoData } from "@/lib/country-seo-data"
-import type { AppMode } from "@/components/chat/types"
+import { isAppMode } from "@/components/chat/types"
 
 const SITE_URL = getSiteUrl()
 
@@ -35,7 +35,11 @@ export default async function CountryPage({
 
   return (
     <>
-      <CountryShell countryCode={country} locale={locale} initialTool={tool as AppMode | undefined} />
+      <CountryShell
+        countryCode={country}
+        locale={locale}
+        initialTool={isAppMode(tool) && tool !== "chat" ? tool : undefined}
+      />
       <script
         type="application/ld+json"
         dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}

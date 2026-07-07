@@ -16,25 +16,24 @@ import {
   IconBell,
 } from "@tabler/icons-react"
 import { isValidCountry } from "@/lib/countries"
-import { buildToolJsonLd, getToolPageMetadata } from "@/lib/tool-seo"
+import { buildToolJsonLd, getToolAppMode, getToolPageMetadata } from "@/lib/tool-seo"
 import { countryLabels } from "@/lib/tools-common"
 import type { ReactNode } from "react"
 
 type ToolConfig = {
   icon: ReactNode
   h1Prefix: string
-  toolParam: string
   ctaLabel: string
 }
 
 const toolConfigs: Record<string, ToolConfig> = {
-  "liquidacion-laboral": { icon: <IconCalculator className="size-6" />, h1Prefix: "Calculadora de liquidación laboral", toolParam: "settlement", ctaLabel: "Abrir calculadora" },
-  vacaciones: { icon: <IconBeach className="size-6" />, h1Prefix: "Vacaciones", toolParam: "vacations", ctaLabel: "Abrir calculadora" },
-  "salario-neto": { icon: <IconCoins className="size-6" />, h1Prefix: "Salario neto", toolParam: "salary-net", ctaLabel: "Abrir calculadora" },
-  "aguinaldo-decimo-bono": { icon: <IconGift className="size-6" />, h1Prefix: "Aguinaldo / décimo / bono", toolParam: "bonus", ctaLabel: "Abrir calculadora" },
-  "simulador-terminacion": { icon: <IconDoorExit className="size-6" />, h1Prefix: "Simulador de terminación", toolParam: "termination", ctaLabel: "Abrir calculadora" },
-  "generador-contratos": { icon: <IconFileDescription className="size-6" />, h1Prefix: "Generador de contratos de trabajo", toolParam: "contract", ctaLabel: "Abrir generador" },
-  preaviso: { icon: <IconBell className="size-6" />, h1Prefix: "Calculadora de preaviso laboral", toolParam: "preaviso", ctaLabel: "Calcular preaviso" },
+  "liquidacion-laboral": { icon: <IconCalculator className="size-6" />, h1Prefix: "Calculadora de liquidación laboral", ctaLabel: "Abrir calculadora" },
+  vacaciones: { icon: <IconBeach className="size-6" />, h1Prefix: "Vacaciones", ctaLabel: "Abrir calculadora" },
+  "salario-neto": { icon: <IconCoins className="size-6" />, h1Prefix: "Salario neto", ctaLabel: "Abrir calculadora" },
+  "aguinaldo-decimo-bono": { icon: <IconGift className="size-6" />, h1Prefix: "Aguinaldo / décimo / bono", ctaLabel: "Abrir calculadora" },
+  "simulador-terminacion": { icon: <IconDoorExit className="size-6" />, h1Prefix: "Simulador de terminación", ctaLabel: "Abrir calculadora" },
+  "generador-contratos": { icon: <IconFileDescription className="size-6" />, h1Prefix: "Generador de contratos de trabajo", ctaLabel: "Abrir generador" },
+  preaviso: { icon: <IconBell className="size-6" />, h1Prefix: "Calculadora de preaviso laboral", ctaLabel: "Calcular preaviso" },
 }
 
 export async function generateStaticParams() {
@@ -101,6 +100,7 @@ export default async function ToolDetailPage({
   const countryName = cc ? (countryLabels[cc] ?? cc.toUpperCase()) : null
   const namePart = countryName ? ` en ${countryName}` : ""
   const title = config ? `${config.h1Prefix}${namePart}` : `${tool.name}${namePart}`
+  const toolParam = getToolAppMode(slug) ?? slug
   const jsonLd = buildToolJsonLd({
     slug,
     tool,
@@ -167,7 +167,7 @@ export default async function ToolDetailPage({
             <div className="mt-8 flex flex-wrap gap-3">
               <Link
                 className="inline-flex items-center gap-2 rounded-xl bg-primary px-5 py-2.5 text-sm font-semibold text-primary-foreground transition-colors hover:bg-primary/90"
-                href={`/${cc}?tool=${config ? config.toolParam : slug}`}
+                href={`/${cc}?tool=${toolParam}`}
               >
                 {config ? config.ctaLabel : "Abrir herramienta"}
                 <IconArrowRight className="size-4" />

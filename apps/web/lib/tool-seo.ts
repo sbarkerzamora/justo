@@ -8,6 +8,7 @@ import { countryLabels } from "@/lib/tools-common"
 
 const SITE_URL = getSiteUrl()
 const OG_IMAGE = `${SITE_URL}/images/og-image.png`
+export const SEO_YEAR = new Date().getFullYear()
 
 export const toolAppModes: Record<string, AppMode> = {
   "liquidacion-laboral": "settlement",
@@ -29,7 +30,7 @@ export function getToolCanonical(
   country: CountryCode | null,
   pageLocale = "es"
 ): string {
-  if (country) return `${SITE_URL}/${pageLocale}/${country}/${slug}`
+  if (country) return `${SITE_URL}${getCleanToolPath(slug, country, pageLocale)}`
   return `${SITE_URL}${pageLocale === "en" ? "/en" : ""}/tools/${slug}`
 }
 
@@ -60,15 +61,21 @@ export function getToolPageMetadata({
 }): Metadata {
   const canonical = getToolCanonical(slug, country, pageLocale)
   const countryInfo = countryList.find((item) => item.code === country)
-  const locale = countryInfo ? countryInfo.locale.replace("-", "_") : "es_419"
+  const locale =
+    pageLocale === "en"
+      ? "en"
+      : countryInfo
+        ? countryInfo.locale.replace("-", "_")
+        : "es_419"
 
   const alternates: Metadata["alternates"] = {
     canonical,
   }
 
   if (country) {
+    const spanishKey = countryInfo?.hreflang ?? "es"
     alternates.languages = {
-      es: `${SITE_URL}/es/${country}/${slug}`,
+      [spanishKey]: `${SITE_URL}/es/${country}/${slug}`,
       en: `${SITE_URL}/en/${country}/${slug}`,
       "x-default": `${SITE_URL}/es/${country}/${slug}`,
     }
@@ -81,16 +88,24 @@ export function getToolPageMetadata({
   }
 
   const countryName = getToolCountryName(country)
-  const countrySuffix = countryName ? ` en ${countryName}` : ""
-  const yearSuffix = " 2026"
+  const countrySuffix = countryName
+    ? pageLocale === "en"
+      ? ` in ${countryName}`
+      : ` en ${countryName}`
+    : ""
+  const yearSuffix = ` ${SEO_YEAR}`
+  const description =
+    pageLocale === "en"
+      ? `Use ${title} to get an informational labor calculation with formulas, corpus version and legal references.`
+      : `${tool.shortDescription}${countrySuffix}. ${tool.outputSummary.slice(0, 3).join(", ")}. Gratuito, open source, con referencias legales.`
 
   return {
     title: `${title}${yearSuffix} | Justo`,
-    description: `${tool.shortDescription}${countrySuffix}. ${tool.outputSummary.slice(0, 3).join(", ")}. Gratuito, open source, con referencias legales.`,
+    description,
     alternates,
     openGraph: {
       title,
-      description: `${tool.shortDescription}${countrySuffix}. ${tool.outputSummary.slice(0, 3).join(", ")}.`,
+      description,
       url: canonical,
       siteName: "Justo",
       images: [{ url: OG_IMAGE, width: 1200, height: 630 }],
@@ -100,7 +115,7 @@ export function getToolPageMetadata({
     twitter: {
       card: "summary_large_image",
       title,
-      description: `${tool.shortDescription}${countrySuffix}.`,
+      description,
       images: [OG_IMAGE],
     },
   }
@@ -121,10 +136,20 @@ export function buildToolJsonLd({
 }) {
   const canonical = getToolCanonical(slug, country, pageLocale)
   const countryName = getToolCountryName(country)
-  const currentName = countryName ? `${tool.name} en ${countryName}` : tool.name
+  const currentName = countryName
+    ? pageLocale === "en"
+      ? title
+      : `${tool.name} en ${countryName}`
+    : pageLocale === "en"
+      ? title
+      : tool.name
   const toolsLabel = pageLocale === "en" ? "Tools" : "Herramientas"
   const toolsUrl = pageLocale === "en" ? `${SITE_URL}/en/tools` : `${SITE_URL}/tools`
   const lang = pageLocale === "en" ? "en" : "es"
+  const description =
+    pageLocale === "en"
+      ? `Informational labor tool with formulas, corpus version and legal references.`
+      : tool.longDescription
 
   return [
     {
@@ -136,7 +161,7 @@ export function buildToolJsonLd({
       operatingSystem: "Web",
       inLanguage: lang,
       offers: { "@type": "Offer", price: "0", priceCurrency: "USD" },
-      description: tool.longDescription,
+      description,
     },
     {
       "@context": "https://schema.org",

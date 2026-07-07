@@ -92,7 +92,7 @@ Alcance: plan de mejoras SEO para aumentar usuarios que calculan y autoridad leg
 4.5. Canonical propuesto:
 
 - `/tools/liquidacion-laboral?country=ni` -> canonical `/es/ni/liquidacion-laboral`.
-- `/guia-laboral?country=ni` -> canonical `/es/ni/guia-laboral` si se crea ruta limpia; si no, no duplicar en sitemap.
+- `/guia-laboral?country=ni` se mantiene como URL canonica actual de la guia laboral por pais mientras no exista ruta limpia dedicada. El sitemap puede seguir listando `/guia-laboral?country={country}` y `/en/guia-laboral?country={country}` con canonical propio.
 - `/{country}` sin locale debe seguir redirigiendo 301 a `/es/{country}`.
 
 ## 5. Modelo de contenido minimalista
@@ -218,11 +218,12 @@ Alcance: plan de mejoras SEO para aumentar usuarios que calculan y autoridad leg
 - [x] `/es/pa/simulador-terminacion`
 - [x] `/es/pa/generador-contratos`
 
-6.6. Fase 5, evaluar version inglesa:
+6.6. Fase 5, version inglesa:
 
-- [ ] Revisar si las paginas `/en/...` generan calculos o solo ruido de indexacion.
-- [ ] Crear equivalentes en ingles solo para paginas con senal de busqueda o uso real.
-- [ ] Si no hay senal, mantener ingles como app/documentacion secundaria y no expandir sitemap SEO en ingles.
+- [x] Mantener `/en/{country}/{tool}` como pagina localizada valida y destino `hreflang` reciproco.
+- [x] Incluir las paginas `/en/{country}/{tool}` en sitemap con menor prioridad que la version espanola.
+- [ ] Revisar si las paginas `/en/...` generan calculos o solo ruido de indexacion despues de 14-28 dias.
+- [ ] Si las paginas inglesas no generan valor, retirar sus entradas del sitemap y sus alternates de metadata en una fase posterior.
 
 ## 7. Autoridad legal por pais
 
@@ -387,7 +388,7 @@ Alcance: plan de mejoras SEO para aumentar usuarios que calculan y autoridad leg
 - [x] Revisar `sitemap.ts` para que liste solo URLs canonicas indexables.
 - [x] Remover del sitemap URLs con `?country=` cuando exista ruta limpia equivalente.
 - [x] Crear estrategia de canonical para `/tools/{tool}?country={country}`.
-- [ ] Crear estrategia de canonical para `/guia-laboral?country={country}`.
+- [x] Crear estrategia de canonical para `/guia-laboral?country={country}`.
 - [x] Definir redirects 301 desde `/{country}` a `/es/{country}`.
 - [x] Definir redirects o canonicals desde `/docs/legal/{countryCode}` a `/docs/legal/{countrySlug}`.
 - [x] Validar que metadata no dependa de cookies en paginas indexables.

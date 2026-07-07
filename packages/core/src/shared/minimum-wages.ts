@@ -138,6 +138,14 @@ export const capDailySalaryByMinimumWage = (
   multiplier: number,
 ) => Math.min(dailySalary, minWageDaily * multiplier)
 
+const getLatestMinimumWageRule = (
+  countryCode: string,
+  options: MinimumWageLookupOptions,
+) =>
+  getMinimumWageRules(countryCode, options).toSorted((a, b) =>
+    b.validFrom.localeCompare(a.validFrom),
+  )[0] ?? null
+
 export const getMinimumWage = (
   countryCode: string,
   date?: string,
@@ -149,7 +157,7 @@ export const getMinimumWage = (
     return rules.find((rule) => isRuleActive(rule, date)) ?? null
   }
 
-  return rules.toSorted((a, b) => b.validFrom.localeCompare(a.validFrom))[0] ?? null
+  return getLatestMinimumWageRule(countryCode, options)
 }
 
 export const getMinimumWageForCalculation = (
@@ -160,10 +168,7 @@ export const getMinimumWageForCalculation = (
   const exact = getMinimumWage(countryCode, date, options)
   if (exact) return { wage: exact, warnings: [] }
 
-  const rules = getMinimumWageRules(countryCode, options)
-    .toSorted((a, b) => b.validFrom.localeCompare(a.validFrom))
-
-  const fallback = rules[0]
+  const fallback = getLatestMinimumWageRule(countryCode, options)
   if (!fallback || fallback.validTo === null || date <= fallback.validTo) {
     return { wage: null, warnings: [] }
   }
