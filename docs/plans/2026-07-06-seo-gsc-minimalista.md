@@ -43,9 +43,9 @@ Alcance: plan de mejoras SEO para aumentar usuarios que calculan y autoridad leg
 
 3.2. Fases por pais:
 
-- [ ] Fase 1, captura de demanda existente: Nicaragua, Peru, Colombia, Costa Rica y Panama.
-- [ ] Fase 2, completar Centroamerica: Guatemala, El Salvador y Honduras.
-- [ ] Fase 3, completar mercados grandes/restantes: Mexico, Argentina y Chile.
+- [x] Fase 1, captura de demanda existente: Nicaragua, Peru, Colombia, Costa Rica y Panama.
+- [x] Fase 2, completar Centroamerica: Guatemala, El Salvador y Honduras.
+- [x] Fase 3, completar mercados grandes/restantes: Mexico, Argentina y Chile.
 
 3.3. Justificacion por pais:
 
@@ -123,100 +123,100 @@ Alcance: plan de mejoras SEO para aumentar usuarios que calculan y autoridad leg
 
 6.1. Fase 0, base tecnica antes de escalar paginas:
 
-- [ ] Definir helpers compartidos para metadata, canonical, hreflang y JSON-LD por `country` + `tool`.
-- [ ] Definir generacion de sitemap solo con URLs canonicas limpias.
-- [ ] Definir redirects/canonicals desde URLs existentes con query params.
-- [ ] Confirmar que cada herramienta abre con pais y herramienta preseleccionados desde la landing.
-- [ ] Confirmar que cada landing incluye disclaimer informativo y version de corpus.
+- [x] Definir helpers compartidos para metadata, canonical, hreflang y JSON-LD por `country` + `tool`.
+- [x] Definir generacion de sitemap solo con URLs canonicas limpias.
+- [x] Definir redirects/canonicals desde URLs existentes con query params.
+- [x] Confirmar que cada herramienta abre con pais y herramienta preseleccionados desde la landing.
+- [x] Confirmar que cada landing incluye disclaimer informativo y version de corpus.
 
 6.2. Fase 1, captura de demanda existente:
 
-- [ ] `/es/ni/liquidacion-laboral`
-- [ ] `/es/ni/vacaciones`
-- [ ] `/es/ni/salario-neto`
-- [ ] `/es/ni/aguinaldo-decimo-bono`
-- [ ] `/es/pe/liquidacion-laboral`
-- [ ] `/es/pe/salario-neto`
-- [ ] `/es/pe/vacaciones`
-- [ ] `/es/co/liquidacion-laboral`
-- [ ] `/es/co/vacaciones`
-- [ ] `/es/co/salario-neto`
-- [ ] `/es/co/aguinaldo-decimo-bono`
-- [ ] `/es/cr/liquidacion-laboral`
-- [ ] `/es/cr/vacaciones`
-- [ ] `/es/cr/salario-neto`
-- [ ] `/es/pa/liquidacion-laboral`
-- [ ] `/es/pa/vacaciones`
-- [ ] `/es/pa/salario-neto`
+- [x] `/es/ni/liquidacion-laboral`
+- [x] `/es/ni/vacaciones`
+- [x] `/es/ni/salario-neto`
+- [x] `/es/ni/aguinaldo-decimo-bono`
+- [x] `/es/pe/liquidacion-laboral`
+- [x] `/es/pe/salario-neto`
+- [x] `/es/pe/vacaciones`
+- [x] `/es/co/liquidacion-laboral`
+- [x] `/es/co/vacaciones`
+- [x] `/es/co/salario-neto`
+- [x] `/es/co/aguinaldo-decimo-bono`
+- [x] `/es/cr/liquidacion-laboral`
+- [x] `/es/cr/vacaciones`
+- [x] `/es/cr/salario-neto`
+- [x] `/es/pa/liquidacion-laboral`
+- [x] `/es/pa/vacaciones`
+- [x] `/es/pa/salario-neto`
 
 6.3. Fase 2, completar Centroamerica:
 
-- [ ] `/es/gt/liquidacion-laboral`
-- [ ] `/es/gt/vacaciones`
-- [ ] `/es/gt/salario-neto`
-- [ ] `/es/gt/aguinaldo-decimo-bono`
-- [ ] `/es/gt/preaviso`
-- [ ] `/es/gt/simulador-terminacion`
-- [ ] `/es/gt/generador-contratos`
-- [ ] `/es/sv/liquidacion-laboral`
-- [ ] `/es/sv/vacaciones`
-- [ ] `/es/sv/salario-neto`
-- [ ] `/es/sv/aguinaldo-decimo-bono`
-- [ ] `/es/sv/preaviso`
-- [ ] `/es/sv/simulador-terminacion`
-- [ ] `/es/sv/generador-contratos`
-- [ ] `/es/hn/liquidacion-laboral`
-- [ ] `/es/hn/vacaciones`
-- [ ] `/es/hn/salario-neto`
-- [ ] `/es/hn/aguinaldo-decimo-bono`
-- [ ] `/es/hn/preaviso`
-- [ ] `/es/hn/simulador-terminacion`
-- [ ] `/es/hn/generador-contratos`
+- [x] `/es/gt/liquidacion-laboral`
+- [x] `/es/gt/vacaciones`
+- [x] `/es/gt/salario-neto`
+- [x] `/es/gt/aguinaldo-decimo-bono`
+- [x] `/es/gt/preaviso`
+- [x] `/es/gt/simulador-terminacion`
+- [x] `/es/gt/generador-contratos`
+- [x] `/es/sv/liquidacion-laboral`
+- [x] `/es/sv/vacaciones`
+- [x] `/es/sv/salario-neto`
+- [x] `/es/sv/aguinaldo-decimo-bono`
+- [x] `/es/sv/preaviso`
+- [x] `/es/sv/simulador-terminacion`
+- [x] `/es/sv/generador-contratos`
+- [x] `/es/hn/liquidacion-laboral`
+- [x] `/es/hn/vacaciones`
+- [x] `/es/hn/salario-neto`
+- [x] `/es/hn/aguinaldo-decimo-bono`
+- [x] `/es/hn/preaviso`
+- [x] `/es/hn/simulador-terminacion`
+- [x] `/es/hn/generador-contratos`
 
 6.4. Fase 3, completar mercados restantes:
 
-- [ ] `/es/mx/liquidacion-laboral`
-- [ ] `/es/mx/vacaciones`
-- [ ] `/es/mx/salario-neto`
-- [ ] `/es/mx/aguinaldo-decimo-bono`
-- [ ] `/es/mx/preaviso`
-- [ ] `/es/mx/simulador-terminacion`
-- [ ] `/es/mx/generador-contratos`
-- [ ] `/es/ar/liquidacion-laboral`
-- [ ] `/es/ar/vacaciones`
-- [ ] `/es/ar/salario-neto`
-- [ ] `/es/ar/aguinaldo-decimo-bono`
-- [ ] `/es/ar/preaviso`
-- [ ] `/es/ar/simulador-terminacion`
-- [ ] `/es/ar/generador-contratos`
-- [ ] `/es/cl/liquidacion-laboral`
-- [ ] `/es/cl/vacaciones`
-- [ ] `/es/cl/salario-neto`
-- [ ] `/es/cl/aguinaldo-decimo-bono`
-- [ ] `/es/cl/preaviso`
-- [ ] `/es/cl/simulador-terminacion`
-- [ ] `/es/cl/generador-contratos`
+- [x] `/es/mx/liquidacion-laboral`
+- [x] `/es/mx/vacaciones`
+- [x] `/es/mx/salario-neto`
+- [x] `/es/mx/aguinaldo-decimo-bono`
+- [x] `/es/mx/preaviso`
+- [x] `/es/mx/simulador-terminacion`
+- [x] `/es/mx/generador-contratos`
+- [x] `/es/ar/liquidacion-laboral`
+- [x] `/es/ar/vacaciones`
+- [x] `/es/ar/salario-neto`
+- [x] `/es/ar/aguinaldo-decimo-bono`
+- [x] `/es/ar/preaviso`
+- [x] `/es/ar/simulador-terminacion`
+- [x] `/es/ar/generador-contratos`
+- [x] `/es/cl/liquidacion-laboral`
+- [x] `/es/cl/vacaciones`
+- [x] `/es/cl/salario-neto`
+- [x] `/es/cl/aguinaldo-decimo-bono`
+- [x] `/es/cl/preaviso`
+- [x] `/es/cl/simulador-terminacion`
+- [x] `/es/cl/generador-contratos`
 
 6.5. Fase 4, completar herramientas restantes en paises de fase 1:
 
-- [ ] `/es/ni/preaviso`
-- [ ] `/es/ni/simulador-terminacion`
-- [ ] `/es/ni/generador-contratos`
-- [ ] `/es/pe/aguinaldo-decimo-bono`
-- [ ] `/es/pe/preaviso`
-- [ ] `/es/pe/simulador-terminacion`
-- [ ] `/es/pe/generador-contratos`
-- [ ] `/es/co/preaviso`
-- [ ] `/es/co/simulador-terminacion`
-- [ ] `/es/co/generador-contratos`
-- [ ] `/es/cr/aguinaldo-decimo-bono`
-- [ ] `/es/cr/preaviso`
-- [ ] `/es/cr/simulador-terminacion`
-- [ ] `/es/cr/generador-contratos`
-- [ ] `/es/pa/aguinaldo-decimo-bono`
-- [ ] `/es/pa/preaviso`
-- [ ] `/es/pa/simulador-terminacion`
-- [ ] `/es/pa/generador-contratos`
+- [x] `/es/ni/preaviso`
+- [x] `/es/ni/simulador-terminacion`
+- [x] `/es/ni/generador-contratos`
+- [x] `/es/pe/aguinaldo-decimo-bono`
+- [x] `/es/pe/preaviso`
+- [x] `/es/pe/simulador-terminacion`
+- [x] `/es/pe/generador-contratos`
+- [x] `/es/co/preaviso`
+- [x] `/es/co/simulador-terminacion`
+- [x] `/es/co/generador-contratos`
+- [x] `/es/cr/aguinaldo-decimo-bono`
+- [x] `/es/cr/preaviso`
+- [x] `/es/cr/simulador-terminacion`
+- [x] `/es/cr/generador-contratos`
+- [x] `/es/pa/aguinaldo-decimo-bono`
+- [x] `/es/pa/preaviso`
+- [x] `/es/pa/simulador-terminacion`
+- [x] `/es/pa/generador-contratos`
 
 6.6. Fase 5, evaluar version inglesa:
 
@@ -382,56 +382,56 @@ Alcance: plan de mejoras SEO para aumentar usuarios que calculan y autoridad leg
 
 12.1. Fase 0, base tecnica:
 
-- [ ] Corregir o eliminar `apps/web/public/robots.txt` para quitar el dominio mal escrito.
+- [x] Corregir o eliminar `apps/web/public/robots.txt` para quitar el dominio mal escrito.
 - [ ] Confirmar que `https://justo.stephanbarker.com/robots.txt` sirve la version esperada.
-- [ ] Revisar `sitemap.ts` para que liste solo URLs canonicas indexables.
-- [ ] Remover del sitemap URLs con `?country=` cuando exista ruta limpia equivalente.
-- [ ] Crear estrategia de canonical para `/tools/{tool}?country={country}`.
+- [x] Revisar `sitemap.ts` para que liste solo URLs canonicas indexables.
+- [x] Remover del sitemap URLs con `?country=` cuando exista ruta limpia equivalente.
+- [x] Crear estrategia de canonical para `/tools/{tool}?country={country}`.
 - [ ] Crear estrategia de canonical para `/guia-laboral?country={country}`.
-- [ ] Definir redirects 301 desde `/{country}` a `/es/{country}`.
-- [ ] Definir redirects o canonicals desde `/docs/legal/{countryCode}` a `/docs/legal/{countrySlug}`.
-- [ ] Validar que metadata no dependa de cookies en paginas indexables.
+- [x] Definir redirects 301 desde `/{country}` a `/es/{country}`.
+- [x] Definir redirects o canonicals desde `/docs/legal/{countryCode}` a `/docs/legal/{countrySlug}`.
+- [x] Validar que metadata no dependa de cookies en paginas indexables.
 - [ ] Preparar medicion de eventos SEO en Plausible o analitica equivalente.
 
 12.2. Fase 1, landings de captura inmediata:
 
-- [ ] Crear landings de Nicaragua definidas en 6.2.
-- [ ] Crear landings de Peru definidas en 6.2.
-- [ ] Crear landings de Colombia definidas en 6.2.
-- [ ] Crear landings de Costa Rica definidas en 6.2.
-- [ ] Crear landings de Panama definidas en 6.2.
-- [ ] Agregar `WebApplication`, `FAQPage` y `BreadcrumbList` donde corresponda.
-- [ ] Enlazar cada landing a docs legales relevantes.
+- [x] Crear landings de Nicaragua definidas en 6.2.
+- [x] Crear landings de Peru definidas en 6.2.
+- [x] Crear landings de Colombia definidas en 6.2.
+- [x] Crear landings de Costa Rica definidas en 6.2.
+- [x] Crear landings de Panama definidas en 6.2.
+- [x] Agregar `WebApplication`, `FAQPage` y `BreadcrumbList` donde corresponda.
+- [x] Enlazar cada landing a docs legales relevantes.
 - [ ] Enlazar docs legales relevantes de vuelta a calculadoras.
 - [ ] Enviar sitemap actualizado en Search Console.
 - [ ] Inspeccionar manualmente 5 URLs nuevas en Search Console.
 
 12.3. Fase 2, completar Centroamerica:
 
-- [ ] Crear landings de Guatemala definidas en 6.3.
-- [ ] Crear landings de El Salvador definidas en 6.3.
-- [ ] Crear landings de Honduras definidas en 6.3.
+- [x] Crear landings de Guatemala definidas en 6.3.
+- [x] Crear landings de El Salvador definidas en 6.3.
+- [x] Crear landings de Honduras definidas en 6.3.
 - [ ] Ajustar copy local de aguinaldo, Bono 14, decimotercer mes, ISSS, AFP, IGSS, IHSS y RAP.
 - [ ] Agregar enlaces cruzados entre landings y hubs legales de Centroamerica.
 - [ ] Verificar Search Console despues de indexacion inicial.
 
 12.4. Fase 3, completar Mexico, Argentina y Chile:
 
-- [ ] Crear landings de Mexico definidas en 6.4.
-- [ ] Crear landings de Argentina definidas en 6.4.
-- [ ] Crear landings de Chile definidas en 6.4.
+- [x] Crear landings de Mexico definidas en 6.4.
+- [x] Crear landings de Argentina definidas en 6.4.
+- [x] Crear landings de Chile definidas en 6.4.
 - [ ] Ajustar lenguaje local: finiquito en Chile, liquidacion final en Argentina, LFT/IMSS en Mexico.
 - [ ] Agregar enlaces cruzados entre landings y docs legales de cada pais.
 - [ ] Revisar si hace falta diferenciar snippets por busquedas locales.
 
 12.5. Fase 4, completar herramientas restantes de fase 1:
 
-- [ ] Completar preaviso, terminacion y contratos para Nicaragua.
-- [ ] Completar aguinaldo, preaviso, terminacion y contratos para Peru.
-- [ ] Completar preaviso, terminacion y contratos para Colombia.
-- [ ] Completar aguinaldo, preaviso, terminacion y contratos para Costa Rica.
-- [ ] Completar aguinaldo, preaviso, terminacion y contratos para Panama.
-- [ ] Confirmar que todas las landings abren herramienta correcta y pais correcto.
+- [x] Completar preaviso, terminacion y contratos para Nicaragua.
+- [x] Completar aguinaldo, preaviso, terminacion y contratos para Peru.
+- [x] Completar preaviso, terminacion y contratos para Colombia.
+- [x] Completar aguinaldo, preaviso, terminacion y contratos para Costa Rica.
+- [x] Completar aguinaldo, preaviso, terminacion y contratos para Panama.
+- [x] Confirmar que todas las landings abren herramienta correcta y pais correcto.
 
 12.6. Fase 5, medicion y ajustes:
 
@@ -446,18 +446,18 @@ Alcance: plan de mejoras SEO para aumentar usuarios que calculan y autoridad leg
 
 ## 13. Checklist de aceptacion
 
-- [ ] El sitemap no incluye duplicados con query params cuando exista URL limpia equivalente.
-- [ ] Cada pagina canonica tiene title unico.
-- [ ] Cada pagina canonica tiene meta description unica.
-- [ ] Cada pagina canonica tiene H1 unico.
-- [ ] Cada pagina canonica tiene canonical propio.
-- [ ] Cada pagina canonica tiene CTA a calcular visible arriba.
-- [ ] Cada pagina de calculadora muestra pais y herramienta.
-- [ ] Cada pagina de calculadora muestra formula resumida.
-- [ ] Cada pagina de calculadora muestra referencias legales.
-- [ ] Cada pagina de calculadora muestra version del corpus.
-- [ ] Cada pagina de calculadora muestra disclaimer informativo.
-- [ ] Cada pagina de calculadora enlaza a docs legales relevantes.
+- [x] El sitemap no incluye duplicados con query params cuando exista URL limpia equivalente.
+- [x] Cada pagina canonica tiene title unico.
+- [x] Cada pagina canonica tiene meta description unica.
+- [x] Cada pagina canonica tiene H1 unico.
+- [x] Cada pagina canonica tiene canonical propio.
+- [x] Cada pagina canonica tiene CTA a calcular visible arriba.
+- [x] Cada pagina de calculadora muestra pais y herramienta.
+- [x] Cada pagina de calculadora muestra formula resumida.
+- [x] Cada pagina de calculadora muestra referencias legales.
+- [x] Cada pagina de calculadora muestra version del corpus.
+- [x] Cada pagina de calculadora muestra disclaimer informativo.
+- [x] Cada pagina de calculadora enlaza a docs legales relevantes.
 - [ ] Cada doc legal principal enlaza a calculadoras relevantes.
 - [ ] Search Console no muestra crecimiento de duplicados por canonical despues del despliegue.
 - [ ] Search Console no muestra crecimiento de 404 por rutas de docs antiguas despues del despliegue.

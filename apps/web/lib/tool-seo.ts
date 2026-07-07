@@ -1,12 +1,23 @@
 import type { CountryCode } from "@justo/core"
 import type { JustoTool } from "@justo/tools"
 import type { Metadata } from "next"
+import type { AppMode } from "@/components/chat/types"
 import { countryList } from "@/lib/countries"
 import { getSiteUrl } from "@/lib/site-url"
 import { countryLabels } from "@/lib/tools-common"
 
 const SITE_URL = getSiteUrl()
 const OG_IMAGE = `${SITE_URL}/images/og-image.png`
+
+export const toolAppModes: Record<string, AppMode> = {
+  "liquidacion-laboral": "settlement",
+  vacaciones: "vacations",
+  "salario-neto": "salary-net",
+  "aguinaldo-decimo-bono": "bonus",
+  "simulador-terminacion": "termination",
+  "generador-contratos": "contract",
+  preaviso: "preaviso",
+}
 
 export function getToolCountryName(country: CountryCode | null): string | null {
   if (!country) return null
@@ -15,10 +26,23 @@ export function getToolCountryName(country: CountryCode | null): string | null {
 
 export function getToolCanonical(
   slug: string,
-  country: CountryCode | null
+  country: CountryCode | null,
+  pageLocale = "es"
 ): string {
-  const url = `${SITE_URL}/tools/${slug}`
-  return country ? `${url}?country=${country}` : url
+  if (country) return `${SITE_URL}/${pageLocale}/${country}/${slug}`
+  return `${SITE_URL}${pageLocale === "en" ? "/en" : ""}/tools/${slug}`
+}
+
+export function getCleanToolPath(
+  slug: string,
+  country: CountryCode,
+  pageLocale = "es"
+): string {
+  return `/${pageLocale}/${country}/${slug}`
+}
+
+export function getToolAppMode(slug: string): AppMode | null {
+  return toolAppModes[slug] ?? null
 }
 
 export function getToolPageMetadata({
@@ -34,7 +58,7 @@ export function getToolPageMetadata({
   title: string
   pageLocale?: string
 }): Metadata {
-  const canonical = getToolCanonical(slug, country)
+  const canonical = getToolCanonical(slug, country, pageLocale)
   const countryInfo = countryList.find((item) => item.code === country)
   const locale = countryInfo ? countryInfo.locale.replace("-", "_") : "es_419"
 
@@ -42,14 +66,11 @@ export function getToolPageMetadata({
     canonical,
   }
 
-  const prefix = pageLocale === "en" ? "/en" : ""
-  const otherPrefix = pageLocale === "en" ? "" : "/en"
-
   if (country) {
     alternates.languages = {
-      es: `${SITE_URL}${pageLocale === "es" ? prefix : otherPrefix}/tools/${slug}?country=${country}`,
-      en: `${SITE_URL}${pageLocale === "en" ? prefix : otherPrefix}/tools/${slug}?country=${country}`,
-      "x-default": `${SITE_URL}/tools/${slug}`,
+      es: `${SITE_URL}/es/${country}/${slug}`,
+      en: `${SITE_URL}/en/${country}/${slug}`,
+      "x-default": `${SITE_URL}/es/${country}/${slug}`,
     }
   } else {
     alternates.languages = {
@@ -98,7 +119,7 @@ export function buildToolJsonLd({
   title: string
   pageLocale?: string
 }) {
-  const canonical = getToolCanonical(slug, country)
+  const canonical = getToolCanonical(slug, country, pageLocale)
   const countryName = getToolCountryName(country)
   const currentName = countryName ? `${tool.name} en ${countryName}` : tool.name
   const toolsLabel = pageLocale === "en" ? "Tools" : "Herramientas"

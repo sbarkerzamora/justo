@@ -89,6 +89,21 @@ const nextConfig = {
       },
     ]
   },
+  async redirects() {
+    return [
+      { source: "/docs/legal/ni", destination: "/docs/legal/nicaragua", permanent: true },
+      { source: "/docs/legal/sv", destination: "/docs/legal/elsalvador", permanent: true },
+      { source: "/docs/legal/gt", destination: "/docs/legal/guatemala", permanent: true },
+      { source: "/docs/legal/hn", destination: "/docs/legal/honduras", permanent: true },
+      { source: "/docs/legal/cr", destination: "/docs/legal/costarica", permanent: true },
+      { source: "/docs/legal/pa", destination: "/docs/legal/panama", permanent: true },
+      { source: "/docs/legal/mx", destination: "/docs/legal/mexico", permanent: true },
+      { source: "/docs/legal/co", destination: "/docs/legal/colombia", permanent: true },
+      { source: "/docs/legal/pe", destination: "/docs/legal/peru", permanent: true },
+      { source: "/docs/legal/ar", destination: "/docs/legal/argentina", permanent: true },
+      { source: "/docs/legal/cl", destination: "/docs/legal/chile", permanent: true },
+    ]
+  },
 }
 
 export default nextConfig

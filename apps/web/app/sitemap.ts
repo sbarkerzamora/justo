@@ -91,21 +91,6 @@ export default function sitemap(): MetadataRoute.Sitemap {
     priority: 0.8,
   })
 
-  for (const country of countryList) {
-    entries.push({
-      url: `${SITE_URL}/tools?country=${country.code}`,
-      lastModified: LAST_MODIFIED,
-      changeFrequency: "weekly",
-      priority: 0.8,
-    })
-    entries.push({
-      url: `${SITE_URL}/en/tools?country=${country.code}`,
-      lastModified: LAST_MODIFIED,
-      changeFrequency: "weekly",
-      priority: 0.7,
-    })
-  }
-
   for (const slug of toolSlugs) {
     entries.push({
       url: `${SITE_URL}/tools/${slug}`,
@@ -121,16 +106,17 @@ export default function sitemap(): MetadataRoute.Sitemap {
     })
     for (const country of countryList) {
       entries.push({
-        url: `${SITE_URL}/tools/${slug}?country=${country.code}`,
+        url: `${SITE_URL}/es/${country.code}/${slug}`,
         lastModified: LAST_MODIFIED,
         changeFrequency: "weekly",
-        priority: 0.7,
-      })
-      entries.push({
-        url: `${SITE_URL}/en/tools/${slug}?country=${country.code}`,
-        lastModified: LAST_MODIFIED,
-        changeFrequency: "weekly",
-        priority: 0.7,
+        priority: 0.85,
+        alternates: {
+          languages: {
+            [country.hreflang]: `${SITE_URL}/es/${country.code}/${slug}`,
+            en: `${SITE_URL}/en/${country.code}/${slug}`,
+            "x-default": `${SITE_URL}/es/${country.code}/${slug}`,
+          },
+        },
       })
     }
   }

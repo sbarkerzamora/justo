@@ -6,6 +6,7 @@ import { AnimatedGridPattern } from "@/components/ui/animated-grid-pattern"
 import { getCountryAccent } from "@/lib/country-accent"
 import type { Locale } from "@/lib/i18n"
 import { cn } from "@/lib/utils"
+import type { AppMode } from "@/components/chat/types"
 
 export function CountryShell({
   countryCode,
@@ -14,7 +15,7 @@ export function CountryShell({
 }: {
   countryCode: string
   locale: Locale
-  initialTool?: "settlement" | "vacations" | "salary-net"
+  initialTool?: AppMode
 }) {
   useEffect(() => {
     try {

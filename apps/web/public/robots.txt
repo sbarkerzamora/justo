@@ -3,4 +3,4 @@ Allow: /
 
 Disallow: /api/
 
-Sitemap: https://justo.stephanbarler.com/sitemap.xml
+Sitemap: https://justo.stephanbarker.com/sitemap.xml

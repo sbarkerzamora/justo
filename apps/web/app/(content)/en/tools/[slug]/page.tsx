@@ -71,7 +71,7 @@ export async function generateMetadata({
 
   const countryName = cc ? (countryLabels[cc] ?? cc.toUpperCase()) : null
   const namePart = countryName ? ` in ${countryName}` : ""
-  const title = config ? `${config.h1Prefix}${namePart} | Justo` : `${tool.name}${namePart} | Justo`
+  const title = config ? `${config.h1Prefix}${namePart}` : `${tool.name}${namePart}`
 
   return getToolPageMetadata({
     slug,
@@ -101,7 +101,7 @@ export default async function ToolDetailPageEn({
 
   const countryName = cc ? (countryLabels[cc] ?? cc.toUpperCase()) : null
   const namePart = countryName ? ` in ${countryName}` : ""
-  const title = config ? `${config.h1Prefix}${namePart} | Justo` : `${tool.name}${namePart} | Justo`
+  const title = config ? `${config.h1Prefix}${namePart}` : `${tool.name}${namePart}`
   const jsonLd = buildToolJsonLd({
     slug,
     tool,

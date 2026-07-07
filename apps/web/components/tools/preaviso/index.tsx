@@ -192,19 +192,31 @@ export function PreavisoTool({
   }, [onComplete, copy, result, fmt, locale])
 
   const onExportPdf = async () => {
-    const response = await fetch("/api/preaviso/pdf", {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify(form),
-    })
-    if (!response.ok) return
-    const blob = await response.blob()
-    const url = URL.createObjectURL(blob)
-    const a = document.createElement("a")
-    a.href = url
-    a.download = `preaviso-${countryCode}.pdf`
-    a.click()
-    URL.revokeObjectURL(url)
+    dispatch({ type: "setError", error: null })
+    try {
+      const response = await fetch("/api/preaviso/pdf", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(form),
+      })
+      if (!response.ok) {
+        const data = await response.json().catch(() => null)
+        dispatch({
+          type: "setError",
+          error: data?.error ?? copy.errorCalculating,
+        })
+        return
+      }
+      const blob = await response.blob()
+      const url = URL.createObjectURL(blob)
+      const a = document.createElement("a")
+      a.href = url
+      a.download = `preaviso-${countryCode}.pdf`
+      a.click()
+      URL.revokeObjectURL(url)
+    } catch {
+      dispatch({ type: "setError", error: copy.errorCalculating })
+    }
   }
 
   const isDataEntry = step === "salary" || step === "tenure"
@@ -267,7 +279,7 @@ export function PreavisoTool({
         </div>
       )}
 
-      <div className="min-h-0 flex-1">
+      <div className="flex min-h-0 flex-1 flex-col">
         {step === "welcome" ? (
           <div className="flex h-full flex-col items-center justify-center gap-8 px-2">
             <div className="flex max-w-md flex-col items-center gap-5 text-center">
@@ -406,6 +418,12 @@ export function PreavisoTool({
           </div>
         ) : step === "done" && result ? (
           <div className="mx-auto max-w-xl space-y-6 px-2">
+            {error && (
+              <div className="flex items-center gap-2 rounded-xl border border-rose-200 bg-rose-50 px-4 py-3 text-sm text-rose-700 motion-safe:animate-in motion-safe:duration-200 motion-safe:fade-in motion-safe:slide-in-from-top-1">
+                <IconAlertCircle className="size-4 shrink-0" />
+                {error}
+              </div>
+            )}
             <div className="w-full rounded-2xl border border-border bg-card p-6 shadow-sm motion-safe:animate-in motion-safe:duration-300 motion-safe:fade-in motion-safe:slide-in-from-bottom-2">
               <div className="flex items-start justify-between">
                 <div>
