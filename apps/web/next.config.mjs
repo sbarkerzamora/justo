@@ -49,6 +49,31 @@ const contentSecurityPolicy = [
   `frame-src ${frameSources.join(" ")}`,
 ].join("; ")
 
+const legalDocRedirects = [
+  ["ni", "nicaragua"],
+  ["sv", "elsalvador"],
+  ["gt", "guatemala"],
+  ["hn", "honduras"],
+  ["cr", "costarica"],
+  ["pa", "panama"],
+  ["mx", "mexico"],
+  ["co", "colombia"],
+  ["pe", "peru"],
+  ["ar", "argentina"],
+  ["cl", "chile"],
+].flatMap(([code, slug]) => [
+  {
+    source: `/docs/legal/${code}`,
+    destination: `/docs/legal/${slug}`,
+    permanent: true,
+  },
+  {
+    source: `/docs/legal/${code}/`,
+    destination: `/docs/legal/${slug}`,
+    permanent: true,
+  },
+])
+
 /** @type {import('next').NextConfig} */
 const nextConfig = {
   poweredByHeader: false,
@@ -88,6 +113,9 @@ const nextConfig = {
         headers,
       },
     ]
+  },
+  async redirects() {
+    return legalDocRedirects
   },
 }
 

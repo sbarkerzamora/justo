@@ -10,15 +10,22 @@ export type ChatMessage = {
   topics?: string[]
 }
 
-export type AppMode =
-  | "chat"
-  | "settlement"
-  | "vacations"
-  | "salary-net"
-  | "bonus"
-  | "termination"
-  | "contract"
-  | "preaviso"
+export const appModes = [
+  "chat",
+  "settlement",
+  "vacations",
+  "salary-net",
+  "bonus",
+  "termination",
+  "contract",
+  "preaviso",
+] as const
+
+export type AppMode = (typeof appModes)[number]
+
+export function isAppMode(value: string | null | undefined): value is AppMode {
+  return appModes.includes(value as AppMode)
+}
 
 export type ChatAction = {
   mode?: AppMode

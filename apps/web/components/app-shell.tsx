@@ -6,6 +6,7 @@ import {
   createContext,
   useContext,
   useCallback,
+  useSyncExternalStore,
 } from "react"
 import Link from "next/link"
 import { usePathname, useSearchParams, useRouter } from "next/navigation"
@@ -74,26 +75,29 @@ function useStoredCountry(
   const localeFromPath =
     segments.length >= 1 && isValidLocale(segments[0]) ? segments[0] : null
 
-  if (countryFromPath && localeFromPath) {
-    return { country: countryFromPath, locale: localeFromPath }
-  }
+  const routeCountry = countryFromPath ?? initialCountry ?? "ni"
+  const routeLocale = localeFromPath ?? initialLocale ?? "es"
+  const routeSnapshot = `${routeLocale}:${routeCountry}`
+  const snapshot = useSyncExternalStore(
+    (onStoreChange) => {
+      window.addEventListener("storage", onStoreChange)
+      return () => window.removeEventListener("storage", onStoreChange)
+    },
+    () => {
+      if (countryFromPath && localeFromPath) return routeSnapshot
+      try {
+        const country = localStorage.getItem("justo-country") ?? routeCountry
+        const locale = localStorage.getItem("justo-locale") ?? routeLocale
+        return `${locale}:${country}`
+      } catch {
+        return routeSnapshot
+      }
+    },
+    () => routeSnapshot
+  )
+  const [locale, country] = snapshot.split(":")
 
-  if (typeof window === "undefined") {
-    return {
-      country: initialCountry ?? "ni",
-      locale: initialLocale ?? "es",
-    }
-  }
-
-  try {
-    return {
-      country:
-        localStorage.getItem("justo-country") ?? initialCountry ?? "ni",
-      locale: localStorage.getItem("justo-locale") ?? initialLocale ?? "es",
-    }
-  } catch {
-    return { country: initialCountry ?? "ni", locale: initialLocale ?? "es" }
-  }
+  return { country, locale }
 }
 
 const sidebarIcons: Record<string, React.ReactNode> = {

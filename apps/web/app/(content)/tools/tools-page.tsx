@@ -15,19 +15,10 @@ import {
   IconArrowRight,
   IconMapPin,
 } from "@tabler/icons-react"
-import { buildToolsItemListJsonLd } from "@/lib/tool-seo"
+import { buildToolsItemListJsonLd, getToolAppMode } from "@/lib/tool-seo"
 import { countryLabels } from "@/lib/tools-common"
 import { isValidCountry, countryList } from "@/lib/countries"
 import type { ReactNode } from "react"
-
-const toolParamMap: Record<string, string> = {
-  "liquidacion-laboral": "settlement",
-  vacaciones: "vacations",
-  "salario-neto": "salary-net",
-  "aguinaldo-decimo-bono": "bonus",
-  "simulador-terminacion": "termination",
-  "generador-contratos": "contract",
-}
 
 export type ToolsPageCopy = {
   metaTitle: string
@@ -79,7 +70,7 @@ function ToolCard({ tool, copy, country, locale }: { tool: JustoTool; copy: Tool
     : "#"
 
   const calcHref = isAvailable && isSupported && country
-    ? `/${locale}/${country}?tool=${toolParamMap[tool.slug] ?? tool.slug}`
+    ? `/${locale}/${country}?tool=${getToolAppMode(tool.slug) ?? tool.slug}`
     : null
 
   const cardClassName =

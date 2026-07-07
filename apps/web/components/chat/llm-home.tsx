@@ -24,7 +24,7 @@ import { getLegalDocsLink } from "@/lib/legal-docs-link"
 import { useChatMessages } from "@/components/chat/use-chat-messages"
 import { useChatUI } from "@/components/chat/use-chat-ui"
 import { LlmHomeView } from "@/components/chat/llm-home-view"
-import type { AppMode } from "@/components/chat/types"
+import { isAppMode, type AppMode } from "@/components/chat/types"
 
 const numberFormatters: Record<string, Intl.NumberFormat> = {
   NIO: new Intl.NumberFormat("es-NI", { style: "currency", currency: "NIO" }),
@@ -68,19 +68,6 @@ const shouldStartGuidedFlow = (text: string, locale: Locale) => {
     normalized.includes("full settlement") ||
     normalized.includes("net salary")
   )
-}
-
-const validToolParams = new Set([
-  "settlement",
-  "vacations",
-  "salary-net",
-  "bonus",
-  "termination",
-  "contract",
-  "preaviso",
-])
-function isValidToolParam(v: string): v is AppMode {
-  return validToolParams.has(v)
 }
 
 export function LlmHome({
@@ -144,7 +131,7 @@ export function LlmHome({
     prevToolFromUrl.current = toolFromUrl
   } else if (toolFromUrl !== prevToolFromUrl.current) {
     prevToolFromUrl.current = toolFromUrl
-    if (toolFromUrl && isValidToolParam(toolFromUrl)) {
+    if (isAppMode(toolFromUrl) && toolFromUrl !== "chat") {
       setMode(toolFromUrl)
     }
   }

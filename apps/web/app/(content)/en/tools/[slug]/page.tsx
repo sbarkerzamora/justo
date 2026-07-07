@@ -16,25 +16,24 @@ import {
   IconBell,
 } from "@tabler/icons-react"
 import { isValidCountry } from "@/lib/countries"
-import { buildToolJsonLd, getToolPageMetadata } from "@/lib/tool-seo"
+import { buildToolJsonLd, getToolAppMode, getToolPageMetadata } from "@/lib/tool-seo"
 import { countryLabels } from "@/lib/tools-common"
 import type { ReactNode } from "react"
 
 type ToolConfig = {
   icon: ReactNode
   h1Prefix: string
-  toolParam: string
   ctaLabel: string
 }
 
 const toolConfigs: Record<string, ToolConfig> = {
-  "liquidacion-laboral": { icon: <IconCalculator className="size-6" />, h1Prefix: "Labor settlement calculator", toolParam: "settlement", ctaLabel: "Open calculator" },
-  vacaciones: { icon: <IconBeach className="size-6" />, h1Prefix: "Vacation calculator", toolParam: "vacations", ctaLabel: "Open calculator" },
-  "salario-neto": { icon: <IconCoins className="size-6" />, h1Prefix: "Net salary calculator", toolParam: "salary-net", ctaLabel: "Open calculator" },
-  "aguinaldo-decimo-bono": { icon: <IconGift className="size-6" />, h1Prefix: "Bonus / 13th salary calculator", toolParam: "bonus", ctaLabel: "Open calculator" },
-  "simulador-terminacion": { icon: <IconDoorExit className="size-6" />, h1Prefix: "Termination simulator", toolParam: "termination", ctaLabel: "Open calculator" },
-  "generador-contratos": { icon: <IconFileDescription className="size-6" />, h1Prefix: "Employment contract generator", toolParam: "contract", ctaLabel: "Open generator" },
-  preaviso: { icon: <IconBell className="size-6" />, h1Prefix: "Notice period calculator", toolParam: "preaviso", ctaLabel: "Calculate notice" },
+  "liquidacion-laboral": { icon: <IconCalculator className="size-6" />, h1Prefix: "Labor settlement calculator", ctaLabel: "Open calculator" },
+  vacaciones: { icon: <IconBeach className="size-6" />, h1Prefix: "Vacation calculator", ctaLabel: "Open calculator" },
+  "salario-neto": { icon: <IconCoins className="size-6" />, h1Prefix: "Net salary calculator", ctaLabel: "Open calculator" },
+  "aguinaldo-decimo-bono": { icon: <IconGift className="size-6" />, h1Prefix: "Bonus / 13th salary calculator", ctaLabel: "Open calculator" },
+  "simulador-terminacion": { icon: <IconDoorExit className="size-6" />, h1Prefix: "Termination simulator", ctaLabel: "Open calculator" },
+  "generador-contratos": { icon: <IconFileDescription className="size-6" />, h1Prefix: "Employment contract generator", ctaLabel: "Open generator" },
+  preaviso: { icon: <IconBell className="size-6" />, h1Prefix: "Notice period calculator", ctaLabel: "Calculate notice" },
 }
 
 export async function generateStaticParams() {
@@ -71,7 +70,7 @@ export async function generateMetadata({
 
   const countryName = cc ? (countryLabels[cc] ?? cc.toUpperCase()) : null
   const namePart = countryName ? ` in ${countryName}` : ""
-  const title = config ? `${config.h1Prefix}${namePart} | Justo` : `${tool.name}${namePart} | Justo`
+  const title = config ? `${config.h1Prefix}${namePart}` : `${tool.name}${namePart}`
 
   return getToolPageMetadata({
     slug,
@@ -101,7 +100,8 @@ export default async function ToolDetailPageEn({
 
   const countryName = cc ? (countryLabels[cc] ?? cc.toUpperCase()) : null
   const namePart = countryName ? ` in ${countryName}` : ""
-  const title = config ? `${config.h1Prefix}${namePart} | Justo` : `${tool.name}${namePart} | Justo`
+  const title = config ? `${config.h1Prefix}${namePart}` : `${tool.name}${namePart}`
+  const toolParam = getToolAppMode(slug) ?? slug
   const jsonLd = buildToolJsonLd({
     slug,
     tool,
@@ -169,7 +169,7 @@ export default async function ToolDetailPageEn({
             <div className="mt-8 flex flex-wrap gap-3">
               <Link
                 className="inline-flex items-center gap-2 rounded-xl bg-primary px-5 py-2.5 text-sm font-semibold text-primary-foreground transition-colors hover:bg-primary/90"
-                href={`/en/${cc}?tool=${config ? config.toolParam : slug}`}
+                href={`/en/${cc}?tool=${toolParam}`}
               >
                 {config ? config.ctaLabel : "Open tool"}
                 <IconArrowRight className="size-4" />

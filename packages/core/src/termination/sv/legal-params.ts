@@ -4,12 +4,11 @@ import {
   isSpecialTerminationClosure,
   makeIndemnityLine,
 } from "../shared"
-import { getMinimumWageForCalculation } from "../../shared"
+import {
+  capDailySalaryByMinimumWage,
+  getMinimumWageForCalculation,
+} from "../../shared"
 import type { TerminationInput } from "../types"
-
-const cappedDailySalary = (dailySalary: number, minWageDaily: number): number => {
-  return Math.min(dailySalary, minWageDaily * 4)
-}
 
 export const getElSalvadorTerminationParams = (
   input: TerminationInput
@@ -51,7 +50,7 @@ export const getElSalvadorTerminationParams = (
           return [
             makeIndemnityLine(
               "Indemnización Art. 58 (30 días por año, mínimo 15 días)",
-              cappedDailySalary(ctx.dailySalary, svMinWage.daily),
+              capDailySalaryByMinimumWage(ctx.dailySalary, svMinWage.daily, 4),
               days,
               `Código de Trabajo Art. 58 (tope 4x SM MTPS ${svMinWage.year})`
             ),

@@ -4,12 +4,11 @@ import {
   isSpecialTerminationClosure,
   makeIndemnityLine,
 } from "../shared"
-import { getMinimumWageForCalculation } from "../../shared"
+import {
+  capDailySalaryByMinimumWage,
+  getMinimumWageForCalculation,
+} from "../../shared"
 import type { TerminationInput } from "../types"
-
-const cappedDailySalary = (dailySalary: number, minWageDaily: number): number => {
-  return Math.min(dailySalary, minWageDaily * 2)
-}
 
 export const getMexicoTerminationParams = (
   input: TerminationInput
@@ -36,7 +35,7 @@ export const getMexicoTerminationParams = (
           return [
             makeIndemnityLine(
               "Prima de antigüedad Art. 162 (12 días por año, solo si ≥15 años)",
-              cappedDailySalary(ctx.dailySalary, mxMinWage.daily),
+              capDailySalaryByMinimumWage(ctx.dailySalary, mxMinWage.daily, 2),
               primaDays,
               `LFT Art. 162 (tope 2x SM CONASAMI ${mxMinWage.year})`
             ),
@@ -61,9 +60,10 @@ export const getMexicoTerminationParams = (
           const indConst = 90
           const indAnual = ctx.fullYears * 12
           const prima = ctx.fullYears * 12
-          const cappedSalary = cappedDailySalary(
+          const cappedSalary = capDailySalaryByMinimumWage(
             ctx.dailySalary,
             mxMinWage.daily,
+            2,
           )
 
           return [
@@ -97,7 +97,7 @@ export const getMexicoTerminationParams = (
           return [
             makeIndemnityLine(
               "Prima de antigüedad Art. 162 (12 días por año, solo si ≥15 años)",
-              cappedDailySalary(ctx.dailySalary, mxMinWage.daily),
+              capDailySalaryByMinimumWage(ctx.dailySalary, mxMinWage.daily, 2),
               primaDays,
               `LFT Art. 162 (tope 2x SM CONASAMI ${mxMinWage.year})`
             ),

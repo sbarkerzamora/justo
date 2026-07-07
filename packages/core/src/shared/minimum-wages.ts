@@ -113,29 +113,51 @@ export const minimumWageRules: MinimumWageRule[] = [
 const isRuleActive = (rule: MinimumWageRule, date: string) =>
   rule.validFrom <= date && (rule.validTo === null || date <= rule.validTo)
 
-export const getMinimumWage = (
+const getMinimumWageRules = (
   countryCode: string,
-  date?: string,
-  options: MinimumWageLookupOptions = {},
-): MinimumWageData | null => {
+  options: MinimumWageLookupOptions,
+) => {
   const normalizedCountry = countryCode.toLowerCase()
   const regionCode =
     options.regionCode ?? (normalizedCountry === "mx" ? "ZSMG" : "GLOBAL")
   const sectorCode =
     options.sectorCode ??
     (normalizedCountry === "sv" ? "COMERCIO_SERVICIOS" : "GLOBAL")
-  const rules = minimumWageRules.filter(
+
+  return minimumWageRules.filter(
     (rule) =>
       rule.countryCode === normalizedCountry &&
       rule.regionCode === regionCode &&
       rule.sectorCode === sectorCode,
   )
+}
+
+export const capDailySalaryByMinimumWage = (
+  dailySalary: number,
+  minWageDaily: number,
+  multiplier: number,
+) => Math.min(dailySalary, minWageDaily * multiplier)
+
+const getLatestMinimumWageRule = (
+  countryCode: string,
+  options: MinimumWageLookupOptions,
+) =>
+  getMinimumWageRules(countryCode, options).toSorted((a, b) =>
+    b.validFrom.localeCompare(a.validFrom),
+  )[0] ?? null
+
+export const getMinimumWage = (
+  countryCode: string,
+  date?: string,
+  options: MinimumWageLookupOptions = {},
+): MinimumWageData | null => {
+  const rules = getMinimumWageRules(countryCode, options)
 
   if (date) {
     return rules.find((rule) => isRuleActive(rule, date)) ?? null
   }
 
-  return rules.toSorted((a, b) => b.validFrom.localeCompare(a.validFrom))[0] ?? null
+  return getLatestMinimumWageRule(countryCode, options)
 }
 
 export const getMinimumWageForCalculation = (
@@ -146,22 +168,7 @@ export const getMinimumWageForCalculation = (
   const exact = getMinimumWage(countryCode, date, options)
   if (exact) return { wage: exact, warnings: [] }
 
-  const normalizedCountry = countryCode.toLowerCase()
-  const regionCode =
-    options.regionCode ?? (normalizedCountry === "mx" ? "ZSMG" : "GLOBAL")
-  const sectorCode =
-    options.sectorCode ??
-    (normalizedCountry === "sv" ? "COMERCIO_SERVICIOS" : "GLOBAL")
-  const rules = minimumWageRules
-    .filter(
-      (rule) =>
-        rule.countryCode === normalizedCountry &&
-        rule.regionCode === regionCode &&
-        rule.sectorCode === sectorCode,
-    )
-    .toSorted((a, b) => b.validFrom.localeCompare(a.validFrom))
-
-  const fallback = rules[0]
+  const fallback = getLatestMinimumWageRule(countryCode, options)
   if (!fallback || fallback.validTo === null || date <= fallback.validTo) {
     return { wage: null, warnings: [] }
   }

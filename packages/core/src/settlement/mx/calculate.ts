@@ -1,5 +1,8 @@
 import { clamp, round2, daysBetween, startOfYear, formatTenure } from "../shared"
-import { getMinimumWageForCalculation } from "../../shared"
+import {
+  capDailySalaryByMinimumWage,
+  getMinimumWageForCalculation,
+} from "../../shared"
 import { SettlementInput, SettlementLine, SettlementResult } from "../types"
 import { getMexicoLegalRates } from "./legal-params"
 
@@ -44,7 +47,11 @@ export const calculateMexicoSettlement = (
     input.endDate,
   )
   if (!mxMinWage) throw new Error("No hay salario mínimo MX para la fecha indicada")
-  const cappedDailySalary = Math.min(dailySalary, mxMinWage.daily * 2)
+  const cappedDailySalary = capDailySalaryByMinimumWage(
+    dailySalary,
+    mxMinWage.daily,
+    2,
+  )
   const primaAntiguedad = round2(cappedDailySalary * tenureYears * 12)
 
   // Aguinaldo: Art. 87 - 15 dias, proporcional
