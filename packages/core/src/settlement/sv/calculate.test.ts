@@ -1,6 +1,7 @@
 import { describe, expect, test } from "bun:test"
 
 import { calculateElSalvadorSettlement } from "./calculate"
+import { getMinimumWageForCalculation } from "../../shared"
 
 describe("calculateElSalvadorSettlement", () => {
   test("incluye todas las lineas de ingreso y version de corpus", () => {
@@ -95,5 +96,25 @@ describe("calculateElSalvadorSettlement", () => {
     const indemnizacion = result.incomes.find((line) => line.label === "Indemnizacion")
     expect(indemnizacion?.legalReference).toContain("MTPS 2025")
     expect(indemnizacion?.formula).toContain("54.52")
+  })
+
+  test("mantiene la regla abierta de salario minimo sin advertencia de fallback", () => {
+    const lookup = getMinimumWageForCalculation("sv", "2026-01-01")
+    const result = calculateElSalvadorSettlement({
+      countryCode: "sv",
+      employeeName: "Marta",
+      employerName: "Test SV",
+      monthlySalary: 3000,
+      frequency: "mensual",
+      unusedVacationDays: 0,
+      startDate: "2025-01-01",
+      endDate: "2026-01-01",
+    })
+
+    expect(lookup.wage?.year).toBe(2025)
+    expect(lookup.warnings).toEqual([])
+    expect(result.netTotal).toBeGreaterThan(0)
+    expect(result.warnings).toEqual([])
+    expect(result.incomes[0]?.legalReference).toContain("MTPS 2025")
   })
 })

@@ -1,5 +1,8 @@
 import { clamp, round2, daysBetween, startOfYear, formatTenure } from "../shared"
-import { getMinimumWageForCalculation } from "../../shared"
+import {
+  capDailySalaryByMinimumWage,
+  getMinimumWageForCalculation,
+} from "../../shared"
 import { SettlementInput, SettlementLine, SettlementResult } from "../types"
 import { getElSalvadorLegalRates } from "./legal-params"
 
@@ -30,7 +33,11 @@ export const calculateElSalvadorSettlement = (
     input.endDate,
   )
   if (!svMinWage) throw new Error("No hay salario mínimo SV para la fecha indicada")
-  const cappedDailySalary = Math.min(dailySalary, svMinWage.daily * 4)
+  const cappedDailySalary = capDailySalaryByMinimumWage(
+    dailySalary,
+    svMinWage.daily,
+    4,
+  )
   const baseIndemnizacionDays = tenureYears * 30
   const indemnizacionDays = round2(Math.max(baseIndemnizacionDays, 15))
   const indemnizacion = round2(cappedDailySalary * indemnizacionDays)

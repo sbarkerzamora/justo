@@ -1,6 +1,7 @@
 import { describe, expect, test } from "bun:test"
 
 import { calculateColombiaSettlement } from "./calculate"
+import { getMinimumWageForCalculation } from "../../shared"
 
 describe("calculateColombiaSettlement", () => {
   test("incluye todas las lineas de ingreso y version de corpus", () => {
@@ -61,5 +62,23 @@ describe("calculateColombiaSettlement", () => {
     const intereses = result.incomes.find((line) => line.label === "Intereses a las cesantias")
     expect(intereses).toBeDefined()
     expect(intereses?.legalReference).toContain("12%")
+  })
+
+  test("permite fechas futuras usando SMMLV documentado con advertencia", () => {
+    const lookup = getMinimumWageForCalculation("co", "2026-01-01")
+    const result = calculateColombiaSettlement({
+      countryCode: "co",
+      employeeName: "Laura",
+      employerName: "Test CO",
+      monthlySalary: 3000000,
+      frequency: "mensual",
+      unusedVacationDays: 0,
+      startDate: "2025-01-01",
+      endDate: "2026-01-01",
+    })
+
+    expect(lookup.wage?.year).toBe(2025)
+    expect(result.netTotal).toBeGreaterThan(0)
+    expect(result.warnings?.[0]).toContain("base legal documentada")
   })
 })
