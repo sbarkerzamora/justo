@@ -138,8 +138,13 @@ export function PreavisoTool({
   const [tenureDisplay, setTenureDisplay] = useState("")
   const [noticeDaysDisplay, setNoticeDaysDisplay] = useState("")
 
-  const stepIndex = PREAVISO_STEPS.indexOf(step)
-  const totalSteps = PREAVISO_STEPS.length
+  const progressSteps: PreavisoStep[] = PREAVISO_STEPS.filter(
+    (item) => item !== "welcome"
+  )
+  const totalSteps = progressSteps.length
+  const progressIndex = progressSteps.indexOf(step)
+  const progressCurrent = progressIndex >= 0 ? progressIndex + 1 : 1
+  const progressText = copy.progressStep(progressCurrent, totalSteps)
 
   const nextStep = useCallback((s: PreavisoStep): PreavisoStep => {
     const idx = PREAVISO_STEPS.indexOf(s)
@@ -186,6 +191,22 @@ export function PreavisoTool({
     ])
   }, [onComplete, copy, result, fmt, locale])
 
+  const onExportPdf = async () => {
+    const response = await fetch("/api/preaviso/pdf", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify(form),
+    })
+    if (!response.ok) return
+    const blob = await response.blob()
+    const url = URL.createObjectURL(blob)
+    const a = document.createElement("a")
+    a.href = url
+    a.download = `preaviso-${countryCode}.pdf`
+    a.click()
+    URL.revokeObjectURL(url)
+  }
+
   const isDataEntry = step === "salary" || step === "tenure"
   const isChoiceStep =
     step === "terminationCause" || step === "contractType" || step === "notice"
@@ -210,12 +231,19 @@ export function PreavisoTool({
       {step !== "welcome" && step !== "done" && (
         <div className="mb-3 w-full space-y-2 motion-safe:animate-in motion-safe:duration-200 motion-safe:fade-in motion-safe:slide-in-from-top-1 max-sm:mb-2">
           <div className="mb-1 flex items-center justify-between text-xs text-muted-foreground">
-            <span>{copy.progressStep(stepIndex)}</span>
+            <span>{progressText}</span>
           </div>
-          <div className="h-2 rounded-full bg-muted">
+          <div
+            className="h-2 rounded-full bg-muted"
+            role="progressbar"
+            aria-valuemin={1}
+            aria-valuemax={totalSteps}
+            aria-valuenow={progressCurrent}
+            aria-valuetext={progressText}
+          >
             <div
               className="h-2 rounded-full bg-primary transition-all duration-300"
-              style={{ width: `${(stepIndex / (totalSteps - 1)) * 100}%` }}
+              style={{ width: `${(progressCurrent / totalSteps) * 100}%` }}
             />
           </div>
           <div className="flex items-center gap-1.5 text-xs text-muted-foreground">
@@ -456,7 +484,7 @@ export function PreavisoTool({
             </div>
           </div>
         ) : isDataEntry ? (
-          <div className="flex h-full flex-col items-center justify-center gap-8 px-2">
+          <div className="flex min-h-0 flex-1 flex-col items-center justify-center gap-8 px-2">
             <div className="w-full max-w-xl rounded-2xl border border-border bg-card p-6 shadow-sm motion-safe:animate-in motion-safe:duration-200 motion-safe:fade-in motion-safe:slide-in-from-bottom-1">
               <p className="text-base font-medium text-foreground">
                 {step === "salary"
@@ -498,7 +526,7 @@ export function PreavisoTool({
             </div>
           </div>
         ) : isChoiceStep ? (
-          <div className="flex h-full flex-col items-center justify-center gap-8 px-2">
+          <div className="flex min-h-0 flex-1 flex-col items-center justify-center gap-8 px-2">
             <div className="w-full max-w-xl rounded-2xl border border-border bg-card p-6 shadow-sm motion-safe:animate-in motion-safe:duration-200 motion-safe:fade-in motion-safe:slide-in-from-bottom-1">
               <p className="text-base font-medium text-foreground">
                 {step === "terminationCause"
@@ -650,6 +678,13 @@ export function PreavisoTool({
         <div className="flex flex-wrap gap-2 px-2 pb-4">
           <button
             type="button"
+            onClick={() => void onExportPdf()}
+            className="inline-flex min-h-[48px] flex-1 items-center justify-center gap-2 rounded-xl border border-border bg-card px-4 py-2.5 text-sm font-medium text-foreground transition-all hover:scale-[1.02] hover:bg-accent focus-visible:ring-2 focus-visible:ring-primary/30 focus-visible:outline-none active:scale-[0.98] disabled:scale-100 disabled:cursor-not-allowed disabled:opacity-40"
+          >
+            <IconDownload className="size-4" /> {copy.downloadPdf}
+          </button>
+          <button
+            type="button"
             onClick={() => dispatch({ type: "setStep", step: "welcome" })}
             className="inline-flex min-h-[48px] flex-1 items-center justify-center gap-2 rounded-xl border border-border bg-card px-4 py-2.5 text-sm font-medium text-foreground transition-all hover:scale-[1.02] hover:bg-accent focus-visible:ring-2 focus-visible:ring-primary/30 focus-visible:outline-none active:scale-[0.98] disabled:scale-100 disabled:cursor-not-allowed disabled:opacity-40"
           >
@@ -664,41 +699,39 @@ export function PreavisoTool({
           </button>
         </div>
       ) : isDataEntry || isChoiceStep ? (
-        <div className="px-2 pb-4">
-          <StepNavigation
-            onBack={goBack}
-            onContinue={() => {
-              if (step === "salary") {
-                const s = parseCurrencyInput(salaryDisplay)
-                if (!s || s <= 0) return
-                dispatch({ type: "patchForm", patch: { monthlySalary: s } })
-                advance()
-              } else if (step === "tenure") {
-                const t = Number.parseFloat(tenureDisplay.replace(/[,\s]/g, ""))
-                if (!t || t <= 0) return
-                dispatch({ type: "patchForm", patch: { tenureYears: t } })
-                advance()
-              } else if (step === "notice") {
-                dispatch({ type: "setStep", step: "confirm" })
-              } else {
-                advance()
-              }
-            }}
-            canContinue={
-              step === "salary"
-                ? !!salaryDisplay && parseCurrencyInput(salaryDisplay) > 0
-                : step === "tenure"
-                  ? !!tenureDisplay && Number.parseFloat(tenureDisplay.replace(/[,\s]/g, "")) > 0
-                  : step === "notice" && form.noticeGivenInWriting
-                    ? !!noticeDaysDisplay &&
-                      Number.parseInt(noticeDaysDisplay, 10) >= 0
-                    : true
+        <StepNavigation
+          onBack={goBack}
+          onContinue={() => {
+            if (step === "salary") {
+              const s = parseCurrencyInput(salaryDisplay)
+              if (!s || s <= 0) return
+              dispatch({ type: "patchForm", patch: { monthlySalary: s } })
+              advance()
+            } else if (step === "tenure") {
+              const t = Number.parseFloat(tenureDisplay.replace(/[,\s]/g, ""))
+              if (!t || t <= 0) return
+              dispatch({ type: "patchForm", patch: { tenureYears: t } })
+              advance()
+            } else if (step === "notice") {
+              dispatch({ type: "setStep", step: "confirm" })
+            } else {
+              advance()
             }
-            showBack
-            backLabel={copy.backToPrevious}
-            continueLabel={copy.send}
-          />
-        </div>
+          }}
+          canContinue={
+            step === "salary"
+              ? !!salaryDisplay && parseCurrencyInput(salaryDisplay) > 0
+              : step === "tenure"
+                ? !!tenureDisplay && Number.parseFloat(tenureDisplay.replace(/[,\s]/g, "")) > 0
+                : step === "notice" && form.noticeGivenInWriting
+                  ? !!noticeDaysDisplay &&
+                    Number.parseInt(noticeDaysDisplay, 10) >= 0
+                  : true
+          }
+          showBack
+          backLabel={copy.backToPrevious}
+          continueLabel={copy.continueStep}
+        />
       ) : null}
     </div>
   )

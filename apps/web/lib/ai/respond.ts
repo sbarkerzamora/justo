@@ -189,6 +189,7 @@ export async function generateLaborResponse(input: {
                   formula: d.formula,
                   legalReference: d.legalReference,
                 })),
+                warnings: result.warnings,
               })
             } catch (e) {
               return `Error al calcular el estimado: ${e instanceof Error ? e.message : "error desconocido"}. Usa la calculadora guiada para un calculo mas preciso.`

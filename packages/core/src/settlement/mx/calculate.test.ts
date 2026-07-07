@@ -78,4 +78,21 @@ describe("calculateMexicoSettlement", () => {
     expect(sp?.amount).toBe(2500)
     expect(sp?.formula).toContain("25 dias")
   })
+
+  test("permite fechas futuras usando salario minimo documentado con advertencia", () => {
+    const result = calculateMexicoSettlement({
+      countryCode: "mx",
+      employeeName: "Ana",
+      employerName: "Test MX",
+      monthlySalary: 30000,
+      frequency: "mensual",
+      unusedVacationDays: 0,
+      startDate: "2025-01-01",
+      endDate: "2026-01-01",
+    })
+
+    expect(result.netTotal).toBeGreaterThan(0)
+    expect(result.warnings?.[0]).toContain("salario mínimo")
+    expect(result.incomes[2]?.legalReference).toContain("CONASAMI 2025")
+  })
 })

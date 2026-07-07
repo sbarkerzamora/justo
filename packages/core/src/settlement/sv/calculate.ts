@@ -1,5 +1,5 @@
 import { clamp, round2, daysBetween, startOfYear, formatTenure } from "../shared"
-import { getMinimumWage } from "../../shared"
+import { getMinimumWageForCalculation } from "../../shared"
 import { SettlementInput, SettlementLine, SettlementResult } from "../types"
 import { getElSalvadorLegalRates } from "./legal-params"
 
@@ -25,7 +25,10 @@ export const calculateElSalvadorSettlement = (
   const tenureYears = tenureDays / 365
 
   // Indemnizacion (Cesantia): Art. 58 - 30 dias por ano, min 15 dias, tope 4x SM diario
-  const svMinWage = getMinimumWage("sv", input.endDate)
+  const { wage: svMinWage, warnings } = getMinimumWageForCalculation(
+    "sv",
+    input.endDate,
+  )
   if (!svMinWage) throw new Error("No hay salario mínimo SV para la fecha indicada")
   const cappedDailySalary = Math.min(dailySalary, svMinWage.daily * 4)
   const baseIndemnizacionDays = tenureYears * 30
@@ -129,5 +132,6 @@ export const calculateElSalvadorSettlement = (
     netTotal,
     generatedAt: new Date().toISOString(),
     legalCorpusVersion: LEGAL_CORPUS_VERSION,
+    warnings,
   }
 }

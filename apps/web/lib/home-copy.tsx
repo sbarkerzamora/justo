@@ -111,6 +111,8 @@ type HomeCopy = {
   biweekly: string
   weekly: string
   startButton: string
+  continueStep: string
+  progressResult: string
   hrCtaTitle: string
   hrCtaDescription: string
   hrCtaBadge: string
@@ -137,6 +139,8 @@ type HomeCopy = {
   tenureSubtitle: (years: number) => string
   pensionSystem: string
   errorCalculating: string
+  calculationWarningTitle: string
+  calculationWarning: string
   monthlyNetResult: string
   vacationResultHeading: string
 }
@@ -294,10 +298,12 @@ export const homeCopy: Record<Locale, HomeCopy> = {
     biweekly: "Quincenal",
     weekly: "Semanal",
     startButton: "Comenzar",
+    continueStep: "Continuar",
+    progressResult: "Resultado",
     hrCtaTitle: "Justo para RRHH",
     hrCtaDescription: "Herramientas avanzadas para gestión de talento, nómina y cumplimiento laboral.",
     hrCtaBadge: "Próximamente",
-    backToPrevious: "← Anterior",
+    backToPrevious: "Anterior",
     resultHeading: "Resultado",
     incomesLabel: "Ingresos",
     expandLabel: "Ver",
@@ -320,6 +326,9 @@ export const homeCopy: Record<Locale, HomeCopy> = {
     tenureSubtitle: (years) => `Basado en ${years} años de antigüedad`,
     pensionSystem: "Sistema de pensiones",
     errorCalculating: "Error al calcular",
+    calculationWarningTitle: "Verificación recomendada",
+    calculationWarning:
+      "Este cálculo usa la base legal documentada disponible en Justo. Algunos parámetros, como salario mínimo o topes legales, pueden requerir verificación profesional para la fecha exacta del caso. Estamos actualizando constantemente la base legal.",
     monthlyNetResult: "Salario neto mensual",
     vacationResultHeading: "Resultado de vacaciones",
   },
@@ -474,10 +483,12 @@ export const homeCopy: Record<Locale, HomeCopy> = {
     biweekly: "Biweekly",
     weekly: "Weekly",
     startButton: "Start",
+    continueStep: "Continue",
+    progressResult: "Result",
     hrCtaTitle: "Justo for HR",
     hrCtaDescription: "Advanced tools for talent management, payroll and labor compliance.",
     hrCtaBadge: "Coming soon",
-    backToPrevious: "← Previous",
+    backToPrevious: "Previous",
     resultHeading: "Result",
     incomesLabel: "Incomes",
     expandLabel: "Expand",
@@ -500,6 +511,9 @@ export const homeCopy: Record<Locale, HomeCopy> = {
     tenureSubtitle: (years) => `Based on ${years} years of tenure`,
     pensionSystem: "Pension system",
     errorCalculating: "Error calculating",
+    calculationWarningTitle: "Verification recommended",
+    calculationWarning:
+      "This calculation uses the documented legal base available in Justo. Some parameters, such as minimum wage or legal caps, may require professional verification for the exact case date. We are constantly updating the legal base.",
     monthlyNetResult: "Monthly net salary",
     vacationResultHeading: "Vacation result",
   },

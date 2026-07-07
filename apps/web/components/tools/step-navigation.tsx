@@ -28,7 +28,7 @@ export function StepNavigation({
             {backLabel}
           </button>
         ) : (
-          <div className="min-w-[48px]" />
+          <div className="min-w-[48px]" aria-hidden="true" />
         )}
         <button
           type="button"

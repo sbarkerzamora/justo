@@ -168,6 +168,21 @@ describe("termination calculators", () => {
     expect(injust?.total).toBe(107974.32)
   })
 
+  test("Mexico: future dates use documented minimum wage with warning", () => {
+    const result = calculateMexicoTermination({
+      ...baseInput,
+      countryCode: "mx",
+      endDate: "2026-01-01",
+    })
+
+    expect(result.warnings?.[0]).toContain("base legal documentada")
+    const injust = result.scenarios.find(
+      (s) => s.type === "despido_injustificado"
+    )
+    expect(injust?.applicable).toBe(true)
+    expect(injust?.lines[2]?.legalReference).toContain("CONASAMI 2025")
+  })
+
   test("Colombia: 30 base + 20d/year for unjustified dismissal", () => {
     const result = calculateColombiaTermination({
       ...baseInput,

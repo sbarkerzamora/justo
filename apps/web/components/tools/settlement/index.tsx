@@ -520,6 +520,13 @@ export function SettlementTool({
     onComplete(messages)
   }
 
+  const progressTotal = flowSteps.length
+  const progressCurrent = Math.max(
+    1,
+    Math.min(stepIndex(step, flowSteps), progressTotal)
+  )
+  const progressText = copy.progressStep(progressCurrent, progressTotal)
+
   return (
     <div className="flex min-h-0 flex-1 flex-col">
       <div className="mb-4 flex w-full items-center justify-between">
@@ -538,12 +545,19 @@ export function SettlementTool({
       </div>
       <div className="mb-3 w-full space-y-2 motion-safe:animate-in motion-safe:duration-200 motion-safe:fade-in motion-safe:slide-in-from-top-1 max-sm:mb-2">
         <div className="mb-1 flex items-center justify-between text-xs text-muted-foreground">
-          <span>{copy.progressStep(stepIndex(step, flowSteps), flowSteps.length)}</span>
+          <span>{progressText}</span>
         </div>
-        <div className="h-2 rounded-full bg-muted">
+        <div
+          className="h-2 rounded-full bg-muted"
+          role="progressbar"
+          aria-valuemin={1}
+          aria-valuemax={progressTotal}
+          aria-valuenow={progressCurrent}
+          aria-valuetext={progressText}
+        >
           <div
             className="h-2 rounded-full bg-primary transition-all duration-300"
-            style={{ width: `${(stepIndex(step, flowSteps) / flowSteps.length) * 100}%` }}
+            style={{ width: `${(progressCurrent / progressTotal) * 100}%` }}
           />
         </div>
         <div className="flex items-center gap-1.5 text-xs text-muted-foreground">
@@ -713,7 +727,7 @@ export function SettlementTool({
             </div>
           </div>
         ) : (
-          <div className="flex h-full flex-col items-center justify-center gap-6 px-2">
+          <div className="flex min-h-0 flex-1 flex-col items-center justify-center gap-6 px-2">
             <div className="w-full max-w-xl rounded-2xl border border-border bg-card p-6 shadow-sm motion-safe:animate-in motion-safe:duration-200 motion-safe:fade-in motion-safe:slide-in-from-bottom-1">
               <p className="text-base font-medium text-foreground">
                 {askText(step)}
@@ -764,7 +778,7 @@ export function SettlementTool({
               canContinue={!!inputValue.trim()}
               showBack={step !== "employeeName"}
               backLabel={copy.backToPrevious}
-              continueLabel={copy.send}
+              continueLabel={copy.continueStep}
             />
           )}
         {(step === "terminationCause" || step === "contractType") &&
@@ -781,7 +795,7 @@ export function SettlementTool({
               canContinue
               showBack
               backLabel={copy.backToPrevious}
-              continueLabel={copy.send}
+              continueLabel={copy.continueStep}
             />
           )}
         {step === "pensionSystem" && !editMode && (
@@ -793,7 +807,7 @@ export function SettlementTool({
             canContinue={!!form.pensionSystem}
             showBack
             backLabel={copy.backToPrevious}
-            continueLabel={copy.send}
+            continueLabel={copy.continueStep}
           />
         )}
         {step === "adjustments" && !editMode && (
@@ -805,7 +819,7 @@ export function SettlementTool({
             canContinue
             showBack
             backLabel={copy.backToPrevious}
-            continueLabel={copy.send}
+            continueLabel={copy.continueStep}
           />
         )}
       </div>
@@ -898,7 +912,7 @@ function ChoicePanel({
   onPatch: (patch: Partial<SettlementForm>) => void
 }) {
   return (
-    <div className="flex h-full flex-col items-center justify-center gap-6 px-2">
+    <div className="flex min-h-0 flex-1 flex-col items-center justify-center gap-6 px-2">
       <div className="w-full max-w-xl rounded-2xl border border-border bg-card p-6 shadow-sm motion-safe:animate-in motion-safe:duration-200 motion-safe:fade-in motion-safe:slide-in-from-bottom-1">
         <p className="text-base font-medium text-foreground">
           {step === "terminationCause"
@@ -1007,7 +1021,7 @@ function SettlementAdjustmentsPanel({
   ]
 
   return (
-    <div className="flex h-full flex-col items-center justify-center px-2 pb-4 sm:pb-2">
+    <div className="flex min-h-0 flex-1 flex-col items-center justify-center px-2 pb-4 sm:pb-2">
       <div className="w-full max-w-xl rounded-2xl border border-border bg-card p-4 shadow-sm motion-safe:animate-in motion-safe:duration-200 motion-safe:fade-in motion-safe:slide-in-from-bottom-1 sm:p-6">
         <div className="flex items-start gap-2.5">
           <div className="rounded-lg bg-primary/10 p-1.5 sm:rounded-xl sm:p-2">
@@ -1358,6 +1372,23 @@ function ResultPanelTool({
           </div>
         </div>
       </div>
+
+      {result.warnings?.length ? (
+        <div className="rounded-2xl border border-amber-200 bg-amber-50 px-4 py-3 text-sm text-amber-900">
+          <div className="flex items-start gap-2">
+            <IconAlertCircle className="mt-0.5 size-4 shrink-0" />
+            <div className="space-y-1">
+              <p className="font-medium">{copy.calculationWarningTitle}</p>
+              <p className="leading-relaxed">{copy.calculationWarning}</p>
+              {result.warnings.map((warning) => (
+                <p key={warning} className="text-xs leading-relaxed text-amber-800">
+                  {warning}
+                </p>
+              ))}
+            </div>
+          </div>
+        </div>
+      ) : null}
 
       <div className="overflow-hidden rounded-2xl border border-border bg-card shadow-sm">
         <details className="group">

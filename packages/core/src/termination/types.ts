@@ -38,4 +38,5 @@ export interface TerminationResult {
   contractType: JurisdictionContractType
   generatedAt: string
   legalCorpusVersion: string
+  warnings?: string[]
 }

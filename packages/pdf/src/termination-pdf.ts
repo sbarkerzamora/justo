@@ -45,6 +45,21 @@ export const buildTerminationPdf = async (
     { label: "Causa", value: scenarioLabel(input.terminationCause) },
   ], left, y, fontSet)
 
+  if (result.warnings?.length) {
+    ;({ page, y } = drawPageBreakIfNeeded(pdf, page, y, 120, drawNewPageHeader))
+    y = drawSectionTitle(page, "Aviso de verificacion", left, y, fontSet)
+    for (const warning of result.warnings) {
+      y = drawBreakdownItem(
+        page,
+        { label: "Base legal documentada", note: warning },
+        left,
+        right,
+        y,
+        fontSet,
+      )
+    }
+  }
+
   const applicableScenarios = result.scenarios.filter((s) => s.applicable)
   for (const scenario of applicableScenarios) {
     ;({ page, y } = drawPageBreakIfNeeded(pdf, page, y, 150, drawNewPageHeader))

@@ -156,7 +156,7 @@ const stepIndex = (s: ContractStep) => {
   return idx >= 0 ? idx + 1 : inputSteps.length + 1
 }
 
-const totalSteps = inputSteps.length
+const totalSteps = inputSteps.length + 1
 
 type Dispatch = React.Dispatch<Action>
 
@@ -303,6 +303,8 @@ export function ContractTool({
   }
 
   const stepTitle = () => c.stepTitle[step] ?? ""
+  const progressCurrent = Math.max(1, Math.min(stepIndex(step), totalSteps))
+  const progressText = copy.progressStep(progressCurrent, totalSteps)
 
   return (
     <div className="flex min-h-0 flex-1 flex-col">
@@ -324,23 +326,26 @@ export function ContractTool({
       <div className="mb-3 w-full space-y-2 motion-safe:animate-in motion-safe:duration-200 motion-safe:fade-in motion-safe:slide-in-from-top-1 max-sm:mb-2">
         <div className="mb-1 flex items-center justify-between text-xs text-muted-foreground">
           <span>
-            {step === "done"
+            {step === "done" || step === "welcome"
               ? ""
               : step === "confirm"
-                ? copy.summaryTitle
-                : `${copy.progressStep(stepIndex(step))}`}
+                ? progressText
+                : progressText}
           </span>
           <span className="max-sm:hidden">{stepTitle()}</span>
         </div>
         {step !== "welcome" && step !== "done" && (
-          <div className="h-2 rounded-full bg-muted">
+          <div
+            className="h-2 rounded-full bg-muted"
+            role="progressbar"
+            aria-valuemin={1}
+            aria-valuemax={totalSteps}
+            aria-valuenow={progressCurrent}
+            aria-valuetext={progressText}
+          >
             <div
               className="h-2 rounded-full bg-primary transition-all duration-300"
-              style={{
-                width: `${
-                  (stepIndex(step) / totalSteps) * 100
-                }%`,
-              }}
+              style={{ width: `${(progressCurrent / totalSteps) * 100}%` }}
             />
           </div>
         )}
@@ -364,7 +369,7 @@ export function ContractTool({
         </div>
       </div>
 
-      <div className="min-h-0 flex-1 py-2">
+      <div className="flex min-h-0 flex-1 flex-col py-2">
         {error && validInputSteps.has(step) && (
           <div className="mb-4 flex items-center gap-2 rounded-xl border border-rose-200 bg-rose-50 px-4 py-3 text-sm text-rose-700 motion-safe:animate-in motion-safe:duration-200 motion-safe:fade-in">
             <IconAlertCircle className="size-4 shrink-0" />
@@ -714,7 +719,7 @@ function MultiFieldInput({
   const allFilled = fields.every((f) => (form[f.key] as string)?.trim())
 
   return (
-    <div className="max-w-xl mx-auto space-y-4 motion-safe:animate-in motion-safe:duration-200 motion-safe:fade-in motion-safe:slide-in-from-bottom-1">
+    <div className="mx-auto flex min-h-0 w-full max-w-xl flex-1 flex-col space-y-4 motion-safe:animate-in motion-safe:duration-200 motion-safe:fade-in motion-safe:slide-in-from-bottom-1">
       <div className="w-full rounded-2xl border border-border bg-card p-5 shadow-sm">
         <p className="mb-4 text-sm font-semibold text-foreground">{title}</p>
         <div className="space-y-3">
@@ -733,6 +738,7 @@ function MultiFieldInput({
         <button
           type="button"
           onClick={onBack}
+          aria-label={c.back}
           className="inline-flex min-h-[44px] items-center justify-center gap-1.5 rounded-xl border border-border bg-card px-4 text-sm font-medium text-foreground transition-colors hover:bg-accent"
         >
           <IconArrowLeft className="size-4" />
@@ -830,7 +836,7 @@ function JobInfoStep({
   const canContinue = form.jobTitle && form.jobDescription && form.workLocation
 
   return (
-    <div className="max-w-xl mx-auto space-y-4 motion-safe:animate-in motion-safe:duration-200 motion-safe:fade-in motion-safe:slide-in-from-bottom-1">
+    <div className="mx-auto flex min-h-0 w-full max-w-xl flex-1 flex-col space-y-4 motion-safe:animate-in motion-safe:duration-200 motion-safe:fade-in motion-safe:slide-in-from-bottom-1">
       <div className="w-full rounded-2xl border border-border bg-card p-5 shadow-sm">
         <p className="mb-4 text-sm font-semibold text-foreground">
           {c.stepTitle.jobInfo}
@@ -866,6 +872,7 @@ function JobInfoStep({
         <button
           type="button"
           onClick={onBack}
+          aria-label={c.back}
           className="inline-flex min-h-[44px] items-center justify-center gap-1.5 rounded-xl border border-border bg-card px-4 text-sm font-medium text-foreground transition-colors hover:bg-accent"
         >
           <IconArrowLeft className="size-4" />
@@ -945,7 +952,7 @@ function ContractTypeStep({
   }
 
   return (
-    <div className="max-w-xl mx-auto space-y-4 motion-safe:animate-in motion-safe:duration-200 motion-safe:fade-in motion-safe:slide-in-from-bottom-1">
+    <div className="mx-auto flex min-h-0 w-full max-w-xl flex-1 flex-col space-y-4 motion-safe:animate-in motion-safe:duration-200 motion-safe:fade-in motion-safe:slide-in-from-bottom-1">
       <div className="w-full rounded-2xl border border-border bg-card p-5 shadow-sm">
         <p className="mb-4 text-sm font-semibold text-foreground">
           {c.stepTitle.contractType}
@@ -1000,6 +1007,7 @@ function ContractTypeStep({
         <button
           type="button"
           onClick={onBack}
+          aria-label={c.back}
           className="inline-flex min-h-[44px] items-center justify-center gap-1.5 rounded-xl border border-border bg-card px-4 text-sm font-medium text-foreground transition-colors hover:bg-accent"
         >
           <IconArrowLeft className="size-4" />
@@ -1094,7 +1102,7 @@ function SalaryStep({
   }
 
   return (
-    <div className="max-w-xl mx-auto space-y-4 motion-safe:animate-in motion-safe:duration-200 motion-safe:fade-in motion-safe:slide-in-from-bottom-1">
+    <div className="mx-auto flex min-h-0 w-full max-w-xl flex-1 flex-col space-y-4 motion-safe:animate-in motion-safe:duration-200 motion-safe:fade-in motion-safe:slide-in-from-bottom-1">
       <div className="w-full rounded-2xl border border-border bg-card p-5 shadow-sm">
         <p className="mb-4 text-sm font-semibold text-foreground">
           {c.stepTitle.salary}
@@ -1148,6 +1156,7 @@ function SalaryStep({
         <button
           type="button"
           onClick={onBack}
+          aria-label={c.back}
           className="inline-flex min-h-[44px] items-center justify-center gap-1.5 rounded-xl border border-border bg-card px-4 text-sm font-medium text-foreground transition-colors hover:bg-accent"
         >
           <IconArrowLeft className="size-4" />

@@ -1,5 +1,5 @@
 import { clamp, round2, daysBetween, startOfYear, formatTenure } from "../shared"
-import { getMinimumWage } from "../../shared"
+import { getMinimumWageForCalculation } from "../../shared"
 import { SettlementInput, SettlementLine, SettlementResult } from "../types"
 import { getColombiaLegalRates } from "./legal-params"
 
@@ -31,7 +31,10 @@ export const calculateColombiaSettlement = (
   const interesesCesantia = round2(cesantia * 0.12 * Math.min(tenureYears, 1))
 
   // Indemnizacion: Art. 64 - escala dual segun SMMLV
-  const coMinWage = getMinimumWage("co", input.endDate)
+  const { wage: coMinWage, warnings } = getMinimumWageForCalculation(
+    "co",
+    input.endDate,
+  )
   if (!coMinWage) throw new Error("No hay SMMLV CO para la fecha indicada")
   const tenSmmlv = coMinWage.monthly * 10
   const isHighSalary = input.monthlySalary >= tenSmmlv
@@ -136,5 +139,6 @@ export const calculateColombiaSettlement = (
     netTotal,
     generatedAt: new Date().toISOString(),
     legalCorpusVersion: LEGAL_CORPUS_VERSION,
+    warnings,
   }
 }

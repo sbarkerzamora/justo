@@ -394,6 +394,10 @@ export function VacationsTool({
     onComplete(messages)
   }
 
+  const totalSteps = vacationSteps.length
+  const progressCurrent = Math.max(1, Math.min(stepIndex(step), totalSteps))
+  const progressText = copy.progressStep(progressCurrent, totalSteps)
+
   return (
     <div className="flex min-h-0 flex-1 flex-col">
       <div className="mb-4 flex w-full items-center justify-between">
@@ -413,7 +417,7 @@ export function VacationsTool({
 
       <div className="mb-3 w-full space-y-2 motion-safe:animate-in motion-safe:duration-200 motion-safe:fade-in motion-safe:slide-in-from-top-1 max-sm:mb-2">
         <div className="mb-1 flex items-center justify-between text-xs text-muted-foreground">
-          <span>{copy.progressStep(stepIndex(step))}</span>
+          <span>{progressText}</span>
           <span className="max-sm:hidden">
             {step === "done"
               ? copy.result
@@ -422,13 +426,20 @@ export function VacationsTool({
                 : askText(step)}
           </span>
           <span className="sm:hidden">
-            {step === "done" ? "OK" : `P${stepIndex(step)}`}
+            {step === "done" ? copy.progressResult : progressText}
           </span>
         </div>
-        <div className="h-2 rounded-full bg-muted">
+        <div
+          className="h-2 rounded-full bg-muted"
+          role="progressbar"
+          aria-valuemin={1}
+          aria-valuemax={totalSteps}
+          aria-valuenow={progressCurrent}
+          aria-valuetext={progressText}
+        >
           <div
             className="h-2 rounded-full bg-primary transition-all duration-300"
-            style={{ width: `${(stepIndex(step) / 6) * 100}%` }}
+            style={{ width: `${(progressCurrent / totalSteps) * 100}%` }}
           />
         </div>
         <div className="flex items-center gap-1.5 text-xs text-muted-foreground">
@@ -526,7 +537,7 @@ export function VacationsTool({
             />
           </div>
         ) : (
-          <div className="flex h-full flex-col items-center justify-center gap-6 px-2">
+          <div className="flex min-h-0 flex-1 flex-col items-center justify-center gap-6 px-2">
             <div className="w-full max-w-xl rounded-2xl border border-border bg-card p-6 shadow-sm motion-safe:animate-in motion-safe:duration-200 motion-safe:fade-in motion-safe:slide-in-from-bottom-1">
               <p className="text-base font-medium text-foreground">
                 {askText(step)}
@@ -569,7 +580,7 @@ export function VacationsTool({
             canContinue={!!inputValue.trim()}
             showBack={step !== "monthlySalary"}
             backLabel={copy.backToPrevious}
-            continueLabel={copy.send}
+            continueLabel={copy.continueStep}
           />
         )}
       </div>

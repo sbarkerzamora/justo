@@ -114,15 +114,6 @@ const salaryNetSteps: SalaryNetStep[] = [
   "done",
 ]
 
-const stepIndex = (step: SalaryNetStep) => {
-  if (step === "welcome") return 0
-  const idx = salaryNetSteps.indexOf(step)
-  if (idx === -1) return 4
-  return idx + 1
-}
-
-const totalSteps = 4
-
 export function SalaryNetTool({
   countryCode,
   countryName,
@@ -343,6 +334,16 @@ export function SalaryNetTool({
     onComplete(messages)
   }
 
+  const visibleSalaryNetSteps = countryCode === "pe"
+    ? salaryNetSteps
+    : salaryNetSteps.filter((item) => item !== "pensionSystem")
+  const totalSteps = visibleSalaryNetSteps.length
+  const visibleStepIndex = visibleSalaryNetSteps.indexOf(step)
+  const progressCurrent = visibleStepIndex >= 0
+    ? visibleStepIndex + 1
+    : 1
+  const progressText = copy.progressStep(progressCurrent, totalSteps)
+
   return (
     <div className="flex min-h-0 flex-1 flex-col">
       <div className="mb-4 flex w-full items-center justify-between">
@@ -362,7 +363,7 @@ export function SalaryNetTool({
 
       <div className="mb-3 w-full space-y-2 motion-safe:animate-in motion-safe:duration-200 motion-safe:fade-in motion-safe:slide-in-from-top-1 max-sm:mb-2">
         <div className="mb-1 flex items-center justify-between text-xs text-muted-foreground">
-          <span>{copy.progressStep(stepIndex(step))}</span>
+          <span>{progressText}</span>
           <span className="max-sm:hidden">
             {step === "done"
               ? copy.result
@@ -371,13 +372,20 @@ export function SalaryNetTool({
                 : askText(step)}
           </span>
           <span className="sm:hidden">
-            {step === "done" ? "OK" : `P${stepIndex(step)}`}
+            {step === "done" ? copy.progressResult : progressText}
           </span>
         </div>
-        <div className="h-2 rounded-full bg-muted">
+        <div
+          className="h-2 rounded-full bg-muted"
+          role="progressbar"
+          aria-valuemin={1}
+          aria-valuemax={totalSteps}
+          aria-valuenow={progressCurrent}
+          aria-valuetext={progressText}
+        >
           <div
             className="h-2 rounded-full bg-primary transition-all duration-300"
-            style={{ width: `${(stepIndex(step) / totalSteps) * 100}%` }}
+            style={{ width: `${(progressCurrent / totalSteps) * 100}%` }}
           />
         </div>
         <div className="flex items-center gap-1.5 text-xs text-muted-foreground">
@@ -488,7 +496,7 @@ export function SalaryNetTool({
             />
           </div>
         ) : (
-          <div className="flex h-full flex-col items-center justify-center gap-6 px-2">
+          <div className="flex min-h-0 flex-1 flex-col items-center justify-center gap-6 px-2">
             <div className="w-full max-w-xl rounded-2xl border border-border bg-card p-6 shadow-sm motion-safe:animate-in motion-safe:duration-200 motion-safe:fade-in motion-safe:slide-in-from-bottom-1">
               <p className="text-base font-medium text-foreground">
                 {askText(step)}
@@ -525,8 +533,8 @@ export function SalaryNetTool({
               canContinue={!!inputValue.trim()}
               showBack={false}
               backLabel={copy.backToPrevious}
-              continueLabel={copy.send}
-            />
+            continueLabel={copy.continueStep}
+          />
           )}
       </div>
     </div>
@@ -677,7 +685,7 @@ function PensionSelector({
               : "border-border text-foreground hover:bg-accent"
           }`}
         >
-          AFP (11.2%)
+          AFP (10% + 1.37%)
         </button>
       </div>
     </div>
@@ -728,7 +736,7 @@ function ConfirmPanel({
           <SummaryRow
             icon={<IconCoins className="size-4 text-muted-foreground" />}
             label={pensionSystem === "afp" ? "AFP" : "ONP"}
-            value={pensionSystem === "afp" ? "AFP (11.2%)" : "ONP (13%)"}
+            value={pensionSystem === "afp" ? "AFP (10% + 1.37%)" : "ONP (13%)"}
           />
         ) : null}
       </div>

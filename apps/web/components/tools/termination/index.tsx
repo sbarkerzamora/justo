@@ -149,15 +149,6 @@ const terminationSteps: TerminationStep[] = [
   "done",
 ]
 
-const stepIndex = (step: TerminationStep) => {
-  if (step === "welcome") return 0
-  const idx = terminationSteps.indexOf(step)
-  if (idx === -1) return 6
-  return idx + 1
-}
-
-const totalSteps = terminationSteps.length
-
 const terminationCauseOptions = [
   { value: "renuncia", es: "Renuncia", en: "Resignation" },
   {
@@ -523,6 +514,16 @@ export function TerminationTool({
     onComplete(messages)
   }
 
+  const visibleTerminationSteps = terminationSteps.filter(
+    (item) =>
+      item !== "writtenNotice" ||
+      (countryCode === "ni" && form.terminationCause === "renuncia")
+  )
+  const totalSteps = visibleTerminationSteps.length
+  const visibleStepIndex = visibleTerminationSteps.indexOf(step)
+  const progressCurrent = visibleStepIndex >= 0 ? visibleStepIndex + 1 : 1
+  const progressText = copy.progressStep(progressCurrent, totalSteps)
+
   return (
     <div className="flex min-h-0 flex-1 flex-col">
       <div className="mb-4 flex w-full items-center justify-between">
@@ -544,7 +545,7 @@ export function TerminationTool({
 
       <div className="mb-3 w-full space-y-2 motion-safe:animate-in motion-safe:duration-200 motion-safe:fade-in motion-safe:slide-in-from-top-1 max-sm:mb-2">
         <div className="mb-1 flex items-center justify-between text-xs text-muted-foreground">
-          <span>{copy.progressStep(stepIndex(step))}</span>
+          <span>{progressText}</span>
           <span className="max-sm:hidden">
             {step === "done"
               ? copy.result
@@ -553,13 +554,20 @@ export function TerminationTool({
                 : askText(step)}
           </span>
           <span className="sm:hidden">
-            {step === "done" ? "OK" : `P${stepIndex(step)}`}
+            {step === "done" ? copy.progressResult : progressText}
           </span>
         </div>
-        <div className="h-2 rounded-full bg-muted">
+        <div
+          className="h-2 rounded-full bg-muted"
+          role="progressbar"
+          aria-valuemin={1}
+          aria-valuemax={totalSteps}
+          aria-valuenow={progressCurrent}
+          aria-valuetext={progressText}
+        >
           <div
             className="h-2 rounded-full bg-primary transition-all duration-300"
-            style={{ width: `${(stepIndex(step) / totalSteps) * 100}%` }}
+            style={{ width: `${(progressCurrent / totalSteps) * 100}%` }}
           />
         </div>
         <div className="flex items-center gap-1.5 text-xs text-muted-foreground">
@@ -582,7 +590,7 @@ export function TerminationTool({
         </div>
       </div>
 
-      <div className="min-h-0 flex-1 py-2">
+      <div className="flex min-h-0 flex-1 flex-col py-2">
         {step === "welcome" ? (
           <OnboardingPanel
             title={copy.terminationWelcomeTitle}
@@ -710,7 +718,7 @@ export function TerminationTool({
             />
           </div>
         ) : (
-          <div className="flex h-full flex-col items-center justify-center gap-6 px-2">
+          <div className="flex min-h-0 flex-1 flex-col items-center justify-center gap-6 px-2">
             <div className="w-full max-w-xl rounded-2xl border border-border bg-card p-6 shadow-sm motion-safe:animate-in motion-safe:duration-200 motion-safe:fade-in motion-safe:slide-in-from-bottom-1">
               <p className="text-base font-medium text-foreground">
                 {askText(step)}
@@ -755,7 +763,7 @@ export function TerminationTool({
             }
             showBack={step !== "monthlySalary"}
             backLabel={copy.backToPrevious}
-            continueLabel={copy.send}
+            continueLabel={copy.continueStep}
           />
         )}
       </div>
@@ -800,7 +808,7 @@ function ChoicePanel({
   onPatch: (patch: Partial<TerminationFormData>) => void
 }) {
   return (
-    <div className="flex h-full flex-col items-center justify-center gap-6 px-2">
+    <div className="flex min-h-0 flex-1 flex-col items-center justify-center gap-6 px-2">
       <div className="w-full max-w-xl rounded-2xl border border-border bg-card p-6 shadow-sm motion-safe:animate-in motion-safe:duration-200 motion-safe:fade-in motion-safe:slide-in-from-bottom-1">
         <p className="text-base font-medium text-foreground">
           {step === "terminationCause"
@@ -1230,6 +1238,23 @@ function ResultPanel({
           </div>
         </div>
       </div>
+
+      {result.warnings?.length ? (
+        <div className="rounded-2xl border border-amber-200 bg-amber-50 px-4 py-3 text-sm text-amber-900">
+          <div className="flex items-start gap-2">
+            <IconAlertCircle className="mt-0.5 size-4 shrink-0" />
+            <div className="space-y-1">
+              <p className="font-medium">{copy.calculationWarningTitle}</p>
+              <p className="leading-relaxed">{copy.calculationWarning}</p>
+              {result.warnings.map((warning) => (
+                <p key={warning} className="text-xs leading-relaxed text-amber-800">
+                  {warning}
+                </p>
+              ))}
+            </div>
+          </div>
+        </div>
+      ) : null}
 
       <div className="grid grid-cols-1 gap-3 sm:grid-cols-2">
         {scenarioOrder.map((type) => {

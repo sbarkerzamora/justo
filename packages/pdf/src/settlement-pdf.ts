@@ -40,6 +40,21 @@ export const buildSettlementPdf = async (
     { label: "Deducciones", value: money(result.totalDeductions, result.currency) },
   ], left, right, y, fontSet)
 
+  if (result.warnings?.length) {
+    ;({ page, y } = drawPageBreakIfNeeded(pdf, page, y, 120, drawNewPageHeader))
+    y = drawSectionTitle(page, "Aviso de verificacion", left, y, fontSet)
+    for (const warning of result.warnings) {
+      y = drawBreakdownItem(
+        page,
+        { label: "Base legal documentada", note: warning },
+        left,
+        right,
+        y,
+        fontSet,
+      )
+    }
+  }
+
   y = drawSectionTitle(page, "Ingresos", left, y, fontSet)
   for (const line of result.incomes) {
     ;({ page, y } = drawPageBreakIfNeeded(pdf, page, y, 120, drawNewPageHeader))
